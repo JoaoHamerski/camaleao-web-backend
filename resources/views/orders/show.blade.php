@@ -5,19 +5,20 @@
 @section('content')
 	<div class="row mt-5">
 		<div class="col-md-3">
-			<a class="btn btn-outline-primary" href="{{ $client->path() }}">
+			<a class="btn btn-outline-primary mb-2" href="{{ $client->path() }}">
 				<i class="fas fa-arrow-circle-left fa-fw mr-1"></i>Voltar
-			</a>	
+			</a>
+			@include('clients._client-card')
 		</div>
 
-		<div class="col-md-9">
-			<div class="d-flex flex-row justify-content-between">
-				<div>
-					<a class="btn btn-outline-success @if ($order->is_closed || ($order->getTotalOwing() == 0)) disabled @endif " href="#newPaymentModal" data-toggle="modal">
+		<div class="col-md-9 mt-3 mt-md-0">
+			<div class="d-flex flex-column flex-md-row justify-content-between mb-2">
+				<div class="mt-3 mt-md-0">
+					<a class="btn btn-outline-success d-block @if ($order->is_closed || ($order->getTotalOwing() == 0)) disabled @endif " href="#newPaymentModal" data-toggle="modal">
 						<i class="fas fa-dollar-sign fa-fw mr-1"></i>Adicionar pagamento
 					</a>
 				</div>
-				<div>
+				<div class="mt-3 mt-md-0">
 					<form id="toggleOrderForm" method="POST" class="d-none" 
 						action="{{ 
 							route('orders.toggleOrder', [
@@ -28,15 +29,15 @@
 							@csrf
 					</form>
 
-					<a class="btn btn-outline-secondary" onclick="event.preventDefault; document.querySelector('#toggleOrderForm').submit()">{{ $order->is_closed ? 'Reabrir pedido' : 'Fechar pedido' }}</a>
+					<a class="btn btn-outline-secondary d-block" onclick="event.preventDefault; document.querySelector('#toggleOrderForm').submit()">{{ $order->is_closed ? 'Reabrir pedido' : 'Fechar pedido' }}</a>
 				</div>
 
-				<div>
+				<div class="d-flex justify-content-between mt-3 mt-md-0">
 					<a target="_blank" class="btn btn-primary" href="{{ route('orders.order-pdf', ['client' => $client, 'order' => $order]) }}">
 						<i class="fas fa-file-invoice fa-fw mr-1"></i>Gerar relatório
 					</a>
 
-					<a class="btn btn-outline-primary @if ($order->is_closed) disabled @endif" 
+					<a class="btn btn-outline-primary mx-2 @if ($order->is_closed) disabled @endif" 
 						href="{{ route('orders.edit', ['client' => $client, 'order' => $order]) }}">
 						<i class="fas fa-edit fa-fw mr-1"></i>Editar
 					</a>
@@ -46,15 +47,6 @@
 					</a>
 				</div>
 			</div>
-		</div>
-	</div>
-
-	<div class="row mt-2">
-		<div class="col-md-3">
-			@include('clients._client-card')
-		</div>
-
-		<div class="col-md-9">
 			<div class="card">
 				<div class="card-header {{ $order->is_closed ?  'bg-secondary' : 'bg-primary' }} font-weight-bold text-white">
 					<i class="fas fa-box-open fa-fw mr-1"></i>Pedido - {{ $order->code }} @if ($order->is_closed) - FECHADO @endif
@@ -73,11 +65,19 @@
 						<h4 class="font-weight-bold text-secondary">Detalhes do pedido ({{ $order->code }})</h4>
 					</div>
 
-					<div class="d-flex justify-content-between">
+					<div class="d-block d-md-none mb-2">
 						<div class="@if($order->status->id == 8) text-success @else text-warning @endif">
 							<h5>Status</h5>
 							<div class="font-weight-bold ">{{ $order->status->text }}</div>
 						</div>
+					</div>
+
+					<div class="d-flex justify-content-between">
+						<div class="d-none d-md-block @if($order->status->id == 8) text-success @else text-warning @endif">
+							<h5>Status</h5>
+							<div class="font-weight-bold ">{{ $order->status->text }}</div>
+						</div>
+
 						<div>
 							<h5>Valor total</h5>
 							<div>{!! Mask::money($order->price, true) !!}</div>
@@ -127,12 +127,12 @@
 					</div>
 
 					<h4 class="font-weight-bold text-secondary mt-4 mb-3">Anexos</h4>
-					<div class="d-flex justify-content-between">
+					<div class="d-flex justify-content-between flex-column flex-md-row">
 						<a href="" data-option="art">
 							<i class="fas fa-images fa-fw mr-1"></i>Artes ({{ count($order->getPaths('art_paths')) }})
 						</a>
 
-						<a href="" data-option="size">
+						<a class="my-2 my-md-0" href="" data-option="size">
 							<i class="fas fa-images fa-fw mr-1"></i>Tamanhos ({{ count($order->getPaths('size_paths')) }})
 						</a>
 

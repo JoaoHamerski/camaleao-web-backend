@@ -2,7 +2,7 @@
 	color: #fff;
 	display: block;
 	position: relative;
-	min-height: 100vh;
+	height: 100vh;
 	min-width: $sidebar-width;
 	max-width: $sidebar-width;
 	margin-left: -($sidebar-width);
@@ -44,12 +44,13 @@
 
 @include media-breakpoint-down(xs) {
 	.sidebar {
-		position: absolute;
+		position: fixed;
 		background-color: rgba(0, 0, 0, .95);
-		z-index: 1100;
+		z-index: 1050;
 		min-width: 100%;
 		max-width: 100%;
 		margin-left: -100%;
+		overflow: hidden;
 	}
 }
 

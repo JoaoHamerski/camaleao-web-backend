@@ -17013,7 +17013,7 @@ readers do not read off random characters that represent icons */
   color: #fff;
   display: block;
   position: relative;
-  min-height: 100vh;
+  height: 100vh;
   min-width: 250px;
   max-width: 250px;
   margin-left: -250px;
@@ -17055,12 +17055,13 @@ readers do not read off random characters that represent icons */
 
 @media (max-width: 575.98px) {
   .sidebar {
-    position: absolute;
+    position: fixed;
     background-color: rgba(0, 0, 0, 0.95);
-    z-index: 1100;
+    z-index: 1050;
     min-width: 100%;
     max-width: 100%;
     margin-left: -100%;
+    overflow: hidden;
   }
 }
 
@@ -17141,7 +17142,7 @@ a {
 
 .hamburger {
   position: absolute;
-  z-index: 1035;
+  z-index: 1051;
   padding: 15px 15px;
   display: inline-block;
   cursor: pointer;

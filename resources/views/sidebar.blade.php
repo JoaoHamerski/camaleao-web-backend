@@ -1,4 +1,4 @@
-<nav class="sidebar {{ Cookie::get('sidebar_active') ? '' : 'is-active' }} bg-dark ">
+<nav class="sidebar {{ Cookie::get('sidebar_active') ? 'is-active' : '' }} bg-dark ">
 	<div class="header mt-3 px-3">
     <i class="fas fa-user-circle fa-3x mb-3"></i>
 		<h5 class="font-weight-bold">{{ Auth::user()->name }}</h5>

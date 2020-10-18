@@ -42785,20 +42785,22 @@ window.destroyCookie = function (name) {
 };
 
 $('#btnSidebar').click(function () {
-  if ($('.sidebar').hasClass('is-active')) {
-    setCookie({
-      name: 'sidebar_active',
-      value: true
-    });
-  } else {
-    setCookie({
-      name: 'sidebar_active',
-      value: false
-    });
-  }
-
   $(this).toggleClass('is-active');
   $('.sidebar').toggleClass('is-active');
+
+  if ($(window).width() > 576) {
+    if ($('.sidebar').hasClass('is-active')) {
+      setCookie({
+        name: 'sidebar_active',
+        value: false
+      });
+    } else {
+      setCookie({
+        name: 'sidebar_active',
+        value: true
+      });
+    }
+  }
 });
 
 window.dispatchErrorMessages = function (errors) {

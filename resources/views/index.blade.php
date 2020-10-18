@@ -5,8 +5,8 @@
 @section('content')
 	
 	<div class="col-md-10 mx-auto mt-5">
-		<div class="d-flex justify-content-between">
-			<div>
+		<div class="d-flex justify-content-between flex-column flex-sm-row">
+			<div class="mb-2 mb-sm-0">
 				<button type="button" data-toggle="modal" data-target="#clientCreateModal" class="btn btn-success">
 					<i class="fas fa-user-plus fa-fw mr-1"></i>Novo cliente
 				</button>	
@@ -32,26 +32,28 @@
 			</div>
 
 			<div class="card-body px-0">
-				<table class="table table-hover">
-					<thead>
-						<tr>
-							<th>Nome</th>
-							<th>Telefone</th>
-							<th>Cidade</th>
-						</tr>
-					</thead>
-
-					<tbody>
-						@foreach($clients as $client)
-							<tr class="clickable-link" 
-								onclick="window.location = '{{ route('clients.show', $client->id) }}'">
-								<td>{{ $client->name }}</td>
-								<td>{{ $client->phone ? Mask::phone($client->phone) : '[não informado]' }}</td>
-								<td>{{ $client->city ?? '[não informado]' }}</td>
+				<div class="table-responsive">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Nome</th>
+								<th>Telefone</th>
+								<th>Cidade</th>
 							</tr>
-						@endforeach
-					</tbody>	
-				</table>	
+						</thead>
+
+						<tbody>
+							@foreach($clients as $client)
+								<tr class="clickable-link" 
+									onclick="window.location = '{{ route('clients.show', $client->id) }}'">
+									<td>{{ $client->name }}</td>
+									<td>{{ $client->phone ? Mask::phone($client->phone) : '[não informado]' }}</td>
+									<td>{{ $client->city ?? '[não informado]' }}</td>
+								</tr>
+							@endforeach
+						</tbody>	
+					</table>
+				</div>	
 
 			</div>
 		</div>

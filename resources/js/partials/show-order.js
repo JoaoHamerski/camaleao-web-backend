@@ -102,7 +102,10 @@ $('#today').on('click', function(e) {
 $('#btnAddPayment').on('click', function(e) {
   e.preventDefault();
 
+  $btn = $(this);
   let id = $(this).attr('data-id');
+
+  loadingBtn($btn, true);
 
   axios.post(window.location.href + '/new-payment', {
     value: $('[name=value]').val(),
@@ -115,5 +118,8 @@ $('#btnAddPayment').on('click', function(e) {
   .catch(error => {
     console.log(error.response);
     dispatchErrorMessages(error.response.data.errors);
+  })
+  .then(function() {
+    loadingBtn($btn, false);
   });
 }); 

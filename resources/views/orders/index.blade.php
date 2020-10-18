@@ -127,45 +127,47 @@
 		</div>
 
 		<div class="card-body px-0">
-			<table class="table table-hover">
-				<thead>
-					<tr>
-						<th>Cliente</th>
-						<th>Código pedido</th>
-						<th>Quantidade</th>
-						<th>Valor total</th>
-						<th>Total pago</th>
-						<th>Data de produção</th>
-						<th>Data de entrega</th>
-					</tr>
-				</thead>
+			<div class="table-responsive">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Cliente</th>
+							<th>Código pedido</th>
+							<th>Quantidade</th>
+							<th>Valor total</th>
+							<th>Total pago</th>
+							<th>Data de produção</th>
+							<th>Data de entrega</th>
+						</tr>
+					</thead>
 
-				<tbody>
-					@foreach($orders as $order)
-					<tr onclick="window.location='{{ $order->path() }}'" class="clickable-link @if ($order->is_closed) table-secondary @endif">
-						<td>{{ $order->client->name }}</td>
-						<td>{{ $order->code }}</td>
-						<td>{{ $order->quantity }}</td>
-						<td>{{ Mask::money($order->price) }}</td>
-						<td>{{ Mask::money($order->getTotalPayments()) }}</td>
-						<td>
-							{{
-							 	$order->production_date 
-							 		? Helper::date($order->production_date, '%d/%m/%Y')
-							 		: '[não informado]' 
-							 }}
-						</td>
-						<td>
-							{{ 
-								$order->delivery_date 
-									? Helper::date($order->delivery_date, '%d/%m/%Y')
-									: '[não informado]' 
-								}}
-						</td>
-					</tr>
-					@endforeach
-				</tbody>
-			</table>
+					<tbody>
+						@foreach($orders as $order)
+						<tr onclick="window.location='{{ $order->path() }}'" class="clickable-link @if ($order->is_closed) table-secondary @endif">
+							<td>{{ $order->client->name }}</td>
+							<td>{{ $order->code }}</td>
+							<td>{{ $order->quantity }}</td>
+							<td>{{ Mask::money($order->price) }}</td>
+							<td>{{ Mask::money($order->getTotalPayments()) }}</td>
+							<td>
+								{{
+								 	$order->production_date 
+								 		? Helper::date($order->production_date, '%d/%m/%Y')
+								 		: '[não informado]' 
+								 }}
+							</td>
+							<td>
+								{{ 
+									$order->delivery_date 
+										? Helper::date($order->delivery_date, '%d/%m/%Y')
+										: '[não informado]' 
+									}}
+							</td>
+						</tr>
+						@endforeach
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 @endsection

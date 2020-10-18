@@ -10,7 +10,7 @@
 	<div id="app">
 		@auth
 			<div id="btnSidebar"
-				class="hamburger hamburger-squeeze js-hamburger {{ Cookie::get('sidebar_active') ? '' : 'is-active' }}">
+				class="hamburger hamburger-squeeze js-hamburger {{ Cookie::get('sidebar_active') ? 'is-active' : '' }}">
 				<div class="hamburger-box icon user text-white">
 					<div class="hamburger-inner"></div>
 				</div>
