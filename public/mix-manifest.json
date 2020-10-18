@@ -1,7 +1,7 @@
 {
-    "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css",
-    "/js/partials/client-form.js": "/js/partials/client-form.js",
-    "/js/partials/order-form.js": "/js/partials/order-form.js",
-    "/js/partials/show-order.js": "/js/partials/show-order.js"
+    "/js/app.js": "/js/app.js?id=7d542fa2140f31644d57",
+    "/css/app.css": "/css/app.css?id=ec9c6fc561bfde3fd3d5",
+    "/js/partials/client-form.js": "/js/partials/client-form.js?id=17d964fe3896862cb04b",
+    "/js/partials/order-form.js": "/js/partials/order-form.js?id=0f9a55d7ee2e20fe99e2",
+    "/js/partials/show-order.js": "/js/partials/show-order.js?id=df8cde43cc4f88d94d85"
 }
