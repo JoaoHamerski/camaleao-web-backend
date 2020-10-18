@@ -1,0 +1,106 @@
+.hamburger {
+	position: absolute;
+	z-index: 1035;
+	padding: 15px 15px;
+	display: inline-block;
+	cursor: pointer;
+	transition-property: opacity, filter;
+	transition-duration: 0.15s;
+	transition-timing-function: linear;
+	font: inherit;
+	color: inherit;
+	text-transform: none;
+	background-color: transparent;
+	border: 0;
+	margin: 0;
+	overflow: visible; 
+
+	&:not(.is-active) {
+		.hamburger-inner {
+			&, &::before, &::after {
+				background-color: black;
+			}
+		}
+	}
+
+	&.is-active, &[aria-expanded="true"] {
+		&:hover {
+			opacity: .7;
+		}
+
+		.hamburger-inner {
+			&, &::before, &::after {
+				background-color: white;
+			}
+		}
+	}
+
+	.hamburger-box {
+		width: 40px;
+		height: 24px;
+		display: inline-block;
+		position: relative; 
+	}
+
+	.hamburger-inner {
+		display: block;
+		top: 50%;
+		margin-top: 2px; 
+
+		&, &::before, &::after {
+			width: 25px;
+			height: 3px;
+			background-color: $white;
+			border-radius: 4px;
+			position: absolute;
+			transition-property: transform;
+			transition-duration: 0.15s;
+			transition-timing-function: ease; 
+
+		}
+
+		&::before, &::after {
+			content: "";
+			display: block; 
+		}
+
+
+		&::before { top: -(7px); }
+		&::after { bottom: -(7px); }
+	}
+}
+
+.hamburger-squeeze {
+	.hamburger-inner {
+		transition-duration: 0.075s;
+		transition-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19); 
+
+		&::before {
+			transition: top 0.075s 0.12s ease, opacity 0.075s ease; 
+		}
+
+		&::after {
+			transition: bottom 0.075s 0.12s ease, transform 0.075s cubic-bezier(0.55, 0.055, 0.675, 0.19); 
+		}
+	}
+	
+	&.is-active, &[aria-expanded="true"] {
+		.hamburger-inner {
+			transform: rotate(45deg);
+			transition-delay: 0.12s;
+			transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); 
+
+			&::before {
+				top: 0;
+				opacity: 0;
+				transition: top 0.075s ease, opacity 0.075s 0.12s ease; 
+			}
+
+			&::after {
+				bottom: 0;
+				transform: rotate(-90deg);
+				transition: bottom 0.075s ease, transform 0.075s 0.12s cubic-bezier(0.215, 0.61, 0.355, 1); 
+			}
+		}
+	}
+}

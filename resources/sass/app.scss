@@ -1,0 +1,31 @@
+@import '_variables';
+@import '~bootstrap/scss/bootstrap';
+@import '_fontawesome';
+@import 'partials/all';
+
+.img-wrapper .btn-delete-image {
+	cursor: pointer;
+	z-index: 1000;
+	top: 0;
+	right: 0;
+	position: absolute;
+	background: $danger;
+	color: white;
+	padding: .1rem .6rem;
+	font-weight: bolder;
+	border-top-right-radius: .25rem;
+	border-bottom-left-radius: .25rem;
+	opacity: .7;
+}
+
+.img-wrapper .btn-delete-image:hover {
+	opacity: 1;
+}
+
+.card-header .fa {
+  transition: .3s transform ease-in-out;
+}
+
+.card-header .collapsed .fa {
+  transform: rotate(90deg);
+}

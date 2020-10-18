@@ -1,0 +1,18 @@
+@import "_sidebar";
+@import "_general";
+@import "_hamburger";
+
+.swal2-content {
+	font-size: .9rem;
+	text-align: left !important; 
+}
+
+.swal2-title {
+	font-size: 1.5rem !important;
+	margin-bottom: 2rem !important;
+}
+
+input[disabled="disabled"] {
+	cursor: not-allowed;
+}
+

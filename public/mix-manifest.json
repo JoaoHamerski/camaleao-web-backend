@@ -1,0 +1,7 @@
+{
+    "/js/app.js": "/js/app.js",
+    "/css/app.css": "/css/app.css",
+    "/js/partials/client-form.js": "/js/partials/client-form.js",
+    "/js/partials/order-form.js": "/js/partials/order-form.js",
+    "/js/partials/show-order.js": "/js/partials/show-order.js"
+}

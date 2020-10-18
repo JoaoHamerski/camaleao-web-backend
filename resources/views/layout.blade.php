@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>@yield('title')</title>
+	<link rel="stylesheet" href="{{ mix('css/app.css') }}">
+</head>
+<body>
+	<div id="app">
+		<div id="btnSidebar"
+			class="hamburger hamburger-squeeze js-hamburger {{ Cookie::get('sidebar_active') ? '' : 'is-active' }}">
+			<div class="hamburger-box icon user text-white">
+				<div class="hamburger-inner"></div>
+			</div>
+		</div>
+
+		<div class="wrapper-app">
+			@auth
+				<div class="d-flex">
+					@include('sidebar')
+				</div>
+			@endauth
+			
+			<div id="content">
+				<div class="container">
+					@yield('content')
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="{{ mix('js/app.js') }}"></script>
+	@stack('script')
+</body>
+</html>
