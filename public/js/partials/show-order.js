@@ -166,12 +166,13 @@ $('#today').on('click', function (e) {
   today += date.getFullYear();
   $('[name=date]').val(today).focus();
 });
-$('#btn-save').on('click', function (e) {
+$('#btnAddPayment').on('click', function (e) {
   e.preventDefault();
   var id = $(this).attr('data-id');
   axios.post(window.location.href + '/new-payment', {
     value: $('[name=value]').val(),
-    date: $('[name=date]').val()
+    date: $('[name=date]').val(),
+    note: $('[name=note]').val()
   }).then(function (response) {
     window.location = response.data.redirect;
   })["catch"](function (error) {

@@ -32,7 +32,7 @@
           </div>
 
           <div class="mt-3">
-            <button id="btn-save" data-id="{{ $order->id }}" type="submit" class="btn btn-primary">Salvar</button>
+            <button id="btnAddPayment" data-id="{{ $order->id }}" type="submit" class="btn btn-primary">Salvar</button>
             <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
           </div>
         </form>

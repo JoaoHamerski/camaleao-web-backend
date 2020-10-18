@@ -99,14 +99,15 @@ $('#today').on('click', function(e) {
 
 });
 
-$('#btn-save').on('click', function(e) {
+$('#btnAddPayment').on('click', function(e) {
   e.preventDefault();
 
   let id = $(this).attr('data-id');
 
   axios.post(window.location.href + '/new-payment', {
     value: $('[name=value]').val(),
-    date: $('[name=date]').val()
+    date: $('[name=date]').val(),
+    note: $('[name=note]').val()
   })
   .then(response => {
     window.location = response.data.redirect;
