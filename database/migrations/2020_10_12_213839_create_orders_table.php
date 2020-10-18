@@ -22,9 +22,9 @@ class CreateOrdersTable extends Migration
             $table->double('price', 9, 2);
             $table->date('delivery_date')->nullable();
             $table->date('production_date')->nullable();
-            $table->json('art_paths')->nullable();
-            $table->json('size_paths')->nullable();
-            $table->json('payment_voucher_paths')->nullable();
+            $table->longText('art_paths')->nullable();
+            $table->longText('size_paths')->nullable();
+            $table->longText('payment_voucher_paths')->nullable();
             $table->string('costureira_valor')->nullable();
             $table->boolean('is_closed')->default(0);
 

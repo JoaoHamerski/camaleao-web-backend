@@ -40,7 +40,7 @@
 </head>
 <body>
 	@if (isset($order->getPaths('art_paths')[0]))
-		<img src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[0])) }} ">	7
+		<img src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[0])) }} ">
 	@else
 		[sem imagem cadastrada]
 	@endif
