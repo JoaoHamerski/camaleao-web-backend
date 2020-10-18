@@ -16,7 +16,6 @@
 				<div class="card-body">
 					<form id="formGenerateReport" target="_blank" action="{{ route('orders.report') }}" method="POST">
 						<div>
-							@csrf
 							<h5 class="font-weight-bold text-dark">Filtros</h5>
 
 							<div class="form-row d-flex flex-column flex-md-row">
@@ -79,7 +78,6 @@
 				<div class="card-body">
 					<h5 class="font-weight-bold">Filtros</h5>
 					<form id="formGenerateReportProduction" target="_blank" method="POST" action="{{ route('orders.reportProductionDate') }}">
-						@csrf
 						<div class="form-group">
 							<label class="font-weight-bold" for="date">Data de produção </label>
 							<input class="form-control" id="date" type="text" name="date" placeholder="dd/mm/yyyy">

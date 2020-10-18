@@ -8,12 +8,14 @@
 </head>
 <body>
 	<div id="app">
-		<div id="btnSidebar"
-			class="hamburger hamburger-squeeze js-hamburger {{ Cookie::get('sidebar_active') ? '' : 'is-active' }}">
-			<div class="hamburger-box icon user text-white">
-				<div class="hamburger-inner"></div>
+		@auth
+			<div id="btnSidebar"
+				class="hamburger hamburger-squeeze js-hamburger {{ Cookie::get('sidebar_active') ? '' : 'is-active' }}">
+				<div class="hamburger-box icon user text-white">
+					<div class="hamburger-inner"></div>
+				</div>
 			</div>
-		</div>
+		@endauth
 
 		<div class="wrapper-app">
 			@auth

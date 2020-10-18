@@ -7,6 +7,7 @@ use App\Models\Status;
 use App\Util\Validate;
 use App\Models\Client;
 use App\Util\Sanitizer;
+use App\Util\Helper;
 use App\Traits\FileManager;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -122,7 +123,7 @@ class OrdersController extends Controller
             'only_open' => $request->only_open
         ]);
 
-        return $pdf->stream('pedido-por-cidade(' . $city ?? 'todas' . ').pdf');
+        return $pdf->stream('pedido.pdf');
     }
 
     public function generateReportProductionDate(Request $request)
