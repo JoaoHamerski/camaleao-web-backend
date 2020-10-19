@@ -123,7 +123,11 @@ class OrdersController extends Controller
             'only_open' => $request->only_open
         ]);
 
-        return $pdf->stream('pedido.pdf');
+        $filename = 'Pedidos';
+        $filename .= isset($city) ? " - $city" : '';
+        $filename .= isset($status) ? " - $status->text" : '';
+
+        return $pdf->stream($filename . '.pdf');
     }
 
     public function generateReportProductionDate(Request $request)

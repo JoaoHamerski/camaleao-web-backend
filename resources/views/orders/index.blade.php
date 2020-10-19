@@ -80,7 +80,7 @@
 					<form id="formGenerateReportProduction" target="_blank" method="POST" action="{{ route('orders.reportProductionDate') }}">
 						<div class="form-group">
 							<label class="font-weight-bold" for="date">Data de produção </label>
-							<input class="form-control" id="date" type="text" name="date" placeholder="dd/mm/yyyy">
+							<input class="form-control" id="date" type="text" name="date" placeholder="dd/mm/aaaa">
 						</div>
 						<div class="form-group">
 								<label class="font-weight-bold" for="">Pedidos: &nbsp;&nbsp;</label>

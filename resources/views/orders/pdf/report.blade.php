@@ -50,8 +50,7 @@
 		<thead>
 			<tr>
 				<th>Cliente</th>
-				<th>Telefone</th>
-				<th>Código pedido</th>
+				<th>Código do pedido</th>
 				<th>Observações</th>
 			</tr>
 		</thead>
@@ -62,11 +61,6 @@
 					<td class="text-center" rowspan="{{ count($order->notes) }}">
 						{{ $order->client->name }}
 					</td>	
-
-					<td class="text-center" rowspan="{{ count($order->notes) }}">
-						{{ $order->client->phone ? Mask::phone($order->client->phone) : '[não informado]'}}
-					</td>
-
 					<td class="text-center" rowspan="{{ count($order->notes) }}">
 						{{ $order->code }}
 					</td>

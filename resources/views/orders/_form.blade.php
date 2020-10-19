@@ -9,7 +9,11 @@
 				type="text" 
 				id="code" 
 				name="code"
-				@if ($method == 'PATCH') value="{{ $order->code }}" @endif>
+				@if ($method == 'PATCH') 
+				value="{{ $order->code }}" 
+				@else 
+				value="{{ substr($client->phone, -4) }}"
+				@endif>
 		</div>
 		<div class="form-group col">
 			<label class="font-weight-bold" for="quantity">Quantidade </label>
