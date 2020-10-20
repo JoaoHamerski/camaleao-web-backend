@@ -19,8 +19,7 @@ class ClientsController extends Controller
 
     	return view('index', [
             'clients' => $clients->latest()->paginate(10)->appends($request->query()),
-            'cities' => Client::all()->pluck('city')->unique()->sort(),
-            'clientNames' => Client::all()->pluck('name')->unique()->sort()
+            'cities' => Client::all()->pluck('city')->unique()->sort()
         ]);
     }
 
