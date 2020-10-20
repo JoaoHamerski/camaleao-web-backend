@@ -26,7 +26,7 @@ class OrdersController extends Controller
         }
 
         return view('orders.index', [
-            'orders' => $orders->latest()->paginate(10),
+            'orders' => $orders->latest()->paginate(10)->appends($request->query()),
             'cities' => Client::all()->pluck('city')->unique()->sort(),
             'status' => Status::all()
         ]);
