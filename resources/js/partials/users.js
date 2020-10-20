@@ -4,7 +4,7 @@ $('#btnRegisterUser').on('click', function(e) {
 
 	loadingBtn($btn, true);
 
-	axios.post(window.location.href, {
+	axios.post(getLocationURL(), {
 		'name': $('[name=name]').val(),
 		'email': $('[name=email]').val(),
 		'password': $('[name=password').val(),

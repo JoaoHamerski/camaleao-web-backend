@@ -28,7 +28,7 @@ $('#btnEditClient').click(function(e) {
 
 	loadingBtn($btn, true);
 
-	axios.patch(window.location.href, {
+	axios.patch(getLocationURL(), {
 		name: $('[name=name]').val(),
 		phone: $('[name=phone]').val(),
 		city: $('[name=city]').val()
@@ -59,7 +59,7 @@ $('#btnDeleteClient').click(e => {
 		if (result.isConfirmed) {
 			$('#content').prepend($('<div class="loading-page"><div class="spinner-border text-primary"></div></div>'))
 			
-			axios.delete(window.location.href)
+			axios.delete(getLocationURL())
 				.then(response => {
 					window.location = response.data.redirect;
 				})

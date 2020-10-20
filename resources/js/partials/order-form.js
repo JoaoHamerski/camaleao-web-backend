@@ -28,7 +28,7 @@ $('#btnCreateOrder').on('click', function(e) {
 
 	loadingBtn($btn, true);
 
-	axios.post(window.location.href, formData, { headers: { 'Content-Type': 'multipart/form-data' }})
+	axios.post(getLocationURL(), formData, { headers: { 'Content-Type': 'multipart/form-data' }})
 		.then(response => {
 			window.location = response.data.redirect;
 		})
@@ -48,7 +48,7 @@ $('#btnUpdateOrder').on('click', function(e) {
 
 	loadingBtn($btn, true);
 
-	axios.post(window.location.href, formData, { headers: { 'Content-Type': 'multipart/form-data' }})
+	axios.post(getLocationURL(), formData, { headers: { 'Content-Type': 'multipart/form-data' }})
 		.then(response => {
 			window.location = response.data.redirect;
 		})
@@ -70,7 +70,7 @@ $('.btn-delete-image, .btn-delete-payment-voucher').on('click', function(e) {
 		$wrapper = $(this).closest('.col-md-3');
 	}
 
-	axios.post(window.location.href + '/delete-file', {
+	axios.post(getLocationURL() + '/delete-file', {
 		filepath: filepath
 	})
 	.then(response => {

@@ -78,6 +78,10 @@ window.loadingBtn = function(btn, add) {
 	}
 }
 
+window.getLocationURL = function() {
+	return window.location.protocol + '//' + window.location.host + window.location.pathname;
+}
+
 $(document).on('focus', 'input, select', function() {
 	$(this).removeClass('is-invalid')
 		.next('.text-danger')

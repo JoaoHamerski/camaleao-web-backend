@@ -3,7 +3,7 @@ $('a[data-option]').on('click', function(e) {
 
 	let option = $(this).attr('data-option');
 
-	axios.post(window.location.href + '/file-view', {
+	axios.post(getLocationURL() + '/file-view', {
 		option: option
 	})
 	.then(response => {
@@ -33,7 +33,7 @@ $('#btnDeleteOrder').on('click', function(e) {
       
       $('#content').prepend($('<div class="loading-page"><div class="spinner-border text-primary"></div></div>'))
 
-			axios.delete(window.location.href)
+			axios.delete(getLocationURL())
 				.then(response => {
 					window.location = response.data.redirect;
 				});
@@ -47,7 +47,7 @@ $('#btnAddNote').on('click', function(e) {
 
   loadingBtn($btn, true);
 
-  axios.post(window.location.href + '/new-note', {
+  axios.post(getLocationURL() + '/new-note', {
     'order_note': $('[name=order_note]').val()
   })
   .then(response => {
@@ -70,7 +70,7 @@ $(document).on('click', '.btn-delete-item', function(e) {
   let $itemWrapper = $(this).parents('[data-id]');
   let id = $itemWrapper.attr('data-id');
 
-  axios.delete(window.location.href + '/delete-note/' + id)
+  axios.delete(getLocationURL() + '/delete-note/' + id)
     .then(response => {
       $itemWrapper.remove();
        $('button[data-target="#notesModal"]').html('Anotações (' + response.data.countNotes  + ')');
@@ -106,7 +106,7 @@ $('#btnAddPayment').on('click', function(e) {
 
   loadingBtn($btn, true);
 
-  axios.post(window.location.href + '/new-payment', {
+  axios.post(getLocationURL() + '/new-payment', {
     value: $('[name=value]').val(),
     date: $('[name=date]').val(),
     note: $('[name=note]').val()

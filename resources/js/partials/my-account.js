@@ -5,7 +5,7 @@ $('#btnUpdateUser').on('click', function(e) {
 
 	loadingBtn($btn, true);
 
-	axios.patch(window.location.href, {
+	axios.patch(getLocationURL(), {
 		name: $('[name=name]').val(),
 		email: $('[name=email]').val(),
 		password: $('[name=password]').val(),
@@ -37,7 +37,7 @@ $('#btnDeleteAccount').on('click', function(e) {
 	})
 	.then(result => {
 		if (result.isConfirmed) {
-			axios.delete(window.location.href + '/deletar')
+			axios.delete(getLocationURL() + '/deletar')
 				.then(response => {
 					window.location = response.data.redirect;
 				})
