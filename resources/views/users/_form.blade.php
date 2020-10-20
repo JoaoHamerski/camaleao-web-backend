@@ -35,7 +35,7 @@
 			@else 
 				<label class="font-weight-bold" for="password">Senha</label>
 			@endif
-			<input value="" class="form-control" type="password" name="password" id="password">
+			<input autocomplete="new-password" class="form-control" type="password" name="password" id="password">
 
 			@if ($method == 'PATCH')
 				<small class="text-secondary">Deixe a senha em branco caso não queria alterar</small>
