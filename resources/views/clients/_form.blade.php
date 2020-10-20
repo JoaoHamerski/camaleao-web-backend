@@ -3,10 +3,18 @@
   <div class="form-group">
     <label class="font-weight-bold" for="name">Nome: </label>
     <input name="name" 
+        list="names" 
         id="name" 
         type="text" 
         class="form-control"
+        autocomplete="new-name" 
         value="{{ isset($method) && $method == 'PATCH' ? $client->name : '' }}">
+
+      <datalist id="names">
+        @foreach($clientNames as $name)
+          <option value="{{ $name }}"></option>
+        @endforeach
+      </datalist>
   </div>
 
   <div class="form-group">
