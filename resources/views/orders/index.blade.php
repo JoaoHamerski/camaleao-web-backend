@@ -132,7 +132,7 @@
 					<thead>
 						<tr>
 							<th>Cliente</th>
-							<th>Código pedido</th>
+							<th>Código do pedido</th>
 							<th>Quantidade</th>
 							<th>Valor total</th>
 							<th>Total pago</th>
