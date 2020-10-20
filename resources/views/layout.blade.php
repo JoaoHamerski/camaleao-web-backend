@@ -5,6 +5,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>@yield('title')</title>
 	<link rel="stylesheet" href="{{ mix('css/app.css') }}">
+	<link rel="icon" type="image/png" href="/favicon.ico"/>
+	<meta name="theme-color" content="#ff4e00">
+	@stack('css')
 </head>
 <body>
 	<div id="app">

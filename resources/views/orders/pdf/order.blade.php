@@ -58,7 +58,7 @@
 		</li>
 
 		<li>
-			<strong>Quantidade:</strong> {{ $order->quantity }} CAMISAS
+			<strong>Quantidade:</strong> {{ $order->quantity }} {{ $order->quantity == 1 ? 'CAMISA' : 'CAMISAS' }}
 		</li>
 
 		<li>

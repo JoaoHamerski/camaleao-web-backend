@@ -170,6 +170,10 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="mt-2">
+		{{ $orders->links() }}
+	</div>
 @endsection
 
 @push ('script')

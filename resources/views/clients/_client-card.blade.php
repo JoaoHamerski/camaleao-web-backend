@@ -25,18 +25,20 @@
 	</div>
 
 	@if (Request::routeIs('clients.show'))
-	<div class="card-footer">
-		<div class="d-flex flex-column">
-			<a class="mb-2" href="" data-target="#clientEditModal" data-toggle="modal">
-				<i class="fas fa-user-edit fa-fw mr-1"></i>Editar dados
-			</a>
+		@role(['atendimento', 'gerencia'])
+			<div class="card-footer">
+				<div class="d-flex flex-column">
+					<a class="mb-2" href="" data-target="#clientEditModal" data-toggle="modal">
+						<i class="fas fa-user-edit fa-fw mr-1"></i>Editar dados
+					</a>
 
-			<a class="text-danger" id="btnDeleteClient" href="">
-				<i class="fas fa-trash-alt fa-fw mr-1"></i>Deletar cliente
-			</a>
-		</div>
-	</div>
+					<a class="text-danger" id="btnDeleteClient" href="">
+						<i class="fas fa-trash-alt fa-fw mr-1"></i>Deletar cliente
+					</a>
+				</div>
+			</div>
+			@include('clients.edit-modal')
+		@endrole
 
-	@include('clients.edit-modal')
 	@endif
 </div>

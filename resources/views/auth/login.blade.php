@@ -19,18 +19,37 @@
 
                         <div class="form-group">
                             <label class="font-weight-bold" for="email">E-mail: </label>
-                            <input type="text" class="form-control" name="email">
+                            <input type="text" value="{{ old('email') }}" class="form-control @error('email') is-invalid @enderror" name="email">
+
+                            @error('email')
+                                <small class="text-danger"> {{ $message }}</small>
+                            @enderror
                         </div>
 
                         <div class="form-group">
                             <label class="font-weight-bolder" for="password">Senha: </label>
-                            <input type="password" class="form-control" name="password">
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" name="password">
+
+                            @error('password')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
 
-                        <button class="btn btn-block btn-primary">Entrar</button>
+                        <button type="submit" id="btnLogin" class="btn btn-block btn-primary">Entrar</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+@push('script')
+<script>
+    $('#btnLogin').on('click', function(e) {
+        let $btn = $(this);
+
+        loadingBtn($btn, true);
+
+        $('form').submit();
+    });
+</script>
+@endpush

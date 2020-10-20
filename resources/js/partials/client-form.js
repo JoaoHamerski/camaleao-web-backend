@@ -57,6 +57,8 @@ $('#btnDeleteClient').click(e => {
 	})
 	.then(result => {
 		if (result.isConfirmed) {
+			$('#content').prepend($('<div class="loading-page"><div class="spinner-border text-primary"></div></div>'))
+			
 			axios.delete(window.location.href)
 				.then(response => {
 					window.location = response.data.redirect;

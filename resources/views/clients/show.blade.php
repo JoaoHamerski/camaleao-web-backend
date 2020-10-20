@@ -14,9 +14,17 @@
 
 		<div class="col-md-9 mt-4 mt-md-0">
 			<div class="d-flex justify-content-between flex-column flex-md-row mb-2">
-				<a href="{{ route('orders.create', $client) }}" class="btn d-block d-md-inline btn-primary mb-2 mb-md-0">
-					<i class="fas fa-plus fa-fw mr-1"></i>Novo pedido
-				</a>
+				@role(['atendimento', 'gerencia'])
+					<a href="{{ route('orders.create', $client) }}" class="btn d-block d-md-inline btn-primary mb-2 mb-md-0">
+						<i class="fas fa-plus fa-fw mr-1"></i>Novo pedido
+					</a>
+				@else('design')
+					<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Você não tem permissão para isso">
+						<button style="pointer-events: none;" disabled="disabled" class="btn d-block d-md-inline btn-primary mb-2 mb-md-0">
+							<i class="fas fa-plus fa-fw mr-1"></i>Novo pedido
+						</button>
+					</span>
+				@endrole
 
 				<div>
 					<form action="{{ route('clients.show', $client) }}" method="GET">
@@ -44,8 +52,11 @@
 					@include('orders.index-table')
 				</div>
 			</div>
+
+			<div class="mt-2">
+				{{ $orders->links() }}
+			</div>
 		</div>
 
-		{{ $orders->links() }}
 	</div>
 @endsection

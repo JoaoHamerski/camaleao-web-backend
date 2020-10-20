@@ -137,6 +137,22 @@ return [
         'name' => [
             'required' => 'Por favor, informe um nome'
         ],
+        'order_note' => [
+            'required' => 'Por favor, informe uma anotação'
+        ],
+        'email' => [
+            'required' => 'Por favor, informe um e-mail',
+            'unique' => 'Este e-mail já está sendo utilizado por outro usuário'
+        ],
+        'password' => [
+            'required' => 'Por favor, informe uma senha',
+            'confirmed' => 'As senhas digitadas não conferem',
+            'min' => 'A senha deve conter no mínimo :min caracteres '
+        ],
+        'role_id' => [
+            'required' => 'Por favor, selecione um nível de autenticação',
+            'exists' => 'O nível de autenticação selecionado não existe'
+        ],
         'city' => [
             'in' => 'A cidade digita não está presente em nenhum pedido'
         ],

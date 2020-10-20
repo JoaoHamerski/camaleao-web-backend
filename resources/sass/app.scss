@@ -31,5 +31,31 @@
 }
 
 .clickable-link {
-	z-index: 9999;
+	-webkit-user-select: none;
+}
+
+.loading-page {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: rgba(255, 255, 255, .3);
+	z-index: 999;
+
+	.spinner-border {
+		width: 3rem;
+		height: 3rem;
+		position: relative;
+		top: 50%;
+		left: 60%;
+	}
+
+	@include media-breakpoint-down(sm) {
+		.spinner-border {
+			left: 50%;
+			width: 1rem;
+			height: 1rem;
+		}
+	}
 }

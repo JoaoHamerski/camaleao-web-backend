@@ -81,101 +81,67 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./resources/js/partials/order-form.js":
+/***/ "./resources/js/partials/my-account.js":
 /*!*********************************************!*\
-  !*** ./resources/js/partials/order-form.js ***!
+  !*** ./resources/js/partials/my-account.js ***!
   \*********************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-applyCleave($('[name=quantity]'), cleaveNumericInt(4));
-applyCleave($('[name=quantity]'), cleaveNumericInt(4));
-applyCleave($('[name=price]'), cleaveValueBRL);
-applyCleave($('[name=down_payment]'), cleaveValueBRL);
-applyCleave($('[name=delivery_date]'), cleaveDate);
-applyCleave($('[name=production_date]'), cleaveDate);
-$(document).on('input', 'input[type=file]', function () {
-  var files = $(this)[0].files || null;
-  var names = [];
-
-  if (files.length > 0) {
-    Object.entries(files).forEach(function (el) {
-      names.push(el[1].name);
-    });
-    $(this).next('.custom-file-label').html(names.reverse().join(', '));
-  } else {
-    $(this).next('.custom-file-label').html('Escolher arquivos');
-  }
-});
-$('#btnCreateOrder').on('click', function (e) {
-  e.preventDefault();
-  var formData = new FormData(document.querySelector('#formCreateOrder'));
-  var $btn = $(this);
-  loadingBtn($btn, true);
-  axios.post(window.location.href, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  }).then(function (response) {
-    window.location = response.data.redirect;
-  })["catch"](function (error) {
-    console.log(error.response);
-    dispatchErrorMessages(error.response.data.errors);
-    loadingBtn($btn, false);
-  });
-});
-$('#btnUpdateOrder').on('click', function (e) {
+$('#btnUpdateUser').on('click', function (e) {
   e.preventDefault();
   $btn = $(this);
-  var formData = new FormData(document.querySelector('#formUpdateOrder'));
   loadingBtn($btn, true);
-  axios.post(window.location.href, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
+  axios.patch(window.location.href, {
+    name: $('[name=name]').val(),
+    email: $('[name=email]').val(),
+    password: $('[name=password]').val(),
+    password_confirmation: $('[name=password_confirmation]').val()
   }).then(function (response) {
+    console.log(response.data);
     window.location = response.data.redirect;
   })["catch"](function (error) {
-    dispatchErrorMessages(error.response.data.errors);
+    console.log(error.response);
     loadingBtn($btn, false);
+    dispatchErrorMessages(error.response.data.errors);
   });
 });
-$('.btn-delete-image, .btn-delete-payment-voucher').on('click', function (e) {
+$('#btnDeleteAccount').on('click', function (e) {
   e.preventDefault();
-  var filepath = $(this).prev().attr('src') || $(this).prev().attr('href');
-  var wrapper;
-
-  if ($(this).hasClass('btn-delete-payment-voucher')) {
-    $wrapper = $(this).closest('.list-group-item');
-  } else {
-    $wrapper = $(this).closest('.col-md-3');
-  }
-
-  axios.post(window.location.href + '/delete-file', {
-    filepath: filepath
-  }).then(function (response) {
-    $wrapper.remove();
-    console.log(response.data);
-  })["catch"](function (error) {
-    console.log(error.response);
+  Swal.fire({
+    icon: 'error',
+    iconHtml: '<i class="fas fa-trash-alt"></i>',
+    title: 'Tem certeza?',
+    html: '<div class="text-center">Sua conta não poderá ser recuperada</div>',
+    showCancelButton: true,
+    confirmButtonText: 'Tenho',
+    cancelButtonText: 'Cancelar'
+  }).then(function (result) {
+    if (result.isConfirmed) {
+      axios["delete"](window.location.href + '/deletar').then(function (response) {
+        window.location = response.data.redirect;
+      })["catch"](function (error) {
+        console.log(error.response);
+      });
+    }
   });
 });
 
 /***/ }),
 
-/***/ 2:
+/***/ 5:
 /*!***************************************************!*\
-  !*** multi ./resources/js/partials/order-form.js ***!
+  !*** multi ./resources/js/partials/my-account.js ***!
   \***************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/joao/Desktop/wellington/site/resources/js/partials/order-form.js */"./resources/js/partials/order-form.js");
+module.exports = __webpack_require__(/*! /home/joao/Desktop/wellington/site/resources/js/partials/my-account.js */"./resources/js/partials/my-account.js");
 
 
 /***/ })

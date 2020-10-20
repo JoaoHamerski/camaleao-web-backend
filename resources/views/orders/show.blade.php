@@ -14,22 +14,53 @@
 		<div class="col-md-9 mt-3 mt-md-0">
 			<div class="d-flex flex-column flex-md-row justify-content-between mb-2">
 				<div class="mt-3 mt-md-0">
-					<a class="btn btn-outline-success d-block @if ($order->is_closed || ($order->getTotalOwing() == 0)) disabled @endif " href="#newPaymentModal" data-toggle="modal">
-						<i class="fas fa-dollar-sign fa-fw mr-1"></i>Adicionar pagamento
-					</a>
+					@role(['atendimento', 'gerencia'])
+						@if ($order->is_closed || $order->getTotalOwing() == 0)
+							<span class="d-inline-block" 
+								data-toggle="tooltip"
+								@if ($order->is_closed)
+								title="Não é possível efetuar pagamento pois o pedido está fechado">
+								@else
+								title="Não é possível efetuar pagamento pois o pedido está quitado">
+								@endif
+								<button style="pointer-events: none;" disabled="disabled" class="btn btn-outline-success d-block">
+									<i class="fas fa-dollar-sign fa-fw mr-1"></i>Adicionar pagamento
+								</button>
+							</span>
+						@else
+							<a class="btn btn-outline-success d-block" href="#newPaymentModal" data-toggle="modal">
+								<i class="fas fa-dollar-sign fa-fw mr-1"></i>Adicionar pagamento
+							</a>
+						@endif
+					@else('design')
+						<span class="d-inline-block w-100" tabindex="0" data-toggle="tooltip" title="Você não tem permissão para isso">
+							<button style="pointer-events: none;" class="btn d-block w-100 btn-outline-success " disabled="disabled">
+								<i class="fas fa-dollar-sign fa-fw mr-1"></i>Adicionar pagamento
+							</button>
+						</span>
+					@endrole
 				</div>
-				<div class="mt-3 mt-md-0">
-					<form id="toggleOrderForm" method="POST" class="d-none" 
-						action="{{ 
-							route('orders.toggleOrder', [
-								'client' => $client, 
-								'order' => $order
-							]) 
-						}}">
-							@csrf
-					</form>
 
-					<a class="btn btn-outline-secondary d-block" onclick="event.preventDefault; document.querySelector('#toggleOrderForm').submit()">{{ $order->is_closed ? 'Reabrir pedido' : 'Fechar pedido' }}</a>
+				<div class="mt-3 mt-md-0">
+					@role(['atendimento', 'gerencia'])
+						<form id="toggleOrderForm" method="POST" class="d-none" 
+							action="{{ 
+								route('orders.toggleOrder', [
+									'client' => $client, 
+									'order' => $order
+								]) 
+							}}">
+								@csrf
+						</form>
+
+						<a class="btn btn-outline-secondary d-block" onclick="event.preventDefault; document.querySelector('#toggleOrderForm').submit()">{{ $order->is_closed ? 'Reabrir pedido' : 'Fechar pedido' }}</a>
+					@else('design')
+						<span class="d-inline-block w-100" tabindex="0" data-toggle="tooltip" title="Você não tem permissão para isso">
+							<button style="pointer-events: none;" class="btn btn-outline-secondary d-block w-100" disabled="disabled">
+								{{ $order->is_closed ? 'Reabrir pedido' : 'Fechar pedido' }}
+							</button>
+						</span>
+					@endrole
 				</div>
 
 				<div class="d-flex justify-content-between mt-3 mt-md-0">
@@ -37,14 +68,31 @@
 						<i class="fas fa-file-invoice fa-fw mr-1"></i>Gerar relatório
 					</a>
 
-					<a class="btn btn-outline-primary mx-2 @if ($order->is_closed) disabled @endif" 
-						href="{{ route('orders.edit', ['client' => $client, 'order' => $order]) }}">
-						<i class="fas fa-edit fa-fw mr-1"></i>Editar
-					</a>
+					@role(['atendimento', 'gerencia'])
+						<a class="btn btn-outline-primary mx-2 @if ($order->is_closed) disabled @endif" 
+							href="{{ route('orders.edit', ['client' => $client, 'order' => $order]) }}">
+							<i class="fas fa-edit fa-fw mr-1"></i>Editar
+						</a>
+					@else
+						<span tabindex="0" data-toggle="tooltip" title="Você não tem permissão para isso">
+							<button style="pointer-events: none;" class="btn btn-outline-primary mx-2" disabled="disabled">
+								<i class="fas fa-edit fa-fw mr-1"></i>Editar
+							</button>
+						</span>
+					@endrole
 
-					<a class="btn btn-outline-danger" id="btnDeleteOrder" href="">
-						<i class="fas fa-trash-alt fa-fw mr-1"></i>Excluir
-					</a>
+					@role(['atendimento', 'gerencia'])
+						<a class="btn btn-outline-danger" id="btnDeleteOrder" href="">
+							<i class="fas fa-trash-alt fa-fw mr-1"></i>Excluir
+						</a>
+					@else
+						<span tabindex="0" data-toggle="tooltip" title="Voce não tem permissão para isso">
+							<button disabled="disabled" style="pointer-events: none;" class="btn btn-outline-danger">
+								<i class="fas fa-trash-alt fa-fw mr-1"></i>Excluir
+							</button>
+						</span>
+					@endrole
+
 				</div>
 			</div>
 			<div class="card">
@@ -164,13 +212,16 @@
 		</div>
 	</div>
 
+
 	@if (! $order->is_closed)
 		@include('orders._change-status-modal')
 	@endif
 
-	@if (! $order->is_closed || ($order->getTotalOwing() > 0))
-		@include('orders._new-payment-modal')
-	@endif	
+	@role(['atendimento', 'gerencia'])
+		@if (! $order->is_closed || ($order->getTotalOwing() > 0))
+			@include('orders._new-payment-modal')
+		@endif	
+	@endrole
 
 	@include('orders._notes-modal')
 	@include('orders._file-viewer-modal')

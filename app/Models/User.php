@@ -20,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id'
     ];
 
     /**
@@ -40,4 +41,21 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function hasRole($role)
+    {
+        if (is_array($role)) {
+            foreach($role as $r) {
+                if ($this->role()->where('name', $r)->exists())
+                    return true;
+            }
+        }
+
+        return $this->role()->where('name', $role)->exists();
+    }
 }

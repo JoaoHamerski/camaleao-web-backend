@@ -16,4 +16,6 @@ mix.sass('resources/sass/app.scss', 'public/css')
 	.js('resources/js/partials/client-form.js', 'public/js/partials')
 	.js('resources/js/partials/order-form.js', 'public/js/partials')
 	.js('resources/js/partials/show-order.js', 'public/js/partials')
+	.js('resources/js/partials/users.js', 'public/js/partials')
+	.js('resources/js/partials/my-account.js', 'public/js/partials')
 	.version();

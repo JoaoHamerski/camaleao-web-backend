@@ -41,6 +41,11 @@ window.dispatchErrorMessages = function(errors) {
 			selector = '[name*=' + name + ']';
 		}
 
+		if (name == 'password') {
+			$('[name=password]').val('');
+			$('[name=password_confirmation]').val('');
+		}
+
 		if ($(selector).parent().hasClass('input-group')) {
 			$(selector).parent().next('.text-danger').remove();
 
@@ -73,7 +78,7 @@ window.loadingBtn = function(btn, add) {
 	}
 }
 
-$(document).on('focus', 'input', function() {
+$(document).on('focus', 'input, select', function() {
 	$(this).removeClass('is-invalid')
 		.next('.text-danger')
 		.remove();

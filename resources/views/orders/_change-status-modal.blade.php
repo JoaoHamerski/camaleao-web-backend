@@ -1,5 +1,5 @@
 <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header bg-primary">
         <h5 class="modal-title font-weight-bold text-white" id="statusModalLabel">Alterar status</h5>

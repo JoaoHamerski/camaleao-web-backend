@@ -39,6 +39,7 @@ class OrdersController extends Controller
 
     public function show(Client $client, Order $order) 
     {
+        $this->authorize('view', [$order, $client->id]);
 
         return view('orders.show', [
             'client' => $client,
@@ -49,8 +50,14 @@ class OrdersController extends Controller
 
     public function edit(Client $client, Order $order) 
     {
+        $this->authorize('view', [$order, $client->id]);
+
         if ($order->is_closed)
             return abort(403);
+
+        if (! $client->orders()->where('id', $order->id)->exists()) {
+            abort(403);
+        }
         
         return view('orders.edit', compact('client', 'order'));
     }
@@ -69,8 +76,83 @@ class OrdersController extends Controller
         ], 200);
     }
 
+    public function store(Client $client, Request $request) 
+    {
+        $validator = $this->validator(
+            $data = $this->getFormattedData($request->all())
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'error',
+                'errors' => $validator->errors()
+             ], 422);
+        }
+
+        $data = array_merge($data, $this->uploadAllFiles($request));
+        $data['status_id'] = Status::first()->id;
+
+        $order = $client->orders()->create(\Arr::except($data, ['down_payment']));
+
+        if (! empty($data['down_payment'])) {
+            $order->payments()->create([
+                'value' => $data['down_payment'],
+                'date' => \Carbon\Carbon::now(),
+                'note' => 'Pagamento de entrada'
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'success',
+            'redirect' => $order->path()
+        ], 200);
+    }
+
+    public function patch(Client $client, Order $order, Request $request)
+    {  
+        $this->authorize('view', [$order, $client->id]);
+
+        $validator = $this->validator(
+            $data = $this->getFormattedData($request->all()),
+            $request->code
+        );
+
+        if ($validator->fails()) {  
+            return response()->json([
+                'message' => 'error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        foreach(['art_paths', 'size_paths', 'payment_voucher_paths'] as $field) { 
+            if ($request->hasFile($field)) {
+                $order->{$field} = $this->appendOrInsertFiles(
+                    $request->only([$field]), 
+                    $field, 
+                    $order
+                );
+            }
+        }
+
+        $order->save();
+
+        $order->update([
+            'quantity' => $data['quantity'],
+            'price' => $data['price'],
+            'delivery_date' => $data['delivery_date'],
+            'production_date' => $data['production_date']
+        ]);
+
+        return response()->json([
+            'message' => 'success',
+            'redirect' => $order->path()
+        ], 200);
+    }
+
     public function generateOrderPDF(Client $client, Order $order)
     {
+        $this->authorize('view', [$order, $client->id]);
+
         $pdf = \PDF::loadView('orders.pdf.order', compact('client', 'order'));
 
         return $pdf->stream('pedido(' . $order->code . ').pdf');
@@ -78,7 +160,6 @@ class OrdersController extends Controller
 
     public function generateReport(Request $request)
     {   
-
         if ($request->wantsJson()) {
             $cities = Client::all()->pluck('city')->unique()->all();
 
@@ -180,6 +261,8 @@ class OrdersController extends Controller
 
     public function deleteFile(Client $client, Order $order, Request $request)
     {
+        $this->authorize('view', [$order, $client->id]);
+        
         $filepath = $this->getPathToDelete($request->filepath); 
 
         if (\Storage::delete($filepath)) {
@@ -225,81 +308,11 @@ class OrdersController extends Controller
         ], 422);
     }
 
-    public function store(Client $client, Request $request) 
-    {
-    	$validator = $this->validator(
-            $data = $this->getFormattedData($request->all())
-        );
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'error',
-                'errors' => $validator->errors()
-             ], 422);
-        }
-
-        $data = array_merge($data, $this->uploadAllFiles($request));
-        $data['status_id'] = Status::first()->id;
-
-        $order = $client->orders()->create(\Arr::except($data, ['down_payment']));
-
-        if (! empty($data['down_payment'])) {
-            $order->payments()->create([
-                'value' => $data['down_payment'],
-                'date' => \Carbon\Carbon::now(),
-                'note' => 'Pagamento de entrada'
-            ]);
-        }
-
-        return response()->json([
-            'message' => 'success',
-            'redirect' => $order->path()
-        ], 200);
-    }
-
-    public function patch(Client $client, Order $order, Request $request)
-    {  
-        $validator = $this->validator(
-            $data = $this->getFormattedData($request->all()),
-            $request->code
-        );
-
-        if ($validator->fails()) {  
-            return response()->json([
-                'message' => 'error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        foreach(['art_paths', 'size_paths', 'payment_voucher_paths'] as $field) { 
-            if ($request->hasFile($field)) {
-                $order->{$field} = $this->appendOrInsertFiles(
-                    $request->only([$field]), 
-                    $field, 
-                    $order
-                );
-            }
-        }
-
-        $order->save();
-
-        $order->update([
-            'quantity' => $data['quantity'],
-            'price' => $data['price'],
-            'delivery_date' => $data['delivery_date'],
-            'production_date' => $data['production_date']
-        ]);
-
-        return response()->json([
-            'message' => 'success',
-            'redirect' => $order->path()
-        ], 200);
-    }
-
     private function validator(array $data, $codeExcept = null) 
     {
         return Validator::make($data, [
-            'code' => ['required', $codeExcept 
+            'code' => [
+                'required', $codeExcept 
                 ? Rule::unique('orders')->ignore($codeExcept, 'code')
                 : Rule::unique('orders')
             ],
@@ -307,6 +320,7 @@ class OrdersController extends Controller
             'price' => 'required',
             'delivery_date' => 'nullable|date_format:Y-m-d',
             'production_date' => 'nullable|date_format:Y-m-d',
+            'down_payment' => 'sometimes|max_double:' . $data['price'],
             'art_paths.*' => 'nullable|image',
             'size_paths.*' => 'nullable|image'
         ]);

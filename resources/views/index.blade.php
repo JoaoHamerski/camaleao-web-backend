@@ -1,15 +1,23 @@
 @extends('layout')
 
-@section('title', 'Lista de clientes')
+@section('title', 'Clientes')
 
 @section('content')
 	
-	<div class="col-md-10 mx-auto mt-5">
+	<div class="col col-md-10 mx-auto mt-5 px-0">
 		<div class="d-flex justify-content-between flex-column flex-sm-row">
 			<div class="mb-2 mb-sm-0">
-				<button type="button" data-toggle="modal" data-target="#clientCreateModal" class="btn btn-success">
-					<i class="fas fa-user-plus fa-fw mr-1"></i>Novo cliente
-				</button>	
+				@role(['atendimento', 'gerencia'])
+					<button type="button" data-toggle="modal" data-target="#clientCreateModal" class="btn btn-success">
+						<i class="fas fa-user-plus fa-fw mr-1"></i>Novo cliente
+					</button>
+				@else('design')
+					<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Você não tem permissão para isso">
+						<button style="pointer-events: none;" class="btn btn-success" disabled="disabled">
+							<i class="fas fa-user-plus fa-fw mr-1"></i>Novo cliente
+						</button>
+					</span>
+				@endrole
 			</div>
 
 			<div>
@@ -63,5 +71,7 @@
 		</div>
 	</div>
 
-	@include('clients.create-modal')
+	@role(['gerencia', 'atendimento'])
+		@include('clients.create-modal')
+	@endrole
 @endsection

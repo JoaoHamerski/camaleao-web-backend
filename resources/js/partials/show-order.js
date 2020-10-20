@@ -30,14 +30,13 @@ $('#btnDeleteOrder').on('click', function(e) {
 	})
 	.then(result => {
 		if (result.isConfirmed) {
+      
+      $('#content').prepend($('<div class="loading-page"><div class="spinner-border text-primary"></div></div>'))
+
 			axios.delete(window.location.href)
 				.then(response => {
-					console.log(response.data);
 					window.location = response.data.redirect;
-				})
-				.catch(error => {
-					console.log(error.response);
-				})
+				});
 		}
 	});
 });
