@@ -1,9 +1,9 @@
 {
-    "/js/app.js": "/js/app.js?id=2c6b61f9efb75c29c894",
-    "/css/app.css": "/css/app.css?id=91c68c08d30943731b10",
-    "/js/partials/client-form.js": "/js/partials/client-form.js?id=7470a80d2276135aef91",
-    "/js/partials/my-account.js": "/js/partials/my-account.js?id=37092d7a8e6002a761f3",
-    "/js/partials/order-form.js": "/js/partials/order-form.js?id=2640671c99a2b8609c9e",
-    "/js/partials/show-order.js": "/js/partials/show-order.js?id=5cac35082fe949053f36",
-    "/js/partials/users.js": "/js/partials/users.js?id=d07bcd11092395dbb0a8"
+    "/js/app.js": "/js/app.js?id=b8514b379bd83d6e9754",
+    "/css/app.css": "/css/app.css?id=9ead595aae0408e80894",
+    "/js/partials/client-form.js": "/js/partials/client-form.js?id=d1ceae73e6150bd9122e",
+    "/js/partials/my-account.js": "/js/partials/my-account.js?id=1b6a923b77514fe8e047",
+    "/js/partials/order-form.js": "/js/partials/order-form.js?id=0f9a55d7ee2e20fe99e2",
+    "/js/partials/show-order.js": "/js/partials/show-order.js?id=55ea867c9432eddefbad",
+    "/js/partials/users.js": "/js/partials/users.js?id=b1665a0e7058dc84f538"
 }
