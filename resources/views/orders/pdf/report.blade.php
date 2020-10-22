@@ -30,6 +30,10 @@
 			font-size: 1.3rem;
 			margin-bottom: 2rem;
 		}
+
+		.text-muted {
+			color: rgba(0, 0, 0, .3);
+		}
 	</style>
 </head>
 <body>
@@ -65,9 +69,9 @@
 						{{ $order->code }}
 					</td>
 					@isset($order->notes[0]->text)
-					<td>{{ $order->notes[0]->text }}</td>
+						<td>{{ $order->notes[0]->text }}</td>
 					@else
-					<td class="text-center">[sem observações]</td>
+						<td class="text-center text-muted">[sem observações]</td>
 					@endisset
 				</tr>
 					@foreach($order->notes as $note)
