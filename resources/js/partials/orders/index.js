@@ -30,6 +30,8 @@ $('#formGenerateReportProduction button[type=submit]').on('click', function(e) {
 
 	let $btn = $(this);
 
+	loadingBtn($btn, true);
+	
 	axios.get(getLocationURL() + '/relatorio-data-producao', {
 		params: {
 			data_de_producao: $('[name=data_de_producao]').val()
