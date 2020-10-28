@@ -151,6 +151,10 @@ return [
             'required' => 'Por favor, informe uma data',
             'date' => 'Por favor, informe uma data válida'
         ],
+        'data_de_producao' => [
+            'required' => 'Por favor, informe uma data de produção',
+            'date' => 'Por favor, informe uma data de produção válida'
+        ],
         'dia*' => [
             'required' => 'Por favor, informe uma data',
             'date' => 'Por favor, informe uma data válida'
@@ -172,8 +176,8 @@ return [
             'required' => 'Por favor, selecione um nível de autenticação',
             'exists' => 'O nível de autenticação selecionado não existe'
         ],
-        'city' => [
-            'in' => 'A cidade digita não está presente em nenhum pedido'
+        'cidade' => [
+            'in' => 'A cidade digitada não está presente em nenhum pedido'
         ],
         'date' => [
             'required' => 'Por favor, informe uma data',

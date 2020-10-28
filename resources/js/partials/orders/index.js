@@ -1,13 +1,16 @@
-applyCleave($('[name=date]'), cleaveDate);	
+applyCleave($('[name*=data]'), cleaveDate);	
 
 $('#formGenerateReport button[type=submit]').on('click', function(e) {
 	e.preventDefault();
 
-	axios.get(window.location.href + '/relatorio', {
+	let $btn = $(this);
+
+	loadingBtn($btn, true);
+
+	axios.get(getLocationURL() + '/relatorio', {
 		params: {
-			city: $('[name=city]').val(),
-			status: $('[name=status]').val(),
-			only_open: $('[name=only_open]:checked').val()
+			cidade: $('[name=cidade]').val(),
+			status: $('[name=status]').val()
 		}
 	})
 	.then(response => {
@@ -16,15 +19,20 @@ $('#formGenerateReport button[type=submit]').on('click', function(e) {
 	.catch(error => {
 		console.log(error.response);
 		dispatchErrorMessages(error.response.data.errors);
+	})
+	.then(function() {
+		loadingBtn($btn, false);
 	});
 });
 
 $('#formGenerateReportProduction button[type=submit]').on('click', function(e) {
 	e.preventDefault();
 
-	axios.get(window.location.href + '/relatorio-data-producao', {
+	let $btn = $(this);
+
+	axios.get(getLocationURL() + '/relatorio-data-producao', {
 		params: {
-			date: $('[name=date]').val()
+			data_de_producao: $('[name=data_de_producao]').val()
 		}
 	})
 	.then(response => {
@@ -33,5 +41,8 @@ $('#formGenerateReportProduction button[type=submit]').on('click', function(e) {
 	.catch(error => {
 		console.log(error.response);
 		dispatchErrorMessages(error.response.data.errors);
+	})
+	.then(function() {
+		loadingBtn($btn, false);
 	});
 });

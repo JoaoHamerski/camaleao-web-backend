@@ -150,7 +150,8 @@ class OrdersController extends Controller
             $cities = Client::all()->pluck('city')->unique()->all();
 
             $validator = Validator::make($request->all(), [ 
-                'city' => ['nullable', Rule::in($cities)] 
+                'cidade' => ['nullable', Rule::in($cities)],
+                'status' => 'nullable|exists:status,id'
             ]);
 
             if ($validator->fails()) {
@@ -167,14 +168,13 @@ class OrdersController extends Controller
 
         $orders = Order::query();
 
-        if ($request->city != null) {
-            $city = $request->city;
-            $orders->whereHas('client', function ($query) use ($request) {
-                $query->where('city', $request->city);
+        if (($city = $request->cidade) != null) {
+            $orders->whereHas('client', function ($query) use ($city) {
+                $query->where('city', $city);
             });
         }
 
-        if ($request->only_open == 'only_open') {
+        if ($request->em_aberto == 'em_aberto') {
             $orders->where('is_closed', '0');
         }
 
@@ -199,15 +199,13 @@ class OrdersController extends Controller
 
     public function generateReportProductionDate(Request $request)
     {
-        $date = $request->date;
-
-        if (Validate::isDate($date)) {
-            $date = \Carbon\Carbon::createFromFormat('d/m/Y', $request->date);
+        if (Validate::isDate($date = $request->data_de_producao)) {
+            $date = \Carbon\Carbon::createFromFormat('d/m/Y', $date);
         }       
 
         if ($request->wantsJson()) {
-            $validator = Validator::make(['date' => $date], [
-                'date' => 'required|date'
+            $validator = Validator::make(['data_de_producao' => $date], [
+                'data_de_producao' => 'required|date'
             ]);
 
             if ($validator->fails()) {
@@ -223,6 +221,10 @@ class OrdersController extends Controller
         }
 
         $orders = Order::where('production_date', $date->toDateString());
+
+        if ($request->has('em_aberto') && $request->em_aberto == 'em_aberto') {
+            $orders->where('is_closed', '0');
+        }
 
         $pdf = \PDF::loadView('orders.pdf.report-production-date', [
             'orders' => $orders->get(),

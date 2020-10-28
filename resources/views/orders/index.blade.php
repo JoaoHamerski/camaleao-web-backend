@@ -23,7 +23,7 @@
 									<label class="font-weight-bold" for="city">Cidade</label>
 									<input list="cities"
 										id="city" 
-										name="city"
+										name="cidade"
 										class="form-control"
 										type="text"
 										placeholder="Nome da cidade..."
@@ -51,11 +51,11 @@
 							<div class="form-group">
 								<label class="font-weight-bold" for="">Pedidos: &nbsp;&nbsp;</label>
 								<div class="custom-control custom-radio custom-control-inline">
-									<input checked="checked" type="radio" id="customRadioOnlyOpen" name="only_open" class="custom-control-input" value="only_open">
+									<input checked="checked" type="radio" id="customRadioOnlyOpen" name="em_aberto" class="custom-control-input" value="em_aberto">
 									<label class="custom-control-label" for="customRadioOnlyOpen">Em aberto</label>
 								</div>
 								<div class="custom-control custom-radio custom-control-inline">
-									<input type="radio" id="customRadioAll" name="only_open" class="custom-control-input" value="all">
+									<input type="radio" id="customRadioAll" name="em_aberto" class="custom-control-input" value="todos">
 									<label class="custom-control-label" for="customRadioAll">Todos</label>
 								</div>
 							</div>
@@ -79,18 +79,18 @@
 					<h5 class="font-weight-bold">Filtros</h5>
 					<form id="formGenerateReportProduction" target="_blank" method="GET" action="{{ route('orders.reportProductionDate') }}">
 						<div class="form-group">
-							<label class="font-weight-bold" for="date">Data de produção </label>
-							<input class="form-control" id="date" type="text" name="date" placeholder="dd/mm/aaaa">
+							<label class="font-weight-bold" for="data_de_producao">Data de produção </label>
+							<input class="form-control" id="data_de_producao" type="text" name="data_de_producao" placeholder="dd/mm/aaaa">
 						</div>
 						<div class="form-group">
 								<label class="font-weight-bold" for="">Pedidos: &nbsp;&nbsp;</label>
 								<div class="custom-control custom-radio custom-control-inline">
-									<input checked="checked" type="radio" id="customRadioOnlyOpen" name="only_open" class="custom-control-input" value="only_open">
-									<label class="custom-control-label" for="customRadioOnlyOpen">Em aberto</label>
+									<input checked="checked" type="radio" id="customRadioOnlyOpenP" name="em_aberto" class="custom-control-input" value="em_aberto">
+									<label class="custom-control-label" for="customRadioOnlyOpenP">Em aberto</label>
 								</div>
 								<div class="custom-control custom-radio custom-control-inline">
-									<input type="radio" id="customRadioAll" name="only_open" class="custom-control-input" value="all">
-									<label class="custom-control-label" for="customRadioAll">Todos</label>
+									<input type="radio" id="customRadioAllP" name="em_aberto" class="custom-control-input" value="todos">
+									<label class="custom-control-label" for="customRadioAllP">Todos</label>
 								</div>
 							</div>
 
