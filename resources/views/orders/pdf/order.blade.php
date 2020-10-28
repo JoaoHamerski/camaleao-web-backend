@@ -45,7 +45,7 @@
 <body>
 	@if (isset($order->getPaths('art_paths')[0]))
 		<div class="text-center">
-			<img src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[0])) }} ">
+			<img class="text-center" src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[0])) }} ">
 		</div>
 	@else
 		[sem imagem cadastrada]
