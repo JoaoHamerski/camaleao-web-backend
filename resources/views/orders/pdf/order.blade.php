@@ -36,6 +36,10 @@
 		.text-danger {
 			color: red;
 		}
+
+		.text-center {
+			text-align: center;
+		}
 	</style>
 </head>
 <body>
