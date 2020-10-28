@@ -42,9 +42,17 @@ observer.observe(target, {attributes: true, childList: true, characterData: true
 $('#btnNewExpense').on('click', function(e) {
 	e.preventDefault();
 
+	$btn = $(this);
+
+	loadingBtn($(this), true);
+
 	axios.get(getLocationURL() + '/get-inline-form')
 		.then(response => {
 			$('#btnNewExpense').parent().before(response.data.view);
+		})
+		.catch(error => {})
+		.then(function() {
+			loadingBtn($btn, false);
 		});
 });
 
