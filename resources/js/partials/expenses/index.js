@@ -255,6 +255,10 @@ $('.btn-edit').on('click', function() {
 $('#btnGenerateReport').on('click', function(e) {
   e.preventDefault();
 
+  $btn = $(this);
+
+  loadingBtn($btn, true);
+
   axios.get(getLocationURL() + '/relatorio', {
     params: {
       dia_inicial: $('[name=dia_inicial]').val(),
@@ -266,7 +270,10 @@ $('#btnGenerateReport').on('click', function(e) {
   })
   .catch(error => {
     dispatchErrorMessages(error.response.data.errors);
-  });
+  })
+  .then(function() {
+    loadingBtn($btn, false);
+  }); 
 });
 
 $(document).on('click', '#deleteReceipt', function(e) {
