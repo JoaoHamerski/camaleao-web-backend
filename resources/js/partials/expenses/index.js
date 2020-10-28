@@ -14,6 +14,21 @@ let observer = new MutationObserver(mutations => {
   applyCleave($('[name=date]'), cleaveDate);
 });
 
+$(document).on('input', 'input[type=file]', function() {
+  let files = $(this)[0].files || null; 
+  let names = [];
+
+  if (files.length > 0) {
+    Object.entries(files).forEach(function(el) {
+      names.push(el[1].name);
+    });
+
+    $(this).next('.custom-file-label').html(names.reverse().join(', '));
+  } else {
+    $(this).next('.custom-file-label').html('Selecione o comprovante');
+  }
+});
+
 observer.observe(target, {attributes: true, childList: true, characterData: true});
 
 /*
@@ -186,12 +201,9 @@ $('#btnCreateUniqueExpense').on('click', function(e) {
 
   loadingBtn($btn, true);
 
-  axios.post(getLocationURL() + '/cadastro', {
-    description: $('#createFormModal [name=description]').val(),
-    expense_type_id: $('#createFormModal [name=expense_type_id]').val(),
-    value: $('#createFormModal [name=value]').val(),
-    date: $('#createFormModal [name=date]').val()
-  })
+  let formData = new FormData($(this).parents('form').get(0));
+
+  axios.post(getLocationURL() + '/cadastro', formData)
   .then(response => {
     window.location = response.data.redirect;
   })
@@ -213,12 +225,9 @@ $(document).on('click', '#btnUpdateExpense', function(e) {
 
   loadingBtn($btn, true);
 
-  axios.patch(getLocationURL() + '/' + id, {
-    description: $('#editFormModal [name=description]').val(),
-    expense_type_id: $('#editFormModal [name=expense_type_id]').val(),
-    value: $('#editFormModal [name=value]').val(),
-    date: $('#editFormModal [name=date]').val()
-  })
+  let formData = new FormData($(this).parents('form').get(0));
+
+  axios.post(getLocationURL() + '/' + id, formData)
     .then(response => {
       window.location = response.data.redirect;
     })
@@ -258,4 +267,34 @@ $('#btnGenerateReport').on('click', function(e) {
   .catch(error => {
     dispatchErrorMessages(error.response.data.errors);
   });
+});
+
+$(document).on('click', '#deleteReceipt', function(e) {
+  e.preventDefault();
+
+  let id = $(this).parents('[data-id]').attr('data-id');
+  let $btn = $(this);
+
+  axios.delete(getLocationURL() + '/' + id + '/delete-receipt')
+    .then(response => {
+      console.log(response.data);
+      $btn.parents('[data-id]').remove();
+    })
+    .catch(error => {
+      console.log(error.response);;
+    });
+});
+
+$('.btn-view-receipt').on('click', function(e) {
+  e.preventDefault();
+
+  let id = $(this).parents('[data-id]').attr('data-id');
+
+  axios.get(getLocationURL() + '/' + id + '/get-view-receipt')
+    .then(response => {
+      $('#viewReceiptModal .modal-body').html(response.data.view);
+    })
+    .catch(error => {
+      console.log(error.response);
+    })
 });

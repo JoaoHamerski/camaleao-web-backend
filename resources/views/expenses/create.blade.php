@@ -16,11 +16,10 @@
 				<h5 class="mb-3">Valor total: <strong id="totalValue">R$ 0,00</strong></h5>
 
 				<div class="d-flex no-gutters">
-					<div class="form-group col-md-3">
+					<div class="form-group col col-md-6 col-lg-4 col-xl-3">
 						<label class="font-weight-bold" for="all_date">Mesma data</label> <span class="text-secondary">(opcional)</span>
 
 						<div class="input-group">
-
 							<input class="form-control" name="all_date" type="text" placeholder="dd/mm/aaaa">
 							<div class="input-group-append">
 								<button class="btn-today btn btn-outline-primary">Hoje</button>

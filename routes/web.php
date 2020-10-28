@@ -88,6 +88,8 @@ Route::middleware('auth')->group(function() {
 		Route::patch('/despesas/{expense}', [ExpensesController::class, 'patch'])->name('patch');
 		Route::delete('/despesas/{expense}/deletar', [ExpensesController::class, 'destroy'])->name('destroy');
 		Route::get('/despesas/relatorio', [ExpensesController::class, 'report'])->name('report');
+		Route::delete('/despesas/{expense}/delete-receipt', [ExpensesController::class, 'destroyReceipt']);
+		Route::get('/despesas/{expense}/get-view-receipt', [ExpensesController::class, 'getViewReceipt']);
 	});
 
 	Route::name('expense_types.')->middleware('role:gerencia,atendimento')->group(function() {

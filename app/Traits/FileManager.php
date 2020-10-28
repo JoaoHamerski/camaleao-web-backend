@@ -12,11 +12,11 @@ trait FileManager
      * 
      * @return string $filename
     */
-    public function getFilename($file, $key) 
+    public function getFilename($file, $key = null) 
     {
         $filename = '';
         $filename .= \Carbon\Carbon::now();
-        $filename .= " ($key)";
+        $filename .= $key ? " ($key)" : '';
         $filename .= '.' . $file->extension();
 
         return $filename;
@@ -37,12 +37,16 @@ trait FileManager
         $paths = [];
 
         foreach (array_reverse($files) as $key => $file) {
-            $file->storeAs($path, $filename = $this->getFilename($file, $key));
-
+            $this->uploadFile($file, $path, $key);
             $paths[] = $filename;
         }
 
         return json_encode($paths);
+    }
+
+    public function uploadFile($file, $path, $key = null)
+    {
+        return $file->storeAs($path, $this->getFilename($file, $key));
     }
 
     /**
@@ -53,22 +57,27 @@ trait FileManager
      * 
      * @return string|null
     */
-    public function getFilepath($field, $onlyPathName = false)
+    public function getFilepath($field, $removePublic = false)
     {
         if ($field == 'art_paths')
-            return $onlyPathName 
+            return $removePublic 
                 ? 'imagens_da_arte'
                 : 'public/imagens_da_arte';
 
         if ($field == 'size_paths')
-            return $onlyPathName
+            return $removePublic
                 ? 'imagens_do_tamanho'
                 : 'public/imagens_do_tamanho';
 
         if ($field == 'payment_voucher_paths')
-            return $onlyPathName
+            return $removePublic
                 ? 'comprovantes'
                 : 'public/comprovantes';
+
+        if ($field == 'receipt_path')
+            return $removePublic
+                ? 'comprovante_vias'
+                : 'public/comprovante_vias';
 
         return null; 
     }

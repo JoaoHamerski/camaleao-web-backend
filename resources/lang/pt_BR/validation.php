@@ -206,6 +206,7 @@ return [
             'image' => 'Os arquivos devem conter apenas imagens'
         ],
         'expense_type*.required' => 'Por favor, informe o tipo de despesa',
+        'expense_via*.required' => 'Por favor, informe a via',
     ],
 
     /*

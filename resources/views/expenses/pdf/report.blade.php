@@ -69,6 +69,7 @@
 			<tr>
 				<th>Descrição</th>
 				<th>Tipo</th>
+				<th>Via</th>
 				<th>Valor</th>
 				<th>Data</th>
 			</tr>
@@ -79,6 +80,7 @@
 				<tr>
 					<td>{{ $expense->description }}</td>
 					<td>{{ $expense->expenseType->name }}</td>
+					<td>{{ $expense->expenseVia->name }}</td>
 					<td>{{ Mask::money($expense->value) }}</td>
 					<td>{{ Helper::date($expense->date, '%d/%m/%Y') }}</td>
 				</tr>

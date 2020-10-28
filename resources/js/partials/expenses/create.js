@@ -48,6 +48,21 @@ $('#btnNewExpense').on('click', function(e) {
 		});
 });
 
+$(document).on('input', 'input[type=file]', function() {
+  let files = $(this)[0].files || null; 
+  let names = [];
+
+  if (files.length > 0) {
+    Object.entries(files).forEach(function(el) {
+      names.push(el[1].name);
+    });
+
+    $(this).next('.custom-file-label').html(names.reverse().join(', '));
+  } else {
+    $(this).next('.custom-file-label').html('Comprovante');
+  }
+});
+
 /*
 	Atualiza o valor total de despesas ao alterar qualquer input value
 */
@@ -94,7 +109,6 @@ $('#formExpenses button[type="submit"]').on('click', function(e) {
 			window.location = response.data.redirect;
 		})
 		.catch(error => {
-			console.log(error.response);
 			loadingBtn($btn, false);
 			dispatchErrorMessages(error.response.data.errors);
 		});

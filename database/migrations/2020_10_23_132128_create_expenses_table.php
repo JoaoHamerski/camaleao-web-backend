@@ -16,14 +16,21 @@ class CreateExpensesTable extends Migration
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('expense_type_id')->nullable();
+            $table->foreignId('expense_via_id')->nullable();
             $table->string('description')->nullable();
             $table->double('value', 8, 2)->nullable();
             $table->date('date')->nullable();
+            $table->string('receipt_path')->nullable();
             $table->timestamps();
 
             $table->foreign('expense_type_id')
                 ->references('id')
                 ->on('expense_types')
+                ->onDelete('set null');
+
+            $table->foreign('expense_via_id')
+                ->references('id')
+                ->on('expense_vias')
                 ->onDelete('set null');
         });
     }
