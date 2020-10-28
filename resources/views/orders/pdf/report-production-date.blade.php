@@ -24,7 +24,22 @@
 		}
 
 		img	{
-			width: 100%;
+			/*width: 100%;*/
+			max-height: 400px;
+		}
+
+		@page { margin: 20px 30px 40px 50px; }
+		
+		footer .page:after { 
+        	content: counter(page, decimal); 
+        }
+
+        footer { 
+			position: fixed; 
+			right: 0px; 
+			bottom: 10px; 
+			text-align: center;
+			border-top: 1px solid black;
 		}
 	</style>
 </head>
@@ -35,6 +50,10 @@
 		<br>
 		<strong>{{ Helper::date($date, '%d/%m/%Y') }}  |  TOTAL {{ $totalQuantity }} PEÇAS</strong>
 	</div>
+
+	<footer>
+    	<p class="page">Página </p>
+  	</footer> 
 
 	@foreach($orders as $order)
 		<div class="text-center" style="font-size: 1.2rem">
