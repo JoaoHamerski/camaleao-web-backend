@@ -46,6 +46,10 @@ window.dispatchErrorMessages = function(errors, wrapper = '') {
 		}
 
 		if ($(selector).parent().hasClass('input-group')) {
+			if (el[0].includes('.')) {
+				selector = $(selector).get(child);
+			} 
+			
 			$(selector).parent().next('.text-danger').remove();
 
 			$(selector).removeClass('is-invalid')
@@ -54,7 +58,7 @@ window.dispatchErrorMessages = function(errors, wrapper = '') {
 			$(selector).parent().after($errorMessage);
 		} else {
 			if (el[0].includes('.')) {
-				selector = $(selector).[child];
+				selector = $(selector).get(child);
 			} 
 			
 			$(selector).next('.text-danger').remove();
