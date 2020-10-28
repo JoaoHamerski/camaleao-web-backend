@@ -20,7 +20,7 @@
       @endrole
 
       @role('gerencia')
-      <li class="{{ Request::is('financeiro*') ? 'active' : ''}}">
+      <li class="d-none {{ Request::is('financeiro*') ? 'active' : ''}}">
         <a href="{{ route('financial.index') }}"><i class="fas fa-dollar-sign fa-fw mr-1 text-primary"></i>Financeiro</a>
       </li>
       @endrole
