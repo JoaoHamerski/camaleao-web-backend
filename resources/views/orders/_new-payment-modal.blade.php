@@ -21,7 +21,7 @@
             <div class="input-group">
               <input placeholder="dd/mm/aaaa" class="form-control" id="date" name="date" type="text">
               <div class="input-group-append">
-                <button id="today" class="btn btn-outline-primary">Hoje</button>
+                <button class="btn btn-outline-primary btn-today">Hoje</button>
               </div>
             </div>
           </div>

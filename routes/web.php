@@ -7,9 +7,11 @@ use App\Http\Controllers\CookieController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\FinancialController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ExpenseTypesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,16 +67,33 @@ Route::middleware('auth')->group(function() {
 
 		Route::middleware('role:gerencia,atendimento')->group(function() {
 			Route::get('/pedidos', [OrdersController::class, 'index'])->name('index');
-			Route::post('/pedidos/relatorio-data-producao', [OrdersController::class, 'generateReportProductionDate'])->name('reportProductionDate');
-			Route::post('/pedidos/relatorio', [OrdersController::class, 'generateReport'])->name('report');
+			Route::get('/pedidos/relatorio-data-producao', [OrdersController::class, 'generateReportProductionDate'])->name('reportProductionDate');
+			Route::get('/pedidos/relatorio', [OrdersController::class, 'generateReport'])->name('report');
 			Route::get('/cliente/{client}/novo-pedido', [OrdersController::class, 'create'])->name('create');
 			Route::post('/cliente/{client}/novo-pedido', [OrdersController::class, 'store'])->name('store');
 			Route::get('/cliente/{client}/pedido/{order}/editar', [OrdersController::class, 'edit'])->name('edit');
 			Route::patch('/cliente/{client}/pedido/{order}/editar', [OrdersController::class, 'patch'])->name('patch');
 			Route::post('/cliente/{client}/pedido/{order}/toggle-order', [OrdersController::class, 'toggleOrder'])->name('toggleOrder');
-			Route::delete('/cliente/{client}/pedido/{order}', [OrdersController::class, 'destroy'])->name('destroy');
+			Route::delete('/cliente/{client}/pedido/{order}/deletar', [OrdersController::class, 'destroy'])->name('destroy');
 			Route::post('/cliente/{client}/pedido/{order}/editar/delete-file', [OrdersController::class, 'deleteFile']);
 		});
+	});
+
+	Route::name('expenses.')->middleware('role:gerencia,atendimento')->group(function() {
+		Route::get('/despesas', [ExpensesController::class, 'index'])->name('index');
+		Route::get('/despesas/cadastro', [ExpensesController::class, 'create'])->name('create');
+		Route::get('/despesas/cadastro/get-inline-form', [ExpensesController::class, 'getInlineForm']);
+		Route::post('/despesas/cadastro', [ExpensesController::class, 'store'])->name('store');
+		Route::get('/despesas/{expense}/get-edit-form', [ExpensesController::class, 'getEditForm']);
+		Route::patch('/despesas/{expense}', [ExpensesController::class, 'patch'])->name('patch');
+		Route::delete('/despesas/{expense}/deletar', [ExpensesController::class, 'destroy'])->name('destroy');
+		Route::get('/despesas/relatorio', [ExpensesController::class, 'report'])->name('report');
+	});
+
+	Route::name('expense_types.')->middleware('role:gerencia,atendimento')->group(function() {
+		Route::post('/despesas/tipo-de-despesa', [ExpenseTypesController::class, 'store'])->name('store');
+		Route::patch('/despesas/tipo-de-despesa/{expense_type}', [ExpenseTypesController::class, 'patch'])->name('patch');
+		Route::delete('/despesas/tipo-de-despesa/{expense_type}/deletar', [ExpenseTypesController::class, 'destroy'])->name('destroy');
 	});
 
 	Route::name('payments.')->middleware('role:gerencia,atendimento')->group(function() {

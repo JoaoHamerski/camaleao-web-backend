@@ -1,3 +1,6 @@
+applyCleave($('[name=value]'), cleaveValueBRL);
+applyCleave($('[name=date]'), cleaveDate);
+
 $('a[data-option]').on('click', function(e) {
 	e.preventDefault();
 
@@ -31,9 +34,13 @@ $('#btnDeleteOrder').on('click', function(e) {
 	.then(result => {
 		if (result.isConfirmed) {
       
-      $('#content').prepend($('<div class="loading-page"><div class="spinner-border text-primary"></div></div>'))
+      $('#content').prepend($(`
+        <div class="loading-page">
+          <div class="spinner-border text-primary"></div>
+        </div>
+        `));
 
-			axios.delete(getLocationURL())
+			axios.delete(getLocationURL() + '/deletar')
 				.then(response => {
 					window.location = response.data.redirect;
 				});
@@ -78,25 +85,6 @@ $(document).on('click', '.btn-delete-item', function(e) {
     .catch(error => { 
     })
 }); 
-
-applyCleave($('[name=value]'), cleaveValueBRL);
-applyCleave($('[name=date]'), cleaveDate);
-
-$('#today').on('click', function(e) {
-  e.preventDefault();
-
-  let date = new Date();
-  let today = '';
-  let month = date.getMonth() + 1;
-
-  today += date.getDate() + '/';
-  today += (month < 10) ? '0' + month : month;
-  today += '/';
-  today += date.getFullYear();
-
-  $('[name=date]').val(today).focus();
-
-});
 
 $('#btnAddPayment').on('click', function(e) {
   e.preventDefault();

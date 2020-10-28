@@ -6,7 +6,7 @@
 	<div class="mt-5">
 		<div class="card">
 			<div class="card-header bg-success font-weight-bold position-relative">
-				<a class="text-white stretched-link" data-toggle="collapse" href="#collapse-card-report" aria-expanded="true" href="">
+				<a class="text-white stretched-link" data-toggle="collapse" href="#collapse-card-report" aria-expanded="true">
 					<i class="fas fa-clipboard-list fa-fw mr-1"></i>Relatório por cidade ou status
 
 				</a>
@@ -14,7 +14,7 @@
 
 			<div id="collapse-card-report" class="collapse">
 				<div class="card-body">
-					<form id="formGenerateReport" target="_blank" action="{{ route('orders.report') }}" method="POST">
+					<form id="formGenerateReport" target="_blank" action="{{ route('orders.report') }}" method="GET">
 						<div>
 							<h5 class="font-weight-bold text-dark">Filtros</h5>
 
@@ -77,7 +77,7 @@
 			<div id="collapse-card-report-production" class="collapse">
 				<div class="card-body">
 					<h5 class="font-weight-bold">Filtros</h5>
-					<form id="formGenerateReportProduction" target="_blank" method="POST" action="{{ route('orders.reportProductionDate') }}">
+					<form id="formGenerateReportProduction" target="_blank" method="GET" action="{{ route('orders.reportProductionDate') }}">
 						<div class="form-group">
 							<label class="font-weight-bold" for="date">Data de produção </label>
 							<input class="form-control" id="date" type="text" name="date" placeholder="dd/mm/aaaa">
@@ -177,39 +177,5 @@
 @endsection
 
 @push ('script')
-	<script>
-		applyCleave($('[name=date]'), cleaveDate);	
-
-		$('#formGenerateReport button[type=submit]').on('click', function(e) {
-			e.preventDefault();
-
-			axios.post(window.location.href + '/relatorio', {
-				city: $('[name=city]').val(),
-				status: $('[name=status]').val(),
-				only_open: $('[name=only_open]:checked').val()
-			})
-			.then(response => {
-				$('#formGenerateReport').submit();
-			})
-			.catch(error => {
-				console.log(error.response);
-				dispatchErrorMessages(error.response.data.errors);
-			});
-		});
-
-		$('#formGenerateReportProduction button[type=submit]').on('click', function(e) {
-			e.preventDefault();
-
-			axios.post(window.location.href + '/relatorio-data-producao', {
-				date: $('[name=date]').val()
-			})
-			.then(response => {
-				$('#formGenerateReportProduction').submit();
-			})
-			.catch(error => {
-				console.log(error.response);
-				dispatchErrorMessages(error.response.data.errors);
-			});
-		});
-	</script>
+	<script src="{{ mix('js/partials/orders/index.js') }}"></script>
 @endpush

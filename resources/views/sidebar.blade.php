@@ -26,6 +26,12 @@
       @endrole
 
       @role('gerencia')
+      <li class="{{ Request::is('despesas*') ? 'active' : '' }}">
+        <a href="{{ route('expenses.index') }}"><i class="fas fa-cash-register fa-fw mr-1 text-primary"></i>Despesas</a>
+      </li>
+      @endrole
+
+      @role('gerencia')
       <li class="{{ Request::is('usuarios*') ? 'active' : '' }}">
           <a href="{{ route('users.index') }}"><i class="fas fa-users fa-fw mr-1 text-primary"></i>Usuários</a>
       </li>
@@ -40,8 +46,4 @@
       </li>
     </ul>
   </div>
-
-  <form id="logoutForm" method="POST" action="{{ route('auth.logout') }}">
-    @csrf
-  </form>
-</nav>
+  </nav>

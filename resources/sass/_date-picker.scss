@@ -1,0 +1,8 @@
+@import '_variables';
+@import "~bootstrap-datepicker/dist/css/bootstrap-datepicker.standalone.css";
+
+.datepicker-days {
+	.day  {
+		padding: .75em !important;
+	}
+}

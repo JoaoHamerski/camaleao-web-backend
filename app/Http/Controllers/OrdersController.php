@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Util\Helper;
 use App\Models\Order;
 use App\Models\Status;
 use App\Util\Validate;
 use App\Models\Client;
 use App\Util\Sanitizer;
-use App\Util\Helper;
 use App\Traits\FileManager;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -50,25 +50,16 @@ class OrdersController extends Controller
 
     public function edit(Client $client, Order $order) 
     {
-        $this->authorize('view', [$order, $client->id]);
+        $this->authorize('update', [$order, $client->id]);
 
-        if ($order->is_closed)
-            return abort(403);
-
-        if (! $client->orders()->where('id', $order->id)->exists()) {
-            abort(403);
-        }
-        
         return view('orders.edit', compact('client', 'order'));
     }
 
     public function destroy(Client $client, Order $order)
     {
-        $order->delete();
+        $this->authorize('view', [$order, $client->id]);
 
-        $this->deleteFiles($order, [
-            'art_paths', 'size_paths', 'payment_voucher_paths'
-        ]);
+        $order->delete();
 
         return response()->json([
             'message' => 'success',
@@ -90,16 +81,11 @@ class OrdersController extends Controller
         }
 
         $data = array_merge($data, $this->uploadAllFiles($request));
-        $data['status_id'] = Status::first()->id;
 
         $order = $client->orders()->create(\Arr::except($data, ['down_payment']));
 
         if (! empty($data['down_payment'])) {
-            $order->payments()->create([
-                'value' => $data['down_payment'],
-                'date' => \Carbon\Carbon::now(),
-                'note' => 'Pagamento de entrada'
-            ]);
+            $order->createDownPayment($data['down_payment']);
         }
 
         return response()->json([
@@ -110,11 +96,11 @@ class OrdersController extends Controller
 
     public function patch(Client $client, Order $order, Request $request)
     {  
-        $this->authorize('view', [$order, $client->id]);
+        $this->authorize('update', [$order, $client->id]);
 
         $validator = $this->validator(
             $data = $this->getFormattedData($request->all()),
-            $request->code
+            true
         );
 
         if ($validator->fails()) {  
@@ -249,6 +235,8 @@ class OrdersController extends Controller
 
     public function toggleOrder(Client $client, Order $order, Request $request)
     {
+        $this->authorize('view', [$order, $client->id]);
+        
         if ($order->is_closed) 
             $order->is_closed = 0;
         else 
@@ -263,22 +251,16 @@ class OrdersController extends Controller
     {
         $this->authorize('view', [$order, $client->id]);
         
-        $filepath = $this->getPathToDelete($request->filepath); 
+        if (\Storage::delete($filepath = $this->getPathToDelete($request->filepath))) {
+            $paths = json_decode($order->{$this->getField($filepath)});
 
-        if (\Storage::delete($filepath)) {
-            foreach(['art_paths', 'size_paths', 'payment_voucher_paths'] as $field) {
-                if (\Str::contains($filepath, $this->getFilepath($field, true))) {
-                    $paths = json_decode($order->{$field});
-
-                    foreach ($paths as $key => $path) {
-                        if (\Str::contains($filepath, $path))
-                            unset($paths[$key]);
-                    }
-
-                    $order->{$field} = ! empty($paths) ? array_values($paths) : null;
-                    $order->save();
-                }
+            foreach ($paths as $key => $path) {
+                if (\Str::contains($filepath, $path))
+                    unset($paths[$key]);
             }
+
+            $order->{$this->getField($filepath)} = ! empty($paths) ? array_values($paths) : null;
+            $order->save();
 
             return response()->json([
                 'message' => 'success'
@@ -297,7 +279,8 @@ class OrdersController extends Controller
                 return response()->json([
                     'message' => 'success',
                     'view' => view('orders.file-viewer', [
-                        'paths' => $order->getPaths($option . '_paths')
+                        'paths' => $order->getPaths($option . '_paths'),
+                        'option' => $option
                     ])->render()
                 ], 200);
             }
@@ -308,12 +291,12 @@ class OrdersController extends Controller
         ], 422);
     }
 
-    private function validator(array $data, $codeExcept = null) 
+    private function validator(array $data, $isUpdate = false) 
     {
         return Validator::make($data, [
             'code' => [
-                'required', $codeExcept 
-                ? Rule::unique('orders')->ignore($codeExcept, 'code')
+                'required', $isUpdate 
+                ? Rule::unique('orders')->ignore($data['code'], 'code')
                 : Rule::unique('orders')
             ],
             'quantity' => 'required',

@@ -2,15 +2,34 @@
 
 namespace App\Models;
 
+use App\Traits\FileManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, FileManager;
 
     protected $guarded = [];
-    
+
+    /**
+     * Método "booted" do model
+     * 
+     * @return void
+    **/
+    public static function booted() 
+    {
+        static::creating(function(Order $order) {
+            $order->status_id = Status::first()->id;
+        });
+
+        static::deleting(function(Order $order) {
+            static::deleteFiles($order, [
+                'art_paths', 'size_paths', 'payment_voucher_paths'
+            ]);
+        });
+    }   
+
     public function client()
     {
     	return $this->belongsTo(Client::class);
@@ -34,6 +53,15 @@ class Order extends Model
     public function status()
     {
         return $this->belongsTo(Status::class);
+    }
+
+    public function createDownPayment($value)
+    {
+        return $this->payments()->create([
+            'value' => $value,
+            'date' => \Carbon\Carbon::now(),
+            'note' => 'Pagamento de entrada'
+        ]);
     }
 
     public function getTotalPayments()

@@ -137,6 +137,25 @@ return [
         'name' => [
             'required' => 'Por favor, informe um nome'
         ],
+        'description.*' => [
+            'required' => 'Por favor, informe uma descrição.'
+        ],
+        'type.*' => [
+            'required' => 'Por favor, informe um tipo',
+            'exists' => 'O tipo informado não existe'
+        ],
+        'value.*' => [ 
+            'required' => 'Por favor, informe um valor',
+        ],
+        'date.*' => [
+            'required' => 'Por favor, informe uma data',
+            'date' => 'Por favor, informe uma data válida'
+        ],
+        'dia*' => [
+            'required' => 'Por favor, informe uma data',
+            'date' => 'Por favor, informe uma data válida'
+        ],
+        'dia_final.after' => 'A segunda data deve ser posterior a primeira data.',
         'order_note' => [
             'required' => 'Por favor, informe uma anotação'
         ],
@@ -182,6 +201,7 @@ return [
         'size_paths.*' => [
             'image' => 'Os arquivos devem conter apenas imagens'
         ],
+        'expense_type*.required' => 'Por favor, informe o tipo de despesa',
     ],
 
     /*

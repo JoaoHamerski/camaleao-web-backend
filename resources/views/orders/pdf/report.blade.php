@@ -14,18 +14,27 @@
 		table {
 			width: 100%;
 			border-collapse: collapse;
+			padding-bottom: .25rem;
+			page-break-inside: avoid !important;
 		}
 
 		table tr, table td, table th {
-			padding: .25rem;
+			padding-left: .4rem;
+			padding-right: .4rem;
+			padding-top: .25rem;
+			padding-bottom: .25rem;
 			border: 1px solid black;
+		}
+
+		table tr {
+			word-wrap: break-word;
 		}
 
 		.text-center {
 			text-align: center;
 		}
 
-		.title {
+		header {
 			text-align: center;
 			font-size: 1.3rem;
 			margin-bottom: 2rem;
@@ -34,10 +43,41 @@
 		.text-muted {
 			color: rgba(0, 0, 0, .3);
 		}
+
+		.image, .image img {
+			width: 250px !important;
+			/*page-break-inside: avoid;*/
+		}
+
+		footer { 
+			position: fixed; 
+			right: 0px; 
+			bottom: 10px; 
+			text-align: center;
+			border-top: 1px solid black;
+		}
+
+        footer .page:after { 
+        	content: counter(page, decimal); 
+        }
+
+        .page-break {
+        	page-break-before: always;
+        }
+
+        .note {
+        	font-size: .9rem;
+        }
+
+ 		@page { margin: 20px 30px 40px 50px; }
 	</style>
 </head>
 <body>
-	<div class="title">
+	<footer>
+    	<p class="page">Página </p>
+  	</footer> 
+
+	<header>
 		Relatório de pedidos 
 		@if ($city != null)
 			<br>
@@ -49,40 +89,46 @@
 			<br>
 			<div style="font-size: 1.2rem; margin-top: .25rem;">{{ $status->text }}</div>
 		@endif
-	</div>
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Cliente</th>
-				<th>Código do pedido</th>
-				<th>Observações</th>
-			</tr>
-		</thead>
+	</header>
 
-		<tbody>
-			@foreach($orders as $order)
+	@foreach($orders as $order)
+		<table>	
+			<tbody>
 				<tr>
-					<td class="text-center" rowspan="{{ count($order->notes) }}">
-						{{ $order->client->name }}
-					</td>	
-					<td class="text-center" rowspan="{{ count($order->notes) }}">
-						{{ $order->code }}
+					<td class="image text-center" 
+						rowspan="{{ $order->notes->count() 
+								? $order->notes->count() + 4
+								: 3 }}">
+						@isset($order->getPaths('art_paths')[0])
+							<div>
+								<img width="100px" src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[0])) }}" alt="">
+							</div>
+						@else
+							[sem imagem]
+						@endisset
 					</td>
-					@isset($order->notes[0]->text)
-						<td>{{ $order->notes[0]->text }}</td>
-					@else
-						<td class="text-center text-muted">[sem observações]</td>
-					@endisset
+					<td><strong>Cliente: </strong> {{ $order->client->name }}</td>
 				</tr>
+
+				<tr><td><strong>Código: </strong>{{ $order->code }}</td></tr>
+
+				<tr>
+					<td>
+						<strong>Quantidade: </strong>
+						{{ $order->quantity }} 
+						{{ $order->quantity == 1 ? 'CAMISA' : 'CAMISAS' }} 
+					</td>
+				</tr>
+
+				@if ($order->notes->count())
+					<tr><td class="text-center"><strong>Anotações</strong></td></tr>
+
 					@foreach($order->notes as $note)
-						@if ($loop->index != 0)
-						<tr>
-							<td>{{ $note->text }}</td>
-						</tr>
-						@endif
+						<tr><td class="note">{{ $note->text }}</td></tr>
 					@endforeach
-			@endforeach
-		</tbody>
-	</table>
+				@endif
+			</tbody>
+		</table>
+	@endforeach
 </body>
 </html>

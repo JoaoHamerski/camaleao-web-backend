@@ -21,13 +21,11 @@ class CreateStatusTable extends Migration
 
         DB::table('status')->insert([
             ['text' => 'Arte pendente'],
-            ['text' => 'Aguardando cliente'],
             ['text' => 'Pagamento pendente'],
-            ['text' => 'Exportação'],
-            ['text' => 'Impressão'],
-            ['text' => 'Em estampa'],
+            ['text' => 'Produção'],
+            ['text' => 'Costura'],
             ['text' => 'Problemas na produção'],
-            ['text' => 'Disponivel para retirada']
+            ['text' => 'Disponível para retirada'],
         ]);
     }
 

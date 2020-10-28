@@ -81,8 +81,6 @@ class ClientsController extends Controller
 
     public function destroy(Client $client)
     {
-        $this->deleteAllFiles($client->orders);
-
         $client->delete();
 
         return response()->json([
@@ -90,16 +88,6 @@ class ClientsController extends Controller
             'redirect' => route('clients.index')
         ], 200);
     }   
-
-    public function deleteAllFiles($orders)
-    {
-        foreach($orders as $order)
-        {
-            \Storage::delete($order->getPaths('art_paths', true));
-            \Storage::delete($order->getPaths('size_paths', true));
-            \Storage::delete($order->getPaths('payment_voucher_paths', true));
-        }
-    } 
 
     private function validator($data) 
     {

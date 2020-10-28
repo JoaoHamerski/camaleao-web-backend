@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Collection;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,7 +33,14 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrap();
         
         $this->bootBlade();
+        
+        Collection::macro('transpose', function () {
+            $items = array_map(function (...$items) {
+                return $items;
+            }, ...$this->values());
 
+            return new static($items);
+        });
     }
 
     private function bootBlade()

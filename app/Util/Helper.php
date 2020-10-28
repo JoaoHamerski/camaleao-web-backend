@@ -92,6 +92,13 @@ class Helper {
 		return $format;
 	}
 
+	/**
+	 * Verifica se a URL passada é uma imagem
+	 * 
+	 * @param string $str
+	 * 
+	 * @return string
+	**/
 	public static function isImage($str) 
 	{
 		$extensions = ['.jpg', '.jpeg', '.jpe', '.jif', '.jfif', '.jfi', '.png', '.gif', '.web', '.tiff', 'tif','.bmp', '.svg'];
@@ -99,19 +106,51 @@ class Helper {
 		return \Str::endsWith($str, $extensions);
 	}
 
+	/**
+	 *	Retorna a extensão da URL passada.
+	 * 
+	 * @param string $str
+	 * 
+	 * @return string 
+	**/
 	public static function getExtension($str) 
 	{
-		$pieces = explode('.', $str);
-
-		return end($pieces);
+		return pathinfo($str, PATHINFO_EXTENSION);
 	}
 
-
+	/**
+	 *	Converte o URL da image passada para base64.
+	 * 
+	 * @param string $imagePath
+	 * 
+	 * @return string
+	**/
 	public static function imageTo64($imagePath) 
 	{
 		$type = pathinfo($imagePath, PATHINFO_EXTENSION);
 		$data = file_get_contents($imagePath);
 
 		return 'data:image/' . $type . ';base64,' . base64_encode($data);
+	}
+
+	/**
+	 * Substitui uma chave de um array por outra.
+	 * 
+	 * @param array $array
+	 * @param string $old_key
+	 * @param string $new_key
+	 * 
+	 * @return array
+	 */
+	public static function replaceKey($array, $old_key, $new_key) {
+
+	    if (! array_key_exists($old_key, $array)) {
+	        return $array;
+	    }
+
+	    $keys = array_keys($array);
+	    $keys[array_search($old_key, $keys)] = $new_key;
+
+	    return array_combine($keys, $array);
 	}
 }

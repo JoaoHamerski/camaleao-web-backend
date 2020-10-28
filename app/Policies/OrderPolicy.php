@@ -51,9 +51,9 @@ class OrderPolicy
      * @param  \App\Models\Order  $order
      * @return mixed
      */
-    public function update(User $user, Order $order)
+    public function update(?User $user, Order $order, $clientId)
     {
-        //
+        return ! $order->is_closed && $order->client->id == $clientId;
     }
 
     /**

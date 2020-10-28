@@ -18,11 +18,8 @@
 						@if ($order->is_closed || $order->getTotalOwing() == 0)
 							<span class="d-inline-block" 
 								data-toggle="tooltip"
-								@if ($order->is_closed)
-								title="Não é possível efetuar pagamento pois o pedido está fechado">
-								@else
-								title="Não é possível efetuar pagamento pois o pedido está quitado">
-								@endif
+								title="Não é possível efetuar pagamento pois o pedido está @if ($order->is_closed)  fechado @else quitado @endif"> 
+
 								<button style="pointer-events: none;" disabled="disabled" class="btn btn-outline-success d-block">
 									<i class="fas fa-dollar-sign fa-fw mr-1"></i>Adicionar pagamento
 								</button>
@@ -69,10 +66,18 @@
 					</a>
 
 					@role(['atendimento', 'gerencia'])
-						<a class="btn btn-outline-primary mx-2 @if ($order->is_closed) disabled @endif" 
-							href="{{ route('orders.edit', ['client' => $client, 'order' => $order]) }}">
-							<i class="fas fa-edit fa-fw mr-1"></i>Editar
-						</a>
+						@if ($order->is_closed)
+							<span tabindex="0" data-toggle="tooltip" title="Não é possível editar pois o pedido está fechado.">
+								<button style="pointer-events: none;" class="btn btn-outline-primary mx-2" disabled="disabled">
+									<i class="fas fa-edit fa-fw mr-1"></i>Editar
+								</button>
+							</span>
+						@else
+							<a class="btn btn-outline-primary mx-2" 
+								href="{{ route('orders.edit', ['client' => $client, 'order' => $order]) }}">
+								<i class="fas fa-edit fa-fw mr-1"></i>Editar
+							</a>
+						@endif
 					@else
 						<span tabindex="0" data-toggle="tooltip" title="Você não tem permissão para isso">
 							<button style="pointer-events: none;" class="btn btn-outline-primary mx-2" disabled="disabled">
@@ -106,7 +111,17 @@
 							<i class="fas fa-sticky-note fa-fw mr-1"></i>Anotações ({{ $order->notes->count() }})
 						</button>
 
-						<button @if($order->is_closed) disabled="disabled" @endif data-target="#statusModal" data-toggle="modal" class="btn btn-outline-primary">Alterar status</button>
+						@if ($order->is_closed)
+							<span title="Não é possível alterar os status pois o pedido está fechado" 
+								data-toggle="tooltip">
+								<button style="pointer-events: none;" class="btn btn-outline-primary" disabled="disabled">
+									Alterar status
+								</button>
+							</span>
+						@else
+							<button data-target="#statusModal" data-toggle="modal" class="btn btn-outline-primary">Alterar status</button>
+						@endif
+
 					</div>
 
 					<div class="mb-4">
@@ -228,5 +243,5 @@
 @endsection
 
 @push('script')
-	<script src="{{ mix('js/partials/show-order.js') }}"></script>
+	<script src="{{ mix('js/partials/orders/show.js') }}"></script>
 @endpush

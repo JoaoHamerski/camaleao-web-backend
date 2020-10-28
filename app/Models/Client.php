@@ -2,15 +2,25 @@
 
 namespace App\Models;
 
+use App\Traits\FileManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
-    use HasFactory;
+    use HasFactory, FileManager;
 
     protected $guarded = [];
     
+    public static function booted() 
+    {
+        static::deleting(function(Client $client) {
+            static::deleteFiles($client->orders, [
+                'art_paths', 'size_paths', 'payment_voucher_paths'
+            ]);
+        });
+    }
+
     public function path() {
     	return route('clients.show', $this);
     }

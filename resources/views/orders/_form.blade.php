@@ -157,5 +157,5 @@
 </form>
 
 @push('script')
-	<script src="{{ mix('js/partials/order-form.js') }}"></script>
+	<script src="{{ mix('js/partials/orders/form.js') }}"></script>
 @endpush
