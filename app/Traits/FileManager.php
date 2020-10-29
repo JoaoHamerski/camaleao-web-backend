@@ -37,8 +37,8 @@ trait FileManager
         $paths = [];
 
         foreach (array_reverse($files) as $key => $file) {
-            $this->uploadFile($file, $path, $key);
-            $paths[] = $filename;
+            $filename = $this->uploadFile($file, $path, $key);
+            $paths[] = explode('/', $filename)[2];
         }
 
         return json_encode($paths);

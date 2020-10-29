@@ -69,8 +69,6 @@ class OrdersController extends Controller
 
     public function store(Client $client, Request $request) 
     {
-        return $request->recipt_path;
-        
         $validator = $this->validator(
             $data = $this->getFormattedData($request->all())
         );
