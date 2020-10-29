@@ -1,3 +1,7 @@
+<menu type="context" id="mymenu">
+    <menuitem>Teste</menuitem>
+</menu>
+
 <div class="table-responsive">
 	<table class="table table-hover">
 		<thead>
@@ -12,7 +16,7 @@
 		</thead>
 		<tbody>
 			@foreach ($orders as $order)
-				<tr data-url="{{ $order->path() }}" 
+				<tr contextmenu="mymenu" data-url="{{ $order->path() }}" 
 					class="clickable-link @if ($order->is_closed) table-secondary @endif" 
 					data-id="{{ $order->id }}">
 					<td>{{ $order->code }}</td>
