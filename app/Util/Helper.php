@@ -5,8 +5,8 @@ namespace App\Util;
 class Helper {
 	/**
 	 * Converte a primeira letra de cada palavra de uma sentença 
-	 * para maíuscula, podendo ser informado um array com exceções
-	 * (palavras que não devem ser transformadas para ucfirst())
+	 * para maíuscula usando ucfirst(), podendo ser informado um 
+	 * array com exceções (palavras que não devem ser transformadas para ucfirst())
 	 * 
 	 * @param string $sentence
 	 * @param string|array $except
@@ -29,11 +29,8 @@ class Helper {
      * Formata a data usando strftime.
      * Referências para $format: https://www.php.net/manual/en/function.strftime.php.
      *
-     * $datetime aceita datas em formato de string e instância de Carbon.
-     * 
-     * 
      * @param string $format
-     * @param mix $datetime
+     * @param string | \Carbon\Carbon $datetime
      * @return string
      */
 	public static function date($datetime, $format)
@@ -50,8 +47,7 @@ class Helper {
 	/**
      * Converte o valor informado para uma timestamp de valor inteiro.
      * 
-     * 
-     * @param  mix $timestamp
+     * @param  string | \Carbon\Carbon $timestamp
      * @return int $timestamp
      */
 	public static function dateToTimestamp($datetime)
@@ -81,11 +77,11 @@ class Helper {
 			$format = str_replace("%B", "março", $format);
 		}
 
-		if(\Str::contains($format, "%A") && date('N', $timestamp) == 6) {
+		if (\Str::contains($format, "%A") && date('N', $timestamp) == 6) {
 			$format = str_replace("%A", "sábado", $format);
 		}
 
-		if(\Str::contains($format, "%A") && date('N', $timestamp) == 2) {
+		if (\Str::contains($format, "%A") && date('N', $timestamp) == 2) {
 			$format = str_replace("%A", "terça-feira", $format);
 		}
 
@@ -137,19 +133,19 @@ class Helper {
 	 * Substitui uma chave de um array por outra.
 	 * 
 	 * @param array $array
-	 * @param string $old_key
-	 * @param string $new_key
+	 * @param string $oldKey
+	 * @param string $newKey
 	 * 
 	 * @return array
 	 */
-	public static function replaceKey($array, $old_key, $new_key) {
+	public static function replaceKey($array, $oldKey, $newKey) {
 
-	    if (! array_key_exists($old_key, $array)) {
+	    if (! array_key_exists($oldKey, $array)) {
 	        return $array;
 	    }
 
 	    $keys = array_keys($array);
-	    $keys[array_search($old_key, $keys)] = $new_key;
+	    $keys[array_search($oldKey, $keys)] = $newKey;
 
 	    return array_combine($keys, $array);
 	}

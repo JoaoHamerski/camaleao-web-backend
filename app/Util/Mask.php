@@ -14,7 +14,6 @@ class Mask {
 	 */
 	public static function mask(string $mask, string $str)
 	{
-
 	    $str = str_replace(" ", "", $str);
 
 	    for ($i = 0; $i < strlen($str); $i++){
@@ -41,7 +40,6 @@ class Mask {
 		return isset($str) 
 			? self::mask('(##) ####-####', $str)
 			: null;
-
 	}
 
 	/**
@@ -49,20 +47,17 @@ class Mask {
 	 * Ex.: "123,456.78" => "R$ 123.456,78"
 	 * 
 	 * @param string $str, 
-	 * @param bool $highlightValue
+	 * @param bool $strongValue Retorna o valor entre tags <strong>
 	 * @return string or null;
 	 */
-	public static function money($str, $highlightValue = false)
+	public static function money($str, $strongValue = false)
 	{
 		$formatter = new \NumberFormatter('pt_BR', \NumberFormatter::CURRENCY);
 		$money = $formatter->formatCurrency($str, 'BRL');
 
-		if ($highlightValue) {
+		if ($strongValue) {
 			$money = explode(',', $money);
-
-			return isset($str)
-				? '<strong>' . $money[0] . '</strong>,' . $money[1]
-				: null;
+			$money = '<strong>' . $money[0] . '</strong>,' . $money[1];
 		}
 
 		return isset($str) 

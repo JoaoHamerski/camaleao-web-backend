@@ -3,14 +3,19 @@
 @section('title', 'Despesas')
 
 @section('content')
-  <div class="col-md-10 mt-5 mx-auto">
+  <div class="mt-5 mx-auto">
     <div class="card mb-2">
       <div class="card-header font-weight-bold text-white bg-success position-relative">
-        <a class="stretched-link" data-toggle="collapse" href="#collapse-filter-card" aria-expanded="true"></a>
-        <i class="fas fa-filter fa-fw mr-1"></i>Filtros   
+        <a class="stretched-link collapsed" data-toggle="collapse" href="#collapse-filter-card" aria-expanded="true"></a>
+        <div class="card-collapse">
+          <i class="fas fa-filter fa-fw mr-1"></i>Filtros  
+          <div class="collapse-icon">
+            <i class="fas fa-caret-down fa-fw fa-2x"></i>
+          </div> 
+        </div>
       </div>
 
-      <div id="collapse-filter-card" class="collapse show">
+      <div id="collapse-filter-card" class="collapse">
         <div class="card-body">
           <form id="reportForm" method="GET" action="{{ route('expenses.report') }}" target="_blank">
             <label for="dia_inicial" class="font-weight-bold">Intervalo de datas</label>

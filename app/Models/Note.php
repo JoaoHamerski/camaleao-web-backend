@@ -11,6 +11,11 @@ class Note extends Model
 
     protected $guarded = [];
 
+    /**
+     * Uma anotação pertence a um pedido
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function order()
     {
     	return $this->belongsTo(Order::class);

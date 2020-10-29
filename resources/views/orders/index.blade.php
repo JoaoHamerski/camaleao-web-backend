@@ -5,11 +5,15 @@
 @section('content')
 	<div class="mt-5">
 		<div class="card">
-			<div class="card-header bg-success font-weight-bold position-relative">
-				<a class="text-white stretched-link" data-toggle="collapse" href="#collapse-card-report" aria-expanded="true">
-					<i class="fas fa-clipboard-list fa-fw mr-1"></i>Relatório por cidade ou status
-
+			<div class="card-header bg-success text-white font-weight-bold position-relative">
+				<a class="stretched-link collapsed" data-toggle="collapse" href="#collapse-card-report" aria-expanded="true">
 				</a>
+				<div class="card-collapse">
+					<i class="fas fa-clipboard-list fa-fw mr-1"></i>Relatório por cidade ou status
+					<div class="collapse-icon">
+			            <i class="fas fa-caret-down fa-fw fa-2x"></i>
+			        </div>
+		        </div>
 			</div>
 
 			<div id="collapse-card-report" class="collapse">
@@ -68,10 +72,16 @@
 		</div>
 
 		<div class="card mt-2">
-			<div class="card-header bg-success font-weight-bold position-relative">
-				<a class="text-white stretched-link" data-toggle="collapse" href="#collapse-card-report-production">
-					<i class="fas fa-clipboard-list fa-fw mr-1"></i>Relátório por data de produção
+			<div class="card-header text-white bg-success font-weight-bold position-relative">
+				<a class="stretched-link collapsed" data-toggle="collapse" href="#collapse-card-report-production">
 				</a>
+
+				<div class="card-collapse">
+					<i class="fas fa-clipboard-list fa-fw mr-1"></i>Relátório por data de produção
+					<div class="collapse-icon">
+			            <i class="fas fa-caret-down fa-fw fa-2x"></i>
+			        </div>
+				</div>
 			</div>
 
 			<div id="collapse-card-report-production" class="collapse">

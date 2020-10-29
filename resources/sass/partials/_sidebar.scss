@@ -74,33 +74,4 @@
 	.collapse-sb-item:hover {
 		background-color: rgba(black, .3);
 	}
-	
-	.collapse-sb-item:not(.collapsed) .icon, 
-	.collapse-sb-item.collapsed .icon {
-		transform: rotate(0);
-		transition: transform .1s;
-	}
-
-	.collapse-sb-item:not(.collapsed) .icon {
-		transform: rotate(-180deg);
-	}
-}
-
-.sidebar:not(.is-active) .icon::before {
-	color: inherit;
-	background-color: red;
-	border-radius: 75% 0 0 0;
-	padding-top: .2rem;
-	padding-left: .2rem;
-	right: 5px;
-	bottom: -3px;
-	font-size: .8rem;
-}
-
-.sidebar:not(.is-active) .icon.user-chield::before {
-	content: "\f505";
-}
-
-.sidebar:not(.is-active) .icon.user::before {
-	content: "\f007";
 }

@@ -13,6 +13,9 @@
       <div class="modal-body">
         
       </div>
+      <div class="modal-footer">
+        <button data-dismiss="modal" class="btn btn-light">Fechar</button>
+      </div>
     </div>
   </div>
 </div>

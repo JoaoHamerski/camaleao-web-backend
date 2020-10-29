@@ -9,6 +9,11 @@ class Role extends Model
 {
     use HasFactory;
 
+    /**
+     * Uma regra tem vários usuários
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function users()
     {
     	return $this->hasMany(User::class);

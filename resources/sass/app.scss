@@ -59,3 +59,19 @@
 		}
 	}
 }
+
+.card .card-header {
+	.collapse-icon {
+		position: absolute;
+		right: 10px;
+		top: 24%;
+	}
+
+	a[data-toggle="collapse"] + .card-collapse .collapse-icon i {
+		transition: transform .25s;
+	}
+
+	a[data-toggle="collapse"].collapsed + .card-collapse .collapse-icon i {
+		transform: rotate(90deg);
+	}
+}

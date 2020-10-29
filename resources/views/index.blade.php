@@ -55,8 +55,8 @@
 								<tr class="clickable-link" 
 									onclick="window.location = '{{ route('clients.show', $client->id) }}'">
 									<td>{{ $client->name }}</td>
-									<td>{{ $client->phone ? Mask::phone($client->phone) : '[não informado]' }}</td>
-									<td>{{ $client->city ?? '[não informado]' }}</td>
+									<td nowrap="nowrap">{{ $client->phone ? Mask::phone($client->phone) : '[não informado]' }}</td>
+									<td nowrap="nowrap">{{ $client->city ?? '[não informado]' }}</td>
 								</tr>
 							@endforeach
 						</tbody>	

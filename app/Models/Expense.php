@@ -11,6 +11,11 @@ class Expense extends Model
     
     protected $guarded = [];
 
+    /**
+     * Método booted do model
+     * 
+     * @return void
+     */
     public static function booted()
     {
         static::deleting(function($expense) {
@@ -18,16 +23,31 @@ class Expense extends Model
         });
     }
 
+    /**
+     * Uma despesa pertence a um tipo de despesa
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function expenseType()
     {
     	return $this->belongsTo(ExpenseType::class);
     }
 
+    /**
+     * Uma despesa pertence a uma via 
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function expenseVia()
     {
     	return $this->belongsTo(ExpenseVia::class);
     }
 
+    /**
+     * Retorna o caminho para o arquivo do comprovante
+     * 
+     * @return string
+     */
     public function getReceiptPath() 
     {
         return $this->receipt_path 
@@ -35,6 +55,11 @@ class Expense extends Model
             : null;
     }
 
+    /**
+     * Delete o arquivo de comprovante
+     * 
+     * @return void
+     */
     public function destroyReceipt()
     {
         \Storage::delete($this->receipt_path);

@@ -42,11 +42,22 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * Um usuário pertence a uma regra
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function role()
     {
         return $this->belongsTo(Role::class);
     }
 
+    /**
+     * Verifica se o usuário possui determinada regra
+     * 
+     * @param int | array $role
+     * @return boolean
+     */
     public function hasRole($role)
     {
         if (is_array($role)) {

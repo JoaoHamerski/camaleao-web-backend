@@ -33,7 +33,16 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrap();
         
         $this->bootBlade();
-        
+        $this->bootCollectionMacros();
+    }
+
+    /**
+     * Inicializa as macros customizadas das Collections
+     * 
+     * @return void
+     */
+    private function bootCollectionMacros()
+    {
         Collection::macro('transpose', function () {
             $items = array_map(function (...$items) {
                 return $items;
@@ -43,19 +52,34 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Inicializa tudo relativo ao blade no service provider
+     * 
+     * @return void
+     */
     private function bootBlade()
     {
         $this->bootBladeValidation();
-        $this->bootBladeCustomIfs();
+        $this->bootBladeIfs();
     }
 
-    private function bootBladeCustomIfs()
+    /**
+     * Estruturas de condições customizadas do blade
+     * 
+     * @return void
+     */
+    private function bootBladeIfs()
     {
         Blade::if('role', function($role) {
             return (auth()->check() && auth()->user()->hasRole($role));
         });
     }
 
+    /**
+     * Validações customizadas do blade
+     * 
+     * @return void
+     */
     private function bootBladeValidation()
     {
         Validator::extend('max_double', 'App\Rules\MaxDouble@passes');

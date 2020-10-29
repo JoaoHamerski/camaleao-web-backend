@@ -18,6 +18,8 @@ class Sanitizer {
 	/**
 	 * Sanitiza o valor em dinheiro BRL para o formato padrão.
 	 * 
+	 * Ex.: R$ 123,45 => 123.45
+	 * 
 	 * @param string $str
 	 * @return string or null
 	 */
