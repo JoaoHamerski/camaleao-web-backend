@@ -84,4 +84,9 @@ class Client extends Model
     {
     	return $this->orders()->sum('price');
     }
+
+    public function getNewOrderCode()
+    {
+        return substr($this->phone, -4);
+    }
 }

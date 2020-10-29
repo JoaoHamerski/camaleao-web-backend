@@ -12,7 +12,7 @@
 				@if ($method == 'PATCH') 
 				value="{{ $order->code }}" 
 				@else 
-				value="{{ substr($client->phone, -4) }}"
+				value="{{ $client->getNewOrderCode() }}"
 				@endif>
 		</div>
 		<div class="form-group col">

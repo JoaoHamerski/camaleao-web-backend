@@ -1,14 +1,23 @@
 
-// Seta um cookie, em que "data" é informado o "name" e "value" do cookie.
+/*
+	Seta um cookie, em que "data" 
+	é informado o "name" e "value" do cookie.
+*/
 window.setCookie = function(data) {
 	axios.post('/set-cookie', data);
 }
 
-// Deleta um cookie, em que "name" é informado o "name" do cookie a ser deletado.
+/*
+	Deleta um cookie com o nome especificado.
+*/
 window.destroyCookie = function(name) {
 	axios.delete('/destroy-cookie', {name: name});
 }
 
+/*
+	Sanitiza o valor em dinheiro 
+	Ex.: R$ 123,45 => 123.45
+*/
 window.sanitizeMoney = function(str) {
 	str = str.replace(/\./g, '');
 	str = str.replace(',', '.');
@@ -70,8 +79,10 @@ window.dispatchErrorMessages = function(errors, wrapper = '') {
 	});
 }
 
-// Altera o estado de um botão passado, adicionando ou removendo
-// o ícone de loading
+/*
+	Altera o estado de um botão passado, 
+	adicionando ou removendo o ícone de loading
+*/
 window.loadingBtn = function(btn, add) {
 
 	if (add) {
@@ -85,13 +96,28 @@ window.loadingBtn = function(btn, add) {
 	}
 }
 
+/*
+	Retorna a URL atual sem parâmetros.
+*/
 window.getLocationURL = function() {
 	return window.location.protocol + '//' + window.location.host + window.location.pathname;
 }
 
-// Scrolla para o elemento informado.
+/*
+	Scrolla para o elemento informado.
+*/
 window.scrollToElement = function(element, duration = 400) {
   $('html, body').animate({
     scrollTop: element.offset().top - 100
   }, duration);
+}
+
+/*
+	Abre a URL passada em uma nova guia.
+*/
+window.openInNewTab = function(href) {
+  Object.assign(document.createElement('a'), {
+    target: '_blank',
+    href: href,
+  }).click();
 }

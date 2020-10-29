@@ -153,7 +153,7 @@
 
 					<tbody>
 						@foreach($orders as $order)
-						<tr onclick="window.location='{{ $order->path() }}'" class="clickable-link @if ($order->is_closed) table-secondary @endif">
+						<tr data-url="{{ $order->path() }}" class="clickable-link @if ($order->is_closed) table-secondary @endif">
 							<td>{{ $order->client->name }}</td>
 							<td>{{ $order->code }}</td>
 							<td>{{ $order->quantity }}</td>

@@ -42,3 +42,15 @@ $(document).on('click', '.btn-today', function(e) {
 });
 
 $('[data-toggle="tooltip"]').tooltip();
+
+$('.clickable-link').on('mousedown', function(e) {
+  let url = $(this).attr('data-url');
+
+  if (e.which == 1) {
+    window.location = url;
+  }
+
+  if (e.which == 2) {
+    openInNewTab(url);
+  }
+});

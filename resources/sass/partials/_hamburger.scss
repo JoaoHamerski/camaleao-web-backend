@@ -1,6 +1,6 @@
 .hamburger {
 	position: absolute;
-	z-index: 1051;
+	z-index: 1010;
 	padding: 15px 15px;
 	display: inline-block;
 	cursor: pointer;
@@ -102,5 +102,11 @@
 				transition: bottom 0.075s ease, transform 0.075s 0.12s cubic-bezier(0.215, 0.61, 0.355, 1); 
 			}
 		}
+	}
+}
+
+@include media-breakpoint-down(xs) {
+	.hamburger {
+		z-index: 1021;
 	}
 }

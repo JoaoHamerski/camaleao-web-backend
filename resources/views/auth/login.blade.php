@@ -35,6 +35,13 @@
                             @enderror
                         </div>
 
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="remember">
+                                <label class="custom-control-label" for="remember">Mantenha-me conectado</label>
+                            </div>
+                        </div>      
+
                         <button type="submit" id="btnLogin" class="btn btn-block btn-primary">Entrar</button>
                     </form>
                 </div>
@@ -43,13 +50,13 @@
     </div>
 @endsection
 @push('script')
-<script>
-    $('#btnLogin').on('click', function(e) {
-        let $btn = $(this);
+    <script>
+        $('#btnLogin').on('click', function(e) {
+            let $btn = $(this);
 
-        loadingBtn($btn, true);
+            loadingBtn($btn, true);
 
-        $('form').submit();
-    });
-</script>
+            $('form').submit();
+        });
+    </script>
 @endpush
