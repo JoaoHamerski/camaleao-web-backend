@@ -79,7 +79,7 @@ Route::middleware('auth')->group(function() {
 		});
 	});
 
-	Route::name('expenses.')->middleware('role:gerencia,atendimento')->group(function() {
+	Route::name('expenses.')->middleware('role:gerencia')->group(function() {
 		Route::get('/despesas', [ExpensesController::class, 'index'])->name('index');
 		Route::get('/despesas/cadastro', [ExpensesController::class, 'create'])->name('create');
 		Route::get('/despesas/cadastro/get-inline-form', [ExpensesController::class, 'getInlineForm']);
@@ -92,7 +92,7 @@ Route::middleware('auth')->group(function() {
 		Route::get('/despesas/{expense}/get-view-receipt', [ExpensesController::class, 'getViewReceipt']);
 	});
 
-	Route::name('expense_types.')->middleware('role:gerencia,atendimento')->group(function() {
+	Route::name('expense_types.')->middleware('role:gerencia')->group(function() {
 		Route::post('/despesas/tipo-de-despesa', [ExpenseTypesController::class, 'store'])->name('store');
 		Route::patch('/despesas/tipo-de-despesa/{expense_type}', [ExpenseTypesController::class, 'patch'])->name('patch');
 		Route::delete('/despesas/tipo-de-despesa/{expense_type}/deletar', [ExpenseTypesController::class, 'destroy'])->name('destroy');
