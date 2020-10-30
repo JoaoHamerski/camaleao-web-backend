@@ -9,6 +9,7 @@ class ExpenseVia extends Model
 {
     use HasFactory;
 
+    protected $table = 'vias';
     /**
      * Uma via tem várias despesas
      * 

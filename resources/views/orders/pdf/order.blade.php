@@ -74,7 +74,7 @@
 		</li>
 
 		<li class="text-danger">
-			<strong>Data de entrega:</strong> {{ Helper::date($order->delivery_date, '%d/%m/%Y') }}
+			<strong>Data de entrega:</strong> {{ $order->delivery_date ? Helper::date($order->delivery_date, '%d/%m/%Y') : '[não informado]' }}
 		</li>
 
 	</ul>
@@ -96,7 +96,7 @@
 				<strong>Quantidade:</strong> {{ $order->quantity }} CAMISAS
 			</li>
 			<li class="text-danger">
-				<strong>Data de entrega: </strong> {{ $order->delivery_date ? Helper::date($order->delivery_date, '%d/%m/%Y') : '[não-informado]' }}
+				<strong>Data de entrega: </strong> {{ $order->delivery_date ? Helper::date($order->delivery_date, '%d/%m/%Y') : '[não informado]' }}
 			</li>
 			<li>
 				<strong>Costureira / Valor: </strong>

@@ -142,27 +142,23 @@ class Order extends Model
      * @param $field
      * @param $publicRelative Determina se o caminho deve ser relativo a pasta public
      * 
-     * @return array $paths
+     * @return array
      */
     public function getPaths($field, $publicRelative = false) 
     {
-    	$paths = [];
-        $relatedPaths = [
+        $folderName = [
             'art_paths' => 'imagens_da_arte',
             'size_paths' => 'imagens_do_tamanho',
             'payment_voucher_paths' => 'comprovantes'
-        ];
+        ][$field];
 
-        foreach($relatedPaths as $fieldPath => $folderName) {
-            if ($field == $fieldPath && ! empty($this->{$field})) {
-                foreach(json_decode($this->{$field}) as $path) {
-                    $paths[] = $publicRelative
-                        ? "public/$folderName/$path"
-                        : "/storage/$folderName/$path";
-                }
-            }
-        }
+        if (! $this->{$field})
+            return [];
 
-    	return $paths;
+        return array_map(function($filename) use ($publicRelative, $folderName) {
+            return $publicRelative
+                ? "public/$folderName/$filename"
+                : "/storage/$folderName/$filename"; 
+        }, json_decode($this->{$field}));
     }
 }

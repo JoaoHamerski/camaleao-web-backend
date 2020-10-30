@@ -12,7 +12,7 @@
 		</thead>
 		<tbody>
 			@foreach ($orders as $order)
-				<tr contextmenu="mymenu" data-url="{{ $order->path() }}" 
+				<tr data-url="{{ $order->path() }}" 
 					class="clickable-link @if ($order->is_closed) table-secondary @endif" 
 					data-id="{{ $order->id }}">
 					<td>{{ $order->code }}</td>
