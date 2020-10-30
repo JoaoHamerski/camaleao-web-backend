@@ -13,14 +13,61 @@ a {
 	text-decoration: none !important;
 }
 
-.toast-custom {
-	z-index: 1110; 
-	position: absolute; 
-	top: 10px; 
-	right: 10px; 
-	background-color: transparent;
+.swal2-content {
+	font-size: .9rem;
+	text-align: left !important; 
 }
 
-.table tr.clickable-link:hover {
+.swal2-title {
+	font-size: 1.5rem !important;
+	margin-bottom: 2rem !important;
+}
+
+input[disabled="disabled"] {
+	cursor: not-allowed;
+}
+
+.loading-page {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: rgba(255, 255, 255, .3);
+	z-index: 999;
+
+	.spinner-border {
+		width: 3rem;
+		height: 3rem;
+		position: relative;
+		top: 35%;
+		left: 45%;
+	}
+
+	@include media-breakpoint-down(sm) {
+		.spinner-border {
+			left: 50%;
+			width: 1rem;
+			height: 1rem;
+		}
+	}
+}
+
+.img-wrapper .btn-delete-image {
 	cursor: pointer;
+	z-index: 1000;
+	top: 0;
+	right: 0;
+	position: absolute;
+	background: $danger;
+	color: white;
+	padding: .1rem .6rem;
+	font-weight: bolder;
+	border-top-right-radius: .25rem;
+	border-bottom-left-radius: .25rem;
+	opacity: .7;
+}
+
+.img-wrapper .btn-delete-image:hover {
+	opacity: 1;
 }

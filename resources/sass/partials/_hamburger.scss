@@ -18,7 +18,7 @@
 	&:not(.is-active) {
 		.hamburger-inner {
 			&, &::before, &::after {
-				background-color: black;
+				background-color: black !important;
 			}
 		}
 	}
@@ -48,10 +48,10 @@
 		margin-top: 2px; 
 
 		&, &::before, &::after {
-			width: 25px;
-			height: 3px;
-			background-color: $white;
-			border-radius: 4px;
+			width: 23px;
+			height: 2.5px;
+			background-color: rgba($white, .9) !important;
+			border-radius: 2px;
 			position: absolute;
 			transition-property: transform;
 			transition-duration: 0.15s;

@@ -1,7 +1,3 @@
-<menu type="context" id="mymenu">
-    <menuitem>Teste</menuitem>
-</menu>
-
 <div class="table-responsive">
 	<table class="table table-hover">
 		<thead>
