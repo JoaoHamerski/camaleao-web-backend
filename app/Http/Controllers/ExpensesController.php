@@ -90,7 +90,7 @@ class ExpensesController extends Controller
                 $data = array_replace($data, ['receipt_path' => $filename]);
             }
 
-            Expense::create(array_merge($data);
+            Expense::create($data);
         }
 
         return response()->json([
