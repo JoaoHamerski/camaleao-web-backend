@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\ExpenseVia;
+use App\Models\Via;
 use App\Util\Validate;
 use App\Util\Sanitizer;
 use App\Models\Expense;
@@ -18,10 +18,18 @@ class ExpensesController extends Controller
 
     public function index() 
     {
+        // if (\Auth::user()->hasRole('gerencia')) {
+        //     $expenses = Expense::latest();
+        // }
+
+        // if (\Auth::user()->hasRole('atendimento')) {
+        //     $expenses = Expense::where('user_id', \Auth::user()->id)->latest();
+        // }
+
     	return view('expenses.index', [
-            'expenses' => Expense::latest()->paginate(10),
+            'expenses' => $expenses->paginate(10),
             'expenseTypes' => ExpenseType::all(),
-            'expenseVias' => ExpenseVia::all()
+            'vias' => Via::all()
         ]);
     }
 
@@ -29,7 +37,7 @@ class ExpensesController extends Controller
     {
     	return view('expenses.create', [
             'expenseTypes' => ExpenseType::all(),
-            'expenseVias' => ExpenseVia::all()
+            'vias' => Via::all()
         ]);
     }
 
@@ -66,6 +74,7 @@ class ExpensesController extends Controller
                     'expense_type_id' => $expense[3],
                     'expense_via_id' => $expense[4],
                     'receipt_path' => $filename ?? null,
+                    // 'user_id' => \Auth::user()->id,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                 ];
@@ -78,10 +87,10 @@ class ExpensesController extends Controller
                     $this->getFilepath('receipt_path')
                 );
 
-                $data = array_replace($data, ['recept_path' => $filename]);
+                $data = array_replace($data, ['receipt_path' => $filename]);
             }
 
-            Expense::create($data);
+            Expense::create(array_merge($data);
         }
 
         return response()->json([
@@ -90,7 +99,8 @@ class ExpensesController extends Controller
         ], 200);
     }
 
-    public function patch(Expense $expense, Request $request) {
+    public function patch(Expense $expense, Request $request) 
+    {
         $validator = $this->validator(
             $data = $this->getFormattedData($request->all())
         );
@@ -258,7 +268,7 @@ class ExpensesController extends Controller
             'view' => view('expenses._form-modal', [
                 'expense' => $expense,
                 'expenseTypes' => ExpenseType::all(),
-                'expenseVias' => ExpenseVia::all(),
+                'vias' => Via::all(),
                 'method' => 'PATCH'
             ])->render()
         ], 200);
@@ -270,7 +280,7 @@ class ExpensesController extends Controller
     		'message' => 'success',
     		'view' => view('expenses._inline-form', [
                 'expenseTypes' => ExpenseType::all(),
-                'expenseVias' => ExpenseVia::all()
+                'vias' => Via::all()
             ])->render()
     	], 200);
     }
