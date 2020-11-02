@@ -27,7 +27,7 @@ class ExpensesController extends Controller
         // }
 
     	return view('expenses.index', [
-            'expenses' => $expenses->paginate(10),
+            'expenses' => Expense::latest()->paginate(10),
             'expenseTypes' => ExpenseType::all(),
             'vias' => Via::all()
         ]);
