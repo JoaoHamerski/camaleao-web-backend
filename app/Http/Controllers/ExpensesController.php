@@ -244,7 +244,7 @@ class ExpensesController extends Controller
         return Validator::make($data, [
             $isArray ? 'description.*' : 'description'  => 'required',
             $isArray ? 'expense_type_id.*' : 'expense_type_id' => 'required|exists:expense_types,id',
-            $isArray ? 'expense_via_id.*' : 'expense_via_id' => 'required|exists:vias,id',
+            $isArray ? 'expense_via_id.*' : 'expense_via_id' => 'required|exists:expense_vias,id',
             $isArray ? 'value.*' : 'value' => 'required',
             $isArray ? 'date.*' : 'date' => 'required|date',
             $isArray ? 'receipt_path.*' : 'receipt_path' => 'nullable|file|mimes:jpg,jpeg,bmp,png,gif,svg,pdf'
