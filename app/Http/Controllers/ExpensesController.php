@@ -78,7 +78,7 @@ class ExpensesController extends Controller
                     $this->getFilepath('receipt_path')
                 );
 
-                $data = array_replace($data, ['recept_path' => $filename]);
+                $data = array_replace($data, ['receipt_path' => $filename]);
             }
 
             Expense::create($data);
