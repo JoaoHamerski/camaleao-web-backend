@@ -169,7 +169,7 @@ class OrdersController extends Controller
         $orders = $this->getRequestQuery($request);
 
         $pdf = \PDF::loadView('orders.pdf.report', [
-            'orders' => $orders->with('client')->latest()->get(),
+            'orders' => $orders->with('client')->get(),
             'city' => $city ?? null,
             'status' => Status::find($request->status) ?? null,
             'only_open' => $request->only_open
@@ -202,6 +202,11 @@ class OrdersController extends Controller
 
         if ($request->has('codigo') && ! empty($request->codigo)) {
             $orders->where('code', 'like', '%' . $request->codigo . '%');
+        }
+
+        if ($request->has('ordem')) {
+            if ($request->ordem == 'mais_recente') 
+                $orders->latest();
         }
 
         return $orders;
