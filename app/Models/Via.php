@@ -5,11 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ExpenseVia extends Model
+class Via extends Model
 {
     use HasFactory;
 
-    protected $table = 'vias';
+    /**
+     * Uma via tem vários pagamentos
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function payments()
+    {
+    	return $this->hasMany(Payment::class);
+    }
+
     /**
      * Uma via tem várias despesas
      * 

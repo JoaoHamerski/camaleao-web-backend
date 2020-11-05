@@ -63,7 +63,6 @@
 									<label class="custom-control-label" for="customRadioAll">Todos</label>
 								</div>
 							</div>
-
 							<button type="submit" class="btn btn-outline-primary">Gerar relatório</button>
 						</div>
 				</form>
@@ -88,10 +87,18 @@
 				<div class="card-body">
 					<h5 class="font-weight-bold">Filtros</h5>
 					<form id="formGenerateReportProduction" target="_blank" method="GET" action="{{ route('orders.reportProductionDate') }}">
+
 						<div class="form-group">
 							<label class="font-weight-bold" for="data_de_producao">Data de produção </label>
-							<input class="form-control" id="data_de_producao" type="text" name="data_de_producao" placeholder="dd/mm/aaaa">
+							<input class="form-control" 
+								id="data_de_producao" 
+								type="text" 
+								data-toggle="datepicker"
+								autocomplete="off" 
+								name="data_de_producao" 
+								placeholder="dd/mm/aaaa">
 						</div>
+
 						<div class="form-group">
 								<label class="font-weight-bold" for="">Pedidos: &nbsp;&nbsp;</label>
 								<div class="custom-control custom-radio custom-control-inline">
@@ -132,7 +139,8 @@
 	</form>
 
 	<div class="card">
-		<div class="card-header bg-primary font-weight-bold text-white">
+		<div class="card-header bg-primary font-weight-bold text-white position-relative">
+			<a href="{{ route('orders.index') }}" class="stretched-link"></a>
 			<i class="fas fa-boxes fa-fw mr-1"></i>Lista de todos pedidos
 		</div>
 
@@ -186,6 +194,10 @@
 	</div>
 @endsection
 
+@push('css')
+	<link rel="stylesheet" href="{{ mix('css/_date-picker.css') }}">
+@endpush
 @push ('script')
 	<script src="{{ mix('js/partials/orders/index.js') }}"></script>
+	<script src="{{ mix('js/_date-picker.js') }}"></script>
 @endpush

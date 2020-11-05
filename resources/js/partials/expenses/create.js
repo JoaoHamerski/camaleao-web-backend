@@ -46,14 +46,22 @@ $('#btnNewExpense').on('click', function(e) {
 
 	loadingBtn($(this), true);
 
-	axios.get(getLocationURL() + '/get-inline-form')
-		.then(response => {
-			$('#btnNewExpense').parent().before(response.data.view);
-		})
-		.catch(error => {})
-		.then(function() {
-			loadingBtn($btn, false);
-		});
+	let index = $('.form-inline-wrapper').last().attr('data-index');
+
+	index = isNaN(index) ? 0 : index;
+
+	axios.get(getLocationURL() + '/get-inline-form', {
+		params: {
+			index: +index + 1
+		}
+	})
+	.then(response => {
+		$('#btnNewExpense').parent().before(response.data.view);
+	})
+	.catch(error => {})
+	.then(function() {
+		loadingBtn($btn, false);
+	});
 });
 
 $(document).on('input', 'input[type=file]', function() {
@@ -110,6 +118,7 @@ $('#formExpenses button[type="submit"]').on('click', function(e) {
 	let formData = new FormData(document.querySelector('#formExpenses'));
 	let $btn = $(this);
 
+
 	loadingBtn($btn, true);
 
 	axios.post(getLocationURL(), formData)
@@ -117,7 +126,28 @@ $('#formExpenses button[type="submit"]').on('click', function(e) {
 			window.location = response.data.redirect;
 		})
 		.catch(error => {
+			console.log(error.response);
 			loadingBtn($btn, false);
 			dispatchErrorMessages(error.response.data.errors);
 		});
+});
+
+$(document).on('change', '[name*=expense_type_id]', function(e) {
+	let dataIndex = $(this).parents('.form-inline-wrapper').attr('data-index');
+	let formGroup = `
+		<div class="form-row">
+			<div class="form-group col col-md-4">
+				<input type="text" class="form-control" name="employee_name[${dataIndex}]" placeholder="Nome do funcionário...">
+			</div>
+		</div>
+	`;
+
+
+	let text = $(`[name="expense_type_id[${dataIndex}]"] option:selected`).text().trim();
+
+	if (text.toUpperCase() == 'mão de obra'.toUpperCase()) {
+		$(this).parents('.form-inline-wrapper').find('.form-row:nth-child(2)').after($(formGroup));
+	} else {
+		$(this).parents('.form-inline-wrapper').find('.form-row:nth-child(3)').remove();
+	}
 });

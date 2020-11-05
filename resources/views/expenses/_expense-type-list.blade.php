@@ -7,8 +7,8 @@
 		<div class="mr-2">
 			<a href="" class="btn-edit-expense-type">Editar</a>
 		</div>
-		<div>
+{{-- 		<div>
 			<a href="" class="text-danger btn-delete-expense-type">Deletar</a>
-		</div>
+		</div> --}}
 	</div>
 </li>

@@ -1,16 +1,16 @@
-<div class="form-inline-wrapper d-flex flex-column no-gutters">
+<div data-index="{{ $index ?? 0 }}" class="form-inline-wrapper d-flex flex-column no-gutters">
 	<div class="form-row d-flex flex-column flex-lg-row col">
 		<div class="form-group col">
-			<input class="form-control" type="text" placeholder="Descrição..." name="description[]">
+			<input class="form-control" type="text" placeholder="Descrição..." name="description[{{ $index ?? 0 }}]">
 		</div>
 
 		<div class="form-group col">
-			<input class="form-control" type="text" name="value[]">
+			<input class="form-control" type="text" name="value[{{ $index ?? 0 }}]">
 		</div>
 
 		<div class="form-group col">
 			<div class="input-group">
-				<input class="form-control" type="text" name="date[]" placeholder="dd/mm/aaaa">
+				<input class="form-control" type="text" name="date[{{ $index ?? 0 }}]" placeholder="dd/mm/aaaa">
 				<div class="input-group-append">
 					<button class="btn btn-outline-primary btn-today">Hoje</button>
 				</div>
@@ -18,33 +18,32 @@
 		</div>
 	</div>
 
-	<div class="form-row d-flex flex-column flex-lg-row  col">
+	<div class="form-row d-flex flex-column flex-lg-row col">
 		<div class="form-group col">
-			<select class="custom-select" name="expense_type_id[]">
+			<select class="custom-select" name="expense_type_id[{{ $index ?? 0 }}]">
 				<option value="">Selecione o tipo</option>
-				@foreach($expenseTypes as $expenseType)
-					<option value="{{ $expenseType->id }}">{{ $expenseType->name }}</option>
+				@foreach($expenseTypes as $type)
+					<option value="{{ $type->id }}">{{ $type->name }}</option>
 				@endforeach
 			</select>
 		</div>
 
 
 		<div class="form-group col">
-			<select class="custom-select" name="expense_via_id[]">
+			<select class="custom-select" name="expense_via_id[{{ $index ?? 0 }}]">
 				<option value="">Selecione a via</option>
-				@foreach($expenseVias as $expenseVia)
-					<option value="{{ $expenseVia->id }}">{{ $expenseVia->name }}</option>
+				@foreach($vias as $via)
+					<option value="{{ $via->id }}">{{ $via->name }}</option>
 				@endforeach
 			</select>
 		</div>
 
 		<div class="form-group col">
 			<div class="custom-file">
-				<input class="custom-file-input" name="receipt_path[]" type="file" accept="image/*,.pdf">
+				<input class="custom-file-input" name="receipt_path[{{ $index ?? 0 }}]" type="file" accept="image/*,.pdf">
 				<label class="custom-file-label" for="receipt_path">Comprovante</label>
 			</div>
 		</div>
-	
 	</div>
 	
 	<div class="form-group col col-md-1">

@@ -10,7 +10,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form action="" method="POST">
+        <form method="POST">
           <div class="form-group">
             <label class="font-weight-bold" for="value">Valor </label>
             <input class="form-control" id="value" name="value" type="text">  
@@ -25,6 +25,16 @@
               </div>
             </div>
           </div>
+
+          <div class="form-group">
+            <label for="via_id" class="font-weight-bold">Via</label>
+            <select class="custom-select" name="payment_via_id" id="payment_via_id">
+              <option value="">Selecione a via</option>
+              @foreach($vias as $via)
+                <option value="{{ $via->id }}">{{ $via->name }}</option>
+              @endforeach
+            </select>
+          </div>  
 
           <div class="form-group">
             <label class="font-weight-bold" for="note">Observação</label> <small class="text-secondary">(opcional)</small>

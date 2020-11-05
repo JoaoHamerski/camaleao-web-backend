@@ -3,25 +3,40 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\ExpenseVia;
+use App\Models\Via;
 use App\Util\Validate;
 use App\Util\Sanitizer;
 use App\Models\Expense;
 use App\Models\ExpenseType;
-use Illuminate\Http\Request;
 use App\Traits\FileManager;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ExpensesController extends Controller
 {   
     use FileManager;
 
-    public function index() 
+    public function index(Request $request) 
     {
+        $expenses = Expense::query();
+
+        if ($request->has('descricao')) {
+            $expenses->where('description', 'like', '%' . $request->descricao . '%');
+        }
+
+        if (\Auth::user()->hasRole('gerencia')) {
+            $expenses->latest();
+        }
+
+        if (\Auth::user()->hasRole('atendimento')) {
+            $expenses->where('user_id', \Auth::user()->id)->latest();
+        }
+
+ 
     	return view('expenses.index', [
-            'expenses' => Expense::latest()->paginate(10),
+            'expenses' => $expenses->paginate(10),
             'expenseTypes' => ExpenseType::all(),
-            'expenseVias' => ExpenseVia::all()
+            'vias' => Via::all()
         ]);
     }
 
@@ -29,7 +44,7 @@ class ExpensesController extends Controller
     {
     	return view('expenses.create', [
             'expenseTypes' => ExpenseType::all(),
-            'expenseVias' => ExpenseVia::all()
+            'vias' => Via::all()
         ]);
     }
 
@@ -46,31 +61,23 @@ class ExpensesController extends Controller
             ], 422);
         }
 
-
         if (is_array($data[array_key_first($data)])) {
             $expenses = collect($data);
 
-            Expense::insert($expenses->transpose()->map(function($expense, $key) {
-                if (isset($expense[5])) {
+            $expenses->transpose()->map(function($expense, $key) {
+                if (isset($expense['receipt_path'])) {
                     $filename = $this->uploadFile(
-                        $expense[5],
+                        $expense['receipt_path'],
                         $this->getFilepath('receipt_path'),
                         $key
                     );
                 }
 
-                return [
-                    'description' => $expense[0],
-                    'value' => $expense[1],
-                    'date' => $expense[2],
-                    'expense_type_id' => $expense[3],
-                    'expense_via_id' => $expense[4],
-                    'receipt_path' => $filename ?? null,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now()
-                ];
-            })->toArray());
-
+                Expense::create(array_merge($expense, [
+                    'user_id' => \Auth::user()->id,
+                    'receipt_path' => $filename ?? NULL 
+                ]));
+            });
         } else {
             if ($request->hasFile('receipt_path')) {
                 $filename = $this->uploadFile(
@@ -81,7 +88,7 @@ class ExpensesController extends Controller
                 $data = array_replace($data, ['receipt_path' => $filename]);
             }
 
-            Expense::create($data);
+            Expense::create(array_merge($data, ['user_id' => \Auth::user()->id]));
         }
 
         return response()->json([
@@ -90,7 +97,10 @@ class ExpensesController extends Controller
         ], 200);
     }
 
-    public function patch(Expense $expense, Request $request) {
+    public function patch(Expense $expense, Request $request) 
+    {
+        $this->authorize('update', $expense);
+
         $validator = $this->validator(
             $data = $this->getFormattedData($request->all())
         );
@@ -109,6 +119,10 @@ class ExpensesController extends Controller
             );
 
             $data = array_replace($data, ['receipt_path' => $filename]);
+        }
+
+        if (($expense->type->id == 9) && $data['expense_type_id'] != 9) {
+            $data['employee_name'] = null;
         }
 
         $expense->update($data);
@@ -234,6 +248,18 @@ class ExpensesController extends Controller
             }
         }
 
+        if (isset($data['employee_name']) && is_array($data['employee_name'])) {
+            foreach($data['employee_name'] as $key => $value) {
+                if (isset($value)) {
+                    $data['employee_name'][$key] = Sanitizer::name($value);
+                }
+            }
+        } else {
+            if (isset($data['employee_name'])) {
+                $data['employee_name'] = Sanitizer::name($data['employee_name']);
+            }
+        }
+
         return $data;
     }
 
@@ -244,7 +270,7 @@ class ExpensesController extends Controller
         return Validator::make($data, [
             $isArray ? 'description.*' : 'description'  => 'required',
             $isArray ? 'expense_type_id.*' : 'expense_type_id' => 'required|exists:expense_types,id',
-            $isArray ? 'expense_via_id.*' : 'expense_via_id' => 'required|exists:expense_vias,id',
+            $isArray ? 'expense_via_id.*' : 'expense_via_id' => 'required|exists:vias,id',
             $isArray ? 'value.*' : 'value' => 'required',
             $isArray ? 'date.*' : 'date' => 'required|date',
             $isArray ? 'receipt_path.*' : 'receipt_path' => 'nullable|file|mimes:jpg,jpeg,bmp,png,gif,svg,pdf'
@@ -258,19 +284,20 @@ class ExpensesController extends Controller
             'view' => view('expenses._form-modal', [
                 'expense' => $expense,
                 'expenseTypes' => ExpenseType::all(),
-                'expenseVias' => ExpenseVia::all(),
+                'vias' => Via::all(),
                 'method' => 'PATCH'
             ])->render()
         ], 200);
     }
     
-    public function getInlineForm()
+    public function getInlineForm(Request $request)
     {
     	return response()->json([
     		'message' => 'success',
     		'view' => view('expenses._inline-form', [
                 'expenseTypes' => ExpenseType::all(),
-                'expenseVias' => ExpenseVia::all()
+                'vias' => Via::all(),
+                'index' => $request->index
             ])->render()
     	], 200);
     }

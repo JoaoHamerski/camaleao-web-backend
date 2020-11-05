@@ -79,14 +79,14 @@
 			@forelse($expenses as $expense)
 				<tr>
 					<td>{{ $expense->description }}</td>
-					<td>{{ $expense->expenseType->name }}</td>
-					<td>{{ $expense->expenseVia->name }}</td>
+					<td>{{ $expense->type->name }}</td>
+					<td>{{ $expense->via->name }}</td>
 					<td>{{ Mask::money($expense->value) }}</td>
 					<td>{{ Helper::date($expense->date, '%d/%m/%Y') }}</td>
 				</tr>
 			@empty
 				<tr>
-					<td class="text-center" colspan="4">Nenhuma despesa encontrada</td>
+					<td class="text-center" colspan="5">Nenhuma despesa encontrada</td>
 				</tr>
 			@endforelse
 		</tbody>

@@ -33,7 +33,6 @@ $('#btnCreateOrder').on('click', function(e) {
 			window.location = response.data.redirect;
 		})
 		.catch(error => {
-			console.log(error.response);
 			dispatchErrorMessages(error.response.data.errors);
 			loadingBtn($btn, false);
 		});
@@ -75,9 +74,5 @@ $('.btn-delete-image, .btn-delete-payment-voucher').on('click', function(e) {
 	})
 	.then(response => {
 		$wrapper.remove();
-		console.log(response.data);
-	})
-	.catch(error => {
-		console.log(error.response);
-	})
+	});
 });

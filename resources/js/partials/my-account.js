@@ -12,12 +12,9 @@ $('#btnUpdateUser').on('click', function(e) {
 		password_confirmation: $('[name=password_confirmation]').val()
 	})
 	.then(response => {
-		console.log(response.data);
 		window.location = response.data.redirect;
 	})
 	.catch(error => {
-		console.log(error.response);
-
 		loadingBtn($btn, false);
 		dispatchErrorMessages(error.response.data.errors);
 	});
@@ -40,10 +37,7 @@ $('#btnDeleteAccount').on('click', function(e) {
 			axios.delete(getLocationURL() + '/deletar')
 				.then(response => {
 					window.location = response.data.redirect;
-				})
-				.catch(error => {
-					console.log(error.response);
-				});	
+				});
 		}
 	});
 });

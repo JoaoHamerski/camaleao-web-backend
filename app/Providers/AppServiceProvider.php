@@ -44,9 +44,14 @@ class AppServiceProvider extends ServiceProvider
     private function bootCollectionMacros()
     {
         Collection::macro('transpose', function () {
-            $items = array_map(function (...$items) {
-                return $items;
-            }, ...$this->values());
+            $items = [];
+            $arr = $this->all();
+
+            foreach ($arr as $key => $subarr) {
+                foreach ($subarr as $subkey => $subvalue) {
+                    $items[$subkey][$key] = $subvalue;
+                }
+            }
 
             return new static($items);
         });

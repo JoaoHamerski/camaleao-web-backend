@@ -55,23 +55,25 @@
 }
 
 .accordion-sidebar {
-
-	ul > li > ul  a:before {
-		content: '';
-		margin-left: 1rem;
-	}
-	
-	.list-title-item {
-		font-weight: 600;
-		letter-spacing: 1px;
+	[data-toggle="collapse"] + div ul {
+		a {
+			padding-left: 3rem;
+		}
 	}
 
-	.collapse-sb-item {
-		padding: .9rem;
-		cursor: pointer;
+	[data-toggle="collapse"] .icon {
+		position: absolute;
+		right: 15px;
+		top: 10px
 	}
 
-	.collapse-sb-item:hover {
-		background-color: rgba(black, .3);
+	[data-toggle="collapse"]:not(.collapsed) .icon,
+	[data-toggle="collapse"].colllapsed .icon {
+		transform: rotate(0);
+	}
+
+	[data-toggle="collapse"] .icon {
+		transition: transform .2s;
+		transform: rotate(90deg);
 	}
 }

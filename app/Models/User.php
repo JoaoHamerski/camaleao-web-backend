@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Spatie\Activitylog\Traits\CausesActivity;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -9,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, CausesActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -68,5 +69,15 @@ class User extends Authenticatable
         }
 
         return $this->role()->where('name', $role)->exists();
+    }
+
+    /**
+     * Um usuário possui muitas despesas
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
     }
 }

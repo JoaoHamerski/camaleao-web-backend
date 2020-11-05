@@ -17,7 +17,7 @@ class ClientsController extends Controller
             $clients->where('name', 'like', '%' . $request->nome . '%');
         }
 
-    	return view('index', [
+    	return view('clients.index', [
             'clients' => $clients->latest()->paginate(10)->appends($request->query()),
             'cities' => Client::all()->pluck('city')->unique()->sort()
         ]);
@@ -33,7 +33,7 @@ class ClientsController extends Controller
         return view('clients.show', [
             'client' => $client,
             'orders' => $orders->latest()->paginate(10)->appends($request->query()),
-            'cities' => Client::all()->pluck('city')->sort()
+            'cities' => Client::all()->pluck('city')->unique()->sort()
         ]);
     }
 

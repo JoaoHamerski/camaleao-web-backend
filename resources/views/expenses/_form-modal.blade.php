@@ -6,8 +6,10 @@
   <div class="form-group">
     <label class="font-weight-bold" for="description">Descrição</label>
     <input class="form-control" 
-      type="text" 
+      type="text"
+      id="description" 
       name="description" 
+      placeholder="Descrição sobre a despesa..." 
       @if ($method == 'PATCH') value="{{ $expense->description }}" @endif >
   </div>
 
@@ -21,13 +23,25 @@
     </select>
   </div>
 
+  @if ($method == 'PATCH' && strcasecmp($expense->type->name, 'mão de obra') == 0)
+    <div class="form-group">
+      <label for="employee_name" id="employee_name" class="font-weight-bold">Nome do funcionário</label>
+      <small class="text-secondary">(opcional)</small>
+      <input type="text" 
+        name="employee_name" 
+        class="form-control"
+        value="{{ $expense->employee_name }}" 
+        >
+    </div>
+  @endif  
 
   <div class="form-row d-flex flex-column flex-md-row">
     <div class="form-group col">
       <label class="font-weight-bold" for="value">Valor</label>
     	<input class="form-control" 
         type="text" 
-        name="value" 
+        name="value"
+        id="value" 
         @if($method == 'PATCH') value="{{ Mask::money($expense->value) }}" @endif>
     </div>
     <div class="form-group col">
@@ -35,8 +49,8 @@
       <select class="custom-select" name="expense_via_id" id="expense_via_id">
         <option value="">Selecione a via</option>
 
-        @foreach($expenseVias as $via)
-          <option @if ($method == 'PATCH' && $via->id == $expense->expenseVia->id) selected="selected" @endif value="{{ $via->id }}">{{ $via->name }}</option>
+        @foreach($vias as $via)
+          <option @if ($method == 'PATCH' && $via->id == $expense->via->id) selected="selected" @endif value="{{ $via->id }}">{{ $via->name }}</option>
         @endforeach
       </select>
     </div>
@@ -76,8 +90,14 @@
 
   <div class="form-group">
     <label for="date" class="font-weight-bold">Data</label>
-  	<input class="form-control" type="text" id="date" name="date" placeholder="dd/mm/aaaa" 
-      @if($method == 'PATCH') value="{{ Helper::date($expense->date, '%d/%m/%Y') }}" @endif>
+    	<input class="form-control" 
+        type="text" 
+        id="date" 
+        name="date" 
+        placeholder="dd/mm/aaaa" 
+        data-toggle="datepicker"
+        autocomplete="off" 
+        @if($method == 'PATCH') value="{{ Helper::date($expense->date, '%d/%m/%Y') }}" @endif>
   </div>
 
   @if ($method == 'PATCH')

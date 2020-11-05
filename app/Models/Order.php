@@ -3,14 +3,66 @@
 namespace App\Models;
 
 use App\Traits\FileManager;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
-    use HasFactory, FileManager;
+    use HasFactory, FileManager, LogsActivity;
 
     protected $guarded = [];
+    protected static $logName = 'orders';
+    protected static $logUnguarded = true;
+    protected static $logOnlyDirty = true;
+    protected static $logAttributes = ['client'];
+
+    /**
+     * Descrição que é cadastrada no log de atividades toda vez que um tipo
+     * de evento ocorre no model
+     * 
+     * @param string $eventname
+     * 
+     * @return string
+     */
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        if ($eventName == 'created') {
+            return '
+                <div data-event="created">
+                    <strong>:causer.name</strong> 
+                    cadastrou o pedido 
+                    <strong>:subject.code</strong> 
+                    para o cliente 
+                    <strong>:properties.attributes.client.name</strong>
+                </div>
+            ';
+        }
+
+        if ($eventName == 'updated') {
+            return '
+                <div data-event="updated">
+                    <strong>:causer.name</strong> 
+                    alterou os dados do pedido 
+                    <strong>:subject.code</strong> 
+                    do cliente 
+                    <strong>:properties.attributes.client.name</strong>
+                </div>
+            ';
+        }
+
+        if ($eventName == 'deleted') {
+            return '
+                <div data-event="deleted">
+                    <strong>:causer.name</strong> 
+                    deletou o pedido 
+                    <strong>:subject.code</strong> 
+                    do cliente 
+                    <strong>:properties.attributes.client.name</strong>
+                </div>
+            ';
+        }
+    }
 
     /**
      * Get the route key for the model.

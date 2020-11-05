@@ -132,7 +132,7 @@ return [
     'custom' => [
         'value' => [
             'required' => 'Por favor, informe um valor',
-            'max_double' => 'Por favor, o pagamento não pode ser maior que o restante (:max)'
+            'max_double' => 'O pagamento não pode ser maior que o restante (:max)'
         ],
         'name' => [
             'required' => 'Por favor, informe um nome'
@@ -207,6 +207,7 @@ return [
         ],
         'expense_type*.required' => 'Por favor, informe o tipo de despesa',
         'expense_via*.required' => 'Por favor, informe a via',
+        'payment_via_id.required' => 'Por favor, informe a via'
     ],
 
     /*

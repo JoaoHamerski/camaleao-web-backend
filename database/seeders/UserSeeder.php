@@ -25,6 +25,11 @@ class UserSeeder extends Seeder
         ]);	
 
         User::factory()->create([
+            'email' => 'atendimento2@email.com',
+            'role_id' => 2
+        ]);
+
+        User::factory()->create([
         	'email' => 'design@email.com',
         	'role_id' => 1
         ]);

@@ -2,7 +2,24 @@
 	@if ($method == 'PATCH')
 		@method('PATCH')
 	@endif
+
 	<div class="form-row d-flex flex-column flex-md-row">
+		<div class="form-group col">
+			<label class="font-weight-bold" for="name">Nome do pedido</label>
+			<small class="text-secondary">(opcional)</small>	
+			<input class="form-control" 
+				type="text"
+				id="name"
+				name="name"
+				placeholder="Nome que descreva o pedido..." 
+				@if ($method == 'PATCH')
+				value="{{ $order->name }}"
+				@endif>
+		</div>
+	</div>
+
+	<div class="form-row d-flex flex-column flex-md-row">
+
 		<div class="form-group col">
 			<label class="font-weight-bold" for="code">Código </label>
 			<input class="form-control" 
@@ -50,6 +67,7 @@
 
 		<div class="form-group col">
 			<label class="font-weight-bold" for="production_date">Data de produção</label>
+			<small class="text-secondary">(opcional)</small>
 			<input class="form-control" 
 				type="text" 
 				id="production_date" 
@@ -59,6 +77,7 @@
 		</div>
 		<div class="form-group col">
 			<label class="font-weight-bold" for="delivery_date">Data de entrega </label>
+			<small class="text-secondary">(opcional)</small>
 			<input class="form-control" 
 				type="text" 
 				id="delivery_date" 
@@ -70,6 +89,7 @@
 
 	<div class="form-group">
 		<label class="font-weight-bold">Imagem da arte </label>
+		<small>(opcional)</small>
 		<div class="custom-file">
 			<input type="file" value="@old('art_paths')" name="art_paths[]" accept="image/*" class="custom-file-input" multiple="multiple">
 			@if ($method == 'PATCH')
@@ -96,6 +116,7 @@
 
 	<div class="form-group">
 		<label class="font-weight-bold">Imagem do tamanho </label>
+		<small class="text-secondary">(opcional)</small>
 		<div class="custom-file">
 			<input type="file" name="size_paths[]" accept="image/*" class="custom-file-input" multiple="multiple">
 			@if ($method == 'PATCH')
@@ -122,6 +143,7 @@
 
 	<div class="form-group">
 		<label class="font-weight-bold">Comprovante de pagamento </label>
+		<small class="text-secondary">(opcional)</small>
 		<div class="custom-file">
 			<input type="file" name="payment_voucher_paths[]" accept="image/*,.pdf" class="custom-file-input" multiple="multiple">
 			@if ($method == 'PATCH')

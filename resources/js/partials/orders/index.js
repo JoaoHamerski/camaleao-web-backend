@@ -17,7 +17,6 @@ $('#formGenerateReport button[type=submit]').on('click', function(e) {
 		$('#formGenerateReport').submit();
 	})
 	.catch(error => {
-		console.log(error.response);
 		dispatchErrorMessages(error.response.data.errors);
 	})
 	.then(function() {
@@ -41,7 +40,6 @@ $('#formGenerateReportProduction button[type=submit]').on('click', function(e) {
 		$('#formGenerateReportProduction').submit();
 	})
 	.catch(error => {
-		console.log(error.response);
 		dispatchErrorMessages(error.response.data.errors);
 	})
 	.then(function() {

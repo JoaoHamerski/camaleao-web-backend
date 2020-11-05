@@ -2,6 +2,8 @@
 	@forelse($paths as $path)
 		@if ($option == 'payment_voucher')
 			<h3 class="font-weight-bold text-center">Comprovante {{ $loop->index + 1 }}</h3>
+		@else
+			<h3 class="font-weight-bold text-center">Imagem {{ $loop->index + 1 }}</h3>
 		@endif
 		
 		@if (Helper::isImage($path))

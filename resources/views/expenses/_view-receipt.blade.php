@@ -1,7 +1,7 @@
 
 @if ($expense->getReceiptPath())
 	@if (Helper::isImage($expense->getReceiptPath()))
-		<div>
+		<div class="text-center">
 			<img class="img-fluid" src="{{ $expense->getReceiptPath() }}" alt="">
 		</div>
 	@else

@@ -12,10 +12,6 @@ $('a[data-option]').on('click', function(e) {
 	.then(response => {
 		$('#fileViewerModal').find('.modal-body').html(response.data.view);
 		$('#fileViewerModal').modal('show');
-		console.log(response);
-	})
-	.catch(error => {
-		console.log(error.response);
 	});
 });
 
@@ -64,7 +60,6 @@ $('#btnAddNote').on('click', function(e) {
     $('[name=order_note').val('');
   })
   .catch(error => { 
-    console.log(error.response);
   	dispatchErrorMessages(error.response.data.errors);
   })
   .then(function() {
@@ -89,21 +84,17 @@ $(document).on('click', '.btn-delete-item', function(e) {
 $('#btnAddPayment').on('click', function(e) {
   e.preventDefault();
 
-  $btn = $(this);
-  let id = $(this).attr('data-id');
+  let $btn = $(this),
+      id = $(this).attr('data-id'),
+      formData = new FormData($btn.parents('form').get(0));
 
   loadingBtn($btn, true);
 
-  axios.post(getLocationURL() + '/new-payment', {
-    value: $('[name=value]').val(),
-    date: $('[name=date]').val(),
-    note: $('[name=note]').val()
-  })
+  axios.post(getLocationURL() + '/new-payment', formData)
   .then(response => {
     window.location = response.data.redirect;
   })
   .catch(error => {
-    console.log(error.response);
     dispatchErrorMessages(error.response.data.errors);
   })
   .then(function() {

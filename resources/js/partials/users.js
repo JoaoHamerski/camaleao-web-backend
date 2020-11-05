@@ -15,7 +15,6 @@ $('#btnRegisterUser').on('click', function(e) {
 		window.location = response.data.redirect;
 	})
 	.catch(error => {
-		console.log(error.response);
 		dispatchErrorMessages(error.response.data.errors);
 		loadingBtn($btn, false);
 	});
@@ -53,9 +52,6 @@ $('.btn-change-role').on('click', function(e) {
 	axios.get(window.location.href + '/' + id + '/get-change-role-form')
 		.then(response => {
 			$('#changeRoleModal .modal-body').html(response.data.view);
-		})
-		.catch(error => {
-			console.log(error.response);
 		});
 });
 
@@ -66,17 +62,14 @@ $(document).on('click', '#btnSaveChangedRole', function(e) {
 	let $btn = $(this);
 
 	loadingBtn($btn, true);
-	console.log($('[name=role_id]'));
 
 	axios.post(window.location.href + '/' + id + '/change-role', {
 		role_id: $('[name=role_id_change]').val()	
 	})
 	.then(response => {
-		console.log(response.data);
 		window.location = response.data.redirect;
 	})	
 	.catch(error => {
-		console.log(error.response);
 		dispatchErrorMessages(error.response.data.errors);
 		loadingBtn($btn, false);
 	});

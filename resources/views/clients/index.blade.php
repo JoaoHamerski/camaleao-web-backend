@@ -35,7 +35,8 @@
 		</div>
 
 		<div class="card mt-2">
-			<div class="card-header bg-primary font-weight-bold text-white">
+			<div class="card-header bg-primary font-weight-bold text-white position-relative">
+				<a href="{{ route('clients.index') }}" class="stretched-link"></a>
 				<i class="fas fa-list fa-fw mr-1"></i> Lista de clientes
 			</div>
 

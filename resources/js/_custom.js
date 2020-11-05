@@ -29,15 +29,13 @@ $(document).on('click', '.btn-today', function(e) {
   e.preventDefault();
 
   let date = new Date();
-  let today = '';
-  let month = date.getMonth() + 1;
-
-  today += date.getDate() + '/';
-  today += (month < 10) ? '0' + month : month;
-  today += '/';
-  today += date.getFullYear();
-
-  $(this).parents('.input-group').find('input').val(today).focus();
+  let today = new Intl.DateTimeFormat('pt-BR').format(date);
+  
+  if (this.hasAttribute('data-target')) {
+    $($(this).attr('data-target')).val(today);
+  } else {
+    $(this).parents('.input-group').find('input').val(today).focus();
+  }
 
 });
 
@@ -53,4 +51,22 @@ $('.clickable-link').on('mouseup', function(e) {
   if (e.which == 2) {
     openInNewTab(url);
   }
+});
+
+$('[data-mask="money"]').each(function() {
+  var formatter = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  });
+
+  $(this).text(formatter.format(($(this).text())));
+});
+
+$('[data-mask="date"]').each(function() {
+  let date = $(this).text().split('-');
+  let formatter = new Intl.DateTimeFormat('pt-BR');
+
+  date = new Date(date[0], date[1] - 1, date[2]);
+
+  $(this).text(formatter.format(date));
 });

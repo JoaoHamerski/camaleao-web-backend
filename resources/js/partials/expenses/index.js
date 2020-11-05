@@ -248,7 +248,7 @@ $('.btn-edit').on('click', function() {
     .then(response => {
       $('#editFormModal .modal-body').html(response.data.view);
     });
-});
+  });
 
 /*
   Valida e dá submit no relatório das despesas caso validado.
@@ -285,11 +285,7 @@ $(document).on('click', '#deleteReceipt', function(e) {
 
   axios.delete(getLocationURL() + '/' + id + '/delete-receipt')
     .then(response => {
-      console.log(response.data);
       $btn.parents('[data-id]').remove();
-    })
-    .catch(error => {
-      console.log(error.response);;
     });
 });
 
@@ -301,8 +297,23 @@ $('.btn-view-receipt').on('click', function(e) {
   axios.get(getLocationURL() + '/' + id + '/get-view-receipt')
     .then(response => {
       $('#viewReceiptModal .modal-body').html(response.data.view);
-    })
-    .catch(error => {
-      console.log(error.response);
-    })
+    });
+});
+
+$(document).on('change', '[name=expense_type_id]', function() {
+  let formGroup = `
+    <div class="form-group">
+      <label for="employee_name" id="employee_name" class="font-weight-bold">Nome do funcionário</label>
+      <small class="text-secondary">(opcional)</small>
+      <input type="text" name="employee_name" class="form-control">
+    </div>
+  `;
+
+  let text = $('[name=expense_type_id] option:selected').text().trim();
+
+  if (text.toUpperCase() == 'mão de obra'.toUpperCase()) {
+    $(this).parents('.form-group').after($(formGroup));
+  } else {
+    $('[name=employee_name]').parents('.form-group').remove();
+  }
 });

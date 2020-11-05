@@ -53,6 +53,12 @@
 			<strong>Código:</strong> {{ $order->code }}
 		</li>
 
+		@if ($order->name)
+		<li>
+			<strong>Nome do pedido: </strong>{{ $order->name }}
+		</li>
+		@endif
+
 		<li>
 			<strong>Cidade:</strong> {{ $order->client->city ? $order->client->city : '[não-informado]' }}
 		</li>

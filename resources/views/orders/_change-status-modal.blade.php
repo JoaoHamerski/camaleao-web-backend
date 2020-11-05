@@ -7,6 +7,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+      
       <div class="modal-body">
         <form action="{{ route('status.patch', ['client' => $client, 'order' => $order]) }}" method="POST">
           @csrf

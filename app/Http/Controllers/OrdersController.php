@@ -8,6 +8,7 @@ use App\Models\Status;
 use App\Util\Validate;
 use App\Models\Client;
 use App\Util\Sanitizer;
+use App\Models\Via;
 use App\Traits\FileManager;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -19,11 +20,7 @@ class OrdersController extends Controller
 
     public function index(Request $request)
     {
-        $orders = Order::query();
-
-        if ($request->has('codigo') && ! empty($request->codigo)) {
-            $orders->where('code', 'like', '%' . $request->codigo . '%');
-        }
+        $orders = $this->getRequestQuery($request);
 
         return view('orders.index', [
             'orders' => $orders->latest()->paginate(10)->appends($request->query()),
@@ -44,7 +41,8 @@ class OrdersController extends Controller
         return view('orders.show', [
             'client' => $client,
             'order' => $order,
-            'status' => Status::all()
+            'status' => Status::all(),
+            'vias' => Via::all()
         ]);
     }
 
@@ -123,6 +121,8 @@ class OrdersController extends Controller
         $order->save();
 
         $order->update([
+            'code' => $data['code'],
+            'name' => $data['name'],
             'quantity' => $data['quantity'],
             'price' => $data['price'],
             'delivery_date' => $data['delivery_date'],
@@ -166,6 +166,24 @@ class OrdersController extends Controller
             ], 200);
         }
 
+        $orders = $this->getRequestQuery($request);
+
+        $pdf = \PDF::loadView('orders.pdf.report', [
+            'orders' => $orders->with('client')->latest()->get(),
+            'city' => $city ?? null,
+            'status' => Status::find($request->status) ?? null,
+            'only_open' => $request->only_open
+        ]);
+
+        $filename = 'Pedidos';
+        $filename .= isset($city) ? " - $city" : '';
+        $filename .= isset($status) ? " - $status->text" : '';
+
+        return $pdf->stream($filename . '.pdf');
+    }
+
+    public function getRequestQuery($request) 
+    {
         $orders = Order::query();
 
         if (($city = $request->cidade) != null) {
@@ -179,22 +197,14 @@ class OrdersController extends Controller
         }
 
         if ($request->status != null && Status::where('id', $request->status)->exists()) {
-            $status = Status::find($request->status);
             $orders->where('status_id', $request->status);
         }
 
-        $pdf = \PDF::loadView('orders.pdf.report', [
-            'orders' => $orders->with('client')->latest()->get(),
-            'city' => $city ?? null,
-            'status' => $status ?? null,
-            'only_open' => $request->only_open
-        ]);
+        if ($request->has('codigo') && ! empty($request->codigo)) {
+            $orders->where('code', 'like', '%' . $request->codigo . '%');
+        }
 
-        $filename = 'Pedidos';
-        $filename .= isset($city) ? " - $city" : '';
-        $filename .= isset($status) ? " - $status->text" : '';
-
-        return $pdf->stream($filename . '.pdf');
+        return $orders;
     }
 
     public function generateReportProductionDate(Request $request)
@@ -296,6 +306,7 @@ class OrdersController extends Controller
     private function validator(array $data, $isUpdate = false) 
     {
         return Validator::make($data, [
+            'name' => 'nullable|max:255',
             'code' => [
                 'required', $isUpdate 
                 ? Rule::unique('orders')->ignore($data['code'], 'code')
