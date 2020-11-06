@@ -212,6 +212,11 @@ class OrdersController extends Controller
                 $orders->latest();
         }
 
+        if ($request->filled('ordem') && $request->ordem == 'data_de_entrega') {
+            $orders->orderBy('delivery_date', 'DESC');
+            $orders->where('is_closed', '0');
+        }
+
         return $orders;
     }
 

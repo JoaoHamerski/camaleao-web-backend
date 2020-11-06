@@ -3,7 +3,7 @@
 @section('title', 'Log de atividades')
 
 @section('content')
-  <div class="col-md-10 mx-auto mt-5">
+  <div class="mx-auto mt-5">
     <div class="card">
       <div class="card-header bg-success text-white font-weight-bold position-relative">
         <a class="stretched-link {{ Request::anyFilled(['usuario', 'entidade', 'data']) ? '' : 'collapsed' }}" 
@@ -76,7 +76,7 @@
     </div>  
   </div>
 
-  <div class="col-md-10 mx-auto">
+  <div class="mx-auto">
     <div class="card mt-2">
       <div class="card-header bg-primary text-white font-weight-bold position-relative">
         <a href="{{ route('activities.index') }}" class="stretched-link"></a>
