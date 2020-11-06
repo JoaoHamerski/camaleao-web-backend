@@ -136,7 +136,7 @@
           <div class="input-group">
             <div class="input-group-prepend">
               <a href="{{ route('orders.index') }}" 
-                class="btn {{ Request::filled('ordem') ? 'btn-outline-primary' : 'btn-primary' }}">
+                class="btn {{ Request::isNotFilled(['ordem', 'codigo']) ? 'btn-primary' : 'btn-outline-primary' }}">
                 Prioritários
               </a>
             </div>
