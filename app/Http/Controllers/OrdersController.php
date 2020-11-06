@@ -213,7 +213,7 @@ class OrdersController extends Controller
         }
 
         if ($request->filled('ordem') && $request->ordem == 'data_de_entrega') {
-            $orders->orderBy('delivery_date', 'DESC');
+            $orders->orderByRaw('production_date is null');
             $orders->where('is_closed', '0');
         }
 
