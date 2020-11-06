@@ -22,7 +22,7 @@ class OrdersController extends Controller
     {
         $orders = $this->getRequestQuery($request);
 
-        if (! $request->filled('ordem'))
+        if (! $request->filled('ordem') && ! $request->filled('codigo'))
             $orders->where('is_closed', '0');
 
         return view('orders.index', [
