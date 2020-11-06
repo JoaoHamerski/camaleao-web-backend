@@ -106,7 +106,7 @@
 
             </div>
 
-            @if (! Request::filled('descricao'))
+            @if (Request::anyFilled(['dia_inicial', 'dia_final']))
             <h5 class="mx-2 mb-3 text-center {{ $balance < 0 ? 'text-danger' : 'text-success' }}">
               <span class="font-weight-bold">BALANÇO FINAL:</span> 
               <span>{!! Mask::money($balance, true) !!}</span>
