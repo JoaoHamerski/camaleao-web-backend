@@ -11,9 +11,9 @@
         <div class="card-collapse">
           <i class="fas fa-clipboard-list fa-fw mr-1"></i>Relatório por cidade ou status
           <div class="collapse-icon">
-                  <i class="fas fa-caret-down fa-fw fa-2x"></i>
-              </div>
+                <i class="fas fa-caret-down fa-fw fa-2x"></i>
             </div>
+          </div>
       </div>
 
       <div id="collapse-card-report" class="collapse">
@@ -130,9 +130,31 @@
     
   </div>
 
-  <form method="GET" action="{{ route('orders.index') }}">
-    <div class="d-flex justify-content-end mt-2">
+    <div class="d-flex justify-content-between flex-column flex-md-row mt-2">
       <div class="col-md-4 px-0">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <a href="{{ route('orders.index') }}" 
+                class="btn {{ Request::filled('ordem') ? 'btn-outline-primary' : 'btn-primary' }}">
+                Prioritários
+              </a>
+            </div>
+            <div class="input-group-append">
+              <a href="{{ route('orders.index', ['ordem' => 'mais_antigo']) }}"
+                class="btn border-left-0 {{ Request::query('ordem') == 'mais_antigo' ? 'btn-primary' : 'btn-outline-primary' }}">
+                  Mais antigos
+                </a>
+              <a href="{{ route('orders.index', ['ordem' => 'mais_recente']) }}" 
+                class="{{ Request::query('ordem') == 'mais_recente' ? 'btn-primary' : 'btn-outline-primary' }} btn">
+                Mais recentes
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form class="col-md-4 px-0" method="GET" action="{{ route('orders.index') }}">
         <div class="form-group">
           <div class="input-group">
             <input class="form-control" 
@@ -145,9 +167,8 @@
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
-  </form>
 
   <div class="card">
     <div class="card-header bg-primary font-weight-bold text-white position-relative">

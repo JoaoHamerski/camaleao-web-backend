@@ -22,8 +22,11 @@ class OrdersController extends Controller
     {
         $orders = $this->getRequestQuery($request);
 
+        if (! $request->filled('ordem'))
+            $orders->where('is_closed', '0');
+
         return view('orders.index', [
-            'orders' => $orders->latest()->paginate(10)->appends($request->query()),
+            'orders' => $orders->paginate(10)->appends($request->query()),
             'cities' => Client::all()->pluck('city')->unique()->sort(),
             'status' => Status::all()
         ]);
