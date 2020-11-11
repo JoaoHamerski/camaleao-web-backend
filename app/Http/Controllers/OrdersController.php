@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Util\Helper;
+use \Carbon\Carbon;
+use App\Models\Via;
 use App\Models\Order;
 use App\Models\Status;
-use App\Util\Validate;
 use App\Models\Client;
+use App\Util\Helper;
+use App\Util\Validate;
 use App\Util\Sanitizer;
-use App\Models\Via;
 use App\Traits\FileManager;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -189,9 +190,9 @@ class OrdersController extends Controller
     {
         $orders = Order::query();
 
-        if (($city = $request->cidade) != null) {
-            $orders->whereHas('client', function ($query) use ($city) {
-                $query->where('city', $city);
+        if ($request->filled('cidade')) {
+            $orders->whereHas('client', function ($query) use ($request) {
+                $query->where('city', $request->city);
             });
         }
 
@@ -199,15 +200,15 @@ class OrdersController extends Controller
             $orders->whereNull('closed_at');  
         }
 
-        if ($request->status != null && Status::where('id', $request->status)->exists()) {
+        if ($request->filled('status') && Status::where('id', $request->status)->exists()) {
             $orders->where('status_id', $request->status);
         }
 
-        if ($request->has('codigo') && ! empty($request->codigo)) {
+        if ($request->filled('codigo')) {
             $orders->where('code', 'like', '%' . $request->codigo . '%');
         }
 
-        if ($request->has('ordem')) {
+        if ($request->filled('ordem')) {
             if ($request->ordem == 'mais_recente') 
                 $orders->latest();
         }
@@ -217,13 +218,20 @@ class OrdersController extends Controller
             $orders->orderByRaw('CASE WHEN delivery_date IS NULL THEN 1 ELSE 0 END, delivery_date');
         }
 
+        if ($request->filled('data_de_fechamento')) {
+            $orders->whereDate(
+                'closed_at', 
+                Carbon::createFromFormat('d/m/Y', $request->data_de_fechamento)
+            );
+        }
+
         return $orders;
     }
 
     public function generateReportProductionDate(Request $request)
     {
         if (Validate::isDate($date = $request->data_de_producao)) {
-            $date = \Carbon\Carbon::createFromFormat('d/m/Y', $date);
+            $date = Carbon::createFromFormat('d/m/Y', $date);
         }       
 
         if ($request->wantsJson()) {
@@ -265,7 +273,7 @@ class OrdersController extends Controller
         if ($order->closed_at) 
             $order->closed_at = null;
         else 
-            $order->closed_at = \Carbon\Carbon::now()->toDateString();
+            $order->closed_at = Carbon::now()->toDateString();
 
         $order->save();
 
@@ -343,7 +351,7 @@ class OrdersController extends Controller
 
             if (\Str::contains($key, ['delivery_date', 'production_date'])) {
                 if (Validate::isDate($field)) {
-                    $data[$key] = \Carbon\Carbon::createFromFormat('d/m/Y', $data[$key])->toDateString();
+                    $data[$key] = Carbon::createFromFormat('d/m/Y', $data[$key])->toDateString();
                 }
             }
         }

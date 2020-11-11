@@ -54,7 +54,7 @@
 						<tbody>
 							@foreach($clients as $client)
 								<tr class="clickable-link" data-url="{{ $client->path() }}">
-									<td>{{ $client->name }}</td>
+									<td>{!! $client->name !!}</td>
 									<td nowrap="nowrap">{{ $client->phone ? Mask::phone($client->phone) : '[não informado]' }}</td>
 									<td nowrap="nowrap">{{ $client->city ?? '[não informado]' }}</td>
 								</tr>

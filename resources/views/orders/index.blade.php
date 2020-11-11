@@ -9,7 +9,7 @@
         <a class="stretched-link collapsed" data-toggle="collapse" href="#collapse-card-report" aria-expanded="true">
         </a>
         <div class="card-collapse">
-          <i class="fas fa-clipboard-list fa-fw mr-1"></i>Relatório por cidade ou status
+          <i class="fas fa-clipboard-list fa-fw mr-1"></i>Relatório geral
           <div class="collapse-icon">
                 <i class="fas fa-caret-down fa-fw fa-2x"></i>
             </div>
@@ -32,7 +32,6 @@
                     type="text"
                     placeholder="Nome da cidade..."
                     autocomplete="off">
-                  <small class="text-secondary">Você pode combinar os campos para gerar o relatório</small>
 
                   <datalist id="cities">
                     @foreach($cities as $city)
@@ -49,6 +48,20 @@
                       <option value="{{ $stat->id }}">{{ $stat->text }}</option>
                     @endforeach
                   </select>
+                </div>
+
+                <div class="form-group col">
+                  <label for="data_de_fechamento" class="font-weight-bold">
+                    Data de fechamento
+                  </label>
+                  
+                  <input type="text" 
+                    class="form-control" 
+                    id="data_de_fechamento" 
+                    name="data_de_fechamento" 
+                    placeholder="dd/mm/aaaa"
+                    data-toggle="datepicker"
+                    autocomplete="off">
                 </div>
               </div>
 

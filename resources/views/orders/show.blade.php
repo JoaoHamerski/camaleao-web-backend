@@ -112,7 +112,7 @@
       </div>
       <div class="card">
         <div class="card-header {{ $order->isClosed() ?  'bg-secondary' : 'bg-primary' }} font-weight-bold text-white">
-          <i class="fas fa-box-open fa-fw mr-1"></i>Pedido - {{ $order->name ?? $order->code }} @if ($order->isClosed()) - FECHADO @endif
+          <i class="fas fa-box-open fa-fw mr-1"></i>Pedido - {{ $order->name ?? $order->code }} @if ($order->isClosed()) - FECHADO EM {{ Helper::date($order->closed_at, '%d/%m/%Y') }} @endif
         </div>
 
         <div class="card-body">

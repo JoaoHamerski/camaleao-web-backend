@@ -46,3 +46,15 @@ $('#formGenerateReportProduction button[type=submit]').on('click', function(e) {
 		loadingBtn($btn, false);
 	});
 });
+
+var $input = $('[name="data_de_fechamento"]');
+
+setInterval(function() {
+	if ($input.val() == '') {
+		$('[name="em_aberto"]').removeAttr('disabled');
+		$('[name="em_aberto"]')[0].checked = true;;
+	} else {
+		$('[name="em_aberto"]').attr('disabled', 'disabled');
+		$('[name="em_aberto"').prop('checked', false);
+	}
+}, 100);
