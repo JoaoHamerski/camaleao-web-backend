@@ -17331,6 +17331,10 @@ input[disabled=disabled] {
   opacity: 1;
 }
 
+.first-upper-case:first-letter {
+  text-transform: uppercase;
+}
+
 .hamburger {
   position: absolute;
   z-index: 1010;
@@ -17473,9 +17477,5 @@ input[disabled=disabled] {
 
 .text-success-darker {
   color: #16944b;
-}
-
-.first-upper-case:first-letter {
-  text-transform: uppercase;
 }
 

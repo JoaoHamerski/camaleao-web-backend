@@ -49,7 +49,7 @@
 				</div>
 
 				<div class="card-body px-0">
-					@include('orders.index-table')
+					@include('clients.index-orders')
 				</div>
 			</div>
 

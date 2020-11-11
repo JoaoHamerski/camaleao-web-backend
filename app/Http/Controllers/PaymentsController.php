@@ -67,9 +67,10 @@ class PaymentsController extends Controller
     {
         return response()->json([
             'message' => 'success',
-            'view' => view('orders._change-payment', [
+            'view' => view('orders._payment-form', [
                 'payment' => $payment,
-                'vias' => Via::all()
+                'vias' => Via::all(),
+                'method' => 'PATCH'
             ])->render()
         ], 200);    
     }

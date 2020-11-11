@@ -149,4 +149,27 @@ class Helper {
 
 	    return array_combine($keys, $array);
 	}
+
+	/**
+	 * Renderiza os atributos HTML passados em forma de array associativo 
+	 * como atributos de tag HTML.
+	 * 
+	 * @param array $attributes
+	 * 
+	 * @return string
+	 */
+	public static function renderAttributes($attributes)
+	{
+		$attr = '';
+
+		foreach($attributes as $key => $value) {
+			$attr .= "$key=\"$value\"";
+
+			if (array_key_last($attributes) != $key) {
+				$attr .= ' ';
+			}
+		}
+
+		return $attr;
+	}
 }

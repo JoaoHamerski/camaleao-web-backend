@@ -6,6 +6,9 @@ $('[data-target="#changePaymentModal"]').on('click', function(e) {
   axios.get(getLocationURL() + '/pagamento/' + id + '/get-change-payment-view')
     .then(response => {
       $('#changePaymentModal .modal-body').html(response.data.view);
+    })
+    .catch(error => {
+      console.log(error.response);
     });
 });
 

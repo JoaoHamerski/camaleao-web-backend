@@ -213,4 +213,9 @@ class Order extends Model
                 : "/storage/$folderName/$filename"; 
         }, json_decode($this->{$field}));
     }
+
+    public function isClosed()
+    {
+        return $this->closed_at != null;
+    }
 }

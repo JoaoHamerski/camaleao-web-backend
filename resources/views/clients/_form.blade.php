@@ -1,39 +1,39 @@
 <form>
-  
-  <div class="form-group">
-    <label class="font-weight-bold" for="name">Nome: </label>
-    <input name="name" 
-        list="names" 
-        id="name" 
-        type="text" 
-        class="form-control"
-        value="{{ isset($method) && $method == 'PATCH' ? $client->name : '' }}">
-  </div>
+  @input([
+    'id' => 'name',
+    'name' => 'name',
+    'placeholder' => 'Digite o nome do cliente...',
+    'value' => isset($method) && $method == 'PATCH' ? $client->name : '',
+    'label' => 'Nome: ',
+    'labelClass' => 'font-weight-bold'
+  ])
 
-  <div class="form-group">
-    <label class="font-weight-bold" for="phone">Telefone: </label>
-    <input name="phone" 
-        id="phone" 
-        type="text" 
-        class="form-control"
-        value="{{ isset($method) && $method== 'PATCH' ? $client->phone : '' }}">
-  </div>
+  @input([
+    'id' => 'phone',
+    'name' => 'phone',
+    'placeholder' => 'Digite o telefone...',
+    'value' => isset($method) && $method == 'PATCH' ? $client->phone : '',
+    'label' => 'Telefone: ',
+    'labelClass' => 'font-weight-bold'
+  ])
 
-  <div class="form-group">
-    <label class="font-weight-bold" for="city">Cidade: </label>
-    <input name="city" 
-        list="cities" 
-        id="city" 
-        type="text" 
-        class="form-control"
-        autocomplete="no" 
-        value="{{ isset($method) && $method == 'PATCH' ? $client->city : '' }}">
-      <datalist id="cities">
-        @foreach($cities as $city)
-          <option value="{{ $city }}"></option>
-        @endforeach
-      </datalist>
-  </div>
+  @input([
+    'id' => 'city',
+    'name' => 'city',
+    'placeholder' => 'Digite a cidade...',
+    'value' => isset($method) && $method == 'PATCH' ? $client->city : '',
+    'label' => 'Cidade: ',
+    'labelClass' => 'font-weight-bold',
+    'attributes' => [
+      'list' => 'cities',
+      'autocomplete' => 'no'
+    ]
+  ])
+
+  @dataList([
+    'id' => 'cities',
+    'items' => $cities
+  ])
 
   <div class="mt-1">
     @if (isset($method) && $method == 'PATCH')

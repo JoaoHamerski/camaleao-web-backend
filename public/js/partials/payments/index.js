@@ -98,6 +98,8 @@ $('[data-target="#changePaymentModal"]').on('click', function (e) {
   var id = $(this).parents('[data-id]').attr('data-id');
   axios.get(getLocationURL() + '/pagamento/' + id + '/get-change-payment-view').then(function (response) {
     $('#changePaymentModal .modal-body').html(response.data.view);
+  })["catch"](function (error) {
+    console.log(error.response);
   });
 });
 $(document).on('click', '#btnChangePayment', function (e) {

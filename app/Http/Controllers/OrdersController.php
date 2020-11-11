@@ -23,7 +23,7 @@ class OrdersController extends Controller
         $orders = $this->getRequestQuery($request);
 
         if (! $request->filled('ordem') && ! $request->filled('codigo'))
-            $orders->where('is_closed', '0');
+            $orders->whereNull('closed_at');
 
         return view('orders.index', [
             'orders' => $orders->paginate(10)->appends($request->query()),
@@ -196,7 +196,7 @@ class OrdersController extends Controller
         }
 
         if ($request->em_aberto == 'em_aberto') {
-            $orders->where('is_closed', '0');
+            $orders->whereNull('closed_at');  
         }
 
         if ($request->status != null && Status::where('id', $request->status)->exists()) {
@@ -213,8 +213,8 @@ class OrdersController extends Controller
         }
 
         if ($request->filled('ordem') && $request->ordem == 'data_de_entrega') {
-            $orders->where('is_closed', '0');
-            $orders->orderByRaw('case when delivery_date is null then 1 else 0 end, delivery_date');
+            $orders->whereNull('closed_at');
+            $orders->orderByRaw('CASE WHEN delivery_date IS NULL THEN 1 ELSE 0 END, delivery_date');
         }
 
         return $orders;
@@ -260,12 +260,12 @@ class OrdersController extends Controller
 
     public function toggleOrder(Client $client, Order $order, Request $request)
     {
-        $this->authorize('view', [$order, $client->id]);
+        $this->authorize('toggleOrder', [$order, $client->id]);
         
-        if ($order->is_closed) 
-            $order->is_closed = 0;
+        if ($order->closed_at) 
+            $order->closed_at = null;
         else 
-            $order->is_closed = 1;
+            $order->closed_at = \Carbon\Carbon::now()->toDateString();
 
         $order->save();
 

@@ -4,101 +4,94 @@
 	@endif
 
 	<div class="form-row d-flex flex-column flex-md-row">
-		<div class="form-group col">
-			<label class="font-weight-bold" for="name">Nome do pedido</label>
-			<small class="text-secondary">(opcional)</small>	
-			<input class="form-control" 
-				type="text"
-				id="name"
-				name="name"
-				placeholder="Nome que descreva o pedido..." 
-				@if ($method == 'PATCH')
-				value="{{ $order->name }}"
-				@endif>
-		</div>
+		@input([
+			'id' => 'name',
+			'name' => 'name',
+			'label' => 'Nome do pedido',
+			'labelClass' => 'font-weight-bold',
+			'formGroupClass' => 'col',
+			'optional' => true,
+			'placeholder' => 'Nome que descreva o pedido...',
+			'value' => $method == 'PATCH' ? $order->name : null,
+		])
 	</div>
 
 	<div class="form-row d-flex flex-column flex-md-row">
+		@input([
+			'id' => 'code',
+			'name' => 'code',
+			'label' => 'Código',
+			'labelClass' => 'font-weight-bold',
+			'formGroupClass' => 'col',
+			'value' => $method == 'PATCH' ? $order->name : $client->getNewOrderCode(),
+		])
 
-		<div class="form-group col">
-			<label class="font-weight-bold" for="code">Código </label>
-			<input class="form-control" 
-				type="text" 
-				id="code" 
-				name="code"
-				@if ($method == 'PATCH') 
-				value="{{ $order->code }}" 
-				@else 
-				value="{{ $client->getNewOrderCode() }}"
-				@endif>
-		</div>
-		<div class="form-group col">
-			<label class="font-weight-bold" for="quantity">Quantidade </label>
-			<input class="form-control" 
-				type="text" 
-				id="quantity" 
-				name="quantity"
-				@if ($method == 'PATCH') value="{{ $order->quantity }}" @endif>
-		</div>
-
+		@input([
+			'id' => 'quantity',
+			'name' => 'quantity',
+			'label' => 'Quantidade',
+			'labelClass' => 'font-weight-bold',
+			'formGroupClass' => 'col',
+			'value' => $method == 'PATCH' ? $order->quantity : null,
+		])
 	</div>
 
 	<div class="form-row d-flex flex-column flex-md-row">
-		<div class="form-group col">
-			<label class="font-weight-bold" for="price">Valor total</label>
-			<input class="form-control" 
-				type="text" 
-				id="price" 
-				name="price"
-				@if ($method == 'PATCH') value="{{ Mask::money($order->price) }}" @endif>
-		</div>
+		@input([
+			'id' => 'price',
+			'name' => 'price',
+			'label' => 'Valor total',
+			'labelClass' => 'font-weight-bold',
+			'formGroupClass' => 'col',
+			'value' => $method == 'PATCH' ? Mask::money($order->price) : '',
+		])
 
 		@if ($method == 'POST')
-			<div class="form-group col">
-				<label for="down_payment">
-					<span class="font-weight-bold">Entrada</span> <small class="text-secondary">(opcional)</small> 
-				</label>
-				<input class="form-control" type="text" id="down_payment" name="down_payment">
-			</div>
+			@input([
+				'id' => 'down_payment',
+				'name' => 'down_payment',
+				'label' => 'Entrada',
+				'labelClass' => 'font-weight-bold',
+				'formGroupClass' => 'col',
+				'optional' => true
+			])
 		@endif
 	</div>
 
 	<div class="form-row d-flex flex-column flex-md-row">
+		@input([
+			'id' => 'production_date',
+			'name' => 'production_date',
+			'optional' => true,
+			'formGroupClass' => 'col',
+			'placeholder' => 'dd/mm/aaaa',
+			'label' => 'Data de produção',
+			'labelClass' => 'font-weight-bold',
+			'value' => $method == 'PATCH' ? Helper::date($order->production_date, '%d/%m/%Y') : null
+		])
 
-		<div class="form-group col">
-			<label class="font-weight-bold" for="production_date">Data de produção</label>
-			<small class="text-secondary">(opcional)</small>
-			<input class="form-control" 
-				type="text" 
-				id="production_date" 
-				name="production_date" 
-				placeholder="dd/mm/aaaa"
-				@if ($method == 'PATCH') value="{{ Helper::date($order->production_date, '%d/%m/%Y') }}" @endif>
-		</div>
-		<div class="form-group col">
-			<label class="font-weight-bold" for="delivery_date">Data de entrega </label>
-			<small class="text-secondary">(opcional)</small>
-			<input class="form-control" 
-				type="text" 
-				id="delivery_date" 
-				name="delivery_date" 
-				placeholder="dd/mm/aaaa"
-				@if ($method == 'PATCH') value="{{ Helper::date($order->delivery_date, '%d/%m/%Y') }}" @endif>
-		</div>
+		@input([
+			'id' => 'delivery_date',
+			'name' => 'delivery_date',
+			'optional' => true,
+			'formGroupClass' => 'col',
+			'placeholder' => 'dd/mm/aaaa',
+			'label' => 'Data de entrega',
+			'labelClass' => 'font-weight-bold',
+			'value' => $method == 'PATCH' ? Helper::date($order->delivery_date, '%d/%m/%Y') : null
+		])
 	</div>
 
-	<div class="form-group">
-		<label class="font-weight-bold">Imagem da arte </label>
-		<small>(opcional)</small>
-		<div class="custom-file">
-			<input type="file" value="@old('art_paths')" name="art_paths[]" accept="image/*" class="custom-file-input" multiple="multiple">
-			@if ($method == 'PATCH')
-				<label class="custom-file-label">Adicionar mais arquivos</label>
-			@else
-				<label class="custom-file-label">Escolher arquivos</label>
-			@endif
-		</div>
-	</div>
+	@inputFile([
+		'id' => 'art_paths',
+		'name' => 'art_paths[]',
+		'accept' => 'image/*',
+		'multiple' => true,
+		'optional' => true,
+		'label' => 'Imagem da arte',
+		'labelClass' => 'font-weight-bold',
+		'fileLabel' => $method == 'PATCH' ? 'Adicionar mais arquivos' : 'Escolher arquivos'
+	])
 
 	@if ($method == 'PATCH')
 		<div class="row mb-3">
@@ -114,18 +107,16 @@
 		</div>
 	@endif
 
-	<div class="form-group">
-		<label class="font-weight-bold">Imagem do tamanho </label>
-		<small class="text-secondary">(opcional)</small>
-		<div class="custom-file">
-			<input type="file" name="size_paths[]" accept="image/*" class="custom-file-input" multiple="multiple">
-			@if ($method == 'PATCH')
-				<label class="custom-file-label">Adicionar mais arquivos</label>
-			@else
-				<label class="custom-file-label">Escolher arquivos</label>
-			@endif
-		</div>
-	</div>
+	@inputFile([
+		'id' => 'size_paths',
+		'name' => 'size_paths[]',
+		'accept' => 'image/*',
+		'multiple' => true,
+		'optional' => true,
+		'label' => 'Imagem da arte',
+		'labelClass' => 'font-weight-bold',
+		'fileLabel' => $method == 'PATCH' ? 'Adicionar mais arquivos' : 'Escolher arquivos'
+	])
 
 	@if ($method == 'PATCH')
 		<div class="row mb-3">
@@ -141,18 +132,16 @@
 		</div>
 	@endif
 
-	<div class="form-group">
-		<label class="font-weight-bold">Comprovante de pagamento </label>
-		<small class="text-secondary">(opcional)</small>
-		<div class="custom-file">
-			<input type="file" name="payment_voucher_paths[]" accept="image/*,.pdf" class="custom-file-input" multiple="multiple">
-			@if ($method == 'PATCH')
-				<label class="custom-file-label">Adicionar mais arquivos</label>
-			@else
-				<label class="custom-file-label">Escolher arquivos</label>
-			@endif
-		</div>
-	</div>
+	@inputFile([
+		'id' => 'payment_voucher_paths',
+		'name' => 'payment_voucher_paths[]',
+		'accept' => 'image/*,.pdf',
+		'multiple' => true,
+		'optional' => true,
+		'label' => 'Comprovantes de pagamento',
+		'labelClass' => 'font-weight-bold',
+		'fileLabel' => $method == 'PATCH' ? 'Adicionar mais arquivos' : 'Escolher arquivos'
+	])
 
 	@if ($method == 'PATCH')
 		<ul class="list-group">

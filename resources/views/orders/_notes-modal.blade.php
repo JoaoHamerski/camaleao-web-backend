@@ -18,14 +18,19 @@
         </ul>
 
         <form>
-          <div class="input-group mt-3">
-            <input class="form-control" type="text" placeholder="Adicionar nota..." name="order_note">
-            <div class="input-group-append">
-              <button id="btnAddNote" class="btn btn-outline-primary">
-                <i class="fas fa-plus fa-fw mr-1"></i>Adicionar
-              </button>
-            </div>
-          </div>
+          @input([
+            'name' => 'order_note',
+            'placeholder' => 'Adicionar nota...',
+            'inputGroup' => [
+              'class' => 'mt-3',
+              'btnAppend' => [
+                'id' => 'btnAddNote',
+                'class' => 'btn btn-outline-primary',
+                'icon' => 'fas fa-plus',
+                'text' => 'Adicionar'
+              ]
+            ]
+          ])
         </form>
       </div>
 

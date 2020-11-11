@@ -38,9 +38,9 @@
 		para <strong>{{ \App\Models\ExpenseType::find($changed)->name ?? '[não informado]' }}</strong>
 	@endif
 
-	@if (in_array($field, ['is_closed']))
-		De <strong>{{ $changes['old'][$field] == 0 ? 'Aberto' : 'Fechado' }}</strong>
-		para <strong>{{ $changed == 0 ? 'Aberto' : 'Fechado' }}</strong>
+	@if (in_array($field, ['closed_at']))
+		De <strong>{{ $changes['old'][$field] == null ? 'Aberto' : 'Fechado' }}</strong>
+		para <strong>{{ $changed == null ? 'Aberto' : 'Fechado' }}</strong>
 	@endif
 
 	@if (in_array($field, ['receipt_path', 'payment_voucher_paths']))

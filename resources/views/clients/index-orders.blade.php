@@ -13,7 +13,7 @@
 		<tbody>
 			@foreach ($orders as $order)
 				<tr data-url="{{ $order->path() }}" 
-					class="clickable-link @if ($order->is_closed) table-secondary @endif" 
+					class="clickable-link @if ($order->isClosed()) table-secondary @endif" 
 					data-id="{{ $order->id }}">
 					<td>{{ $order->code }}</td>
 					<td>{{ Mask::money($order->price) }}</td>

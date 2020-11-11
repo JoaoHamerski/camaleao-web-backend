@@ -33,6 +33,12 @@ class OrderPolicy
         return $order->client->id == $clientId;
     }
 
+    public function toggleOrder(?User $user, Order $order, int $clientId)
+    {  
+        return ($order->getTotalOwing() == 0 || $order->isClosed())
+            && $order->client->id == $clientId;
+    }
+
     /**
      * Determine whether the user can create models.
      *

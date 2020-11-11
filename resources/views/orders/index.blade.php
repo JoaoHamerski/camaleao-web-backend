@@ -70,10 +70,17 @@
                   <input checked="checked" type="radio" id="customRadioOrder" name="ordem" class="custom-control-input" value="mais_antigo">
                   <label class="custom-control-label" for="customRadioOrder">Mais antigo</label>
                 </div>
+
                 <div class="custom-control custom-radio custom-control-inline">
                   <input type="radio" id="customRadioNewer" name="ordem" class="custom-control-input" value="mais_recente">
                   <label class="custom-control-label" for="customRadioNewer">Mais recente</label>
                 </div>
+
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" id="customRadioDeliveryDate" name="ordem" class="custom-control-input" value="data_de_entrega">
+                  <label class="custom-control-label" for="customRadioDeliveryDate">Data de entrega</label>
+                </div>
+
               </div>
               <button type="submit" class="btn btn-outline-primary">Gerar relatório</button>
             </div>
@@ -174,6 +181,22 @@
       </form>
     </div>
 
+    <div>
+      <small class="text-secondary">
+        @if (Request::query('ordem') == 'mais_antigo')
+          Exibindo pedidos por ordem de cadastro mais antigos primeiros inclusive pedidos fechados
+        @elseif (Request::query('ordem') == 'mais_recente')
+          Exibindo pedidos por ordem de cadastro mais recente primeiros inclusive pedidos fechados
+        @elseif (Request::query('ordem') == 'data_de_entrega')
+          Exibindo pedidos por ordem de data de entrega mais antiga primeiro apenas pedidos em aberto
+          <br>
+          (sem data de entrega informada ficam por último)
+        @else
+          Exibindo pedidos por ordem de cadastro mais antigo primeiros somente pedidos em aberto
+        @endif
+      </small>
+    </div>  
+
   <div class="card">
     <div class="card-header bg-primary font-weight-bold text-white position-relative">
       <a href="{{ route('orders.index') }}" class="stretched-link"></a>
@@ -197,7 +220,7 @@
 
           <tbody>
             @foreach($orders as $order)
-            <tr data-url="{{ $order->path() }}" class="clickable-link @if ($order->is_closed) table-secondary @endif">
+            <tr data-url="{{ $order->path() }}" class="clickable-link @if ($order->isClosed()) table-secondary @endif">
               <td>{{ $order->client->name }}</td>
               <td>{{ $order->code }}</td>
               <td>{{ $order->quantity }}</td>

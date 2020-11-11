@@ -71,3 +71,7 @@ input[disabled="disabled"] {
 .img-wrapper .btn-delete-image:hover {
 	opacity: 1;
 }
+
+.first-upper-case:first-letter {
+	text-transform: uppercase;
+}

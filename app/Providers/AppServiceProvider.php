@@ -66,6 +66,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->bootBladeValidation();
         $this->bootBladeIfs();
+        $this->bootBladeComponents();
     }
 
     /**
@@ -91,5 +92,13 @@ class AppServiceProvider extends ServiceProvider
         Validator::replacer('max_double', function($message, $attribute, $rule, $parameters) {
             return str_replace(':max', Mask::money($parameters[0]), $message);
         });
+    }
+
+    private function bootBladeComponents()
+    {
+        Blade::include('components.forms.input', 'input');
+        Blade::include('components.forms.data-list', 'dataList');
+        Blade::include('components.forms.input-file', 'inputFile');
+        Blade::include('components.forms.select', 'select');
     }
 }

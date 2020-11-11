@@ -14,6 +14,7 @@
     "size_paths": "imagens do tamanho",
     "payment_voucher_paths": "comprovantes de pagamento",
     "is_closed": "estado do pedido",
+    "closed_at": "estado do pedido",
     "name": "nome",
     "note": "observação",
     "phone": "telefone",
