@@ -21,7 +21,7 @@
           <form id="formGenerateReport" target="_blank" action="{{ route('orders.report') }}" method="GET">
             <div>
               <h5 class="font-weight-bold text-dark">Filtros</h5>
-
+              <small class="text-secondary">Você pode filtrar por apenas um ou vários campos combinados</small>
               <div class="form-row d-flex flex-column flex-md-row">
                 <div class="form-group col">
                   <label class="font-weight-bold" for="city">Cidade</label>

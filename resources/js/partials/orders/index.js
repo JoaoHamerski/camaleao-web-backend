@@ -10,7 +10,8 @@ $('#formGenerateReport button[type=submit]').on('click', function(e) {
 	axios.get(getLocationURL() + '/relatorio', {
 		params: {
 			cidade: $('[name=cidade]').val(),
-			status: $('[name=status]').val()
+			status: $('[name=status]').val(),
+			data_de_fechamento: $('[name=data_de_fechamento]').val()
 		}
 	})
 	.then(response => {
@@ -47,14 +48,13 @@ $('#formGenerateReportProduction button[type=submit]').on('click', function(e) {
 	});
 });
 
-var $input = $('[name="data_de_fechamento"]');
-
-setInterval(function() {
-	if ($input.val() == '') {
+$(document).on('click blur type focus', '[name=data_de_fechamento]', function(e) {
+	if ($(this).val() == '') {
 		$('[name="em_aberto"]').removeAttr('disabled');
-		$('[name="em_aberto"]')[0].checked = true;;
+		$('[name="em_aberto"]')[0].checked = true;
 	} else {
-		$('[name="em_aberto"]').attr('disabled', 'disabled');
-		$('[name="em_aberto"').prop('checked', false);
+		$('[name="em_aberto"]').prop('checked', false);
+		$('[name="em_aberto"]').prop('disabled', true);
 	}
-}, 100);
+});
+

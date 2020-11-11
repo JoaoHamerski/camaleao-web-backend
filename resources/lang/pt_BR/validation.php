@@ -155,6 +155,9 @@ return [
             'required' => 'Por favor, informe uma data de produção',
             'date' => 'Por favor, informe uma data de produção válida'
         ],
+        'data_de_fechamento' => [
+            'date_format' => 'Por favor, informe uma data válida',
+        ],
         'dia*' => [
             'required' => 'Por favor, informe uma data',
             'date' => 'Por favor, informe uma data válida'

@@ -11,6 +11,8 @@ $.fn.datepicker.defaults.todayBtn = 'linked';
 $.fn.datepicker.defaults.todayHighlight = true;
 $.fn.datepicker.defaults.autoclose = true;
 
-$('[data-toggle="datepicker"]').datepicker();
+$('[data-toggle="datepicker"]').datepicker().on('changeDate', function(e) {
+	$(this).focus().blur();
+});
 
 

@@ -4,7 +4,12 @@
 	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>
-		Relatório de pedidos @if ($city != null) - {{ $city }} @endif @if ($status != null) - {{ $status->text }} @endif
+		Relatório de pedidos 
+		@if ($request->filled('cidade')) - {{ $request->cidade }} @endif 
+		@if ($request->filled('status')) - {{ \App\Models\Status::find($request->status)->text }} @endif
+		@if ($request->filled('data_de_fechamento'))
+		 - fechados em {{ Helper::date($request->data_de_fechamento, '%d/%m/%Y') }} 
+		 @endif
 	</title>
 	<style>
 		* {
@@ -46,7 +51,6 @@
 
 		.image, .image img {
 			width: 250px !important;
-			/*page-break-inside: avoid;*/
 		}
 
 		footer { 
@@ -79,15 +83,23 @@
 
 	<header>
 		Relatório de pedidos 
-		@if ($city != null)
+		@if ($request->filled('cidade'))
 			<br>
 			<br>
-			<strong style="text-transform: uppercase;">{{ $city }}</strong>
+			<strong style="text-transform: uppercase;">{{ $request->cidade }}</strong>
 		@endif
 		
-		@if ($status != null)
+		@if ($request->filled('status'))
 			<br>
-			<div style="font-size: 1.2rem; margin-top: .25rem;">{{ $status->text }}</div>
+			<div style="font-size: 1.2rem; margin-top: .25rem;">
+				{{ \App\Models\Status::find($request->status)->text }}
+			</div>
+		@endif
+		@if ($request->filled('data_de_fechamento'))
+			<br>
+			<div style="font-size: 1rem">
+				<strong>Fechados em {{ Helper::date($request->data_de_fechamento, '%d/%m/%Y') }}</strong>
+			</div>
 		@endif
 	</header>
 

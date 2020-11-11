@@ -155,7 +155,8 @@ class OrdersController extends Controller
 
             $validator = Validator::make($request->all(), [ 
                 'cidade' => ['nullable', Rule::in($cities)],
-                'status' => 'nullable|exists:status,id'
+                'status' => 'nullable|exists:status,id',
+                'data_de_fechamento' => 'nullable|date_format:d/m/Y'
             ]);
 
             if ($validator->fails()) {
@@ -174,16 +175,11 @@ class OrdersController extends Controller
 
         $pdf = \PDF::loadView('orders.pdf.report', [
             'orders' => $orders->with('client')->get(),
-            'city' => $city ?? null,
-            'status' => Status::find($request->status) ?? null,
-            'only_open' => $request->only_open
+            'request' => $request
         ]);
 
-        $filename = 'Pedidos';
-        $filename .= isset($city) ? " - $city" : '';
-        $filename .= isset($status) ? " - $status->text" : '';
 
-        return $pdf->stream($filename . '.pdf');
+        return $pdf->stream('pedido.pdf');
     }
 
     public function getRequestQuery($request) 
@@ -192,7 +188,7 @@ class OrdersController extends Controller
 
         if ($request->filled('cidade')) {
             $orders->whereHas('client', function ($query) use ($request) {
-                $query->where('city', $request->city);
+                $query->where('city', $request->cidade);
             });
         }
 
