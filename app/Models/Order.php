@@ -189,6 +189,16 @@ class Order extends Model
     }
 
     /**
+     * Verifica se o pedido está pago
+     * 
+     * @return bool
+     */
+    public function isPaid()
+    {
+        return $this->getTotalOwing() <= 0;
+    }
+
+    /**
      * Retorna o caminho para os arquivos do campo especificado
      * 
      * @param $field

@@ -16,25 +16,27 @@
         <div class="mt-3 mt-md-0">
           @role(['atendimento', 'gerencia'])
             @if ($order->isClosed() || $order->getTotalOwing() == 0)
-              <span class="d-inline-block" 
-                data-toggle="tooltip"
-                title="Não é possível efetuar pagamento pois o pedido está @if (! $order->isClosed())  quitado @else fechado @endif"> 
-
-                <button style="pointer-events: none;" disabled="disabled" class="btn btn-outline-success d-block">
-                  <i class="fas fa-dollar-sign fa-fw mr-1"></i>Adicionar pagamento
-                </button>
-              </span>
+              @button([
+                'title' => 'Não é possível efetuar pagamentos pois o pedido está ' 
+                  . (! $order->isClosed() ? 'quitado' : 'fechado'),
+                'class' => 'btn btn-outline-success',
+                'wrapperClass' => 'w-100',
+                'icon' => 'fas fa-dollar-sign',
+                'text' => 'Adicionar pagamento'
+              ])
             @else
               <a class="btn btn-outline-success d-block" href="#newPaymentModal" data-toggle="modal">
                 <i class="fas fa-dollar-sign fa-fw mr-1"></i>Adicionar pagamento
               </a>
             @endif
           @else('design')
-            <span class="d-inline-block w-100" tabindex="0" data-toggle="tooltip" title="Você não tem permissão para isso">
-              <button style="pointer-events: none;" class="btn d-block w-100 btn-outline-success " disabled="disabled">
-                <i class="fas fa-dollar-sign fa-fw mr-1"></i>Adicionar pagamento
-              </button>
-            </span>
+            @button([
+                'title' => 'Você não tem permissão para isso ', 
+                'class' => 'btn btn-outline-success',
+                'wrapperClass' => 'w-100',
+                'icon' => 'fas fa-dollar-sign',
+                'text' => 'Adicionar pagamento'
+              ])
           @endrole
         </div>
 
@@ -53,20 +55,22 @@
             @if ($order->getTotalOwing() == 0 || $order->isClosed())
               <a class="btn btn-outline-secondary d-block" onclick="event.preventDefault; document.querySelector('#toggleOrderForm').submit()">{{ $order->isClosed() ? 'Reabrir pedido' : 'Fechar pedido' }}</a>
             @else
-              <span class="d-inline-block w-100" tabindex="0" data-toggle="tooltip" title="Não é possível fechar pedidos com pendência financeira">
-                <button style="pointer-events: none;" class="btn btn-outline-secondary d-block w-100" disabled="disabled">
-                  {{ $order->isClosed() ? 'Reabrir pedido' : 'Fechar pedido' }}
-                </button>
-              </span>
+              @button([
+                'title' => 'Não é possível fechar pedidos com pendência financeira', 
+                'class' => 'btn btn-outline-secondary',
+                'wrapperClass' => 'w-100',
+                'text' => $order->isClosed() ? 'Reabrir pedido' : 'Fechar pedido'
+              ])
             @endif
 
 
           @else('design')
-            <span class="d-inline-block w-100" tabindex="0" data-toggle="tooltip" title="Você não tem permissão para isso">
-              <button style="pointer-events: none;" class="btn btn-outline-secondary d-block w-100" disabled="disabled">
-                {{ $order->isClosed() ? 'Reabrir pedido' : 'Fechar pedido' }}
-              </button>
-            </span>
+            @button([
+                'title' => 'Você não tem permissão para isso', 
+                'class' => 'btn btn-outline-secondary',
+                'wrapperClass' => 'w-100',
+                'text' => $order->isClosed() ? 'Reabrir pedido' : 'Fechar pedido'
+              ])
           @endrole
         </div>
 
@@ -77,11 +81,12 @@
 
           @role(['atendimento', 'gerencia'])
             @if ($order->isClosed())
-              <span tabindex="0" data-toggle="tooltip" title="Não é possível editar pois o pedido está fechado.">
-                <button style="pointer-events: none;" class="btn btn-outline-primary mx-2" disabled="disabled">
-                  <i class="fas fa-edit fa-fw mr-1"></i>Editar
-                </button>
-              </span>
+              @button([
+                'title' => 'Não é possível editar pois o pedido está fechado', 
+                'class' => 'btn btn-outline-primary mx-2',
+                'icon' => 'fas fa-edit',
+                'text' => 'Editar'
+              ])
             @else
               <a class="btn btn-outline-primary mx-2" 
                 href="{{ route('orders.edit', ['client' => $client, 'order' => $order]) }}">
@@ -89,11 +94,12 @@
               </a>
             @endif
           @else
-            <span tabindex="0" data-toggle="tooltip" title="Você não tem permissão para isso">
-              <button style="pointer-events: none;" class="btn btn-outline-primary mx-2" disabled="disabled">
-                <i class="fas fa-edit fa-fw mr-1"></i>Editar
-              </button>
-            </span>
+            @button([
+              'title' => 'Você não tem permissão para isso',
+              'class' => 'btn btn-outline-primary mx-2',
+              'icon' => 'fas fa-edit',
+              'text' => 'Editar'
+            ])
           @endrole
 
           @role(['atendimento', 'gerencia'])
@@ -101,18 +107,23 @@
               <i class="fas fa-trash-alt fa-fw mr-1"></i>Excluir
             </a>
           @else
-            <span tabindex="0" data-toggle="tooltip" title="Voce não tem permissão para isso">
-              <button disabled="disabled" style="pointer-events: none;" class="btn btn-outline-danger">
-                <i class="fas fa-trash-alt fa-fw mr-1"></i>Excluir
-              </button>
-            </span>
+            @button([
+              'title' => 'Voce não tem permissão para isso',
+              'class' => 'btn btn-outline-danger',
+              'icon' => 'fas fa-trash-alt',
+              'text' => 'Excluir'
+            ])
           @endrole
-
         </div>
       </div>
+      
       <div class="card">
         <div class="card-header {{ $order->isClosed() ?  'bg-secondary' : 'bg-primary' }} font-weight-bold text-white">
-          <i class="fas fa-box-open fa-fw mr-1"></i>Pedido - {{ $order->name ?? $order->code }} @if ($order->isClosed()) - FECHADO EM {{ Helper::date($order->closed_at, '%d/%m/%Y') }} @endif
+          <i class="fas fa-box-open fa-fw mr-1"></i>
+          Pedido - {{ $order->name ?? $order->code }} 
+          @if ($order->isClosed())
+            - FECHADO EM {{ Helper::date($order->closed_at, '%d/%m/%Y') }} 
+          @endif
         </div>
 
         <div class="card-body">
@@ -122,16 +133,14 @@
             </button>
 
             @if ($order->isClosed())
-              <span title="Não é possível alterar os status pois o pedido está fechado" 
-                data-toggle="tooltip">
-                <button style="pointer-events: none;" class="btn btn-outline-primary" disabled="disabled">
-                  Alterar status
-                </button>
-              </span>
+              @button([
+                'title' => 'Não é possível alterar os status pois o pedido está fechado',
+                'text' => 'Alterar status',
+                'class' => 'btn btn-outline-primary'
+              ])
             @else
               <button data-target="#statusModal" data-toggle="modal" class="btn btn-outline-primary">Alterar status</button>
             @endif
-
           </div>
 
           <div class="mb-4">
@@ -182,7 +191,6 @@
           </div>
 
           <div class="d-flex justify-content-between mt-5">
-
             <div>
               <h5>Data de produção</h5>
               <div>
@@ -249,6 +257,13 @@
         ]
       ])
     @endif  
+
+    @modal([
+        'id' => 'changePaymentModal',
+        'title' => 'Alteração de pagamento',
+        'modalDialogClass' => 'modal-dialog-centered',
+        'headerClass' => 'bg-success text-white font-weight-bold'
+      ])
   @endrole
 
   @modal([
@@ -266,12 +281,7 @@
     'headerClass' => 'bg-dark text-white font-weight-bold'
   ])
   
-  @modal([
-    'id' => 'changePaymentModal',
-    'title' => 'Alteração de pagamento',
-    'modalDialogClass' => 'modal-dialog-centered',
-    'headerClass' => 'bg-success text-white font-weight-bold'
-  ])
+  
 @endsection
 
 @push('script')

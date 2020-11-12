@@ -104,7 +104,6 @@ Route::middleware('auth')->group(function() {
 	Route::name('expense_types.')->middleware('role:gerencia')->group(function() {
 		Route::post('/despesas/tipo-de-despesa', [ExpenseTypesController::class, 'store'])->name('store');
 		Route::patch('/despesas/tipo-de-despesa/{expense_type}', [ExpenseTypesController::class, 'patch'])->name('patch');
-		// Route::delete('/despesas/tipo-de-despesa/{expense_type}/deletar', [ExpenseTypesController::class, 'destroy'])->name('destroy');
 	});
 
 	Route::name('payments.')->middleware('role:gerencia,atendimento')->group(function() {

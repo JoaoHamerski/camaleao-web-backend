@@ -37,6 +37,10 @@
 			color: red;
 		}
 
+		.text-success {
+			color: green;
+		}
+
 		.text-center {
 			text-align: center;
 		}
@@ -75,7 +79,7 @@
 			<strong>Total pago:</strong> {!! Mask::money($order->getTotalPayments(), true) !!}
 		</li>
 
-		<li class="text-danger">
+		<li class="{{ $order->isPaid() ? 'text-success' : 'text-danger' }}">
 			<strong>Falta pagar:</strong> {!! Mask::money($order->getTotalOwing(), true) !!}
 		</li>
 

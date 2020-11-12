@@ -154,7 +154,9 @@
             @empty
               <tr>
                 <td colspan="5">
-                  <h5 class="text-center mt-3 text-secondary">Nenhum registro que corresponda aos filtros</h5>
+                  <h5 class="text-center mt-3 text-secondary">
+                    Não foram encontradas entradas de dinheiro para o período especificado.
+                  </h5>
                 </td>
               </tr>
             @endforelse

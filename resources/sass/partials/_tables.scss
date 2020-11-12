@@ -5,3 +5,7 @@
 .clickable-link {
 	-webkit-user-select: none;
 }
+
+.table.table-hover tr.not-hover:hover {
+	background-color: inherit !important;
+}

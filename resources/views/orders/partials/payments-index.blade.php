@@ -29,9 +29,19 @@
         </div>
 
         <div>
-          <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#changePaymentModal">
-            <i class="fas fa-edit fa-fw"></i>
-          </button>
+          @role(['gerencia', 'atendimento'])
+            <button class="btn btn-sm btn-outline-primary" 
+              data-toggle="modal" 
+                data-target="#changePaymentModal">
+              <i class="fas fa-edit fa-fw"></i>
+            </button>
+          @else
+            @button([
+              'title' => 'Você não tem permissão para isso',
+              'icon' => 'fas fa-edit',
+              'class' => 'btn btn-outline-primary btn-sm'
+            ])
+          @endrole
         </div>
       </li>
     @empty

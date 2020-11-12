@@ -78,7 +78,7 @@ class PaymentsController extends Controller
     public function getFormattedData(array $data) 
     {
     	if (isset($data['value']))
-    		$data['value'] = Sanitizer::removeNonDigits($data['value']);
+    		$data['value'] = Sanitizer::money($data['value']);
 
     	if (isset($data['date']) && Validate::isDate($data['date']))
     		$data['date'] = \Carbon\Carbon::createFromFormat('d/m/Y', $data['date'])->toDateString();

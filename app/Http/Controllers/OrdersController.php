@@ -102,7 +102,8 @@ class OrdersController extends Controller
 
         $validator = $this->validator(
             $data = $this->getFormattedData($request->all()),
-            true
+            true,
+            $order
         );
 
         if ($validator->fails()) {  
@@ -320,7 +321,7 @@ class OrdersController extends Controller
         ], 422);
     }
 
-    private function validator(array $data, $isUpdate = false) 
+    private function validator(array $data, $isUpdate = false, $order = null) 
     {
         return Validator::make($data, [
             'name' => 'nullable|max:255',
@@ -330,7 +331,11 @@ class OrdersController extends Controller
                 : Rule::unique('orders')
             ],
             'quantity' => 'required',
-            'price' => 'required',
+            'price' => [
+                'required', 'numeric', $isUpdate 
+                ? 'min:' . $order->getTotalPayments()
+                : ''
+            ],
             'delivery_date' => 'nullable|date_format:Y-m-d',
             'production_date' => 'nullable|date_format:Y-m-d',
             'down_payment' => 'sometimes|max_double:' . $data['price'],

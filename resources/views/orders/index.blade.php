@@ -46,29 +46,35 @@
           </thead>
 
           <tbody>
-            @foreach($orders as $order)
-            <tr data-url="{{ $order->path() }}" class="clickable-link @if ($order->isClosed()) table-secondary @endif">
-              <td>{{ $order->client->name }}</td>
-              <td>{{ $order->code }}</td>
-              <td>{{ $order->quantity }}</td>
-              <td>{{ Mask::money($order->price) }}</td>
-              <td>{{ Mask::money($order->getTotalPayments()) }}</td>
-              <td>
-                {{
-                  $order->production_date 
-                    ? Helper::date($order->production_date, '%d/%m/%Y')
-                    : '[não informado]' 
-                 }}
-              </td>
-              <td>
-                {{ 
-                  $order->delivery_date 
-                    ? Helper::date($order->delivery_date, '%d/%m/%Y')
-                    : '[não informado]' 
-                  }}
-              </td>
-            </tr>
-            @endforeach
+            @forelse($orders as $order)
+              <tr data-url="{{ $order->path() }}" class="clickable-link @if ($order->isClosed()) table-secondary @endif">
+                <td>{{ $order->client->name }}</td>
+                <td>{{ $order->code }}</td>
+                <td>{{ $order->quantity }}</td>
+                <td>{{ Mask::money($order->price) }}</td>
+                <td>{{ Mask::money($order->getTotalPayments()) }}</td>
+                <td>
+                  {{
+                    $order->production_date 
+                      ? Helper::date($order->production_date, '%d/%m/%Y')
+                      : '[não informado]' 
+                   }}
+                </td>
+                <td>
+                  {{ 
+                    $order->delivery_date 
+                      ? Helper::date($order->delivery_date, '%d/%m/%Y')
+                      : '[não informado]' 
+                    }}
+                </td>
+              </tr>
+            @empty
+              <tr class="not-hover">
+                <td colspan="7">
+                  <h5 class="text-center text-secondary mt-4">Nenhum pedido que corresponda aos critérios foi encontrado.</h5>
+                </td>
+              </tr>
+            @endforelse
           </tbody>
         </table>
       </div>
