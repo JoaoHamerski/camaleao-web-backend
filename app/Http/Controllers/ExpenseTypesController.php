@@ -27,7 +27,7 @@ class ExpenseTypesController extends Controller
 
     	return response()->json([
     		'message' => 'success',
-    		'view' => view('expenses._expense-type-list', [
+    		'view' => view('expenses._expense-type-item', [
     			'expenseType' => $expenseType
     		])->render()
     	], 200);
@@ -51,7 +51,7 @@ class ExpenseTypesController extends Controller
 
         return response()->json([
             'message' => 'success',
-            'view' => view('expenses._expense-type-list', [
+            'view' => view('expenses._expense-type-item', [
                 'expenseType' => $expenseType
             ])->render()
         ], 200);

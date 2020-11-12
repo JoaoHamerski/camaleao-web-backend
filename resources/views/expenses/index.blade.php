@@ -54,7 +54,7 @@
         <i class="fas fa-plus fa-fw mr-1"></i>Cadastro de despesas
       </a>
 
-      <a href="#createFormModal" data-toggle="modal" class="btn btn-outline-success my-3 my-md-0">
+      <a href="#expensesCreateModal" data-toggle="modal" class="btn btn-outline-success my-3 my-md-0">
         <i class="fas fa-plus fa-fw mr-1"></i>Cadastrar única despesa
       </a>
 
@@ -141,7 +141,7 @@
                     @endif
                   </td>
                   <td>
-                    <button data-toggle="modal" data-target="#editFormModal" class="btn btn-outline-primary btn-edit">
+                    <button data-toggle="modal" data-target="#expensesEditModal" class="btn btn-outline-primary btn-edit">
                       <i class="fas fa-edit"></i>
                     </button>
                   </td>
@@ -179,9 +179,9 @@
     </div>
   </div>
 
-  @include('expenses._expense_types_modal')
-  @include('expenses._edit-form-modal')
-  @include('expenses._create-form-modal')
+  @include('expenses.edit-modal')
+  @include('expenses.create-modal')
+  @include('expenses._expense-types-modal')
   @include('expenses._view-receipt-modal')
 @endsection
 

@@ -1,4 +1,3 @@
-
 @if ($expense->getReceiptPath())
 	@if (Helper::isImage($expense->getReceiptPath()))
 		<div class="text-center">
@@ -14,3 +13,6 @@
 		<h4>Sem comprovante cadastrado</h4>
 	</div>
 @endif
+<div class="text-right">
+	<button class="btn btn-light" data-dismiss="modal">Fechar</button>
+</div>

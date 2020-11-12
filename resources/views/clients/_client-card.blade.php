@@ -37,8 +37,8 @@
 					</a>
 				</div>
 			</div>
+			
 			@include('clients.edit-modal')
 		@endrole
-
 	@endif
 </div>

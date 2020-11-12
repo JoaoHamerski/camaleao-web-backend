@@ -35,18 +35,22 @@
     'items' => $cities
   ])
 
-  <div class="mt-1">
-    @if (isset($method) && $method == 'PATCH')
-      <button class="btn btn-outline-success" id="btnEditClient">
-        Atualizar
-      </button>
-    @else
-      <button class="btn btn-outline-success" id="btnCreateClient">
-        <i class="fas fa-check fa-fw mr-1"></i>Cadastrar
-      </button>
-    @endif
+  <div class="mt-1 d-flex justify-content-between">
+    <div>
+      @if (isset($method) && $method == 'PATCH')
+        <button class="btn btn-outline-success" id="btnEditClient">
+          Atualizar
+        </button>
+      @else
+        <button class="btn btn-outline-success" id="btnCreateClient">
+          <i class="fas fa-check fa-fw mr-1"></i>Cadastrar
+        </button>
+      @endif
+    </div>
 
-    <button class="btn btn-light" data-dismiss="modal">Cancelar</button>
+    <div>
+      <button class="btn btn-light" data-dismiss="modal">Cancelar</button>
+    </div>
   </div>
 </form>
 

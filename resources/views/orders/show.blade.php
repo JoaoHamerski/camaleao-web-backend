@@ -18,7 +18,7 @@
             @if ($order->isClosed() || $order->getTotalOwing() == 0)
               <span class="d-inline-block" 
                 data-toggle="tooltip"
-                title="Não é possível efetuar pagamento pois o pedido está @if ($order->isClosed())  fechado @else quitado @endif"> 
+                title="Não é possível efetuar pagamento pois o pedido está @if (! $order->isClosed())  quitado @else fechado @endif"> 
 
                 <button style="pointer-events: none;" disabled="disabled" class="btn btn-outline-success d-block">
                   <i class="fas fa-dollar-sign fa-fw mr-1"></i>Adicionar pagamento
@@ -257,18 +257,50 @@
   </div>
 
   @if (! $order->isClosed())
-    @include('orders._change-status-modal')
+    @modal([
+      'id' => 'statusModal', 
+      'title' => 'Alterar status',
+      'headerClass' => 'bg-primary text-white font-weight-bold',
+      'view' => 'orders._change-status-form'
+    ])
   @endif
 
   @role(['atendimento', 'gerencia'])
     @if (! $order->isClosed() || ($order->getTotalOwing() > 0))
-      @include('orders._new-payment-modal')
+      @modal([
+        'id' => 'newPaymentModal', 
+        'title' => 'Novo pagamento',
+        'icon' => 'fas fa-dollar-sign',
+        'modalDialogClass' => 'modal-dialog-centered',
+        'headerClass' => 'bg-success text-white font-weight-bold',
+        'view' => 'orders._payment-form',
+        'viewAttrs' => [
+          'method' => 'POST'
+        ]
+      ])
     @endif  
   @endrole
 
-  @include('orders._notes-modal')
-  @include('orders._file-viewer-modal')
-  @include('orders._change-payment-modal')
+  @modal([
+    'id' => 'notesModal',
+    'title' => 'Anotações sobre o pedido',
+    'headerClass' => 'bg-primary text-white font-weight-bold',
+    'icon' => 'fas fa-sticky-note',
+    'view' => 'orders._notes'
+  ])
+
+  @modal([
+    'id' => 'fileViewerModal',
+    'title' => 'Visualização de anexo',
+    'modalDialogClass' => 'modal-dialog-centered',
+    'headerClass' => 'bg-dark text-white font-weight-bold'
+  ])
+  @modal([
+    'id' => 'changePaymentModal',
+    'title' => 'Alteração de pagamento',
+    'modalDialogClass' => 'modal-dialog-centered',
+    'headerClass' => 'bg-success text-white font-weight-bold'
+  ])
 @endsection
 
 @push('script')

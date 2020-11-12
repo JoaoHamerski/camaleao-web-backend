@@ -281,7 +281,7 @@ class ExpensesController extends Controller
     {
         return response()->json([
             'message' => 'success',
-            'view' => view('expenses._form-modal', [
+            'view' => view('expenses._form', [
                 'expense' => $expense,
                 'expenseTypes' => ExpenseType::all(),
                 'vias' => Via::all(),

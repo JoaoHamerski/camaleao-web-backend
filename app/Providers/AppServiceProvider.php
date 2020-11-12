@@ -100,5 +100,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::include('components.forms.data-list', 'dataList');
         Blade::include('components.forms.input-file', 'inputFile');
         Blade::include('components.forms.select', 'select');
+        Blade::include('components.modal', 'modal');
+        Blade::include('components.forms.radio', 'radio');
     }
 }

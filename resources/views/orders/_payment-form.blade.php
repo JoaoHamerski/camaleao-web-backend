@@ -58,13 +58,13 @@
 
 	<div>
 	@if ($method == 'POST')
-	        <button id="btnAddPayment" data-id="{{ $order->id }}" type="submit" class="btn btn-primary">
-	        	Salvar
-	        </button>
+        <button id="btnAddPayment" data-id="{{ $order->id }}" type="submit" class="btn btn-primary">
+        	Salvar
+        </button>
 	@else
-			<button data-id="{{ $payment->id }}" id="btnChangePayment" class="btn btn-primary">
-				Atualizar
-			</button>
+		<button data-id="{{ $payment->id }}" id="btnChangePayment" class="btn btn-primary">
+			Atualizar
+		</button>
 	@endif
 		<button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
 	</div>

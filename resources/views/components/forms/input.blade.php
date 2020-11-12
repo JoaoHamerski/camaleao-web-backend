@@ -26,9 +26,13 @@
 			<div class="input-group-append">
 				<button class="{{ $inputGroup['btnAppend']['class'] ?? '' }}"
 			 		@isset($inputGroup['btnAppend']['id']) 
-					id="{{ $inputGroup['btnAppend']['id'] }}" 
+					id="{{ $inputGroup['btnAppend']['id'] }}"
+					@endisset
+					@isset($inputGroup['btnAppend']['attributes'])
+					{{ Helper::renderAttributes($inputGroup['btnAppend']['attributes']) }} 
 					@endisset
 				>
+
 				@isset($inputGroup['btnAppend']['icon'])
 					<i class="{{ $inputGroup['btnAppend']['icon'] }} fa-fw mr-1"></i>
 				@endisset

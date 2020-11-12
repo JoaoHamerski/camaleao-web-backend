@@ -17,5 +17,8 @@
 		> 
 
 		<label class="custom-file-label">{{ $fileLabel }}</label>
+		@isset($helpMessage)
+		<small class="text-secondary">{{ $helpMessage }}</small>
+		@endisset
 	</div>
 </div>

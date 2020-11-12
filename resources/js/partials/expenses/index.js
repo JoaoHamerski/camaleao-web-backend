@@ -7,7 +7,7 @@ applyCleave($('[name*=dia]'), cleaveDate);
   Aplica as máscaras nos inputs caso haja alguma alteração no modal
   de formulário.
 */
-let target = document.querySelector('#editFormModal .modal-body');
+let target = document.querySelector('#expensesEditModal .modal-body');
 
 let observer = new MutationObserver(mutations => {
   applyCleave($('[name=value]'),  cleaveValueBRL);
@@ -145,6 +145,7 @@ $(document).on('click', '.btn-update-expense-type', function(e) {
     $('[data-id=' + id + ']').html($(response.data.view).children());
   })
   .catch(error => {
+    console.log(error.response);
     dispatchErrorMessages(error.response.data.errors);
   })
   .then(function() {
@@ -246,7 +247,7 @@ $('.btn-edit').on('click', function() {
 
   axios.get(getLocationURL() + '/' + id + '/get-edit-form')
     .then(response => {
-      $('#editFormModal .modal-body').html(response.data.view);
+      $('#expensesEditModal .modal-body').html(response.data.view);
     });
   });
 

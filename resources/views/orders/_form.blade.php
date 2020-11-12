@@ -23,7 +23,7 @@
 			'label' => 'Código',
 			'labelClass' => 'font-weight-bold',
 			'formGroupClass' => 'col',
-			'value' => $method == 'PATCH' ? $order->name : $client->getNewOrderCode(),
+			'value' => $method == 'PATCH' ? $order->code : $client->getNewOrderCode(),
 		])
 
 		@input([

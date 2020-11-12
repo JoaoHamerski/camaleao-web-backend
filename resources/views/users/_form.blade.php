@@ -38,7 +38,7 @@
 			<input autocomplete="new-password" class="form-control" type="password" name="password" id="password">
 
 			@if ($method == 'PATCH')
-				<small class="text-secondary">Deixe a senha em branco caso não queria alterar</small>
+				<small class="text-secondary">Deixe a senha em branco caso não queira alterá-la</small>
 			@endif
 		</div>
 
