@@ -89,8 +89,14 @@ class AppServiceProvider extends ServiceProvider
     private function bootBladeValidation()
     {
         Validator::extend('max_double', 'App\Rules\MaxDouble@passes');
+        Validator::extend('min_double', 'App\Rules\MinDouble@passes');
+
         Validator::replacer('max_double', function($message, $attribute, $rule, $parameters) {
             return str_replace(':max', Mask::money($parameters[0]), $message);
+        });
+
+        Validator::replacer('min_double', function($message, $attribute, $rule, $parameters) {
+            return str_replace(':min', Mask::money($parameters[0]), $message);
         });
     }
 

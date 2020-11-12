@@ -119,6 +119,7 @@ return [
     'uuid' => 'O campo :attribute deve ser um UUID válido.',
     'max_double' => 'O valor não pode ser maior que :max',
 
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
@@ -194,7 +195,8 @@ return [
             'required' => 'Por favor, informe uma quantidade'
         ],
         'price' => [
-            'required' => 'Por favor, informe um preço'
+            'required' => 'Por favor, informe um preço',
+            'min_double' => 'O valor do pedido não pode ser menor que o total já pago (:min)'
         ],
         'production_date' => [
             'date_format' => 'Por favor, informe uma data válida'

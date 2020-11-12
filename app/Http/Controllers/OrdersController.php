@@ -332,8 +332,8 @@ class OrdersController extends Controller
             ],
             'quantity' => 'required',
             'price' => [
-                'required', 'numeric', $isUpdate 
-                ? 'min:' . $order->getTotalPayments()
+                'required', $isUpdate 
+                ? 'min_double:' . $order->getTotalPayments()
                 : ''
             ],
             'delivery_date' => 'nullable|date_format:Y-m-d',
