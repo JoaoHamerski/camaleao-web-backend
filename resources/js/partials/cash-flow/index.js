@@ -9,7 +9,11 @@ $('.btn-view-detail').on('click', function(e) {
 	axios.get(getLocationURL() + '/get-details', {
 		params: {
 			id: id,
-			entity: $(this).parents('tr').get(0).hasAttribute('data-expense-id') ? 'expense' : 'payment'
+			entity: $(this).parents('tr')
+				.get(0)
+				.hasAttribute('data-expense-id') 
+			? 'expense' 
+			: 'payment'
 		}
 	})
 	.then(response => {

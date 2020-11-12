@@ -29,7 +29,7 @@ class NotesController extends Controller
 
     	return response()->json([
     		'message' => 'success',
-    		'noteListItem' => view('orders._note-list-item', compact('note'))->render(),
+    		'noteListItem' => view('orders.partials.note-list-item', compact('note'))->render(),
             'countNotes' => $order->notes->count()
     	], 200);
     }

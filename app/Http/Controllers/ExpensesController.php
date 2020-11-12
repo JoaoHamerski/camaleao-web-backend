@@ -220,7 +220,7 @@ class ExpensesController extends Controller
     {
         return response()->json([
             'message' => 'success',
-            'view' => view('expenses._view-receipt', [
+            'view' => view('expenses.partials.view-receipt', [
                 'expense' => $expense
             ])->render()
         ], 200);
@@ -294,7 +294,7 @@ class ExpensesController extends Controller
     {
     	return response()->json([
     		'message' => 'success',
-    		'view' => view('expenses._inline-form', [
+    		'view' => view('expenses.partials.inline-form', [
                 'expenseTypes' => ExpenseType::all(),
                 'vias' => Via::all(),
                 'index' => $request->index

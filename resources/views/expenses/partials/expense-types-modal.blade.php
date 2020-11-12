@@ -4,5 +4,5 @@
   'headerClass' => 'text-white font-weight-bold bg-primary',
   'modalDialogClass' => 'modal-dialog-centered',
   'icon' => 'fas fa-list',
-  'view' => 'expenses._expense-types'
+  'view' => 'expenses.partials.expense-types'
 ])

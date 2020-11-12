@@ -32,7 +32,7 @@
 
 		@if ($payment->note)
 			<div class="text-center mb-1">
-				<small class="text-secondary">{{ $payment->note }}</small>
+				<div class="text-secondary">{{ $payment->note }}</div>
 			</div>
 		@endif
 	@endif
@@ -56,7 +56,7 @@
 		'value' => $method == 'PATCH' ? $payment->note : ''
 	])
 
-	<div>
+	<div class="d-flex justify-content-between">
 	@if ($method == 'POST')
         <button id="btnAddPayment" data-id="{{ $order->id }}" type="submit" class="btn btn-primary">
         	Salvar
@@ -66,6 +66,8 @@
 			Atualizar
 		</button>
 	@endif
-		<button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
+
+	<button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
+
 	</div>
 </form>

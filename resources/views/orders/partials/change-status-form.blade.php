@@ -10,5 +10,8 @@
     </select>
   </div>
 
-  <button class="btn btn-success" type="submit">Alterar</button>
+  <div class="d-flex justify-content-between">
+    <button class="btn btn-success" type="submit">Alterar</button>
+    <button data-dismiss="modal" class="btn btn-light">Fechar</button>
+  </div>
 </form>

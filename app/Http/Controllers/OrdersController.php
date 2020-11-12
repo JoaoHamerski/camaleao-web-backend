@@ -145,7 +145,7 @@ class OrdersController extends Controller
 
         $pdf = \PDF::loadView('orders.pdf.order', compact('client', 'order'));
 
-        return $pdf->stream('pedido(' . $order->code . ').pdf');
+        return $pdf->stream('pedido-' . $order->code . '.pdf');
     }
 
     public function generateReport(Request $request)
@@ -307,7 +307,7 @@ class OrdersController extends Controller
             if ($request->option == $option) {
                 return response()->json([
                     'message' => 'success',
-                    'view' => view('orders.file-viewer', [
+                    'view' => view('orders.partials.file-viewer', [
                         'paths' => $order->getPaths($option . '_paths'),
                         'option' => $option
                     ])->render()

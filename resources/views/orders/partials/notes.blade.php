@@ -1,6 +1,6 @@
 <ul id="listGroupNotes" class="list-group">
   @foreach($order->notes as $note)
-    @include('orders._note-list-item')
+    @include('orders.partials.note-list-item')
   @endforeach
 </ul>
 

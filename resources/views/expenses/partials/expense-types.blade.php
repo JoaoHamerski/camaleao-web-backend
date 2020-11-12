@@ -1,6 +1,6 @@
 <ul class="list-group">
   @foreach($expenseTypes as $expenseType)
-    @include('expenses._expense-type-item', ['expenseType' => $expenseType])
+    @include('expenses.partials.expense-type-item', ['expenseType' => $expenseType])
   @endforeach
 </ul>
 

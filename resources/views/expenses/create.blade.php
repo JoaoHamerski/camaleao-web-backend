@@ -32,7 +32,7 @@
 
 				<form id="formExpenses" method="POST">
 
-					@include('expenses._inline-form')
+					@include('expenses.partials.inline-form')
 					
 					<div class="col col-md-5 mx-auto mt-3 px-0 px-md-3">
 						<button id="btnNewExpense" class="btn btn-block btn-outline-primary">

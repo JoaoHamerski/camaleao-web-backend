@@ -181,8 +181,8 @@
 
   @include('expenses.edit-modal')
   @include('expenses.create-modal')
-  @include('expenses._expense-types-modal')
-  @include('expenses._view-receipt-modal')
+  @include('expenses.partials.expense-types-modal')
+  @include('expenses.partials.view-receipt-modal')
 @endsection
 
 @push('css')

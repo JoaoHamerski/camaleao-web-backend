@@ -1,10 +1,10 @@
 applyCleave($('[name=value]'), cleaveValueBRL);
 applyCleave($('[name=date]'), cleaveDate);
 
-$('a[data-option]').on('click', function(e) {
+$('a[data-attach]').on('click', function(e) {
 	e.preventDefault();
 
-	let option = $(this).attr('data-option');
+	let option = $(this).attr('data-attach');
 
 	axios.post(getLocationURL() + '/file-view', {
 		option: option
@@ -57,7 +57,7 @@ $('#btnAddNote').on('click', function(e) {
     $('#listGroupNotes').append(response.data.noteListItem);
     $('button[data-target="#notesModal"]').html('Anotações (' + response.data.countNotes  + ')');
 
-    $('[name=order_note').val('');
+    $('[name=order_note').val('').focus();
   })
   .catch(error => { 
   	dispatchErrorMessages(error.response.data.errors);
@@ -76,9 +76,7 @@ $(document).on('click', '.btn-delete-item', function(e) {
     .then(response => {
       $itemWrapper.remove();
        $('button[data-target="#notesModal"]').html('Anotações (' + response.data.countNotes  + ')');
-    })
-    .catch(error => { 
-    })
+    });
 }); 
 
 $('#btnAddPayment').on('click', function(e) {

@@ -139,13 +139,12 @@ $(document).on('click', '.btn-update-expense-type', function(e) {
   loadingBtn($btn, true);
 
   axios.patch(getLocationURL() + '/tipo-de-despesa/' + id, {
-    'expense_type_updated': $('[name=expense_type_updated]').val()
+    'expense_type_updated': $btn.parents('.input-group').find('input').val()
   })
   .then(response => {
-    $('[data-id=' + id + ']').html($(response.data.view).children());
+    $('#expenseTypesModal [data-id=' + id + ']').html($(response.data.view).children());
   })
   .catch(error => {
-    console.log(error.response);
     dispatchErrorMessages(error.response.data.errors);
   })
   .then(function() {

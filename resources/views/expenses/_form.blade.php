@@ -57,11 +57,11 @@
 
   @inputFile([
     'id' => 'receipt',
-    'name' => 'receipt',
+    'name' => 'receipt_path',
     'label' => 'Comprovante',
     'labelClass' => 'font-weight-bold', 
     'fileLabel' => 'Selecione o comprovante',
-    'helpMessage' => $expense->receipt_path
+    'helpMessage' => $method == 'PATCH' && $expense->receipt_path
       ? 'Caso um comprovante seja selecionado, ele substituirá o atual'
       : ''
   ])

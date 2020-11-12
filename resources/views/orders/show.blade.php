@@ -53,7 +53,7 @@
             @if ($order->getTotalOwing() == 0 || $order->isClosed())
               <a class="btn btn-outline-secondary d-block" onclick="event.preventDefault; document.querySelector('#toggleOrderForm').submit()">{{ $order->isClosed() ? 'Reabrir pedido' : 'Fechar pedido' }}</a>
             @else
-              <span class="d-inline-block w-100" tabindex="0" data-toggle="tooltip" title="Não é possível fechar o pedido com pendencia financeira">
+              <span class="d-inline-block w-100" tabindex="0" data-toggle="tooltip" title="Não é possível fechar pedidos com pendência financeira">
                 <button style="pointer-events: none;" class="btn btn-outline-secondary d-block w-100" disabled="disabled">
                   {{ $order->isClosed() ? 'Reabrir pedido' : 'Fechar pedido' }}
                 </button>
@@ -207,50 +207,20 @@
 
           <h4 class="font-weight-bold text-secondary mt-4 mb-3">Anexos</h4>
           <div class="d-flex justify-content-between flex-column flex-md-row">
-            <a href="" data-option="art">
+            <a href="" data-attach="art">
               <i class="fas fa-images fa-fw mr-1"></i>Artes ({{ count($order->getPaths('art_paths')) }})
             </a>
 
-            <a class="my-2 my-md-0" href="" data-option="size">
+            <a class="my-2 my-md-0" href="" data-attach="size">
               <i class="fas fa-images fa-fw mr-1"></i>Tamanhos ({{ count($order->getPaths('size_paths')) }})
             </a>
 
-            <a href="" data-option="payment_voucher">
+            <a href="" data-attach="payment_voucher">
               <i class="fas fa-file-alt fa-fw mr-1"></i>Comprovantes ({{ count($order->getPaths('payment_voucher_paths')) }})
             </a>
           </div>
 
-          <h4 class="font-weight-bold text-secondary mt-4 mb-3">Pagamentos</h4>
-          <div class="d-flex flex-column">
-            <ul class="list-group list-group-flush">
-              @forelse($order->payments->reverse() as $payment)
-                <li data-id="{{ $payment->id }}" class="list-group-item d-flex justify-content-between">
-                  <div>
-                  <strong>{{ Mask::money($payment->value) }}</strong> em <strong>{{ Helper::date($payment->date, '%d/%m/%Y') }}</strong>
-
-                  @if ($payment->via)
-                     via <strong>{{ $payment->via->name }}</strong>
-                  @endif
-
-                  @if (! empty($payment->note))
-                    - 
-                    <a onclick="event.preventDefault()" href="" data-toggle="tooltip" title="{{ $payment->note }}">(ver anotação)</a>
-                  @endif
-                  </div>
-
-                  <div>
-                    <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#changePaymentModal">
-                      <i class="fas fa-edit fa-fw"></i>
-                    </button>
-                  </div>
-                </li>
-              @empty
-                <li class="list-group-item text-center">
-                  <h5 class="text-secondary">Nenhum pagamento feito ainda</h5>
-                </li>
-              @endforelse
-            </ul>
-          </div>
+          @include('orders.partials.payments-index')
         </div>
       </div>
     </div>
@@ -261,7 +231,7 @@
       'id' => 'statusModal', 
       'title' => 'Alterar status',
       'headerClass' => 'bg-primary text-white font-weight-bold',
-      'view' => 'orders._change-status-form'
+      'view' => 'orders.partials.change-status-form'
     ])
   @endif
 
@@ -273,7 +243,7 @@
         'icon' => 'fas fa-dollar-sign',
         'modalDialogClass' => 'modal-dialog-centered',
         'headerClass' => 'bg-success text-white font-weight-bold',
-        'view' => 'orders._payment-form',
+        'view' => 'orders.partials.payment-form',
         'viewAttrs' => [
           'method' => 'POST'
         ]
@@ -286,15 +256,16 @@
     'title' => 'Anotações sobre o pedido',
     'headerClass' => 'bg-primary text-white font-weight-bold',
     'icon' => 'fas fa-sticky-note',
-    'view' => 'orders._notes'
+    'view' => 'orders.partials.notes'
   ])
 
   @modal([
     'id' => 'fileViewerModal',
     'title' => 'Visualização de anexo',
-    'modalDialogClass' => 'modal-dialog-centered',
+    'modalDialogClass' => 'modal-dialog-centered modal-lg',
     'headerClass' => 'bg-dark text-white font-weight-bold'
   ])
+  
   @modal([
     'id' => 'changePaymentModal',
     'title' => 'Alteração de pagamento',
