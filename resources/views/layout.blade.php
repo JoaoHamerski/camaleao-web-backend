@@ -32,6 +32,8 @@
         <div class="container">
           @yield('content')
         </div>
+
+        <button class="btn btn-primary" id="btnInstallPWA">Instalar</button>
       </div>
     </div>
   </div>

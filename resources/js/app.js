@@ -9,17 +9,26 @@ window.addEventListener('load', () => {
 	}
 });
 
-function al() {
-	var deferredPrompt;
+window.addEventListener('beforeinstallprompt', (event) => {
+  console.log('👍', 'beforeinstallprompt', event);
+  // Stash the event so it can be triggered later.
+  window.deferredPrompt = event;
+});
 
-	window.addEventListener('beforeinstallprompt', (e) => {
-	  // Prevent the mini-infobar from appearing on mobile
-	  e.preventDefault();
+$('#btnInstallPWA').on('click', function(event) {
+	
+	const promptEvent = window.deferredPrompt;
 
-	  deferredPrompt = e;
-	  // Update UI notify the user they can install the PWA
-	  showInstallPromotion();
-	});
-}
+	if (! promptEvent) {
+		return;
+	}
 
-al();
+	promptEvent.prompt();
+
+	promptEvent.userChoice.then((result) => {
+		console.log(result);
+
+		window.deferredPrompt = null;
+	})
+
+});
