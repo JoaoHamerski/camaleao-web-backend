@@ -23,7 +23,7 @@
 
     <div class="wrapper-app">
       @auth
-        <div class="d-flex">
+        <div class="d-flex flex-column justify-content-between">
           @include('sidebar')
         </div>
       @endauth
@@ -32,8 +32,6 @@
         <div class="container">
           @yield('content')
         </div>
-
-        <button class="btn btn-primary" id="btnInstallPWA">Instalar</button>
       </div>
     </div>
   </div>

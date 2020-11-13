@@ -34,6 +34,11 @@
 
 					<a id="btnDeleteAccount" href="" class="text-danger"><i class="fas fa-trash-alt fa-fw mr-1"></i>Deletar conta</a>
 				</div>
+				<div class="mt-3">
+					<button class="btn btn-block btn-outline-primary" id="btnInstallPWA">
+						Instalar aplicativo do sistema
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
