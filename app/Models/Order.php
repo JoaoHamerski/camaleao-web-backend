@@ -99,7 +99,7 @@ class Order extends Model
      */
     public function client()
     {
-    	return $this->belongsTo(Client::class)->withTrashed();
+    	return $this->belongsTo(Client::class);
     }
 
     /**
