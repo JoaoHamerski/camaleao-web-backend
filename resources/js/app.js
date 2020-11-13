@@ -5,7 +5,7 @@ require('./_custom');
 
 window.addEventListener('load', () => {
 	if ('serviceWorker' in navigator) {
-		navigator.servieWorker.register('_service-worker.js');
+		navigator.serviceWorker.register('_service-worker.js');
 	}
 });
 
