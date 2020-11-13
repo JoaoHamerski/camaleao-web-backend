@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\TrashController;
 use App\Http\Controllers\CookieController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\StatusController;

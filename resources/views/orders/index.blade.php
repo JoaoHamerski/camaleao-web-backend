@@ -71,7 +71,18 @@
             @empty
               <tr class="not-hover">
                 <td colspan="7">
-                  <h5 class="text-center text-secondary mt-4">Nenhum pedido que corresponda aos critérios foi encontrado.</h5>
+                  <h5 class="text-center text-secondary mt-4">
+                    @if ($orders->count())
+                      Nenhum pedido com código 
+                      @if (Request::filled('codigo'))<strong>"{{ Request::query('codigo') }}"</strong> @endif 
+                      foi encontrado.
+                    @else
+                      Nenhum pedido foi encontrado
+                    @endif
+                  </h5>
+                  <div class="small text-center">
+                    <a href="{{ route('orders.index') }}">Voltar aos pedidos</a>
+                  </div>
                 </td>
               </tr>
             @endforelse

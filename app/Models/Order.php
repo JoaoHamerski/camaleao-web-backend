@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use App\Traits\FileManager;
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
@@ -99,7 +99,7 @@ class Order extends Model
      */
     public function client()
     {
-    	return $this->belongsTo(Client::class);
+    	return $this->belongsTo(Client::class)->withTrashed();
     }
 
     /**

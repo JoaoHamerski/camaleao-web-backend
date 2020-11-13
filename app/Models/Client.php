@@ -12,9 +12,12 @@ class Client extends Model
     use HasFactory, FileManager, LogsActivity;
 
     protected $guarded = [];
+
     protected static $logName = 'clients';
     protected static $logUnguarded = true;
     protected static $logOnlyDirty = true;
+
+    protected $cascadeDeletes = ['orders', 'payments'];
     
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo

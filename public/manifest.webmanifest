@@ -1,0 +1,22 @@
+{
+  "short_name": "Camaleão sistema interno",
+  "name": "Camaleão Camisas - Sistema Interno",
+  "description": "Sistema interno para gestão da empresa Camaleão Camisas",
+  "icons": [
+    {
+      "src": "/images/icon-256.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    },
+    {
+      "src": "/images/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "https://web.camaleaocamisas.com.br/",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#FF4E00"
+}
