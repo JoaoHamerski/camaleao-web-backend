@@ -42491,7 +42491,7 @@ __webpack_require__(/*! ./_custom */ "./resources/js/_custom.js");
 
 window.addEventListener('load', function () {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('_service-worker.js');
+    navigator.serviceWorker.register('js/_service-worker.js');
   }
 });
 var deferredPrompt;
