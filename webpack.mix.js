@@ -25,5 +25,5 @@ mix.sass('resources/sass/app.scss', 'public/css')
 	.js('resources/js/partials/expenses/create.js', 'public/js/partials/expenses')
 	.js('resources/js/partials/payments/index.js', 'public/js/partials/payments')
 	.js('resources/js/partials/cash-flow/index.js', 'public/js/partials/cash-flow')
-	.js('resources/js/_service-worker', 'public/js/')
+	.js('resources/js/_service-worker', 'public/')
 	.version();
