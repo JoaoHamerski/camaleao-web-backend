@@ -9,10 +9,17 @@ window.addEventListener('load', () => {
 	}
 });
 
-window.addEventListener('beforeinstallprompt', (e) => {
-  // Prevent the mini-infobar from appearing on mobile
-  e.preventDefault();
-  
-  // Update UI notify the user they can install the PWA
-  showInstallPromotion();
-});
+function al() {
+	var deferredPrompt;
+
+	window.addEventListener('beforeinstallprompt', (e) => {
+	  // Prevent the mini-infobar from appearing on mobile
+	  e.preventDefault();
+
+	  deferredPrompt = e;
+	  // Update UI notify the user they can install the PWA
+	  e.showInstallPromotion();
+	});
+}
+
+al();
