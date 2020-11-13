@@ -18,7 +18,7 @@ function al() {
 
 	  deferredPrompt = e;
 	  // Update UI notify the user they can install the PWA
-	  e.showInstallPromotion();
+	  showInstallPromotion();
 	});
 }
 
