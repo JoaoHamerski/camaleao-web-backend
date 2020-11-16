@@ -12,6 +12,7 @@ const mix = require('laravel-mix');
  */
 
 mix.sass('resources/sass/app.scss', 'public/css')
+	.sass('resources/sass/uniform-simulator/app.scss', 'public/css/uniform-simulator')
 	.sass('resources/sass/_date-picker.scss', 'public/css')
 	.js('resources/js/app.js', 'public/js')
 	.js('resources/js/_date-picker.js', 'public/js')
@@ -25,5 +26,6 @@ mix.sass('resources/sass/app.scss', 'public/css')
 	.js('resources/js/partials/expenses/create.js', 'public/js/partials/expenses')
 	.js('resources/js/partials/payments/index.js', 'public/js/partials/payments')
 	.js('resources/js/partials/cash-flow/index.js', 'public/js/partials/cash-flow')
-	.js('resources/js/_service-worker', 'public/')
+	.js('resources/js/_service-worker.js', 'public/')
+	.js('resources/js/uniform-simulator/app.js', 'public/js/uniform-simulator')
 	.version();

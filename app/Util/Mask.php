@@ -31,15 +31,20 @@ class Mask {
 	 */
 	public static function phone($str)
 	{
-		if (strlen($str) === 11) {
-			return isset($str) 
-				? self::mask('(##) # ####-####', $str)
-				: null;
-		}
+		$masksMap = [
+			'8' => '####-####',
+			'9' => '# ####-####',
+			'10' => '(##) ####-####',
+			'11' => '(##) # ####-####',
+		];
 
-		return isset($str) 
-			? self::mask('(##) ####-####', $str)
-			: null;
+		foreach($masksMap as $length => $mask) {
+			if (strlen($str) == $length) {
+				return isset($str)
+					? self::mask($mask, $str)
+					: null;
+			}
+		}
 	}
 
 	/**

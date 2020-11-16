@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="{{ mix('css/app.css') }}">
   <link rel="icon" type="image/png" href="/favicon.ico"/>
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#ff4e00">
   @stack('css')
 </head>
 <body class="@yield('body-class')">
