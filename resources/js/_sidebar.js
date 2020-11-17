@@ -18,8 +18,8 @@ $('#btnSidebar').click(function() {
 $(document).on('touchstart', function(e) {
   let touchStartX = e.touches[0].clientX; 
 
-  if (touchStartX < 40 || 
-    ($('.sidebar').hasClass('is-active') && touchStartX  > $(document).width() - 80)) {
+  if (touchStartX < 40 && ! $('.sidebar').hasClass('is-active') || 
+    ($('.sidebar').hasClass('is-active') && touchStartX  > $(document).width() - 200)) {
     $(document).on('touchmove', function(e) {
       window.touchMoveX = (e.touches[0].clientX * 100) / $(document).width();
       touchMoveX = -100 +touchMoveX;
