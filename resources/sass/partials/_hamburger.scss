@@ -109,4 +109,8 @@
 	.hamburger {
 		z-index: 1021;
 	}
+
+	.hamburger.is-active {
+		position: fixed;
+	}
 }

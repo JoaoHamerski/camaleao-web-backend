@@ -1,22 +1,3 @@
-$('#btnSidebar').click(function() {
-  
-  $(this).toggleClass('is-active');
-  $('.sidebar').toggleClass('is-active');
-  	
-  if ($(window).width() > 576) {
-	  if ($('.sidebar').hasClass('is-active')) {
-	    setCookie({name: 'sidebar_active', value: true });
-	  } else {
-	    setCookie({name: 'sidebar_active', value: false });
-	  }
-  } else {
-  	if (! $('.sidebar').hasClass('is-active')) {
-  		setCookie({name: 'sidebar_active', value: false});
-  	}
-  }
-});
-
-
 $(document).on('focus', 'input, select', function() {
   $(this).removeClass('is-invalid')
     .next('.text-danger')

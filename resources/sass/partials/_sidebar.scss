@@ -1,7 +1,15 @@
+.sidebar + #content {
+	transition: margin-left .25s;
+}
+
+.sidebar.is-active + #content {
+	margin-left: $sidebar-width; 
+}
+
 .sidebar {
 	color: #fff;
 	display: block;
-	position: relative;
+	position: fixed;
 	height: 100%;
 	min-width: $sidebar-width;
 	max-width: $sidebar-width;
@@ -43,14 +51,18 @@
 }
 
 @include media-breakpoint-down(xs) {
+	.sidebar.is-active + #content {
+		margin-left: 0; 
+	}
+
 	.sidebar {
-		position: fixed;
 		background-color: rgba(0, 0, 0, .95);
 		z-index: 1020;
 		min-width: 100%;
 		max-width: 100%;
 		margin-left: -100%;
 		overflow: hidden;
+		transition: none;
 	}
 }
 

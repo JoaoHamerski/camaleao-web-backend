@@ -22,9 +22,7 @@
 
     <div class="wrapper-app">
       @auth
-        <div class="d-flex flex-column justify-content-between">
-          @include('sidebar')
-        </div>
+        @include('sidebar')
       @endauth
       
       <div id="content">

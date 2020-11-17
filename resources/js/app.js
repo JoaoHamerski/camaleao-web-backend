@@ -2,6 +2,7 @@ require('./_helpers');
 require('./bootstrap');
 require('./cleave');
 require('./_custom');
+require('./_sidebar');
 
 window.addEventListener('load', () => {
 	if ('serviceWorker' in navigator) {
