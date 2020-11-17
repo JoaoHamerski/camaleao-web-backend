@@ -3,6 +3,7 @@
 		@method('PATCH')
 	@endif
 
+	<h5 class="font-weight-bold text-secondary">Informações básicas</h5>
 	<div class="form-row d-flex flex-column flex-md-row">
 		@input([
 			'id' => 'name',
@@ -25,8 +26,8 @@
 		])
 	</div>
 
+	<h5 class="font-weight-bold text-secondary mt-3">Valores</h5>
 	<div class="form-row d-flex flex-column flex-md-row">
-
 		@input([
 			'id' => 'quantity',
 			'name' => 'quantity',
@@ -71,6 +72,7 @@
 		@endif
 	</div>
 
+	<h5 class="font-weight-bold text-secondary mt-3">Produção e entrega</h5>
 	<div class="form-row d-flex flex-column flex-md-row">
 		@input([
 			'id' => 'production_date',
@@ -95,13 +97,14 @@
 		])
 	</div>
 
+	<h5 class="font-weight-bold text-secondary mt-3">Anexos</h5>
 	@inputFile([
 		'id' => 'art_paths',
 		'name' => 'art_paths[]',
 		'accept' => 'image/*',
 		'multiple' => true,
 		'optional' => true,
-		'label' => 'Imagem da arte',
+		'label' => 'Imagens da arte',
 		'labelClass' => 'font-weight-bold',
 		'fileLabel' => $method == 'PATCH' ? 'Adicionar mais arquivos' : 'Escolher arquivos'
 	])
@@ -126,7 +129,7 @@
 		'accept' => 'image/*',
 		'multiple' => true,
 		'optional' => true,
-		'label' => 'Imagem do tamanho',
+		'label' => 'Imagens do tamanho',
 		'labelClass' => 'font-weight-bold',
 		'fileLabel' => $method == 'PATCH' ? 'Adicionar mais arquivos' : 'Escolher arquivos'
 	])
@@ -169,15 +172,19 @@
 		</ul>
 	@endif
 
-	@if ($method == 'POST')
-		<button class="btn btn-success" id="btnCreateOrder" >
-			<i class="fas fa-check fa-fw mr-1"></i>Cadastrar
-		</button>
-	@else
-		<button class="btn btn-success mt-3" id="btnUpdateOrder" >
-			<i class="fas fa-check fa-fw mr-1"></i>Atualizar
-		</button>
-	@endif
+	<div class="d-flex justify-content-between">
+		@if ($method == 'POST')
+			<button class="btn btn-success" id="btnCreateOrder" >
+				<i class="fas fa-check fa-fw mr-1"></i>Cadastrar
+			</button>
+		@else
+			<button class="btn btn-success mt-3" id="btnUpdateOrder" >
+				<i class="fas fa-check fa-fw mr-1"></i>Atualizar
+			</button>
+		@endif
+
+		<a class="btn btn-light" href="{{ route('clients.show', $client) }}">Cancelar</a>
+	</div>
 </form>
 
 @push('script')
