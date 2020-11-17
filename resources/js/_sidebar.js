@@ -35,11 +35,11 @@ $(document).on('touchend', function(e) {
   $('.sidebar').removeAttr('style');
 
   if (typeof window.touchMoveX !== 'undefined' && window.touchMoveX != null) {
-    if (window.touchMoveX > -50) {
+    if (! $('.sidebar').hasClass('is-active')) {
       $('.sidebar').css({'margin-left' : '0%', 'transition': 'all .25s'});
       $('.sidebar').addClass('is-active');;
       $('#btnSidebar').addClass('is-active');
-    } else {
+    } else if ($('.sidebar').hasClass('is-active')) {
       $('.sidebar').css({'margin-left' : '-100%', 'transition': 'all .25s'});
       $('.sidebar').removeClass('is-active');
       $('#btnSidebar').removeClass('is-active');
