@@ -57,6 +57,10 @@ class Mask {
 	 */
 	public static function money($str, $strongValue = false)
 	{
+		if (empty($str)) {
+			$str = 0;
+		}
+		
 		$formatter = new \NumberFormatter('pt_BR', \NumberFormatter::CURRENCY);
 		$money = $formatter->formatCurrency($str, 'BRL');
 

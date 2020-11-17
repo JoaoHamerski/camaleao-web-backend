@@ -33,6 +33,7 @@ $('#btnCreateOrder').on('click', function(e) {
 			window.location = response.data.redirect;
 		})
 		.catch(error => {
+			console.log(error.response);
 			dispatchErrorMessages(error.response.data.errors);
 			loadingBtn($btn, false);
 		});
@@ -75,4 +76,12 @@ $('.btn-delete-image, .btn-delete-payment-voucher').on('click', function(e) {
 	.then(response => {
 		$wrapper.remove();
 	});
+});
+
+$('[name=down_payment]').on('input', function(e) {
+	if ($(this).val().replace('R$ ', '') == '') {
+		$('[name=payment_via_id]').attr('disabled', 'disabled');
+	} else {
+		$('[name=payment_via_id]').removeAttr('disabled');
+	}
 });

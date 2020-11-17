@@ -212,7 +212,11 @@ return [
         ],
         'expense_type*.required' => 'Por favor, informe o tipo de despesa',
         'expense_via*.required' => 'Por favor, informe a via',
-        'payment_via_id.required' => 'Por favor, informe a via'
+        'payment_via_id' => [
+            'required' => 'Por favor, informe a via',
+            'exists' => 'Por favor, selecione uma via válida',
+        ],
+        'down_payment.max_double' => 'O valor não pode ser maior que o valor total (:max)'
     ],
 
     /*

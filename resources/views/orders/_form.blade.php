@@ -14,9 +14,7 @@
 			'placeholder' => 'Nome que descreva o pedido...',
 			'value' => $method == 'PATCH' ? $order->name : null,
 		])
-	</div>
 
-	<div class="form-row d-flex flex-column flex-md-row">
 		@input([
 			'id' => 'code',
 			'name' => 'code',
@@ -25,6 +23,9 @@
 			'formGroupClass' => 'col',
 			'value' => $method == 'PATCH' ? $order->code : $client->getNewOrderCode(),
 		])
+	</div>
+
+	<div class="form-row d-flex flex-column flex-md-row">
 
 		@input([
 			'id' => 'quantity',
@@ -34,9 +35,7 @@
 			'formGroupClass' => 'col',
 			'value' => $method == 'PATCH' ? $order->quantity : null,
 		])
-	</div>
 
-	<div class="form-row d-flex flex-column flex-md-row">
 		@input([
 			'id' => 'price',
 			'name' => 'price',
@@ -45,7 +44,9 @@
 			'formGroupClass' => 'col',
 			'value' => $method == 'PATCH' ? Mask::money($order->price) : '',
 		])
+	</div>
 
+	<div class="form-row d-flex flex-column flex-md-row">
 		@if ($method == 'POST')
 			@input([
 				'id' => 'down_payment',
@@ -54,6 +55,18 @@
 				'labelClass' => 'font-weight-bold',
 				'formGroupClass' => 'col',
 				'optional' => true
+			])
+
+			@select([
+				'label' => 'Via da entrada',
+				'id' => 'payment_via_id',
+				'name' => 'payment_via_id',
+				'items' => $vias,
+				'formGroupClass' => 'col',
+				'itemKeyToMatch' => null,
+				'itemAttribute' => 'name',
+				'defaultOptionText' => 'Selecione a via',
+				'attributes' => ['disabled' => 'disabled']
 			])
 		@endif
 	</div>

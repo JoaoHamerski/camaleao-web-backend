@@ -3,5 +3,8 @@
 @section('title', 'Simulador de uniforme')
 
 @section('content')
-	<sidebar></sidebar>
+	<div class="d-flex">
+		<sidebar></sidebar>
+		<uniform-selection></uniform-selection>
+	</div>
 @endsection

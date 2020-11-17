@@ -149,11 +149,12 @@ class Order extends Model
      * 
      * @return App\Models\Payment
      */
-    public function createDownPayment($value)
+    public function createDownPayment($value, $viaId)
     {
         return $this->payments()->create([
             'value' => $value,
             'date' => \Carbon\Carbon::now(),
+            'payment_via_id' => $viaId,
             'note' => 'Pagamento de entrada'
         ]);
     }

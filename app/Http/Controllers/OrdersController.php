@@ -35,7 +35,10 @@ class OrdersController extends Controller
 
     public function create(Client $client) 
     {
-    	return view('orders.create', compact('client'));
+    	return view('orders.create', [
+            'client' => $client,
+            'vias' => Via::all()
+        ]);
     }
 
     public function show(Client $client, Order $order) 
@@ -84,10 +87,13 @@ class OrdersController extends Controller
 
         $data = array_merge($data, $this->uploadAllFiles($request));
 
-        $order = $client->orders()->create(\Arr::except($data, ['down_payment']));
+        $order = $client->orders()->create(\Arr::except($data, ['down_payment', 'payment_via_id']));
 
-        if (! empty($data['down_payment'])) {
-            $order->createDownPayment($data['down_payment']);
+        if (! empty($data['down_payment']) && ! empty($data['payment_via_id'])) {
+            $order->createDownPayment(
+                $data['down_payment'], 
+                $data['payment_via_id']
+            );
         }
 
         return response()->json([
@@ -339,6 +345,7 @@ class OrdersController extends Controller
             'delivery_date' => 'nullable|date_format:Y-m-d',
             'production_date' => 'nullable|date_format:Y-m-d',
             'down_payment' => 'sometimes|max_double:' . $data['price'],
+            'payment_via_id' => 'sometimes|exists:vias,id',
             'art_paths.*' => 'nullable|image',
             'size_paths.*' => 'nullable|image'
         ]);

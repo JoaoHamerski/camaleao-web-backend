@@ -6,6 +6,7 @@
 	<select class="custom-select" 
 		@isset ($name) name="{{ $name }}" @endisset 
 		@isset ($id ) id="{{ $id }}" @endisset
+		@isset($attributes) {{ Helper::renderAttributes($attributes) }} @endisset
 	>
 
 		<option @if ($itemKeyToMatch == null) selected="selected" @endif value="">{{ $defaultOptionText }}</option>
