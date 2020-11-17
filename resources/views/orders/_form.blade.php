@@ -126,7 +126,7 @@
 		'accept' => 'image/*',
 		'multiple' => true,
 		'optional' => true,
-		'label' => 'Imagem da arte',
+		'label' => 'Imagem do tamanho',
 		'labelClass' => 'font-weight-bold',
 		'fileLabel' => $method == 'PATCH' ? 'Adicionar mais arquivos' : 'Escolher arquivos'
 	])
