@@ -130,7 +130,6 @@ Route::middleware('auth')->group(function() {
 	Route::name('activities.')->middleware('role:gerencia')->group(function() {
 		Route::get('/atividades', [ActivitiesController::class, 'index'])->name('index');
 	});
-
 });
 
 Route::name('uniform-simulator')->group(function() {

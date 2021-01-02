@@ -1,0 +1,37 @@
+// Body
+$body-bg: #f8fafc;
+
+// Typography
+$font-family-sans-serif: 'Nunito', sans-serif;
+$line-height-base: 1.6;
+
+// Colors
+$blue: #3490dc;
+$indigo: #6574cd;
+$purple: #9561e2;
+$pink: #f66d9b;
+$red: #e3342f;
+$orange: #f6993f;
+$yellow: #e0cc1b;
+$green: #38c172;
+$teal: #4dc0b5;
+$cyan: #6cb2eb;
+$dark: #343a40;
+$camaleao: #ff4e00;
+
+$modal-fade-transform: scale(.8);
+
+$custom-file-text: (
+  pt-BR: "Procurar" 
+);
+
+$theme-colors: (
+	"camaleao": #ff4e00	
+);
+
+$navbar-item-color-hover: color.adjust(#FFFFFF, $lightness: -5%);
+
+$uniform-width: 213.64px;
+
+$torso-width: $uniform-width;
+$torso-heigth: 250px;

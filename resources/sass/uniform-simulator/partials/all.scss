@@ -1,0 +1,21 @@
+@import 'dropdown';
+@import 'hamburger';
+@import 'icons';
+@import 'navbar';
+@import 'sidebar';
+@import 'uniform';
+
+html, body {
+	height: 100%;
+}
+
+@for $i from 1 through 3 {
+	.border-#{$i} {
+		border-width: #{$i}px !important;
+	}
+}
+
+.vue-swatches__container:not(.vue-swatches--inline) {
+	border-radius: .075rem;
+	box-shadow: 0px 0px 3px rgba(0, 0, 0, .3);
+}

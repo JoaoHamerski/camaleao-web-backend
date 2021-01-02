@@ -1,4 +1,6 @@
-@import '../_variables';
+@use 'sass:color';
+@import '_variables';
 @import '~bootstrap/scss/bootstrap';
-@import '~@forevolve/bootstrap-dark/scss/toggle-bootstrap-dark';
+@import '~vue-swatches/dist/vue-swatches.css';
 @import '../_fontawesome';
+@import 'partials/all';

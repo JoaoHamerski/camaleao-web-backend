@@ -1,0 +1,45 @@
+.uniform-container {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	width: 100vw;
+
+	.uniform {
+		position: relative;
+		margin-top: 4.5rem;
+		width: $uniform-width;
+
+		.torso {
+			position: relative;
+		}
+	}
+
+	.uniform .torso {
+		.back-base svg,
+		.back-mask img { height: $torso-heigth }
+
+		.back-base svg,
+		.back-mask img { width: $torso-width }
+
+		.back-base, .back-mask {
+			position: absolute;
+		}
+	}
+}
+
+.uniform-rotate-icon i {
+	color: $dark; 
+	opacity: .5;
+	position: absolute;
+	right: -100px;
+	top: 150px;
+	transition-property: opacity, transform;
+	transition-duration: .25s;
+	font-size: 2.3rem; 
+
+	&:hover {
+		cursor: pointer;
+		opacity: .85;
+		transform: scale(1.1);
+	}
+}

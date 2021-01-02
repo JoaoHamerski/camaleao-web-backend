@@ -29,3 +29,5 @@ mix.sass('resources/sass/app.scss', 'public/css')
 	.js('resources/js/_service-worker.js', 'public/')
 	.js('resources/js/uniform-simulator/app.js', 'public/js/uniform-simulator')
 	.version();
+
+mix.copyDirectory('resources/fonts', 'public/fonts');
