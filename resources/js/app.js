@@ -6,7 +6,7 @@ require('./_sidebar');
 
 window.addEventListener('load', () => {
 	if ('serviceWorker' in navigator) {
-		navigator.serviceWorker.register('_service-worker.js');
+		navigator.serviceWorker.register('/_service-worker.js');
 	}
 });
 
