@@ -37,8 +37,8 @@
 
                         <div class="form-group">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="remember">
-                                <label class="custom-control-label" for="remember">Mantenha-me conectado</label>
+                                <input type="checkbox" class="custom-control-input" id="remember" name="remember">
+                                <label class="custom-control-label" for="remember">Lembre-se de mim</label>
                             </div>
                         </div>      
 
