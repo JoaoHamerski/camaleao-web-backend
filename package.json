@@ -10,7 +10,6 @@
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
     "devDependencies": {
-        "axios": "^0.19",
         "cross-env": "^7.0.3",
         "laravel-mix": "^5.0.9",
         "lodash": "^4.17.19",
@@ -20,6 +19,7 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
+        "axios": "^0.19",
         "@forevolve/bootstrap-dark": "^1.0.0-alpha.1091",
         "@fortawesome/fontawesome-free": "^5.15.1",
         "animate.css": "^4.1.1",
