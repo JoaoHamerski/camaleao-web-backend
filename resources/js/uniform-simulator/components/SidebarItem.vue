@@ -21,12 +21,19 @@
 
 <script>
 	export default {
+		props: {
+			width: {
+				default: '400px'
+			}
+		},
 		data() {
 			return {
 				isActive: false
 			}
 		},
 		mounted() {
+			this.$refs.dropdown.style.width = this.width;
+			
 			$(this.$el).on('shown.bs.dropdown', () => {
 				this.isActive = true;
 			});

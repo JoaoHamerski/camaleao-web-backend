@@ -4,6 +4,7 @@
 
 @section('content')
 	<navbar></navbar>
+	
 	<div class="d-flex flex-row">
 		<sidebar>
 			<sidebar-item>
@@ -14,7 +15,7 @@
 				</template>
 			</sidebar-item>
 
-			<sidebar-item>
+			<sidebar-item width="250px">
 				<template #icon><i class="fas fa-font fa-fw"></i></template>
 				<template #label>NOME E NÚMERO</template>
 				<template #content>

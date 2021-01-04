@@ -15,14 +15,36 @@
 	}
 
 	.uniform .torso {
-		.back-base svg,
-		.back-mask img { height: $torso-heigth }
-
-		.back-base svg,
-		.back-mask img { width: $torso-width }
-
-		.back-base, .back-mask {
+		.back-base, .back-mask, .number, .name {
 			position: absolute;
+		}
+
+		.back-base { z-index: 100 }
+		.back-mask { z-index: 150 }
+		.number, .name { z-index: 110 } 
+
+		.back-base svg,
+		.back-mask img { 
+			height: $torso-heigth;
+			width: $torso-width;
+		}
+
+		.number {
+			width: 100%;
+			color: $white;
+			font-size: 4.4rem;
+			font-weight: bolder;
+			top: 35px;
+			text-align: center;
+		}
+
+		.name {
+			font-size: 1.15rem;
+			width: 100%;
+			color: $white;
+			font-weight: bolder;
+			top: 35px;
+			text-align: center;
 		}
 	}
 }
