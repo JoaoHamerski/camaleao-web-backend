@@ -1,14 +1,8 @@
 .dropdown-menu {
-	&.dropright.show {
-		left: 60px !important;
-		top: -50px !important;
-	}
-
-	&.sidebar-dropdown {
-		position: relative;
+	&.dropdown-sidebar-menu {
+		z-index: 1000;
 		border-radius: .1rem;
 		min-width: 0 !important;
-		width: 999vh;
 		max-width: 400px;
 		padding: .5rem;
 		border: none;

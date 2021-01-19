@@ -1,6 +1,6 @@
 <template>
-	<div class="sidebar-item">
-		<div class="sidebar-item-content dropright" 
+	<div class="sidebar-item dropright">
+		<div class="sidebar-item-content no-select" 
 			:class="{'is-active': isActive}"
 			data-toggle="dropdown">
 
@@ -13,9 +13,14 @@
 			</div>
 		</div>
 
-		<div ref="dropdown" @click.stop class="dropdown-menu sidebar-dropdown dropright">
-		    <slot name="content"></slot>
-		</div>
+		<transition enter-active-class="animate__animated animate__zoomIn animate__evenFaster">
+			<div v-show="isActive"
+				ref="dropdown" 
+				@click.stop 
+				class="dropdown-menu dropdown-sidebar-menu">
+			    <slot name="content"></slot>
+			</div>
+		</transition>
 	</div>
 </template>
 
@@ -34,13 +39,12 @@
 		mounted() {
 			this.$refs.dropdown.style.width = this.width;
 			
-			$(this.$el).on('shown.bs.dropdown', () => {
-				this.isActive = true;
-			});
-
-			$(this.$el).on('hidden.bs.dropdown', () => {
-				this.isActive = false;
-			});
+			$(this.$el).on('shown.bs.dropdown', () => { this.isActive = true });
+			$(this.$el).on('hidden.bs.dropdown', () => { this.isActive = false });
 		}
 	}
 </script>
+
+<style>
+	
+</style>

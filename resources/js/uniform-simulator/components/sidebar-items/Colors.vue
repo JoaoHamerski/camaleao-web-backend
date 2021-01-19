@@ -1,16 +1,21 @@
 <template>
 	<div>
-		<h6 class="text-center font-weight-bold text-camaleao border-bottom border-camaleao border-2 pb-2">
-			<i class="fas fa-tshirt fa-2x"></i>
+		<h6 class="sidebar-dropdown-title">
+			UNIFORME
 		</h6>
 
 		<div class="sidebar-dropdown-content">
 			<div class="row">			
-				<!-- CAMISA -->
 				<div class="col d-flex flex-column align-items-center">
 					<color v-model="shirtColor"></color>
 
-					<div class="label text-secondary font-weight-bold">CAMISA</div>
+					<div class="sidebar-content-label text-secondary font-weight-bold">CAMISA</div>
+				</div>
+
+				<div class="col d-flex flex-column align-items-center">
+					<color v-model="neckColor"></color>
+
+					<div class="sidebar-content-label text-secondary font-weight-bold">GOLA</div>
 				</div>
 			</div>
 		</div>
@@ -19,25 +24,29 @@
 
 <script>
 	export default {
+		mixins: [shirtDefaultStateAfterClose],
 		data() {
 			return {
-				shirtColor: '#1FBC9C'
+				shirtColor: '#1FBC9C',
+				neckColor: '#3d556e'
 			}
 		},
 		methods: {
 			initUniformColors() {
-				this.$nextTick(() => {
-					EventBus.$emit('SHIRT_COLOR_CHANGED', this.shirtColor);
-				});
+				EventBus.$emit('SHIRT_COLOR_CHANGED', this.shirtColor);
+				EventBus.$emit('NECK_COLOR_CHANGED', this.neckColor);
 			}
 		},
 		watch: {
 			shirtColor: function(value) {
 				EventBus.$emit('SHIRT_COLOR_CHANGED', value);
+			},
+			neckColor: function(value) {
+				EventBus.$emit('NECK_COLOR_CHANGED', value);
 			}
 		},
 		mounted() {
-			this.initUniformColors();
+			this.$nextTick(() => { this.initUniformColors() });
 		}
 	}
 </script>

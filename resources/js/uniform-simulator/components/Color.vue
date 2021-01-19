@@ -8,6 +8,7 @@
 				popover-x="left" 
 				popover-y="bottom" 
 				shapes="circles"
+				swatch-size="30"
 				:trigger-style="{ width: '28px', height: '28px', border: '2px solid #e6e6e6' }">
 			</v-swatches>
 		</div>

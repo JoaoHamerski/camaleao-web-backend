@@ -1,8 +1,10 @@
 @import 'dropdown';
+@import 'fonts';
 @import 'hamburger';
 @import 'icons';
 @import 'navbar';
 @import 'sidebar';
+@import 'sidebar-attachs';
 @import 'uniform';
 
 html, body {
@@ -35,4 +37,31 @@ html, body {
 		box-shadow: none;
 		border-bottom: 2px solid $blue;
 	}
+}
+
+.animate__evenFaster {
+	--animate-duration: .1s;
+}
+
+.vueperslides__arrow {
+	outline: none !important;
+}
+
+.font-selector-slides {
+	.vueperslides__fractions {
+		color: rgba(0, 0, 0, .45) !important;
+		border: none !important;
+		top: 0 !important;
+		left: 0 !important;
+		bottom: 0;
+		font-size: .8rem;
+	}
+}
+
+.font-selector {
+	font-size: 2.5rem;
+}
+
+.text-wrap {
+	word-wrap: break-word;
 }

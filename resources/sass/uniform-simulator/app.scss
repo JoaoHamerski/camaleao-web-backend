@@ -1,6 +1,21 @@
 @use 'sass:color';
+@import '~animate.css';
 @import '_variables';
 @import '~bootstrap/scss/bootstrap';
 @import '~vue-swatches/dist/vue-swatches.css';
 @import '../_fontawesome';
 @import 'partials/all';
+
+.no-select {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+html {
+	overflow-y: overlay;
+}

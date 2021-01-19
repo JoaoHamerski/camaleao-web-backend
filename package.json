@@ -19,10 +19,10 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
-        "axios": "^0.19",
         "@forevolve/bootstrap-dark": "^1.0.0-alpha.1091",
         "@fortawesome/fontawesome-free": "^5.15.1",
         "animate.css": "^4.1.1",
+        "axios": "^0.19",
         "bootstrap": "^4.5.3",
         "bootstrap-datepicker": "^1.9.0",
         "cleave.js": "^1.6.0",
@@ -30,6 +30,10 @@
         "popper.js": "^1.16.1",
         "sweetalert2": "^10.12.5",
         "vue": "^2.6.12",
-        "vue-swatches": "^2.1.0"
+        "vue-drag-resize": "^1.4.2",
+        "vue-swatches": "^2.1.0",
+        "vue-text-mask": "^6.1.2",
+        "vueperslides": "^2.12.1",
+        "vuex": "^3.6.0"
     }
 }

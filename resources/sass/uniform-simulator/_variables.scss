@@ -31,7 +31,12 @@ $theme-colors: (
 
 $navbar-item-color-hover: color.adjust(#FFFFFF, $lightness: -5%);
 
-$uniform-width: 213.64px;
+$uniform-width: 300px;
 
 $torso-width: $uniform-width;
-$torso-heigth: 250px;
+$torso-heigth: 351px;
+
+$btn-font-size: .8rem;
+$btn-font-size-lg: .9rem;
+$btn-border-radius: .1rem;
+$btn-border-radius-lg: .1rem;

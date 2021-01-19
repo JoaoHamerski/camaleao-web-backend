@@ -1,0 +1,86 @@
+@font-face {
+  font-family: 'Arsenal 19-20';
+  src:  url('/fonts/uniform/arsenal-19-20/arsenal-19-20.eot');
+  src:  url('/fonts/uniform/arsenal-19-20/arsenal-19-20.eot') format('embedded-opentype'),
+    url('/fonts/uniform/arsenal-19-20/arsenal-19-20.ttf') format('truetype'),
+    url('/fonts/uniform/arsenal-19-20/arsenal-19-20.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Nike Brasil 2018';
+  src:  url('/fonts/uniform/nike-brasil-2018/nike-brasil-2018.eot');
+  src:  url('/fonts/uniform/nike-brasil-2018/nike-brasil-2018.eot') format('embedded-opentype'),
+    url('/fonts/uniform/nike-brasil-2018/nike-brasil-2018.ttf') format('truetype'),
+    url('/fonts/uniform/nike-brasil-2018/nike-brasil-2018.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Real Madrid 2021';
+  src:  url('/fonts/uniform/real-madrid-2021/real-madrid-2021.eot');
+  src:  url('/fonts/uniform/real-madrid-2021/real-madrid-2021.eot') format('embedded-opentype'),
+    url('/fonts/uniform/real-madrid-2021/real-madrid-2021.ttf') format('truetype'),
+    url('/fonts/uniform/real-madrid-2021/real-madrid-2021.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Adidas 2020';
+  src:  url('/fonts/uniform/adidas-2020/adidas-2020.eot');
+  src:  url('/fonts/uniform/adidas-2020/adidas-2020.eot') format('embedded-opentype'),
+    url('/fonts/uniform/adidas-2020/adidas-2020.ttf') format('truetype'),
+    url('/fonts/uniform/adidas-2020/adidas-2020.woff') format('woff');
+}
+
+
+.arsenal-19-20 { font-family: 'Arsenal 19-20' }
+.nike-brasil-2018 { font-family: 'Nike Brasil 2018' }
+.real-madrid-2021 { font-family: 'Real Madrid 2021' }
+.adidas-2020 { font-family: 'Adidas 2020' }
+
+.uniform-back {
+  .back-number {
+    &.arsenal-19-20 {
+      top: 65px;
+      font-size: 10rem;
+    }
+
+    &.nike-brasil-2018 {
+      top: 75px;
+      font-size: 9rem;
+    }
+
+    &.real-madrid-2021 {
+      top: 70px;
+      font-size: 8.5rem;
+    }
+
+    &.adidas-2020 {
+      top: 75px;
+      font-size: 8.5rem;
+    }
+  }
+
+  .back-name {
+    &.arsenal-19-20 {
+      top: 75px;
+      font-size: 1.8rem;
+    }
+
+    &.nike-brasil-2018 {
+      top: 75px;
+      font-size: 2rem;
+      letter-spacing: 1.5px;
+    }
+
+    &.real-madrid-2021 {
+      top: 75px;
+      font-size: 2rem;
+      letter-spacing: 1px;
+    }
+
+    &.adidas-2020 {
+      top: 70px;
+      font-size: 2.4rem;
+      letter-spacing: 1px;
+    }
+  }
+}
