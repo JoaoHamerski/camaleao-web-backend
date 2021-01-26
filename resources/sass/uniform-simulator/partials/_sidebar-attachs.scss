@@ -1,11 +1,11 @@
 .sidebar-attachs {
 	z-index: 1000;
 	position: fixed;
-	right: -210px;
+	right: -240px;
 	background-color: $white;
 	height: 100%;
-	width: 200px;
-	max-width: 200px;
+	width: 230px;
+	max-width: 230px;
 	box-shadow: 0 0 5px rgba(0, 0, 0, .3);
 	transition: right .25s;
 
@@ -22,23 +22,31 @@
 	}
 
 	.sidebar-attach-item {
-		padding: .5rem .25rem;
-		border-bottom: 1px solid rgba(0, 0, 0, .2);
-
-		&:last-child {
-			border: none !important;
-		}
+		padding: .75rem .5rem;
 
 		&:hover {
-			background-color: rgba($secondary, .1);
 			cursor: pointer;
 		}
 
-		.image-label {
-			line-height: 1.2;
+		&:focus {
+			outline: none;
 		}
-	}
 
-	.sidebar-attachs-content {
+		.attach-item-image {
+			max-height: 40px;
+		}
+
+		.attach-item-label {
+			font-weight: bold;
+			color: $primary;
+			font-size: .9rem;
+		}
+
+		.attach-item-name {
+			line-height: 1.2;
+			color: rgba(0, 0, 0, .3);
+			white-space: break-word;
+			font-size: .8rem;
+		}
 	}
 }

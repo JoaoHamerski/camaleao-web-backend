@@ -9,34 +9,26 @@
 		margin-top: 4.5rem;
 		width: $uniform-width;
 
-		.uniform-wrapper-attachs {
+		.uniform-mask {
 			position: absolute;
-			z-index: 120;
 			width: $torso-width;
 			height: $torso-heigth;
 
-			&.uniform-mask-front {
+			&.mask-front {
+				z-index: 120;
 				-webkit-mask-image: url('/images/uniform-simulator/front-base-no-neck.svg');
 				mask-image: url('/images/uniform-simulator/front-base-no-neck.svg');
 			}
 
-			&.uniform-mask-back {
+			&.mask-back {
+				z-index: 120;
 				-webkit-mask-image: url('/images/uniform-simulator/back-base-no-neck.svg');
 				mask-image: url('/images/uniform-simulator/back-base-no-neck.svg');
 			}
 		}
 
-		.uniform-attach {
-			z-index: 110 !important;
-		}
-
-
 		.back, .front {
 			position: relative;
-		}
-
-		.drag-and-resize {
-			z-index: 110 !important;
 		}
 	}
 
@@ -78,8 +70,8 @@
 
 		.front-number {
 			color: $white;
-	        top: 70px;
-		    right: 90px;
+	        top: 75px;
+		    right: 185px;
 		    font-size: 2.2rem;
 		}
 	}
@@ -108,7 +100,6 @@
 
 		.back-number {
 			width: 100%;
-			color: $white;
 			text-align: center;
 		}
 
@@ -116,10 +107,14 @@
 			width: 180px;
 			left: 62px;
 			overflow: hidden;
-			color: $white;
 			text-align: center;
 			white-space: nowrap;
 		}
+	}
+
+	[class$="-svg"] { transition: $uniform-transition-color-time fill }
+	.back-number, .back-name {
+		transition: $uniform-transition-color-time color;
 	}
 }
 

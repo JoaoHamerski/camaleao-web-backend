@@ -5,7 +5,7 @@
 				:value="value"
 				@input="$emit('input', $event)" 
 				:close-on-select="false"
-				popover-x="left" 
+				popover-x="right" 
 				popover-y="bottom" 
 				shapes="circles"
 				swatch-size="30"

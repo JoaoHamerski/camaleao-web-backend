@@ -32,13 +32,13 @@
           <font-selector 
             ref="nameFontSelector" 
             @font-changed="(...args) => { 
-              this.fontNameChanged(args[0]);
+              this.nameFontChanged(args[0]);
 
               if (this.isFontsLocked) {
                 this.$refs.numberFontSelector
                     .$refs.vueper
                     .goToSlide(args[1], {emit: false}); 
-                this.fontNumberChanged(args[0]);
+                this.numberFontChanged(args[0]);
               }
             }">ABC</font-selector>
         </div>
@@ -69,13 +69,13 @@
           <font-selector
             ref="numberFontSelector" 
             @font-changed="(...args) => {
-              this.fontNumberChanged(args[0]);
+              this.numberFontChanged(args[0]);
 
               if (this.isFontsLocked) {
                 this.$refs.nameFontSelector
                     .$refs.vueper
                     .goToSlide(args[1], {emit: false}); 
-                this.fontNameChanged(args[0]);
+                this.nameFontChanged(args[0]);
               }
             }">123</font-selector>
         </div>
@@ -104,15 +104,31 @@
 </template>
 
 <script>
+  import { shirtDefaultStateAfterClose } from '../../mixins';
+  
   export default {
     mixins: [shirtDefaultStateAfterClose],
     data() {
       return {
         isFontsLocked: false,
-        name: '',
-        number: '',
-        nameColor: '#FFFFFF',
-        numberColor: '#FFFFFF'
+      }
+    },
+    computed: {
+      name: {
+        get() { return this.$store.state.name },
+        set(value) { this.$store.commit('update', { name: value }) }
+      },
+      number: {
+        get() { return this.$store.state.number },
+        set(value) { this.$store.commit('update', { number: value }) }
+      },
+      nameColor: {
+        get() { return this.$store.state.nameColor },
+        set(value) { this.$store.commit('update', { nameColor: value }) }
+      },
+      numberColor: {
+        get() { return this.$store.stateNumberColor },
+        set(value) { this.$store.commit('update', { numberColor: value }) }
       }
     },
     methods: {
@@ -123,47 +139,25 @@
 
         this.isFontsLocked = ! this.isFontsLocked;
       },
-      fontNameChanged(font) {
-        EventBus.$emit('SHIRT_FONT_NAME_CHANGED', font);
+      nameFontChanged(font) {
+        this.$store.commit('update', { nameFont: font });
       },
-      fontNumberChanged(font) {
-        EventBus.$emit('SHIRT_FONT_NUMBER_CHANGED', font);
+      numberFontChanged(font) {
+        this.$store.commit('update', { numberFont: font });
       },
       initFonts() {
-        let initialFontIndex = 0;
-
-        this.$refs.nameFontSelector.$refs.vueper.goToSlide(initialFontIndex);
-        this.$refs.numberFontSelector.$refs.vueper.goToSlide(initialFontIndex);
+        let font = this.$refs.nameFontSelector.fonts[0];
+        this.nameFontChanged(font);
+        this.numberFontChanged(font);
       },
-      initColors() {
-        EventBus.$emit('SHIRT_NAME_COLOR_CHANGED', this.nameColor);
-        EventBus.$emit('SHIRT_NUMBER_COLOR_CHANGED', this.numberColor);
-      }
-    },
-    watch: {
-      name: function(value) {
-        EventBus.$emit('SHIRT_NAME_CHANGED', value.length === 0 ? 'JOGADOR' : value);
-      },
-      number: function(value) {
-        EventBus.$emit('SHIRT_NUMBER_CHANGED', value.length === 0 ? '10' : value);
-      },
-      nameColor: function(value) {
-        EventBus.$emit('SHIRT_NAME_COLOR_CHANGED', value);
-      },
-      numberColor: function(value) {
-        EventBus.$emit('SHIRT_NUMBER_COLOR_CHANGED', value);
-      }
     },
     mounted() {
       $(this.$parent.$el).on(
         'shown.bs.dropdown', 
-        () => { EventBus.$emit('SHIRT_BACK_SHOW') }
+        () => { this.$store.commit('update', { isFront: false }) }
       );
 
-      this.$nextTick(() => { 
-        this.initFonts();
-        this.initColors(); 
-      });
+      this.initFonts();
     }
   }
 </script>

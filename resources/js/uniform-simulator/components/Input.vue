@@ -18,11 +18,9 @@
 
   export default {
     name: 'name',
-
     components: {
       MaskedInput
     },
-
     data () {
       return {
         phone: ''

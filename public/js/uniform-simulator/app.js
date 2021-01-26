@@ -86,6 +86,199 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./node_modules/@minogin/vector/src/vector.js":
+/*!****************************************************!*\
+  !*** ./node_modules/@minogin/vector/src/vector.js ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Vector; });
+/**
+ * @author Andrey Minogin <minogin@gmail.com>
+ */
+
+class Vector {
+    constructor(x, y) {
+        if (x === undefined)
+            throw new Error("Must provide at least one parameter")
+
+        if (y === undefined) {
+            if (!(x instanceof Vector))
+                throw new Error("Single parameter should be a vector")
+
+            this.x = x.x
+            this.y = x.y
+        }
+        else {
+            if (typeof x !== 'number' || typeof y !== 'number')
+                throw new Error("Must provide numeric parameters")
+
+            this.x = x
+            this.y = y
+        }
+    }
+
+    static zero() {
+        return new Vector(0, 0)
+    }
+
+    add(v) {
+        return new Vector(this.x + v.x, this.y + v.y)
+    }
+
+    sub(v) {
+        return new Vector(this.x - v.x, this.y - v.y)
+    }
+
+    neg() {
+        return new Vector(-this.x, -this.y)
+    }
+
+    mul(v) {
+        if (typeof v === 'number')
+            return new Vector(this.x * v, this.y * v)
+        else if (v instanceof Vector)
+            return this.x * v.x + this.y * v.y
+        else
+            throw new Error("Parameter should be a number or a vector")
+    }
+
+    norm() {
+        return Math.sqrt(this.x * this.x + this.y * this.y)
+    }
+
+    unit() {
+        let norm = this.norm()
+        return new Vector(this.x / norm, this.y / norm)
+    }
+
+    rotate(angle) {
+        return new Vector(
+            this.x * Math.cos(angle) - this.y * Math.sin(angle),
+            this.x * Math.sin(angle) + this.y * Math.cos(angle)
+        )
+    }
+
+    angle() {
+        return Math.atan2(this.y, this.x)
+    }
+
+    static _equals(a, b, precision = Number.EPSILON) {
+        return Math.abs(a - b) < precision
+    }
+
+    equals(v, precision = Number.EPSILON) {
+        if (v instanceof Vector)
+            return Vector._equals(this.x, v.x, precision) && Vector._equals(this.y, v.y, precision)
+        else
+            return false
+    }
+
+    clone() {
+        return new Vector(this)
+    }
+
+    static rad(deg) {
+        return (deg * Math.PI) / 180
+    }
+
+    static deg(rad) {
+        return (rad * 180) / Math.PI
+    }
+}
+
+/***/ }),
+
+/***/ "./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue":
+/*!******************************************************************!*\
+  !*** ./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue ***!
+  \******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _drr_vue_vue_type_template_id_5057d8d6_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./drr.vue?vue&type=template&id=5057d8d6&scoped=true& */ "./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=template&id=5057d8d6&scoped=true&");
+/* harmony import */ var _drr_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./drr.vue?vue&type=script&lang=js& */ "./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _drr_vue_vue_type_style_index_0_id_5057d8d6_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./drr.vue?vue&type=style&index=0&id=5057d8d6&scoped=true&lang=css& */ "./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=style&index=0&id=5057d8d6&scoped=true&lang=css&");
+/* harmony import */ var _vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _drr_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _drr_vue_vue_type_template_id_5057d8d6_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _drr_vue_vue_type_template_id_5057d8d6_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "5057d8d6",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************!*\
+  !*** ./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _vue_loader_lib_index_js_vue_loader_options_drr_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../vue-loader/lib??vue-loader-options!./drr.vue?vue&type=script&lang=js& */ "./node_modules/vue-loader/lib/index.js?!./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_vue_loader_lib_index_js_vue_loader_options_drr_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=style&index=0&id=5057d8d6&scoped=true&lang=css&":
+/*!***************************************************************************************************************************!*\
+  !*** ./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=style&index=0&id=5057d8d6&scoped=true&lang=css& ***!
+  \***************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _style_loader_index_js_css_loader_index_js_ref_8_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_8_2_vue_loader_lib_index_js_vue_loader_options_drr_vue_vue_type_style_index_0_id_5057d8d6_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../style-loader!../../../css-loader??ref--8-1!../../../vue-loader/lib/loaders/stylePostLoader.js!../../../postcss-loader/src??ref--8-2!../../../vue-loader/lib??vue-loader-options!./drr.vue?vue&type=style&index=0&id=5057d8d6&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=style&index=0&id=5057d8d6&scoped=true&lang=css&");
+/* harmony import */ var _style_loader_index_js_css_loader_index_js_ref_8_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_8_2_vue_loader_lib_index_js_vue_loader_options_drr_vue_vue_type_style_index_0_id_5057d8d6_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_index_js_css_loader_index_js_ref_8_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_8_2_vue_loader_lib_index_js_vue_loader_options_drr_vue_vue_type_style_index_0_id_5057d8d6_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _style_loader_index_js_css_loader_index_js_ref_8_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_8_2_vue_loader_lib_index_js_vue_loader_options_drr_vue_vue_type_style_index_0_id_5057d8d6_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _style_loader_index_js_css_loader_index_js_ref_8_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_8_2_vue_loader_lib_index_js_vue_loader_options_drr_vue_vue_type_style_index_0_id_5057d8d6_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+
+
+/***/ }),
+
+/***/ "./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=template&id=5057d8d6&scoped=true&":
+/*!*************************************************************************************************************!*\
+  !*** ./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=template&id=5057d8d6&scoped=true& ***!
+  \*************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_drr_vue_vue_type_template_id_5057d8d6_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../vue-loader/lib??vue-loader-options!./drr.vue?vue&type=template&id=5057d8d6&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=template&id=5057d8d6&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_drr_vue_vue_type_template_id_5057d8d6_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_drr_vue_vue_type_template_id_5057d8d6_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./node_modules/axios/index.js":
 /*!*************************************!*\
   !*** ./node_modules/axios/index.js ***!
@@ -2075,10 +2268,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/uniform-simulator/components/SidebarAttachs.vue?vue&type=script&lang=js&":
-/*!*******************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/uniform-simulator/components/SidebarAttachs.vue?vue&type=script&lang=js& ***!
-  \*******************************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/uniform-simulator/components/SidebarAttachItem.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/uniform-simulator/components/SidebarAttachItem.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2101,30 +2294,117 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  data: function data() {
-    return {
-      attachs: []
-    };
+  props: {
+    attach: null
   },
-  mounted: function mounted() {
-    var _this = this;
+  computed: {
+    index: function index() {
+      var _this = this;
 
-    EventBus.$on('ATTACH_UPLOADED', function (attach) {
-      window.console.log(attach);
-
-      _this.attachs.push(attach);
-    });
+      return this.$store.state.attachs.findIndex(function (el) {
+        return el.id === _this.attach.id;
+      });
+    }
+  },
+  methods: {
+    activate: function activate() {
+      this.$store.commit('updateAttach', {
+        index: this.index,
+        active: true
+      });
+    }
   }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/uniform-simulator/components/SidebarAttachs.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/uniform-simulator/components/SidebarAttachs.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['hasAttach', 'shield', 'brand', 'frontAttachs', 'backAttachs'])), {}, {
+    isFront: function isFront() {
+      return this.$store.state.isFront;
+    }
+  })
 });
 
 /***/ }),
@@ -2199,6 +2479,44 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2300,154 +2618,193 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
-/**
-* front
-*   Especifica o estado do uniforme programaticamente, se for true, inicializa
-*   exibindo a frente, senão a trás.
-*
-* isFront
-*   Determina o estado que o uniforme está sendo exibido, se é a frente ou não.
-*
-* isFrontState
-*   Indica o estado que o usuário deixou o uniforme
-*   manualmente, ignorando mudanças feitas dinamicamente, essa variável 
-*   é utilizada para retornar o estado padrão do uniforme quando necessário.
-**/
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: {
-    front: {
-      type: Boolean,
-      "default": true
+  computed: _objectSpread(_objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['shirtColor', 'neckColor', 'nameColor', 'numberColor', 'nameFont', 'numberFont', 'number', 'name', 'hideBrand', 'hideShield', 'replaceBrandByNumber', 'attachs'])), Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['brand', 'shield', 'frontAttachs', 'backAttachs', 'hasActiveAttach'])), {}, {
+    isFront: {
+      get: function get() {
+        return this.$store.state.isFront;
+      },
+      set: function set(value) {
+        this.$store.commit('update', {
+          isFront: value
+        });
+      }
+    },
+    isFrontState: {
+      get: function get() {
+        return this.$store.state.isFrontState;
+      },
+      set: function set(value) {
+        this.$store.commit('update', {
+          isFrontState: value
+        });
+      }
     }
-  },
-  data: function data() {
-    return {
-      isFront: this.front,
-      isFrontState: this.front,
-      shirtColor: '',
-      neckColor: '',
-      nameColor: '',
-      numberColor: '',
-      nameFont: '',
-      numberFont: '',
-      number: '10',
-      name: 'JOGADOR',
-      hideBrand: false,
-      hideShield: false,
-      numberInFront: false,
-      attachs: [],
-      brand: null,
-      shield: null
-    };
-  },
+  }),
   methods: {
-    initListeners: function initListeners() {
-      var _this = this;
-
-      EventBus.$on('SHIRT_COLOR_CHANGED', function (color) {
-        _this.shirtColor = color;
-      });
-      EventBus.$on('SHIRT_NAME_CHANGED', function (name) {
-        _this.name = name;
-      });
-      EventBus.$on('SHIRT_NUMBER_CHANGED', function (number) {
-        _this.number = number;
-      });
-      EventBus.$on('SHIRT_NAME_COLOR_CHANGED', function (color) {
-        _this.nameColor = color;
-      });
-      EventBus.$on('SHIRT_NUMBER_COLOR_CHANGED', function (color) {
-        _this.numberColor = color;
-      });
-      EventBus.$on('NECK_COLOR_CHANGED', function (color) {
-        _this.neckColor = color;
-      });
-      EventBus.$on('SHIRT_FONT_NAME_CHANGED', function (font) {
-        _this.nameFont = font;
-      });
-      EventBus.$on('SHIRT_FONT_NUMBER_CHANGED', function (font) {
-        _this.numberFont = font;
-      });
-      EventBus.$on('SHIRT_BACK_SHOW', function () {
-        _this.isFront = false;
-      });
-      EventBus.$on('SHIRT_FRONT_SHOW', function () {
-        _this.isFront = true;
-      });
-      EventBus.$on('SHIRT_DEFAULT_STATE', function () {
-        _this.isFront = _this.isFrontState;
-      });
-      EventBus.$on('SHIRT_HIDE_BRAND', function (value) {
-        _this.hideBrand = value;
-      });
-      EventBus.$on('SHIRT_HIDE_SHIELD', function (value) {
-        _this.hideShield = value;
-      });
-      EventBus.$on('SHIRT_SWITCH_SHIELD', function (value) {
-        _this.numberInFront = value;
-      });
-      EventBus.$on('ATTACH_UPLOADED', function (attach) {
-        if (attach["class"] == 'brand') {
-          _this.brand = attach;
-          return;
-        }
-
-        if (attach["class"] == 'shield') {
-          _this.shield = attach;
-          return;
-        }
-
-        _this.attachs.push(attach);
-      });
+    changeShirtColor: function changeShirtColor(color) {
+      this.$refs.backBase.querySelector('.back-base-svg').style.fill = color;
+      this.$refs.frontBase.querySelector('.front-base-svg').style.fill = color;
+      this.$refs.frontNeckBase.querySelector('.front-neck-base-intern-svg').style.fill = color;
+    },
+    changeNeckColor: function changeNeckColor(color) {
+      this.$refs.backNeckBase.querySelector('.back-neck-base-svg').style.fill = color;
+      this.$refs.frontNeckBase.querySelector('.front-neck-base-extern-svg').style.fill = color;
+    },
+    changeNameColor: function changeNameColor(color) {
+      this.$refs.backName.style.color = color;
+    },
+    changeNumberColor: function changeNumberColor(color) {
+      this.$refs.backNumber.style.color = color;
+      this.$refs.frontNumber.style.color = color;
+    },
+    initShirtColors: function initShirtColors() {
+      this.changeShirtColor(this.shirtColor);
+      this.changeNeckColor(this.neckColor);
+      this.changeNameColor(this.nameColor);
+      this.changeNumberColor(this.numberColor);
     }
   },
   watch: {
     shirtColor: function shirtColor(value) {
-      this.$refs.backBase.querySelector('.back-base-svg').style.fill = value;
-      this.$refs.frontBase.querySelector('.front-base-svg').style.fill = value;
-      this.$refs.frontNeckBase.querySelector('.front-neck-base-intern-svg').style.fill = value;
+      this.changeShirtColor(value);
     },
     neckColor: function neckColor(value) {
-      this.$refs.frontNeckBase.querySelector('.front-neck-base-extern-svg').style.fill = value;
-      this.$refs.backNeckBase.querySelector('.back-neck-base-svg').style.fill = value;
+      this.changeNeckColor(value);
     },
     nameColor: function nameColor(value) {
-      this.$refs.backName.style.color = value;
+      this.changeNameColor(value);
     },
     numberColor: function numberColor(value) {
-      this.$refs.backNumber.style.color = value;
-      this.$refs.frontNumber.style.color = value;
+      this.changeNumberColor(value);
     },
     isFrontState: function isFrontState(value) {
       this.isFront = value;
     }
   },
   mounted: function mounted() {
-    this.initListeners();
+    this.initShirtColors();
   }
 });
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/uniform-simulator/components/VueDragResize.vue?vue&type=script&lang=js&":
-/*!******************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/uniform-simulator/components/VueDragResize.vue?vue&type=script&lang=js& ***!
-  \******************************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/uniform-simulator/components/VueDRR.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/uniform-simulator/components/VueDRR.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue_drag_resize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-drag-resize */ "./node_modules/vue-drag-resize/dist/index.js");
-/* harmony import */ var vue_drag_resize__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_drag_resize__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _minogin_vue_drag_resize_rotate__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @minogin/vue-drag-resize-rotate */ "./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'VueDragResize',
-  "extends": vue_drag_resize__WEBPACK_IMPORTED_MODULE_0___default.a,
+  components: {
+    VueDragResizeRotate: _minogin_vue_drag_resize_rotate__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   props: {
-    h: {
-      required: false,
+    attachId: null,
+    x: {
+      "default": 0
+    },
+    y: {
+      "default": 0
+    },
+    w: {
       "default": 100
+    },
+    h: {
+      "default": 100
+    }
+  },
+  computed: {
+    index: function index() {
+      var _this = this;
+
+      return this.attachs.findIndex(function (el) {
+        return el.id == _this.attachId;
+      });
+    },
+    attachs: function attachs() {
+      return this.$store.state.attachs;
+    },
+    attach: function attach() {
+      return this.$store.state.attachs[this.index];
+    }
+  },
+  methods: {
+    onActivated: function onActivated() {
+      var _this2 = this;
+
+      // Desseleciona todos anexos manualmente pois a biblioteca não 
+      // desseleciona automaticamente quando clica de item em item,
+      // apenas quando clica fora do item
+      this.attachs.forEach(function (attach, index) {
+        _this2.$store.commit('updateAttach', {
+          id: attach.id,
+          active: false
+        });
+      });
+      this.$store.commit('updateAttach', {
+        index: this.index,
+        active: true
+      });
+    },
+    onDrag: function onDrag() {
+      this.$store.commit('updateAttach', {
+        index: this.index,
+        x: this.$refs.drr.cx,
+        y: this.$refs.drr.cy
+      });
+    },
+    onResize: function onResize() {
+      this.$store.commit('updateAttach', {
+        index: this.index,
+        width: this.$refs.drr.width,
+        height: this.$refs.drr.height
+      });
+    },
+    onRotate: function onRotate() {
+      var angle = this.$helpers.roundInStep(this.$refs.drr.rotation, 10);
+      this.$store.commit('updateAttach', {
+        index: this.index,
+        angle: angle
+      });
+      this.$refs.drr.rotation = angle;
+    },
+    onDeactivated: function onDeactivated() {
+      this.$store.commit('updateAttach', {
+        index: this.index,
+        active: false
+      });
+    },
+    onDelete: function onDelete() {
+      this.$store.commit('deleteAttach', {
+        index: this.index
+      });
     }
   }
 });
@@ -2463,6 +2820,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../mixins */ "./resources/js/uniform-simulator/mixins.js");
 //
 //
 //
@@ -2487,34 +2846,31 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ __webpack_exports__["default"] = ({
-  mixins: [shirtDefaultStateAfterClose],
-  data: function data() {
-    return {
-      shirtColor: '#1FBC9C',
-      neckColor: '#3d556e'
-    };
-  },
-  methods: {
-    initUniformColors: function initUniformColors() {
-      EventBus.$emit('SHIRT_COLOR_CHANGED', this.shirtColor);
-      EventBus.$emit('NECK_COLOR_CHANGED', this.neckColor);
-    }
-  },
-  watch: {
-    shirtColor: function shirtColor(value) {
-      EventBus.$emit('SHIRT_COLOR_CHANGED', value);
-    },
-    neckColor: function neckColor(value) {
-      EventBus.$emit('NECK_COLOR_CHANGED', value);
-    }
-  },
-  mounted: function mounted() {
-    var _this = this;
 
-    this.$nextTick(function () {
-      _this.initUniformColors();
-    });
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins__WEBPACK_IMPORTED_MODULE_1__["shirtDefaultStateAfterClose"]],
+  computed: {
+    shirtColor: {
+      get: function get() {
+        return this.$store.state.shirtColor;
+      },
+      set: function set(value) {
+        this.$store.commit('update', {
+          shirtColor: value
+        });
+      }
+    },
+    neckColor: {
+      get: function get() {
+        return this.$store.state.neckColor;
+      },
+      set: function set(value) {
+        this.$store.commit('update', {
+          neckColor: value
+        });
+      }
+    }
   }
 });
 
@@ -2529,6 +2885,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _util_Attach__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Attach */ "./resources/js/uniform-simulator/util/Attach.js");
 //
 //
 //
@@ -2558,28 +2915,64 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mixins: [shirtDefaultStateAfterClose],
   methods: {
     upload: function upload(event) {
       var attachClass = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var fileInputRef = arguments.length > 2 ? arguments[2] : undefined;
       var input = event.target;
 
       if (input.files && input.files[0]) {
-        var reader = new FileReader();
+        var vm = this;
         var file = input.files[0];
+        var image = new Image();
+        var objectURL = URL.createObjectURL(file);
 
-        reader.onload = function (e) {
-          EventBus.$emit('ATTACH_UPLOADED', {
-            name: file.name,
-            image: e.target.result,
-            size: file.size,
-            type: file.type,
-            "class": attachClass !== null && attachClass !== void 0 ? attachClass : 'image'
-          });
+        image.onload = function () {
+          var _this = this;
+
+          var reader = new FileReader();
+          URL.revokeObjectURL(objectURL);
+
+          reader.onload = function (e) {
+            vm.$store.commit('appendAttach', new _util_Attach__WEBPACK_IMPORTED_MODULE_0__["default"]({
+              active: true,
+              name: file.name,
+              image: e.target.result,
+              size: file.size,
+              type: file.type,
+              width: _this.width,
+              height: _this.height,
+              isFront: vm.$store.state.isFront,
+              classname: attachClass !== null && attachClass !== void 0 ? attachClass : 'image'
+            }));
+            vm.$store.commit('update', {
+              attachCount: vm.$store.state.attachCount + 1
+            });
+          };
+
+          reader.readAsDataURL(input.files[0]);
+          vm.$refs[fileInputRef].value = '';
         };
 
-        reader.readAsDataURL(input.files[0]);
+        image.src = objectURL;
       }
     }
   }
@@ -2596,6 +2989,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mixins */ "./resources/js/uniform-simulator/mixins.js");
 //
 //
 //
@@ -2701,16 +3095,55 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mixins: [shirtDefaultStateAfterClose],
+  mixins: [_mixins__WEBPACK_IMPORTED_MODULE_0__["shirtDefaultStateAfterClose"]],
   data: function data() {
     return {
-      isFontsLocked: false,
-      name: '',
-      number: '',
-      nameColor: '#FFFFFF',
-      numberColor: '#FFFFFF'
+      isFontsLocked: false
     };
+  },
+  computed: {
+    name: {
+      get: function get() {
+        return this.$store.state.name;
+      },
+      set: function set(value) {
+        this.$store.commit('update', {
+          name: value
+        });
+      }
+    },
+    number: {
+      get: function get() {
+        return this.$store.state.number;
+      },
+      set: function set(value) {
+        this.$store.commit('update', {
+          number: value
+        });
+      }
+    },
+    nameColor: {
+      get: function get() {
+        return this.$store.state.nameColor;
+      },
+      set: function set(value) {
+        this.$store.commit('update', {
+          nameColor: value
+        });
+      }
+    },
+    numberColor: {
+      get: function get() {
+        return this.$store.stateNumberColor;
+      },
+      set: function set(value) {
+        this.$store.commit('update', {
+          numberColor: value
+        });
+      }
+    }
   },
   methods: {
     toggleLockFonts: function toggleLockFonts() {
@@ -2718,47 +3151,31 @@ __webpack_require__.r(__webpack_exports__);
       this.$refs.numberFontSelector.$refs.vueper.goToSlide(currentSlide);
       this.isFontsLocked = !this.isFontsLocked;
     },
-    fontNameChanged: function fontNameChanged(font) {
-      EventBus.$emit('SHIRT_FONT_NAME_CHANGED', font);
+    nameFontChanged: function nameFontChanged(font) {
+      this.$store.commit('update', {
+        nameFont: font
+      });
     },
-    fontNumberChanged: function fontNumberChanged(font) {
-      EventBus.$emit('SHIRT_FONT_NUMBER_CHANGED', font);
+    numberFontChanged: function numberFontChanged(font) {
+      this.$store.commit('update', {
+        numberFont: font
+      });
     },
     initFonts: function initFonts() {
-      var initialFontIndex = 0;
-      this.$refs.nameFontSelector.$refs.vueper.goToSlide(initialFontIndex);
-      this.$refs.numberFontSelector.$refs.vueper.goToSlide(initialFontIndex);
-    },
-    initColors: function initColors() {
-      EventBus.$emit('SHIRT_NAME_COLOR_CHANGED', this.nameColor);
-      EventBus.$emit('SHIRT_NUMBER_COLOR_CHANGED', this.numberColor);
-    }
-  },
-  watch: {
-    name: function name(value) {
-      EventBus.$emit('SHIRT_NAME_CHANGED', value.length === 0 ? 'JOGADOR' : value);
-    },
-    number: function number(value) {
-      EventBus.$emit('SHIRT_NUMBER_CHANGED', value.length === 0 ? '10' : value);
-    },
-    nameColor: function nameColor(value) {
-      EventBus.$emit('SHIRT_NAME_COLOR_CHANGED', value);
-    },
-    numberColor: function numberColor(value) {
-      EventBus.$emit('SHIRT_NUMBER_COLOR_CHANGED', value);
+      var font = this.$refs.nameFontSelector.fonts[0];
+      this.nameFontChanged(font);
+      this.numberFontChanged(font);
     }
   },
   mounted: function mounted() {
     var _this = this;
 
     $(this.$parent.$el).on('shown.bs.dropdown', function () {
-      EventBus.$emit('SHIRT_BACK_SHOW');
+      _this.$store.commit('update', {
+        isFront: false
+      });
     });
-    this.$nextTick(function () {
-      _this.initFonts();
-
-      _this.initColors();
-    });
+    this.initFonts();
   }
 });
 
@@ -2773,6 +3190,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mixins */ "./resources/js/uniform-simulator/mixins.js");
 //
 //
 //
@@ -2809,32 +3227,50 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mixins: [shirtDefaultStateAfterClose],
-  data: function data() {
-    return {
-      hideBrand: false,
-      hideShield: false,
-      switchShieldToNumber: false
-    };
-  },
-  watch: {
-    hideBrand: function hideBrand(value) {
-      EventBus.$emit('SHIRT_HIDE_BRAND', value);
+  mixins: [_mixins__WEBPACK_IMPORTED_MODULE_0__["shirtDefaultStateAfterClose"]],
+  computed: {
+    hideBrand: {
+      get: function get() {
+        return this.$store.state.hideBrand;
+      },
+      set: function set(value) {
+        this.$store.commit('update', {
+          hideBrand: value
+        });
+      }
     },
-    hideShield: function hideShield(value) {
-      EventBus.$emit('SHIRT_HIDE_SHIELD', value);
+    hideShield: {
+      get: function get() {
+        return this.$store.state.hideShield;
+      },
+      set: function set(value) {
+        this.$store.commit('update', {
+          hideShield: value
+        });
+      }
     },
-    switchShieldToNumber: function switchShieldToNumber(value) {
-      EventBus.$emit('SHIRT_SWITCH_SHIELD', value);
+    replaceBrandByNumber: {
+      get: function get() {
+        return this.$store.state.replaceBrandByNumber;
+      },
+      set: function set(value) {
+        this.$store.commit('update', {
+          replaceBrandByNumber: value
+        });
+      }
     }
   },
   mounted: function mounted() {
+    var _this = this;
+
     $(this.$parent.$el).on('shown.bs.dropdown', function () {
-      EventBus.$emit('SHIRT_FRONT_SHOW');
-    });
-    $(this.$parent.$el).on('hidden.bs.dropdown', function () {
-      EventBus.$emit('SHIRT_DEFAULT_STATE');
+      _this.$store.commit('update', {
+        isFront: true
+      });
     });
   }
 });
@@ -7282,6 +7718,25 @@ exports = module.exports = __webpack_require__(/*! ../../css-loader/lib/css-base
 
 // module
 exports.push([module.i, ".vueperslide{white-space:normal;background-size:cover;flex-shrink:0;display:block;width:100%;position:relative}.vueperslide--clone-1{position:absolute;top:0;bottom:0;right:100%}.vueperslides--rtl .vueperslide--clone-1{right:auto;left:100%}.vueperslide[href]{-webkit-user-drag:none}.vueperslide__image{background-size:cover}.vueperslide__image,.vueperslide__loader{position:absolute;top:0;left:0;right:0;bottom:0}.vueperslide__loader{display:flex;flex-direction:column;align-items:center;justify-content:center}.vueperslide__content-wrapper:not(.vueperslide__content-wrapper--outside-top):not(.vueperslide__content-wrapper--outside-bottom){height:100%;margin:auto}.vueperslides--fade .vueperslide{position:absolute;top:0;left:0;right:0;bottom:0;opacity:0;transition:opacity ease-in-out;transition-duration:inherit}.vueperslides--fade .vueperslide--active,.vueperslides--fade .vueperslide--visible{z-index:1;opacity:1}.vueperslides--slide-image-inside .vueperslide{overflow:hidden}.vueperslides--3d .vueperslide{position:absolute;z-index:-1;height:100%}.vueperslides--3d .vueperslide--active,.vueperslides--3d .vueperslide--next-slide,.vueperslides--3d .vueperslide--previous-slide{z-index:0}.vueperslides--3d .vueperslide--active{z-index:1}.vueperslides--3d .vueperslide[face=front]{transform:rotateY(90deg) translateX(-50%) rotateY(-90deg)}.vueperslides--3d .vueperslide[face=right]{transform:rotateY(90deg) translateX(50%);transform-origin:100% 0}.vueperslides--3d .vueperslide[face=back]{transform:rotateY(270deg) translateX(-50%) rotateY(-90deg)}.vueperslides--3d .vueperslide[face=left]{transform:rotateY(270deg) translateX(-50%);transform-origin:0 0}.vueperslides:not(.no-shadow):not(.vueperslides--3d) .vueperslides__parallax-wrapper:after,.vueperslides:not(.no-shadow):not(.vueperslides--3d) .vueperslides__parallax-wrapper:before{content:\"\";position:absolute;bottom:100%;left:-1em;right:-1em;height:2em;box-shadow:0 0 20px rgba(0,0,0,.25);z-index:2}.vueperslides:not(.no-shadow):not(.vueperslides--3d) .vueperslides__parallax-wrapper:after{top:100%;bottom:auto}.vueperslides__arrows{color:#fff}.vueperslides__arrows--outside{color:currentColor}.vueperslides__arrow{top:50%;background-color:transparent;border:none;opacity:.7}.vueperslides--rtl .vueperslides__arrow--next,.vueperslides__arrow--prev{right:auto;left:.5em}.vueperslides--rtl .vueperslides__arrow--prev,.vueperslides__arrow--next{left:auto;right:.5em}.vueperslides__arrow:hover{opacity:1}.vueperslides--rtl .vueperslides__arrows--outside .vueperslides__arrow--next,.vueperslides__arrows--outside .vueperslides__arrow--prev{right:auto;left:-3.5em}.vueperslides--rtl .vueperslides__arrows--outside .vueperslides__arrow--prev,.vueperslides__arrows--outside .vueperslides__arrow--next{left:auto;right:-3.5em}.vueperslides__paused{top:.7em;right:.7em;opacity:0;text-shadow:0 0 3px rgba(0,0,0,.4);z-index:1}.vueperslides:hover .vueperslides__paused{opacity:1}.vueperslides__bullets:not(.vueperslides__bullets--outside){color:#fff}.vueperslides__bullet{margin:1.5em .6em;padding:0;border:none;background:none}.vueperslides__bullet .default{width:12px;height:12px;border-radius:12px;border:1px solid currentColor;background-color:transparent;box-shadow:0 0 1px rgba(0,0,0,.5),0 0 3px rgba(0,0,0,.3);transition:.4s ease-in-out;box-sizing:border-box}.vueperslides__bullet .default span{display:none}.vueperslides__bullet--active .default{border-width:6px}.vueperslide,.vueperslide__image{background-position:50%}.vueperslide__video{outline:none}.vueperslide--no-pointer-events:before{content:\"\";position:absolute;top:0;bottom:0;left:0;right:0}.vueperslide__content-wrapper:not(.vueperslide__content-wrapper--outside-top):not(.vueperslide__content-wrapper--outside-bottom){display:flex;flex:1 1 auto;flex-direction:column;align-items:center;justify-content:center;text-align:center}.vueperslide--has-image-inside .vueperslide__content-wrapper,.vueperslide--has-video .vueperslide__content-wrapper,.vueperslide__content-wrapper.parallax-fixed-content{position:absolute;z-index:2;top:0;bottom:0;left:0;right:0;display:flex;flex-direction:column;justify-content:center;align-items:center;pointer-events:none}.vueperslides{position:relative}.vueperslides--fixed-height .vueperslide,.vueperslides--fixed-height .vueperslides__inner,.vueperslides--fixed-height .vueperslides__parallax-wrapper{height:inherit}.vueperslides--fixed-height .vueperslides__parallax-wrapper{padding-bottom:0!important}.vueperslides--fixed-height.vueperslides--bullets-outside{margin-bottom:4em}.vueperslides__inner{position:relative;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.vueperslides__parallax-wrapper{position:relative;overflow:hidden}.vueperslides--3d .vueperslides__parallax-wrapper{overflow:visible}.vueperslides__track{position:absolute;top:0;height:100%;left:0;right:0;overflow:hidden;z-index:1}.vueperslides--parallax .vueperslides__track{height:200%;transform:translateY(0)}.vueperslides--touchable .vueperslides__track{cursor:ew-resize;cursor:-webkit-grab;cursor:grab}.vueperslides--touchable .vueperslides__track--dragging,.vueperslides--touchable .vueperslides__track--mousedown{cursor:-webkit-grabbing;cursor:grabbing}.vueperslides--3d .vueperslides__track{overflow:visible;perspective:100em}.vueperslides__track-inner{white-space:nowrap;transition:transform .5s ease-in-out;height:100%;display:flex}.vueperslides--no-animation .vueperslides__track-inner{transition-duration:0s!important}.vueperslides--fade .vueperslides__track-inner{white-space:normal;transition:none}.vueperslides--3d .vueperslides__track-inner{transform-style:preserve-3d}.vueperslides__track--mousedown .vueperslides__track-inner{transition:transform .25s ease-in-out!important}.vueperslides__track--dragging .vueperslides__track-inner{transition:none}.vueperslides__arrow{position:absolute;font-size:inherit;color:inherit;text-align:center;transform:translateY(-50%);cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;outline:none;z-index:2;line-height:1}.vueperslides__arrow,.vueperslides__arrow svg{transition:.3s ease-in-out}.vueperslides__arrow svg{vertical-align:middle;stroke:currentColor;fill:none;width:3.5em;padding:1em;stroke-width:1;box-sizing:border-box}.vueperslides__arrow svg:hover{stroke-width:1.3}.vueperslides__paused{position:absolute;transition:.3s ease-in-out}.vueperslides__bullets{display:flex;justify-content:center;position:absolute;bottom:0;left:0;right:0}.vueperslides__bullets--outside{position:relative}.vueperslides__bullet,.vueperslides__bullets button{cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;outline:none;z-index:2;display:flex;justify-content:center;align-items:center;color:inherit}.vueperslides__bullet::-moz-focus-inner,.vueperslides__bullets button::-moz-focus-inner{border:0}.vueperslides__fractions{position:absolute;top:.8em;left:.5em;z-index:2;padding:.2em 1em;border:1px solid hsla(0,0%,100%,.5);border-radius:2em;background:hsla(0,0%,100%,.2);color:#fff}.vueperslides__progress{position:absolute;top:0;left:0;right:0;z-index:2;height:6px;color:rgba(0,0,0,.7)}.vueperslides__progress>*{position:absolute;top:0;bottom:0;left:0;background:currentColor;transition:.3s ease-in-out}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=style&index=0&id=5057d8d6&scoped=true&lang=css&":
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--8-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--8-2!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=style&index=0&id=5057d8d6&scoped=true&lang=css& ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/*TODO less */\n.drr[data-v-5057d8d6] {\n  position: absolute;\n  box-sizing: border-box;\n  cursor: pointer;\n}\n.drr[data-v-5057d8d6]:hover:before {\n  content: '';\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  left: 0;\n  box-sizing: border-box;\n  outline: 2px dashed #d6d6d6;\n}\n.drr.active[data-v-5057d8d6]:before {\n  content: '';\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  left: 0;\n  box-sizing: border-box;\n  outline: 2px dashed lightskyblue;\n}\n.drr-stick[data-v-5057d8d6] {\n  box-sizing: border-box;\n  position: absolute;\n  font-size: 1px;\n  background: #ffffff;\n  border: 1px solid #6c6c6c;\n  box-shadow: 0 0 2px #bbb;\n}\n.drr-stick[data-v-5057d8d6]:hover {\n  border-color: lightskyblue;\n}\n.inactive > .drr-stick[data-v-5057d8d6] {\n  display: none;\n}\n.drr-stick-tl[data-v-5057d8d6], .drr-stick-br[data-v-5057d8d6] {\n  cursor: nwse-resize;\n}\n.drr-stick-tm[data-v-5057d8d6], .drr-stick-bm[data-v-5057d8d6] {\n  left: 50%;\n  cursor: ns-resize;\n}\n.drr-stick-tr[data-v-5057d8d6], .drr-stick-bl[data-v-5057d8d6] {\n  cursor: nesw-resize;\n}\n.drr-stick-ml[data-v-5057d8d6], .drr-stick-mr[data-v-5057d8d6] {\n  top: 50%;\n  cursor: ew-resize;\n}\n.drr-stick-ro[data-v-5057d8d6] {\n  left: 50%;\n  cursor: ew-resize;\n  border-radius: 4px;\n}\n.ro-stick-handle[data-v-5057d8d6] {\n  left: 50%;\n  top: -16px;\n  box-sizing: border-box;\n  position: absolute;\n  font-size: 1px;\n  background: #ffffff;\n  border: 1px solid #6c6c6c;\n  box-shadow: 0 0 2px #bbb;\n  width: 0px;\n  height: 16px;\n}\n.inactive > .ro-stick-handle[data-v-5057d8d6] {\n  display: none;\n}\n.drr-stick.not-resizable[data-v-5057d8d6] {\n  display: none;\n}\n.content-active[data-v-5057d8d6] {\n  border: 2px solid lightskyblue; /*TODO*/\n}\n", ""]);
 
 // exports
 
@@ -38447,6 +38902,36 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=style&index=0&id=5057d8d6&scoped=true&lang=css&":
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--8-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--8-2!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=style&index=0&id=5057d8d6&scoped=true&lang=css& ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../css-loader??ref--8-1!../../../vue-loader/lib/loaders/stylePostLoader.js!../../../postcss-loader/src??ref--8-2!../../../vue-loader/lib??vue-loader-options!./drr.vue?vue&type=style&index=0&id=5057d8d6&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=style&index=0&id=5057d8d6&scoped=true&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/lib/addStyles.js":
 /*!****************************************************!*\
   !*** ./node_modules/style-loader/lib/addStyles.js ***!
@@ -42669,14 +43154,744 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
-/***/ "./node_modules/vue-drag-resize/dist/index.js":
-/*!****************************************************!*\
-  !*** ./node_modules/vue-drag-resize/dist/index.js ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./node_modules/vue-loader/lib/index.js?!./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib??vue-loader-options!./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-!function(t,i){ true?module.exports=i():undefined}(window,function(){return function(t){function i(n){if(e[n])return e[n].exports;var o=e[n]={i:n,l:!1,exports:{}};return t[n].call(o.exports,o,o.exports,i),o.l=!0,o.exports}var e={};return i.m=t,i.c=e,i.d=function(t,e,n){i.o(t,e)||Object.defineProperty(t,e,{configurable:!1,enumerable:!0,get:n})},i.r=function(t){Object.defineProperty(t,"__esModule",{value:!0})},i.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return i.d(e,"a",e),e},i.o=function(t,i){return Object.prototype.hasOwnProperty.call(t,i)},i.p="",i(i.s=44)}({0:function(t,i,e){var n=e(16);"string"==typeof n&&(n=[[t.i,n,""]]);var o={};o.transform=void 0;e(5)(n,o);n.locals&&(t.exports=n.locals)},1:function(t,i,e){"use strict";Object.defineProperty(i,"__esModule",{value:!0});var n={y:{t:"top",m:"marginTop",b:"bottom"},x:{l:"left",m:"marginLeft",r:"right"}};i.default={name:"vue-drag-resize",props:{stickSize:{type:Number,default:8},parentScaleX:{type:Number,default:1},parentScaleY:{type:Number,default:1},isActive:{type:Boolean,default:!1},preventActiveBehavior:{type:Boolean,default:!1},isDraggable:{type:Boolean,default:!0},isResizable:{type:Boolean,default:!0},aspectRatio:{type:Boolean,default:!1},parentLimitation:{type:Boolean,default:!1},snapToGrid:{type:Boolean,default:!1},gridX:{type:Number,default:50,validator:function(t){return t>0}},gridY:{type:Number,default:50,validator:function(t){return t>0}},parentW:{type:Number,default:0,validator:function(t){return t>=0}},parentH:{type:Number,default:0,validator:function(t){return t>=0}},w:{type:Number,default:100,validator:function(t){return t>0}},h:{type:Number,default:100,validator:function(t){return t>0}},minw:{type:Number,default:50,validator:function(t){return t>0}},minh:{type:Number,default:50,validator:function(t){return t>0}},x:{type:Number,default:0,validator:function(t){return"number"==typeof t}},y:{type:Number,default:0,validator:function(t){return"number"==typeof t}},z:{type:[String,Number],default:"auto",validator:function(t){return"string"==typeof t?"auto"===t:t>=0}},dragHandle:{type:String,default:null},dragCancel:{type:String,default:null},sticks:{type:Array,default:function(){return["tl","tm","tr","mr","br","bm","bl","ml"]}},axis:{type:String,default:"both",validator:function(t){return-1!==["x","y","both","none"].indexOf(t)}},contentClass:{type:String,required:!1,default:""}},data:function(){return{active:this.isActive,rawWidth:this.w,rawHeight:this.h,rawLeft:this.x,rawTop:this.y,rawRight:null,rawBottom:null,zIndex:this.z,aspectFactor:this.w/this.h,parentWidth:null,parentHeight:null,left:this.x,top:this.y,right:null,bottom:null,minWidth:this.minw,minHeight:this.minh}},created:function(){this.stickDrag=!1,this.bodyDrag=!1,this.stickAxis=null,this.stickStartPos={mouseX:0,mouseY:0,x:0,y:0,w:0,h:0},this.limits={minLeft:null,maxLeft:null,minRight:null,maxRight:null,minTop:null,maxTop:null,minBottom:null,maxBottom:null},this.currentStick=[]},mounted:function(){if(this.parentElement=this.$el.parentNode,this.parentWidth=this.parentW?this.parentW:this.parentElement.clientWidth,this.parentHeight=this.parentH?this.parentH:this.parentElement.clientHeight,this.rawRight=this.parentWidth-this.rawWidth-this.rawLeft,this.rawBottom=this.parentHeight-this.rawHeight-this.rawTop,document.documentElement.addEventListener("mousemove",this.move),document.documentElement.addEventListener("mouseup",this.up),document.documentElement.addEventListener("mouseleave",this.up),document.documentElement.addEventListener("mousedown",this.deselect),document.documentElement.addEventListener("touchmove",this.move,!0),document.documentElement.addEventListener("touchend",this.up,!0),document.documentElement.addEventListener("touchcancel",this.up,!0),document.documentElement.addEventListener("touchstart",this.up,!0),this.dragHandle){var t=Array.prototype.slice.call(this.$el.querySelectorAll(this.dragHandle));for(var i in t)t[i].setAttribute("data-drag-handle",this._uid)}if(this.dragCancel){var e=Array.prototype.slice.call(this.$el.querySelectorAll(this.dragCancel));for(var n in e)e[n].setAttribute("data-drag-cancel",this._uid)}},beforeDestroy:function(){document.documentElement.removeEventListener("mousemove",this.move),document.documentElement.removeEventListener("mouseup",this.up),document.documentElement.removeEventListener("mouseleave",this.up),document.documentElement.removeEventListener("mousedown",this.deselect),document.documentElement.removeEventListener("touchmove",this.move,!0),document.documentElement.removeEventListener("touchend",this.up,!0),document.documentElement.removeEventListener("touchcancel",this.up,!0),document.documentElement.removeEventListener("touchstart",this.up,!0)},methods:{deselect:function(){this.preventActiveBehavior||(this.active=!1)},move:function(t){(this.stickDrag||this.bodyDrag)&&(t.stopPropagation(),this.stickDrag&&this.stickMove(t),this.bodyDrag&&this.bodyMove(t))},up:function(t){this.stickDrag&&this.stickUp(t),this.bodyDrag&&this.bodyUp(t)},bodyDown:function(t){var i=t.target||t.srcElement;this.preventActiveBehavior||(this.active=!0),t.button&&0!==t.button||(this.$emit("clicked",t),this.active&&(this.dragHandle&&i.getAttribute("data-drag-handle")!==this._uid.toString()||this.dragCancel&&i.getAttribute("data-drag-cancel")===this._uid.toString()||(t.stopPropagation(),t.preventDefault(),this.isDraggable&&(this.bodyDrag=!0),this.stickStartPos.mouseX=void 0!==t.pageX?t.pageX:t.touches[0].pageX,this.stickStartPos.mouseY=void 0!==t.pageY?t.pageY:t.touches[0].pageY,this.stickStartPos.left=this.left,this.stickStartPos.right=this.right,this.stickStartPos.top=this.top,this.stickStartPos.bottom=this.bottom,this.parentLimitation&&(this.limits=this.calcDragLimitation()))))},calcDragLimitation:function(){var t=this.parentWidth,i=this.parentHeight;return{minLeft:0,maxLeft:t-this.width,minRight:0,maxRight:t-this.width,minTop:0,maxTop:i-this.height,minBottom:0,maxBottom:i-this.height}},bodyMove:function(t){var i=this.stickStartPos,e=this.parentWidth,n=this.parentHeight,o=this.gridX,s=this.gridY,r=this.width,a=this.height,h=void 0!==t.pageX?t.pageX:t.touches[0].pageX,c=void 0!==t.pageY?t.pageY:t.touches[0].pageY,u={x:("y"!==this.axis&&"none"!==this.axis?i.mouseX-h:0)/this.parentScaleX,y:("x"!==this.axis&&"none"!==this.axis?i.mouseY-c:0)/this.parentScaleY},l=i.top-u.y,d=i.bottom+u.y,m=i.left-u.x,f=i.right+u.x;if(this.snapToGrid){var p=!0,g=!0,v=l-Math.floor(l/s)*s,b=n-d-Math.floor((n-d)/s)*s,x=m-Math.floor(m/o)*o,y=e-f-Math.floor((e-f)/o)*o;v>s/2&&(v-=s),b>s/2&&(b-=s),x>o/2&&(x-=o),y>o/2&&(y-=o),Math.abs(b)<Math.abs(v)&&(p=!1),Math.abs(y)<Math.abs(x)&&(g=!1),l-=p?v:b,d=n-a-l,m-=g?x:y,f=e-r-m}this.rawTop=l,this.rawBottom=d,this.rawLeft=m,this.rawRight=f,this.$emit("dragging",this.rect)},bodyUp:function(){this.bodyDrag=!1,this.$emit("dragging",this.rect),this.$emit("dragstop",this.rect),this.stickStartPos={mouseX:0,mouseY:0,x:0,y:0,w:0,h:0},this.limits={minLeft:null,maxLeft:null,minRight:null,maxRight:null,minTop:null,maxTop:null,minBottom:null,maxBottom:null}},stickDown:function(t,i){if(this.isResizable&&this.active){switch(this.stickDrag=!0,this.stickStartPos.mouseX=void 0!==i.pageX?i.pageX:i.touches[0].pageX,this.stickStartPos.mouseY=void 0!==i.pageY?i.pageY:i.touches[0].pageY,this.stickStartPos.left=this.left,this.stickStartPos.right=this.right,this.stickStartPos.top=this.top,this.stickStartPos.bottom=this.bottom,this.currentStick=t.split(""),this.stickAxis=null,this.currentStick[0]){case"b":case"t":this.stickAxis="y"}switch(this.currentStick[1]){case"r":case"l":this.stickAxis="y"===this.stickAxis?"xy":"x"}this.limits=this.calcResizeLimitation()}},calcResizeLimitation:function(){var t=this.minWidth,i=this.minHeight,e=this.aspectFactor,n=this.width,o=this.height,s=this.bottom,r=this.top,a=this.left,h=this.right,c=this.stickAxis,u=this.parentLimitation?0:null;this.aspectRatio&&(t/i>e?i=t/e:t=e*i);var l={minLeft:u,maxLeft:a+(n-t),minRight:u,maxRight:h+(n-t),minTop:u,maxTop:r+(o-i),minBottom:u,maxBottom:s+(o-i)};if(this.aspectRatio){var d={minLeft:a-Math.min(r,s)*e*2,maxLeft:a+(o-i)/2*e*2,minRight:h-Math.min(r,s)*e*2,maxRight:h+(o-i)/2*e*2,minTop:r-Math.min(a,h)/e*2,maxTop:r+(n-t)/2/e*2,minBottom:s-Math.min(a,h)/e*2,maxBottom:s+(n-t)/2/e*2};"x"===c?l={minLeft:Math.max(l.minLeft,d.minLeft),maxLeft:Math.min(l.maxLeft,d.maxLeft),minRight:Math.max(l.minRight,d.minRight),maxRight:Math.min(l.maxRight,d.maxRight)}:"y"===c&&(l={minTop:Math.max(l.minTop,d.minTop),maxTop:Math.min(l.maxTop,d.maxTop),minBottom:Math.max(l.minBottom,d.minBottom),maxBottom:Math.min(l.maxBottom,d.maxBottom)})}return l},stickMove:function(t){var i=this.stickStartPos,e=void 0!==t.pageX?t.pageX:t.touches[0].pageX,n=void 0!==t.pageY?t.pageY:t.touches[0].pageY,o={x:(i.mouseX-e)/this.parentScaleX,y:(i.mouseY-n)/this.parentScaleY},s=i.top-o.y,r=i.bottom+o.y,a=i.left-o.x,h=i.right+o.x;switch(this.currentStick[0]){case"b":this.snapToGrid&&(r=this.parentHeight-Math.round((this.parentHeight-r)/this.gridY)*this.gridY),this.rawBottom=r;break;case"t":this.snapToGrid&&(s=Math.round(s/this.gridY)*this.gridY),this.rawTop=s}switch(this.currentStick[1]){case"r":this.snapToGrid&&(h=this.parentWidth-Math.round((this.parentWidth-h)/this.gridX)*this.gridX),this.rawRight=h;break;case"l":this.snapToGrid&&(a=Math.round(a/this.gridX)*this.gridX),this.rawLeft=a}this.$emit("resizing",this.rect)},stickUp:function(){this.stickDrag=!1,this.stickStartPos={mouseX:0,mouseY:0,x:0,y:0,w:0,h:0},this.limits={minLeft:null,maxLeft:null,minRight:null,maxRight:null,minTop:null,maxTop:null,minBottom:null,maxBottom:null},this.rawTop=this.top,this.rawBottom=this.bottom,this.rawLeft=this.left,this.rawRight=this.right,this.stickAxis=null,this.$emit("resizing",this.rect),this.$emit("resizestop",this.rect)},aspectRatioCorrection:function(){if(this.aspectRatio){var t=this.bottom,i=this.top,e=this.left,n=this.right,o=this.width,s=this.height,r=this.aspectFactor,a=this.currentStick;if(o/s>r){var h=r*s;"l"===a[1]?this.left=e+o-h:this.right=n+o-h}else{var c=o/r;"t"===a[0]?this.top=i+s-c:this.bottom=t+s-c}}}},computed:{style:function(){return{top:this.top+"px",left:this.left+"px",width:this.width+"px",height:this.height+"px",zIndex:this.zIndex}},vdrStick:function(){var t=this;return function(i){var e={width:t.stickSize/t.parentScaleX+"px",height:t.stickSize/t.parentScaleY+"px"};return e[n.y[i[0]]]=t.stickSize/t.parentScaleX/-2+"px",e[n.x[i[1]]]=t.stickSize/t.parentScaleX/-2+"px",e}},width:function(){return this.parentWidth-this.left-this.right},height:function(){return this.parentHeight-this.top-this.bottom},rect:function(){return{left:Math.round(this.left),top:Math.round(this.top),width:Math.round(this.width),height:Math.round(this.height)}}},watch:{rawLeft:function(t){var i=this.limits,e=this.stickAxis,n=this.aspectFactor,o=this.aspectRatio,s=this.left,r=this.bottom,a=this.top;if(null!==i.minLeft&&t<i.minLeft?t=i.minLeft:null!==i.maxLeft&&i.maxLeft<t&&(t=i.maxLeft),o&&"x"===e){var h=s-t;this.rawTop=a-h/n/2,this.rawBottom=r-h/n/2}this.left=t},rawRight:function(t){var i=this.limits,e=this.stickAxis,n=this.aspectFactor,o=this.aspectRatio,s=this.right,r=this.bottom,a=this.top;if(null!==i.minRight&&t<i.minRight?t=i.minRight:null!==i.maxRight&&i.maxRight<t&&(t=i.maxRight),o&&"x"===e){var h=s-t;this.rawTop=a-h/n/2,this.rawBottom=r-h/n/2}this.right=t},rawTop:function(t){var i=this.limits,e=this.stickAxis,n=this.aspectFactor,o=this.aspectRatio,s=this.right,r=this.left,a=this.top;if(null!==i.minTop&&t<i.minTop?t=i.minTop:null!==i.maxTop&&i.maxTop<t&&(t=i.maxTop),o&&"y"===e){var h=a-t;this.rawLeft=r-h*n/2,this.rawRight=s-h*n/2}this.top=t},rawBottom:function(t){var i=this.limits,e=this.stickAxis,n=this.aspectFactor,o=this.aspectRatio,s=this.right,r=this.left,a=this.bottom;if(null!==i.minBottom&&t<i.minBottom?t=i.minBottom:null!==i.maxBottom&&i.maxBottom<t&&(t=i.maxBottom),o&&"y"===e){var h=a-t;this.rawLeft=r-h*n/2,this.rawRight=s-h*n/2}this.bottom=t},width:function(){this.aspectRatioCorrection()},height:function(){this.aspectRatioCorrection()},active:function(t){t?this.$emit("activated"):this.$emit("deactivated")},isActive:function(t){this.active=t},z:function(t){(t>=0||"auto"===t)&&(this.zIndex=t)},aspectRatio:function(t){t&&(this.aspectFactor=this.width/this.height)},minw:function(t){t>0&&t<=this.width&&(this.minWidth=t)},minh:function(t){t>0&&t<=this.height&&(this.minHeight=t)},x:function(){if(!this.stickDrag&&!this.bodyDrag){this.parentLimitation&&(this.limits=this.calcDragLimitation());var t=this.x-this.left;this.rawLeft=this.x,this.rawRight=this.right-t}},y:function(){if(!this.stickDrag&&!this.bodyDrag){this.parentLimitation&&(this.limits=this.calcDragLimitation());var t=this.y-this.top;this.rawTop=this.y,this.rawBottom=this.bottom-t}},w:function(){if(!this.stickDrag&&!this.bodyDrag){this.currentStick=["m","r"],this.stickAxis="x",this.parentLimitation&&(this.limits=this.calcResizeLimitation());var t=this.width-this.w;this.rawRight=this.right+t}},h:function(){if(!this.stickDrag&&!this.bodyDrag){this.currentStick=["b","m"],this.stickAxis="y",this.parentLimitation&&(this.limits=this.calcResizeLimitation());var t=this.height-this.h;this.rawBottom=this.bottom+t}},parentW:function(t){this.right=t-this.width-this.left,this.parentWidth=t},parentH:function(t){this.bottom=t-this.height-this.top,this.parentHeight=t}}}},15:function(t,i){t.exports=function(t){var i="undefined"!=typeof window&&window.location;if(!i)throw new Error("fixUrls requires window.location");if(!t||"string"!=typeof t)return t;var e=i.protocol+"//"+i.host,n=e+i.pathname.replace(/\/[^\/]*$/,"/");return t.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi,function(t,i){var o=i.trim().replace(/^"(.*)"$/,function(t,i){return i}).replace(/^'(.*)'$/,function(t,i){return i});if(/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/)/i.test(o))return t;var s;return s=0===o.indexOf("//")?o:0===o.indexOf("/")?e+o:n+o.replace(/^\.\//,""),"url("+JSON.stringify(s)+")"})}},16:function(t,i,e){i=t.exports=e(6)(!1),i.push([t.i,'\n.vdr,.vdr.active:before{position:absolute;-webkit-box-sizing:border-box;box-sizing:border-box\n}\n.vdr.active:before{content:"";width:100%;height:100%;top:0;left:0;outline:1px dashed #d6d6d6\n}\n.vdr-stick{-webkit-box-sizing:border-box;box-sizing:border-box;position:absolute;font-size:1px;background:#fff;border:1px solid #6c6c6c;-webkit-box-shadow:0 0 2px #bbb;box-shadow:0 0 2px #bbb\n}\n.inactive .vdr-stick{display:none\n}\n.vdr-stick-br,.vdr-stick-tl{cursor:nwse-resize\n}\n.vdr-stick-bm,.vdr-stick-tm{left:50%;cursor:ns-resize\n}\n.vdr-stick-bl,.vdr-stick-tr{cursor:nesw-resize\n}\n.vdr-stick-ml,.vdr-stick-mr{top:50%;cursor:ew-resize\n}\n.vdr-stick.not-resizable{display:none\n}',""])},17:function(t,i,e){"use strict";var n=e(0),o=e.n(n);o.a},18:function(t,i,e){"use strict";e.r(i);var n=e(4),o=e(2);for(var s in o)"default"!==s&&function(t){e.d(i,t,function(){return o[t]})}(s);var r=(e(17),e(3)),a=Object(r.a)(o.default,n.a,n.b,!1,null,null,null);a.options.__file="src/components/vue-drag-resize.vue",i.default=a.exports},2:function(t,i,e){"use strict";e.r(i);var n=e(1),o=e.n(n);for(var s in n)"default"!==s&&function(t){e.d(i,t,function(){return n[t]})}(s);i.default=o.a},3:function(t,i,e){"use strict";function n(t,i,e,n,o,s,r,a){var h="function"==typeof t?t.options:t;i&&(h.render=i,h.staticRenderFns=e,h._compiled=!0),n&&(h.functional=!0),s&&(h._scopeId="data-v-"+s);var c;if(r?(c=function(t){t=t||this.$vnode&&this.$vnode.ssrContext||this.parent&&this.parent.$vnode&&this.parent.$vnode.ssrContext,t||"undefined"==typeof __VUE_SSR_CONTEXT__||(t=__VUE_SSR_CONTEXT__),o&&o.call(this,t),t&&t._registeredComponents&&t._registeredComponents.add(r)},h._ssrRegister=c):o&&(c=a?function(){o.call(this,this.$root.$options.shadowRoot)}:o),c)if(h.functional){h._injectStyles=c;var u=h.render;h.render=function(t,i){return c.call(i),u(t,i)}}else{var l=h.beforeCreate;h.beforeCreate=l?[].concat(l,c):[c]}return{exports:t,options:h}}e.d(i,"a",function(){return n})},4:function(t,i,e){"use strict";var n=function(){var t=this,i=t.$createElement,e=t._self._c||i;return e("div",{staticClass:"vdr",class:(t.active||t.isActive?"active":"inactive")+" "+(t.contentClass?t.contentClass:""),style:t.style,on:{mousedown:function(i){t.bodyDown(i)},touchstart:function(i){t.bodyDown(i)},touchend:function(i){t.up(i)}}},[t._t("default"),t._v(" "),t._l(t.sticks,function(i){return e("div",{staticClass:"vdr-stick",class:["vdr-stick-"+i,t.isResizable?"":"not-resizable"],style:t.vdrStick(i),on:{mousedown:function(e){e.stopPropagation(),e.preventDefault(),t.stickDown(i,e)},touchstart:function(e){e.stopPropagation(),e.preventDefault(),t.stickDown(i,e)}}})})],2)},o=[];n._withStripped=!0;e.d(i,"a",function(){return n}),e.d(i,"b",function(){return o})},44:function(t,i,e){"use strict";function n(t){return t&&t.__esModule?t:{default:t}}Object.defineProperty(i,"__esModule",{value:!0});var o=e(18);Object.defineProperty(i,"default",{enumerable:!0,get:function(){return n(o).default}})},5:function(t,i,e){function n(t,i){for(var e=0;e<t.length;e++){var n=t[e],o=f[n.id];if(o){o.refs++;for(var s=0;s<o.parts.length;s++)o.parts[s](n.parts[s]);for(;s<n.parts.length;s++)o.parts.push(u(n.parts[s],i))}else{for(var r=[],s=0;s<n.parts.length;s++)r.push(u(n.parts[s],i));f[n.id]={id:n.id,refs:1,parts:r}}}}function o(t,i){for(var e=[],n={},o=0;o<t.length;o++){var s=t[o],r=i.base?s[0]+i.base:s[0],a=s[1],h=s[2],c=s[3],u={css:a,media:h,sourceMap:c};n[r]?n[r].parts.push(u):e.push(n[r]={id:r,parts:[u]})}return e}function s(t,i){var e=g(t.insertInto);if(!e)throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");var n=x[x.length-1];if("top"===t.insertAt)n?n.nextSibling?e.insertBefore(i,n.nextSibling):e.appendChild(i):e.insertBefore(i,e.firstChild),x.push(i);else{if("bottom"!==t.insertAt)throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");e.appendChild(i)}}function r(t){if(null===t.parentNode)return!1;t.parentNode.removeChild(t);var i=x.indexOf(t);i>=0&&x.splice(i,1)}function a(t){var i=document.createElement("style");return t.attrs.type="text/css",c(i,t.attrs),s(t,i),i}function h(t){var i=document.createElement("link");return t.attrs.type="text/css",t.attrs.rel="stylesheet",c(i,t.attrs),s(t,i),i}function c(t,i){Object.keys(i).forEach(function(e){t.setAttribute(e,i[e])})}function u(t,i){var e,n,o,s;if(i.transform&&t.css){if(!(s=i.transform(t.css)))return function(){};t.css=s}if(i.singleton){var c=b++;e=v||(v=a(i)),n=l.bind(null,e,c,!1),o=l.bind(null,e,c,!0)}else t.sourceMap&&"function"==typeof URL&&"function"==typeof URL.createObjectURL&&"function"==typeof URL.revokeObjectURL&&"function"==typeof Blob&&"function"==typeof btoa?(e=h(i),n=m.bind(null,e,i),o=function(){r(e),e.href&&URL.revokeObjectURL(e.href)}):(e=a(i),n=d.bind(null,e),o=function(){r(e)});return n(t),function(i){if(i){if(i.css===t.css&&i.media===t.media&&i.sourceMap===t.sourceMap)return;n(t=i)}else o()}}function l(t,i,e,n){var o=e?"":n.css;if(t.styleSheet)t.styleSheet.cssText=w(i,o);else{var s=document.createTextNode(o),r=t.childNodes;r[i]&&t.removeChild(r[i]),r.length?t.insertBefore(s,r[i]):t.appendChild(s)}}function d(t,i){var e=i.css,n=i.media;if(n&&t.setAttribute("media",n),t.styleSheet)t.styleSheet.cssText=e;else{for(;t.firstChild;)t.removeChild(t.firstChild);t.appendChild(document.createTextNode(e))}}function m(t,i,e){var n=e.css,o=e.sourceMap,s=void 0===i.convertToAbsoluteUrls&&o;(i.convertToAbsoluteUrls||s)&&(n=y(n)),o&&(n+="\n/*# sourceMappingURL=data:application/json;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(o))))+" */");var r=new Blob([n],{type:"text/css"}),a=t.href;t.href=URL.createObjectURL(r),a&&URL.revokeObjectURL(a)}var f={},p=function(t){var i;return function(){return void 0===i&&(i=t.apply(this,arguments)),i}}(function(){return window&&document&&document.all&&!window.atob}),g=function(t){var i={};return function(e){return void 0===i[e]&&(i[e]=t.call(this,e)),i[e]}}(function(t){return document.querySelector(t)}),v=null,b=0,x=[],y=e(15);t.exports=function(t,i){if("undefined"!=typeof DEBUG&&DEBUG&&"object"!=typeof document)throw new Error("The style-loader cannot be used in a non-browser environment");i=i||{},i.attrs="object"==typeof i.attrs?i.attrs:{},i.singleton||(i.singleton=p()),i.insertInto||(i.insertInto="head"),i.insertAt||(i.insertAt="bottom");var e=o(t,i);return n(e,i),function(t){for(var s=[],r=0;r<e.length;r++){var a=e[r],h=f[a.id];h.refs--,s.push(h)}if(t){n(o(t,i),i)}for(var r=0;r<s.length;r++){var h=s[r];if(0===h.refs){for(var c=0;c<h.parts.length;c++)h.parts[c]();delete f[h.id]}}}};var w=function(){var t=[];return function(i,e){return t[i]=e,t.filter(Boolean).join("\n")}}()},6:function(t,i){function e(t,i){var e=t[1]||"",o=t[3];if(!o)return e;if(i&&"function"==typeof btoa){var s=n(o);return[e].concat(o.sources.map(function(t){return"/*# sourceURL="+o.sourceRoot+t+" */"})).concat([s]).join("\n")}return[e].join("\n")}function n(t){return"/*# sourceMappingURL=data:application/json;charset=utf-8;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(t))))+" */"}t.exports=function(t){var i=[];return i.toString=function(){return this.map(function(i){var n=e(i,t);return i[2]?"@media "+i[2]+"{"+n+"}":n}).join("")},i.i=function(t,e){"string"==typeof t&&(t=[[null,t,""]]);for(var n={},o=0;o<this.length;o++){var s=this[o][0];"number"==typeof s&&(n[s]=!0)}for(o=0;o<t.length;o++){var r=t[o];"number"==typeof r[0]&&n[r[0]]||(e&&!r[2]?r[2]=e:e&&(r[2]="("+r[2]+") and ("+e+")"),i.push(r))}},i}}})});
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _minogin_vector__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @minogin/vector */ "./node_modules/@minogin/vector/src/vector.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+const _ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+
+const stickSize = 8;
+const roStickSize = 20;
+const styleMapping = {
+  y: {
+    t: 'top',
+    m: 'marginTop',
+    b: 'bottom',
+  },
+  x: {
+    l: 'left',
+    m: 'marginLeft',
+    r: 'right',
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'drr',
+  props: {
+    x: {
+      type: Number,
+      required: true,
+      validator: function (val) {
+        return typeof val === 'number'
+      }
+    },
+    y: {
+      type: Number,
+      required: true,
+      validator: function (val) {
+        return typeof val === 'number'
+      }
+    },
+    w: {
+      type: Number,
+      required: true,
+      validator: function (val) {
+        return val > 0
+      }
+    },
+    h: {
+      type: Number,
+      required: true,
+      validator: function (val) {
+        return val > 0
+      }
+    },
+    angle: {
+      type: Number,
+      default: 0,
+      validator: function (val) {
+        return typeof val === 'number'
+      }
+    },
+    selected: {
+      type: Boolean,
+      default: false
+    },
+    selectable: {
+      type: Boolean,
+      default: true
+    },
+    draggable: {
+      type: Boolean,
+      default: true
+    },
+    resizable: {
+      type: Boolean,
+      default: true
+    },
+    rotatable: {
+      type: Boolean,
+      default: true
+    },
+    hasActiveContent: {
+      type: Boolean,
+      default: false
+    },
+    aspectRatio: {
+      type: Boolean,
+      default: false
+    },
+    dragHandle: {
+      type: String,
+      default: null
+    },
+    dragCancel: {
+      type: String,
+      default: null
+    },
+    outerBound: {
+      type: Object
+    },
+    innerBound: {
+      type: Object
+    }
+  },
+
+  data: function () {
+    return {
+      active: this.selected,
+      contentActive: false,
+      cx: this.x,
+      cy: this.y,
+      width: this.w,
+      height: this.h,
+      rotation: this.angle,
+      bodyDrag: false,
+      dragged: false,
+      resized: false,
+      rotated: false
+    }
+  },
+
+  computed: {
+    sticks() {
+      let sticks = []
+      if (this.resizable)
+        sticks.push('tl', 'tr', 'br', 'bl')
+      if (this.rotatable)
+        sticks.push('ro')
+      return sticks
+    },
+
+    classObject() {
+      return {
+        active: this.active,
+        inactive: !this.active,
+        dragging: this.bodyDrag,
+        'content-active': this.contentActive
+      }
+    },
+
+    style() {
+      return {
+        left: (this.cx - this.width / 2) + 'px',
+        top: (this.cy - this.height / 2) + 'px',
+        width: this.width + 'px',
+        height: this.height + 'px',
+        transform: 'rotate(' + this.rotation + 'deg)'
+      }
+    },
+
+    drrStick() {
+      return (stick) => {
+        const stickStyle = {
+          width: `${stickSize}px`,
+          height: `${stickSize}px`,
+        };
+        if (stick == 'ro') {
+          stickStyle['top'] = `${-stickSize / 2 - roStickSize}px`;
+          stickStyle['marginLeft'] = `${-stickSize / 2 + 1}px`;
+        }
+        else {
+          stickStyle[styleMapping.y[stick[0]]] = `${-stickSize / 2}px`;
+          stickStyle[styleMapping.x[stick[1]]] = `${-stickSize / 2}px`;
+        }
+        return stickStyle;
+      }
+    },
+
+    rect() {
+      return {
+        x: this.cx,
+        y: this.cy,
+        w: this.width,
+        h: this.height,
+        angle: this.rotation
+      }
+    }
+  },
+
+  watch: {
+    active(val) {
+      if (val)
+        this.$emit('select');
+      else
+        this.$emit('deselect');
+    },
+
+    selected(val) {
+      this.active = val
+    },
+
+    hasActiveContent: {
+      handler: function(val) {
+        if (val) {
+          this.$on('content-active', this.onContentActive)
+          this.$on('content-inactive', this.onContentInactive)
+        }
+        else {
+          this.$off('content-active')
+          this.$off('content-inactive')
+          if (this.contentActive)
+            this.onContentInactive()
+        }
+      },
+      immediate: true
+    },
+
+    x() {
+      if (this.stickDrag || this.bodyDrag)
+        return
+
+      this.cx = this.x;
+    },
+
+    y() {
+      if (this.stickDrag || this.bodyDrag)
+        return
+
+      this.cy = this.y;
+    },
+
+    w() {
+      if (this.stickDrag || this.bodyDrag)
+        return
+
+      this.currentStick = ['m', 'r'];
+
+      this.width = this.w
+    },
+
+    h() {
+      if (this.stickDrag || this.bodyDrag)
+        return
+
+      this.currentStick = ['b', 'm'];
+
+      this.height = this.h
+    },
+
+    angle() {
+      if (this.stickDrag || this.bodyDrag)
+        return
+
+      this.rotation = this.angle
+    }
+  },
+
+  created: function () {
+    this.stickDrag = false;
+    this.bodyDrag = false;
+    this.stickStartPos = { mouseX: 0, mouseY: 0, x: 0, y: 0, w: 0, h: 0 };
+
+    this.currentStick = [];
+  },
+
+  mounted: function () {
+    this.parentElement = this.$el.parentNode;
+    // this.parentWidth = this.parentW ? this.parentW : this.parentElement.clientWidth;
+    // this.parentHeight = this.parentH ? this.parentH : this.parentElement.clientHeight;
+
+    document.documentElement.addEventListener('mousemove', this.move);
+    document.documentElement.addEventListener('mouseup', this.up);
+    document.documentElement.addEventListener('mouseleave', this.up);
+
+    document.documentElement.addEventListener('mousedown', this.deselect);
+
+    document.documentElement.addEventListener('touchmove', this.move, true);
+    document.documentElement.addEventListener('touchend touchcancel', this.up, true);
+    document.documentElement.addEventListener('touchstart', this.up, true);
+
+    if (this.dragHandle) {
+      let dragHandles = Array.prototype.slice.call(this.$el.querySelectorAll(this.dragHandle));
+      for (let i in dragHandles) {
+        dragHandles[i].setAttribute('data-drag-handle', this._uid);
+      }
+    }
+
+    if (this.dragCancel) {
+      let cancelHandles = Array.prototype.slice.call(this.$el.querySelectorAll(this.dragCancel));
+      for (let i in cancelHandles) {
+        cancelHandles[i].setAttribute('data-drag-cancel', this._uid);
+      }
+    }
+  },
+
+  beforeDestroy: function () {
+    document.documentElement.removeEventListener('mousemove', this.move);
+    document.documentElement.removeEventListener('mouseup', this.up);
+    document.documentElement.removeEventListener('mouseleave', this.up);
+
+    document.documentElement.removeEventListener('mousedown', this.deselect);
+
+    document.documentElement.removeEventListener('touchmove', this.move, true);
+    document.documentElement.removeEventListener('touchend touchcancel', this.up, true);
+    document.documentElement.removeEventListener('touchstart', this.up, true);
+  },
+
+  methods: {
+    dblclick(e) {
+      this.$emit('content-active')
+    },
+
+    onContentActive() {
+      this.contentActive = true
+      this.active = false
+      for (const child of this.$children) {
+        child.$emit('active')
+      }
+    },
+
+    onContentInactive() {
+      this.contentActive = false
+      this.active = true
+      for (const child of this.$children) {
+        child.$emit('inactive')
+      }
+    },
+
+    deselect() {
+      this.$emit('deselect')
+      this.active = false
+    },
+
+    move(ev) {
+      if (!this.stickDrag && !this.bodyDrag) {
+        return
+      }
+
+      ev.stopPropagation();
+
+      if (this.stickDrag) {
+        this.stickMove(ev);
+      }
+      if (this.bodyDrag) {
+        this.bodyMove(ev)
+      }
+    },
+
+    up(ev) {
+      if (this.stickDrag) {
+        this.stickUp(ev);
+      }
+      if (this.bodyDrag) {
+        this.bodyUp(ev)
+      }
+    },
+
+    bodyMouseDown: function (e) {
+      if (this.contentActive || !this.selectable) {
+        return
+      }
+      else {
+        e.stopPropagation()
+        e.preventDefault()
+      }
+
+      let target = e.target || e.srcElement;
+
+      this.active = true;
+
+      if (e.button && e.button !== 0) {
+        return
+      }
+
+      this.$emit('clicked', e);
+
+      if (!this.draggable || !this.active) {
+        return
+      }
+
+      if (this.dragHandle && target.getAttribute('data-drag-handle') !== this._uid.toString()) {
+        return
+      }
+
+      if (this.dragCancel && target.getAttribute('data-drag-cancel') === this._uid.toString()) {
+        return
+      }
+
+      this.bodyDrag = true
+      this.dragged = false
+
+      this.dragStartEmitted = false
+      this.startRect = _.cloneDeep(this.rect)
+
+      this.stickStartPos.mouseX = e.pageX || e.touches[0].pageX
+      this.stickStartPos.mouseY = e.pageY || e.touches[0].pageY
+
+      this.stickStartPos.cx = this.cx
+      this.stickStartPos.cy = this.cy
+    },
+
+    bodyMove(ev) {
+      const stickStartPos = this.stickStartPos;
+
+      const newPos = {
+        mouseX: ev.pageX || ev.touches[0].pageX,
+        mouseY: ev.pageY || ev.touches[0].pageY
+      }
+      const delta = {
+        x: newPos.mouseX - stickStartPos.mouseX,
+        y: newPos.mouseY - stickStartPos.mouseY
+      }
+
+      let newcx = stickStartPos.cx + delta.x
+      let newcy = stickStartPos.cy + delta.y
+      let x1 = newcx - this.width / 2
+      let y1 = newcy - this.height / 2
+      let x2 = newcx + this.width / 2
+      let y2 = newcy + this.height / 2
+
+      if (this.outerBound && this.rotation == 0) {
+        let bx1 = this.outerBound.x - this.outerBound.w / 2
+        let by1 = this.outerBound.y - this.outerBound.h / 2
+        let bx2 = this.outerBound.x + this.outerBound.w / 2
+        let by2 = this.outerBound.y + this.outerBound.h / 2
+        if (x1 < bx1)
+          delta.x -= x1 - bx1
+        if (x2 > bx2)
+          delta.x -= x2 - bx2
+        if (y1 < by1)
+          delta.y -= y1 - by1
+        if (y2 > by2)
+          delta.y -= y2 - by2
+      }
+
+      if (this.innerBound && this.rotation == 0) {
+        let bx1 = this.innerBound.x - this.innerBound.w / 2
+        let by1 = this.innerBound.y - this.innerBound.h / 2
+        let bx2 = this.innerBound.x + this.innerBound.w / 2
+        let by2 = this.innerBound.y + this.innerBound.h / 2
+        if (x1 > bx1)
+          delta.x -= x1 - bx1
+        if (x2 < bx2)
+          delta.x -= x2 - bx2
+        if (y1 > by1)
+          delta.y -= y1 - by1
+        if (y2 < by2)
+          delta.y -= y2 - by2
+      }
+
+      this.cx = stickStartPos.cx + delta.x
+      this.cy = stickStartPos.cy + delta.y
+
+      if (!this.dragStartEmitted) {
+        this.$emit('dragstart', this.startRect);
+        this.dragStartEmitted = true
+      }
+
+      this.dragged = true
+      this.$emit('drag', this.rect);
+    },
+
+    bodyUp() {
+      this.bodyDrag = false;
+      if (this.dragged) {
+        this.$emit('dragstop', this.rect, this.startRect);
+        this.$emit('change', this.rect);
+      }
+
+      this.stickStartPos = { mouseX: 0, mouseY: 0, x: 0, y: 0, w: 0, h: 0 };
+    },
+
+    stickDown: function (stick, ev) {
+      if (!this.resizable || !this.active)
+        return
+
+      this.resizeStartEmitted = false
+      this.rotateStartEmitted = false
+      this.startRect = _.cloneDeep(this.rect)
+
+      this.stickDrag = true;
+      this.resized = false
+      this.rotated = false
+      this.stickStartPos.mouseX = ev.pageX || ev.touches[0].pageX;
+      this.stickStartPos.mouseY = ev.pageY || ev.touches[0].pageY;
+      this.stickStartPos.cx = this.cx;
+      this.stickStartPos.cy = this.cy;
+      this.stickStartPos.width = this.width;
+      this.stickStartPos.height = this.height;
+      this.stickStartPos.rotation = this.rotation;
+      this.currentStick = stick
+    },
+
+    stickMove(ev) {
+      const stickStartPos = this.stickStartPos;
+
+      let delta = new _minogin_vector__WEBPACK_IMPORTED_MODULE_0__["default"](
+        (ev.pageX || ev.touches[0].pageX) - stickStartPos.mouseX,
+        (ev.pageY || ev.touches[0].pageY) - stickStartPos.mouseY
+      )
+
+
+      if (this.currentStick == 'ro') {
+        let up = new _minogin_vector__WEBPACK_IMPORTED_MODULE_0__["default"](0, -(this.height) / 2 - roStickSize)
+        let rotationRad = _minogin_vector__WEBPACK_IMPORTED_MODULE_0__["default"].rad(stickStartPos.rotation);
+        up = up.rotate(rotationRad)
+        let v = up.add(delta)
+
+        if (!this.rotateStartEmitted) {
+          this.$emit('rotatestart', this.startRect);
+          this.rotateStartEmitted = true
+        }
+
+        this.rotation = _minogin_vector__WEBPACK_IMPORTED_MODULE_0__["default"].deg(v.angle()) + 90
+        this.rotated = true
+        this.$emit('rotate', this.rect);
+      }
+      else {
+        let dirX = this.currentStick[1] == 'r' ? 1 : -1
+        let dirY = this.currentStick[0] == 'b' ? 1 : -1
+
+        let phi = _minogin_vector__WEBPACK_IMPORTED_MODULE_0__["default"].rad(stickStartPos.rotation);
+        let p
+        if (this.aspectRatio) {
+          let axis = new _minogin_vector__WEBPACK_IMPORTED_MODULE_0__["default"](dirX * stickStartPos.width / 2, dirY * stickStartPos.height / 2)
+          axis = axis.rotate(phi).unit()
+          p = axis.mul(axis.mul(delta))
+        }
+        else {
+          p = delta
+        }
+
+        let pn = p.rotate(-phi)
+
+        let newcx = stickStartPos.cx + p.x / 2
+        let newcy = stickStartPos.cy + p.y / 2
+        let newwidth = stickStartPos.width + dirX * pn.x
+        let newheight = stickStartPos.height + dirY * pn.y
+        let x1 = newcx - newwidth / 2
+        let y1 = newcy - newheight / 2
+        let x2 = newcx + newwidth / 2
+        let y2 = newcy + newheight / 2
+
+        if (this.outerBound && this.rotation == 0) {
+          let bx1 = this.outerBound.x - this.outerBound.w / 2
+          let by1 = this.outerBound.y - this.outerBound.h / 2
+          let bx2 = this.outerBound.x + this.outerBound.w / 2
+          let by2 = this.outerBound.y + this.outerBound.h / 2
+          let dx = 0
+          let dy = 0
+          if (x1 < bx1)
+            dx = bx1 - x1
+          if (x2 > bx2)
+            dx = bx2 - x2
+          if (y1 < by1)
+            dy = by1 - y1
+          if (y2 > by2)
+            dy = by2 - y2
+
+          if (dx != 0 || dy != 0) {
+            if (this.aspectRatio) {
+              if (dx / p.x < dy / p.y) {
+                p.y += dx * p.y / p.x
+                p.x += dx
+              }
+              else {
+                p.x += dy * p.x / p.y
+                p.y += dy
+              }
+            }
+            else {
+              p.x += dx
+              p.y += dy
+            }
+          }
+        }
+
+        if (this.innerBound && this.rotation == 0) {
+          let bx1 = this.innerBound.x - this.innerBound.w / 2
+          let by1 = this.innerBound.y - this.innerBound.h / 2
+          let bx2 = this.innerBound.x + this.innerBound.w / 2
+          let by2 = this.innerBound.y + this.innerBound.h / 2
+          let dx = 0
+          let dy = 0
+          if (x1 > bx1)
+            dx = bx1 - x1
+          if (x2 < bx2)
+            dx = bx2 - x2
+          if (y1 > by1)
+            dy = by1 - y1
+          if (y2 < by2)
+            dy = by2 - y2
+
+          if (dx != 0 || dy != 0) {
+            if (this.aspectRatio) {
+              if (dx / p.x < dy / p.y) {
+                p.y += dx * p.y / p.x
+                p.x += dx
+              }
+              else {
+                p.x += dy * p.x / p.y
+                p.y += dy
+              }
+            }
+            else {
+              p.x += dx
+              p.y += dy
+            }
+          }
+        }
+
+        this.cx = stickStartPos.cx + p.x / 2
+        this.cy = stickStartPos.cy + p.y / 2
+        pn = p.rotate(-phi)
+        this.width = stickStartPos.width + dirX * pn.x
+        this.height = stickStartPos.height + dirY * pn.y
+
+        if (!this.resizeStartEmitted) {
+          this.$emit('resizestart', this.startRect);
+          this.resizeStartEmitted = true
+        }
+
+        this.resized = true
+        this.$emit('resize', this.rect);
+      }
+    },
+
+    stickUp() {
+      this.stickDrag = false;
+      this.stickStartPos = {
+        mouseX: 0,
+        mouseY: 0,
+        x: 0,
+        y: 0,
+        w: 0,
+        h: 0
+      };
+
+      if (this.resized) {
+        this.$emit('resizestop', this.rect, this.startRect);  // TODO
+        this.$emit('change', this.rect);
+      }
+
+      if (this.rotated) {
+        this.$emit('rotatestop', this.rect, this.startRect);
+        this.$emit('change', this.rect);
+      }
+    },
+  },
+});
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=template&id=5057d8d6&scoped=true&":
+/*!*******************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/@minogin/vue-drag-resize-rotate/src/drr.vue?vue&type=template&id=5057d8d6&scoped=true& ***!
+  \*******************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    {
+      staticClass: "drr",
+      class: _vm.classObject,
+      style: _vm.style,
+      on: {
+        dblclick: function($event) {
+          return _vm.dblclick($event)
+        },
+        mousedown: function($event) {
+          return _vm.bodyMouseDown($event)
+        },
+        touchstart: function($event) {
+          $event.stopPropagation()
+          $event.preventDefault()
+          return _vm.bodyMouseDown($event)
+        }
+      }
+    },
+    [
+      _vm._t("default"),
+      _vm._v(" "),
+      _vm._l(_vm.sticks, function(stick) {
+        return _c("div", {
+          staticClass: "drr-stick",
+          class: ["drr-stick-" + stick, _vm.resizable ? "" : "not-resizable"],
+          style: _vm.drrStick(stick),
+          on: {
+            mousedown: function($event) {
+              $event.stopPropagation()
+              $event.preventDefault()
+              return _vm.stickDown(stick, $event)
+            },
+            touchstart: function($event) {
+              $event.stopPropagation()
+              $event.preventDefault()
+              return _vm.stickDown(stick, $event)
+            }
+          }
+        })
+      }),
+      _vm._v(" "),
+      _vm.rotatable ? _c("div", { staticClass: "ro-stick-handle" }) : _vm._e()
+    ],
+    2
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
 
 /***/ }),
 
@@ -42704,7 +43919,7 @@ var render = function() {
           attrs: {
             value: _vm.value,
             "close-on-select": false,
-            "popover-x": "left",
+            "popover-x": "right",
             "popover-y": "bottom",
             shapes: "circles",
             "swatch-size": "30",
@@ -42948,6 +44163,59 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/uniform-simulator/components/SidebarAttachItem.vue?vue&type=template&id=023e437d&":
+/*!**************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/uniform-simulator/components/SidebarAttachItem.vue?vue&type=template&id=023e437d& ***!
+  \**************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "li",
+    {
+      staticClass:
+        "sidebar-attach-item list-group-item list-group-item-action d-flex flex-column",
+      class: { "list-group-item-primary": _vm.attach.active },
+      on: { click: _vm.activate }
+    },
+    [
+      _c(
+        "div",
+        { staticClass: "d-flex flex-row align-items-center no-gutters" },
+        [
+          _c("div", { staticClass: "col-md-3 text-center" }, [
+            _c("img", {
+              staticClass: "img-fluid attach-item-image",
+              attrs: { src: _vm.attach.image }
+            })
+          ]),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "col-md-9 d-flex flex-column px-2 text-wrap" },
+            [_vm._t("label"), _vm._v(" "), _vm._t("attach-name")],
+            2
+          )
+        ]
+      )
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/uniform-simulator/components/SidebarAttachs.vue?vue&type=template&id=3e73eb99&":
 /*!***********************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/uniform-simulator/components/SidebarAttachs.vue?vue&type=template&id=3e73eb99& ***!
@@ -42966,64 +44234,199 @@ var render = function() {
   return _c(
     "div",
     {
-      staticClass: "sidebar-attachs",
-      class: { active: _vm.attachs.length !== 0 }
+      staticClass: "sidebar-attachs no-select",
+      class: { active: _vm.hasAttach }
     },
     [
-      _c("div", { staticClass: "sidebar-attachs-title mb-2" }, [
-        _vm._v("\n\t\tANEXOS\n\t")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "sidebar-attachs-content" }, [
-        _c(
-          "div",
-          { staticClass: "sidebar-attachs-items" },
-          [
-            _vm._l(_vm.attachs, function(attach) {
-              return [
-                _c(
-                  "div",
-                  { staticClass: "sidebar-attach-item d-flex flex-column" },
-                  [
-                    _c(
-                      "div",
-                      {
-                        staticClass:
-                          "d-flex flex-row align-items-center no-gutters"
-                      },
-                      [
-                        _c("div", { staticClass: "col-md-3" }, [
-                          _c("img", {
-                            staticClass: "img-fluid",
-                            attrs: { src: attach.image }
-                          })
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          {
-                            staticClass:
-                              "col-md-9 small text-center image-label text-secondary px-2 text-wrap"
-                          },
-                          [
-                            _vm._v(
-                              "\n\t\t\t\t\t\t" +
-                                _vm._s(attach.name) +
-                                "\n\t\t\t\t\t"
+      _c(
+        "transition",
+        {
+          attrs: {
+            "enter-active-class":
+              "animate__animated animate__fadeIn animate__fast"
+          }
+        },
+        [
+          _vm.isFront
+            ? _c("div", { key: "frontImages" }, [
+                _c("div", { staticClass: "sidebar-attachs-title mb-2" }, [
+                  _vm._v("\n        IMAGENS DA FRENTE\n      ")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "sidebar-attachs-content" }, [
+                  _c(
+                    "ul",
+                    {
+                      staticClass:
+                        "sidebar-attachs-items list-group list-group-flush"
+                    },
+                    [
+                      _vm.brand
+                        ? _c("sidebar-attach-item", {
+                            attrs: { attach: _vm.brand },
+                            scopedSlots: _vm._u(
+                              [
+                                {
+                                  key: "label",
+                                  fn: function() {
+                                    return [
+                                      _c(
+                                        "div",
+                                        { staticClass: "attach-item-label" },
+                                        [_vm._v("MARCA")]
+                                      )
+                                    ]
+                                  },
+                                  proxy: true
+                                },
+                                {
+                                  key: "attach-name",
+                                  fn: function() {
+                                    return [
+                                      _c(
+                                        "div",
+                                        { staticClass: "attach-item-name" },
+                                        [_vm._v(_vm._s(_vm.brand.name))]
+                                      )
+                                    ]
+                                  },
+                                  proxy: true
+                                }
+                              ],
+                              null,
+                              false,
+                              3846268844
                             )
-                          ]
-                        )
-                      ]
-                    )
-                  ]
-                )
-              ]
-            })
-          ],
-          2
-        )
-      ])
-    ]
+                          })
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.shield
+                        ? _c("sidebar-attach-item", {
+                            attrs: { attach: _vm.shield },
+                            scopedSlots: _vm._u(
+                              [
+                                {
+                                  key: "label",
+                                  fn: function() {
+                                    return [
+                                      _c(
+                                        "div",
+                                        { staticClass: "attach-item-label" },
+                                        [_vm._v("ESCUDO")]
+                                      )
+                                    ]
+                                  },
+                                  proxy: true
+                                },
+                                {
+                                  key: "attach-name",
+                                  fn: function() {
+                                    return [
+                                      _c(
+                                        "div",
+                                        { staticClass: "attach-item-name" },
+                                        [_vm._v(_vm._s(_vm.shield.name))]
+                                      )
+                                    ]
+                                  },
+                                  proxy: true
+                                }
+                              ],
+                              null,
+                              false,
+                              1030193311
+                            )
+                          })
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm._l(_vm.frontAttachs, function(attach, index) {
+                        return [
+                          _c("sidebar-attach-item", {
+                            attrs: { attach: attach },
+                            scopedSlots: _vm._u(
+                              [
+                                {
+                                  key: "label",
+                                  fn: function() {
+                                    return [
+                                      _c(
+                                        "div",
+                                        { staticClass: "attach-item-label" },
+                                        [_vm._v("IMAGEM")]
+                                      )
+                                    ]
+                                  },
+                                  proxy: true
+                                },
+                                {
+                                  key: "attach-name",
+                                  fn: function() {
+                                    return [
+                                      _c(
+                                        "div",
+                                        { staticClass: "attach-item-name" },
+                                        [_vm._v(_vm._s(attach.name))]
+                                      )
+                                    ]
+                                  },
+                                  proxy: true
+                                }
+                              ],
+                              null,
+                              true
+                            )
+                          })
+                        ]
+                      })
+                    ],
+                    2
+                  )
+                ])
+              ])
+            : _c("div", { key: "backImages" }, [
+                _c("div", { staticClass: "sidebar-attachs-title mb-2" }, [
+                  _vm._v("\n        IMAGENS DAS COSTAS\n      ")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "sidebar-attachs-content" }, [
+                  _c(
+                    "ul",
+                    {
+                      staticClass:
+                        "sidebar-attachs-items list-group list-group-flush"
+                    },
+                    [
+                      _vm._l(_vm.backAttachs, function(attach) {
+                        return [
+                          _c("sidebar-attach-item", {
+                            attrs: { attach: attach },
+                            scopedSlots: _vm._u(
+                              [
+                                {
+                                  key: "label",
+                                  fn: function() {
+                                    return [
+                                      _vm._v(" " + _vm._s(attach.name) + " ")
+                                    ]
+                                  },
+                                  proxy: true
+                                }
+                              ],
+                              null,
+                              true
+                            )
+                          })
+                        ]
+                      })
+                    ],
+                    2
+                  )
+                ])
+              ])
+        ]
+      )
+    ],
+    1
   )
 }
 var staticRenderFns = []
@@ -43127,7 +44530,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "uniform" },
+    { staticClass: "uniform no-select" },
     [
       _c(
         "transition",
@@ -43174,7 +44577,10 @@ var render = function() {
               _vm._v(" "),
               _c(
                 "div",
-                { staticClass: "uniform-wrapper-attachs uniform-mask-front" },
+                {
+                  staticClass: "uniform-mask",
+                  class: { "mask-front": !_vm.hasActiveAttach }
+                },
                 [
                   _c(
                     "div",
@@ -43186,55 +44592,6 @@ var render = function() {
                           value: !_vm.hideBrand,
                           expression: "! hideBrand"
                         }
-                      ],
-                      ref: "brand",
-                      class: { "front-brand": _vm.brand == null }
-                    },
-                    [
-                      _vm.brand == null
-                        ? _vm._t("brand-svg")
-                        : _c(
-                            "div",
-                            [
-                              _c(
-                                "vue-drag-resize",
-                                {
-                                  staticClass: "uniform-attach",
-                                  attrs: {
-                                    "aspect-ratio": true,
-                                    h: "100%",
-                                    w: 70,
-                                    minw: 20,
-                                    minh: 20,
-                                    x: 73,
-                                    y: 85,
-                                    sticks: ["tl", "tr", "bl", "br"]
-                                  }
-                                },
-                                [
-                                  _c("img", {
-                                    staticClass: "w-100",
-                                    attrs: { src: _vm.brand.image, alt: "" }
-                                  })
-                                ]
-                              )
-                            ],
-                            1
-                          )
-                    ],
-                    2
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    {
-                      directives: [
-                        {
-                          name: "show",
-                          rawName: "v-show",
-                          value: !_vm.hideShield,
-                          expression: "! hideShield"
-                        }
                       ]
                     },
                     [
@@ -43243,7 +44600,7 @@ var render = function() {
                         {
                           attrs: {
                             "enter-active-class":
-                              "animate__animated animate__bounceIn animate__faster"
+                              "animate__animated animate__fadeIn animate__faster"
                           }
                         },
                         [
@@ -43254,8 +44611,8 @@ var render = function() {
                                 {
                                   name: "show",
                                   rawName: "v-show",
-                                  value: _vm.numberInFront,
-                                  expression: "numberInFront"
+                                  value: _vm.replaceBrandByNumber,
+                                  expression: "replaceBrandByNumber"
                                 }
                               ],
                               ref: "frontNumber",
@@ -43265,7 +44622,9 @@ var render = function() {
                             [
                               _vm._v(
                                 "\n              " +
-                                  _vm._s(_vm.number) +
+                                  _vm._s(
+                                    _vm.number.length === 0 ? "10" : _vm.number
+                                  ) +
                                   "\n            "
                               )
                             ]
@@ -43278,7 +44637,7 @@ var render = function() {
                         {
                           attrs: {
                             "enter-active-class":
-                              "animate__animated animate__bounceIn animate__faster"
+                              "animate__animated animate__fadeIn animate__faster"
                           }
                         },
                         [
@@ -43289,15 +44648,60 @@ var render = function() {
                                 {
                                   name: "show",
                                   rawName: "v-show",
-                                  value: !_vm.numberInFront,
-                                  expression: "! numberInFront"
+                                  value: !_vm.replaceBrandByNumber,
+                                  expression: "! replaceBrandByNumber"
                                 }
                               ],
-                              ref: "shield",
-                              staticClass: "front-shield"
+                              ref: "brand",
+                              class: { "front-brand": !_vm.brand }
                             },
-                            [_vm._t("shield-svg")],
-                            2
+                            [
+                              _c(
+                                "transition",
+                                {
+                                  attrs: {
+                                    "enter-active-class":
+                                      "animate__animated animate__fadeIn animate__faster"
+                                  }
+                                },
+                                [
+                                  _vm.brand
+                                    ? _c(
+                                        "vue-drr",
+                                        {
+                                          key: "brand",
+                                          attrs: {
+                                            "attach-id": _vm.brand.id,
+                                            x: 105,
+                                            y: 95,
+                                            w: 70,
+                                            h:
+                                              (_vm.brand.height /
+                                                _vm.brand.width) *
+                                              70
+                                          }
+                                        },
+                                        [
+                                          _c("img", {
+                                            staticClass: "img-fluid",
+                                            attrs: {
+                                              src: _vm.brand.image,
+                                              alt: ""
+                                            }
+                                          })
+                                        ]
+                                      )
+                                    : _c(
+                                        "div",
+                                        { key: "brand-svg" },
+                                        [_vm._t("brand-svg")],
+                                        2
+                                      )
+                                ],
+                                1
+                              )
+                            ],
+                            1
                           )
                         ]
                       )
@@ -43308,33 +44712,107 @@ var render = function() {
                   _c(
                     "div",
                     {
-                      staticClass: "uniform-wrapper-attachs uniform-mask-front"
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: !_vm.hideShield,
+                          expression: "! hideShield"
+                        }
+                      ],
+                      ref: "shield",
+                      class: { "front-shield": !_vm.shield }
                     },
                     [
                       _c(
-                        "vue-drag-resize",
+                        "transition",
                         {
-                          staticClass: "uniform-attach",
                           attrs: {
-                            "aspect-ratio": true,
-                            minw: 20,
-                            minh: 20,
-                            x: 100,
-                            y: 130,
-                            sticks: ["tl", "tr", "bl", "br"]
+                            "enter-active-class":
+                              "animate__animated animate__fadeIn animate__faster"
                           }
                         },
                         [
-                          _c("img", {
-                            staticClass: "w-100 h-100",
-                            attrs: { src: "", alt: "" }
-                          })
-                        ]
+                          _vm.shield
+                            ? _c(
+                                "vue-drr",
+                                {
+                                  key: "shield",
+                                  attrs: {
+                                    "attach-id": _vm.shield.id,
+                                    x: 200,
+                                    y: 95,
+                                    w: 36,
+                                    h:
+                                      (_vm.shield.height / _vm.shield.width) *
+                                      36
+                                  }
+                                },
+                                [
+                                  _c("img", {
+                                    staticClass: "img-fluid",
+                                    attrs: {
+                                      src: _vm.shield.image,
+                                      alt: "Escudo da camisa"
+                                    }
+                                  })
+                                ]
+                              )
+                            : _c(
+                                "div",
+                                { key: "shield-svg" },
+                                [_vm._t("shield-svg")],
+                                2
+                              )
+                        ],
+                        1
                       )
                     ],
                     1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "transition-group",
+                    {
+                      attrs: {
+                        "enter-active-class":
+                          "animate__animated animate__zoomIn animate__faster",
+                        "leave-active-class":
+                          "animate__animated animate__zoomOut animate__faster"
+                      }
+                    },
+                    [
+                      _vm._l(_vm.frontAttachs, function(attach) {
+                        return [
+                          _c(
+                            "vue-drr",
+                            {
+                              key: attach.id,
+                              attrs: {
+                                "attach-id": attach.id,
+                                x: 155,
+                                y: 170,
+                                w: 100,
+                                h: (attach.height / attach.width) * 100
+                              }
+                            },
+                            [
+                              _c("img", {
+                                staticClass: "img-fluid",
+                                attrs: {
+                                  src: attach.image,
+                                  alt: "Anexo da frente da camisa"
+                                }
+                              })
+                            ]
+                          )
+                        ]
+                      })
+                    ],
+                    2
                   )
-                ]
+                ],
+                1
               )
             ]
           )
@@ -43387,26 +44865,85 @@ var render = function() {
               _c(
                 "div",
                 {
-                  ref: "backNumber",
-                  staticClass: "back-number",
-                  class: [_vm.numberFont.class]
+                  staticClass: "uniform-mask",
+                  class: { "mask-back": !_vm.hasActiveAttach }
                 },
-                [_vm._v("\n        " + _vm._s(_vm.number) + "\n      ")]
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  ref: "backName",
-                  staticClass: "back-name",
-                  class: [_vm.nameFont.class]
-                },
-                [_vm._v(" \n        " + _vm._s(_vm.name) + "\n      ")]
-              ),
-              _vm._v(" "),
-              _c("div", {
-                staticClass: "uniform-wrapper-attachs uniform-mask-back"
-              })
+                [
+                  _c(
+                    "div",
+                    {
+                      ref: "backNumber",
+                      staticClass: "back-number",
+                      class: [_vm.numberFont.class]
+                    },
+                    [
+                      _vm._v(
+                        "\n          " +
+                          _vm._s(_vm.number.length == 0 ? "10" : _vm.number) +
+                          "\n        "
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      ref: "backName",
+                      staticClass: "back-name",
+                      class: _vm.nameFont.class
+                    },
+                    [
+                      _vm._v(
+                        " \n          " +
+                          _vm._s(_vm.name.length === 0 ? "JOGADOR" : _vm.name) +
+                          "\n        "
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "transition-group",
+                    {
+                      attrs: {
+                        "enter-active-class":
+                          "animate__animated animate__zoomIn animate__faster",
+                        "leave-active-class":
+                          "animate__animated animate__zoomOut animate__faster"
+                      }
+                    },
+                    [
+                      _vm._l(_vm.backAttachs, function(attach) {
+                        return [
+                          _c(
+                            "vue-drr",
+                            {
+                              key: attach.id,
+                              attrs: {
+                                "attach-id": attach.id,
+                                x: 155,
+                                y: 170,
+                                w: 100,
+                                h: (attach.height / attach.width) * 100
+                              }
+                            },
+                            [
+                              _c("img", {
+                                staticClass: "img-fluid",
+                                attrs: {
+                                  src: attach.image,
+                                  alt: "Anexo de trás da camisa"
+                                }
+                              })
+                            ]
+                          )
+                        ]
+                      })
+                    ],
+                    2
+                  )
+                ],
+                1
+              )
             ]
           )
         ]
@@ -43435,6 +44972,72 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/uniform-simulator/components/VueDRR.vue?vue&type=template&id=82fc51f6&":
+/*!***************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/uniform-simulator/components/VueDRR.vue?vue&type=template&id=82fc51f6& ***!
+  \***************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "vue-drag-resize-rotate",
+    {
+      ref: "drr",
+      staticClass: "attach",
+      attrs: {
+        x: _vm.x,
+        y: _vm.y,
+        w: _vm.w,
+        h: _vm.h,
+        selected: _vm.attach.active,
+        "aspect-ratio": true
+      },
+      on: {
+        select: _vm.onActivated,
+        deselect: _vm.onDeactivated,
+        drag: _vm.onDrag,
+        resize: _vm.onResize,
+        rotate: _vm.onRotate
+      }
+    },
+    [
+      _vm._t("default"),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.attach.active,
+              expression: "attach.active"
+            }
+          ],
+          staticClass: "attach-delete text-center",
+          on: { click: _vm.onDelete }
+        },
+        [_c("i", { staticClass: "fas fa-trash-alt" })]
+      )
+    ],
+    2
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/uniform-simulator/components/sidebar-items/Colors.vue?vue&type=template&id=b9006a12&":
 /*!*****************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/uniform-simulator/components/sidebar-items/Colors.vue?vue&type=template&id=b9006a12& ***!
@@ -43452,7 +45055,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("h6", { staticClass: "sidebar-dropdown-title" }, [
-      _vm._v("\n\t\tUNIFORME\n\t")
+      _vm._v("\n    UNIFORME\n  ")
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "sidebar-dropdown-content" }, [
@@ -43545,11 +45148,12 @@ var render = function() {
       [
         _c("div", { staticClass: "col" }, [
           _c("input", {
+            ref: "shieldImageInput",
             staticClass: "d-none",
             attrs: { type: "file", id: "shield-image" },
             on: {
               change: function($event) {
-                return _vm.upload($event, "shield")
+                return _vm.upload($event, "shield", "shieldImageInput")
               }
             }
           }),
@@ -43561,11 +45165,12 @@ var render = function() {
         _vm._v(" "),
         _c("div", { staticClass: "col" }, [
           _c("input", {
+            ref: "brandImageInput",
             staticClass: "d-none",
             attrs: { type: "file", id: "brand-image" },
             on: {
               change: function($event) {
-                return _vm.upload($event, "brand")
+                return _vm.upload($event, "brand", "brandImageInput")
               }
             }
           }),
@@ -43579,11 +45184,12 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "sidebar-dropdown-content" }, [
       _c("input", {
+        ref: "extraImageInput",
         staticClass: "d-none",
         attrs: { type: "file", id: "extra-image" },
         on: {
-          change: function($event) {
-            return _vm.upload($event)
+          input: function($event) {
+            return _vm.upload($event, null, "extraImageInput")
           }
         }
       }),
@@ -43746,14 +45352,14 @@ var render = function() {
                       len = arguments.length
                     while (len--) args[len] = arguments[len]
 
-                    this$1.fontNameChanged(args[0])
+                    this$1.nameFontChanged(args[0])
 
                     if (this$1.isFontsLocked) {
                       this$1.$refs.numberFontSelector.$refs.vueper.goToSlide(
                         args[1],
                         { emit: false }
                       )
-                      this$1.fontNumberChanged(args[0])
+                      this$1.numberFontChanged(args[0])
                     }
                   }
                 }
@@ -43835,14 +45441,14 @@ var render = function() {
                       len = arguments.length
                     while (len--) args[len] = arguments[len]
 
-                    this$1.fontNumberChanged(args[0])
+                    this$1.numberFontChanged(args[0])
 
                     if (this$1.isFontsLocked) {
                       this$1.$refs.nameFontSelector.$refs.vueper.goToSlide(
                         args[1],
                         { emit: false }
                       )
-                      this$1.fontNameChanged(args[0])
+                      this$1.nameFontChanged(args[0])
                     }
                   }
                 }
@@ -43957,7 +45563,28 @@ var render = function() {
             }
           }),
           _vm._v(" "),
-          _vm._m(0)
+          _c(
+            "label",
+            {
+              staticClass: "custom-control-label no-select",
+              attrs: { for: "hideBrand" }
+            },
+            [
+              _c(
+                "span",
+                {
+                  staticClass:
+                    "font-weight-bold text-secondary sidebar-content-label"
+                },
+                [
+                  _vm._v("\n            OCULTAR "),
+                  _vm.replaceBrandByNumber
+                    ? _c("span", [_vm._v("NÚMERO")])
+                    : _c("span", [_vm._v(" MARCA")])
+                ]
+              )
+            ]
+          )
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "custom-control custom-checkbox" }, [
@@ -44000,28 +45627,7 @@ var render = function() {
             }
           }),
           _vm._v(" "),
-          _c(
-            "label",
-            {
-              staticClass: "custom-control-label no-select",
-              attrs: { for: "hideShield" }
-            },
-            [
-              _c(
-                "span",
-                {
-                  staticClass:
-                    "font-weight-bold text-secondary sidebar-content-label"
-                },
-                [
-                  _vm._v("\n            OCULTAR "),
-                  _vm.switchShieldToNumber
-                    ? _c("span", [_vm._v("NÚMERO")])
-                    : _c("span", [_vm._v(" ESCUDO")])
-                ]
-              )
-            ]
-          )
+          _vm._m(0)
         ])
       ]),
       _vm._v(" "),
@@ -44032,35 +45638,35 @@ var render = function() {
               {
                 name: "model",
                 rawName: "v-model",
-                value: _vm.switchShieldToNumber,
-                expression: "switchShieldToNumber"
+                value: _vm.replaceBrandByNumber,
+                expression: "replaceBrandByNumber"
               }
             ],
             staticClass: "custom-control-input",
-            attrs: { type: "checkbox", id: "switchShieldToNumber" },
+            attrs: { type: "checkbox", id: "replaceBrandByNumber" },
             domProps: {
-              checked: Array.isArray(_vm.switchShieldToNumber)
-                ? _vm._i(_vm.switchShieldToNumber, null) > -1
-                : _vm.switchShieldToNumber
+              checked: Array.isArray(_vm.replaceBrandByNumber)
+                ? _vm._i(_vm.replaceBrandByNumber, null) > -1
+                : _vm.replaceBrandByNumber
             },
             on: {
               change: function($event) {
-                var $$a = _vm.switchShieldToNumber,
+                var $$a = _vm.replaceBrandByNumber,
                   $$el = $event.target,
                   $$c = $$el.checked ? true : false
                 if (Array.isArray($$a)) {
                   var $$v = null,
                     $$i = _vm._i($$a, $$v)
                   if ($$el.checked) {
-                    $$i < 0 && (_vm.switchShieldToNumber = $$a.concat([$$v]))
+                    $$i < 0 && (_vm.replaceBrandByNumber = $$a.concat([$$v]))
                   } else {
                     $$i > -1 &&
-                      (_vm.switchShieldToNumber = $$a
+                      (_vm.replaceBrandByNumber = $$a
                         .slice(0, $$i)
                         .concat($$a.slice($$i + 1)))
                   }
                 } else {
-                  _vm.switchShieldToNumber = $$c
+                  _vm.replaceBrandByNumber = $$c
                 }
               }
             }
@@ -44081,7 +45687,7 @@ var staticRenderFns = [
       "label",
       {
         staticClass: "custom-control-label no-select",
-        attrs: { for: "hideBrand" }
+        attrs: { for: "hideShield" }
       },
       [
         _c(
@@ -44089,7 +45695,7 @@ var staticRenderFns = [
           {
             staticClass: "font-weight-bold text-secondary sidebar-content-label"
           },
-          [_vm._v("OCULTAR MARCA")]
+          [_vm._v("\n            OCULTAR ESCUDO\n          ")]
         )
       ]
     )
@@ -44102,7 +45708,7 @@ var staticRenderFns = [
       "label",
       {
         staticClass: "custom-control-label no-select",
-        attrs: { for: "switchShieldToNumber" }
+        attrs: { for: "replaceBrandByNumber" }
       },
       [
         _c(
@@ -63884,50 +65490,32 @@ window.cleaveValueBRL = {
 /*!***********************************************!*\
   !*** ./resources/js/uniform-simulator/app.js ***!
   \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/helpers */ "./resources/js/uniform-simulator/util/helpers.js");
+/* harmony import */ var _store_app__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./store/app */ "./resources/js/uniform-simulator/store/app.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/uniform-simulator/bootstrap.js");
 
 __webpack_require__(/*! ./../cleave */ "./resources/js/cleave.js");
 
-__webpack_require__(/*! ./vue-mixins */ "./resources/js/uniform-simulator/vue-mixins.js");
+__webpack_require__(/*! ./components */ "./resources/js/uniform-simulator/components.js");
 
-window.EventBus = new Vue();
-Vue.component('vue-drag-resize', __webpack_require__(/*! ./components/VueDragResize */ "./resources/js/uniform-simulator/components/VueDragResize.vue")["default"]);
-Vue.component('navbar', __webpack_require__(/*! ./components/Navbar */ "./resources/js/uniform-simulator/components/Navbar.vue")["default"]);
-Vue.component('hamburger', __webpack_require__(/*! ./components/Hamburger */ "./resources/js/uniform-simulator/components/Hamburger.vue")["default"]);
-Vue.component('sidebar', __webpack_require__(/*! ./components/Sidebar */ "./resources/js/uniform-simulator/components/Sidebar.vue")["default"]);
-Vue.component('sidebar-item', __webpack_require__(/*! ./components/SidebarItem */ "./resources/js/uniform-simulator/components/SidebarItem.vue")["default"]);
-Vue.component('uniform', __webpack_require__(/*! ./components/Uniform */ "./resources/js/uniform-simulator/components/Uniform.vue")["default"]);
-Vue.component('color', __webpack_require__(/*! ./components/Color */ "./resources/js/uniform-simulator/components/Color.vue")["default"]);
-Vue.component('masked-input', __webpack_require__(/*! vue-text-mask */ "./node_modules/vue-text-mask/dist/vueTextMask.js")["default"]);
-Vue.component('font-selector', __webpack_require__(/*! ./components/FontSelector */ "./resources/js/uniform-simulator/components/FontSelector.vue")["default"]);
-Vue.component('sidebar-attachs', __webpack_require__(/*! ./components/SidebarAttachs */ "./resources/js/uniform-simulator/components/SidebarAttachs.vue")["default"]); // Sidebar items
 
-Vue.component('sidebar-item-colors', __webpack_require__(/*! ./components/sidebar-items/Colors */ "./resources/js/uniform-simulator/components/sidebar-items/Colors.vue")["default"]);
-Vue.component('sidebar-item-name-and-number', __webpack_require__(/*! ./components/sidebar-items/NameAndNumber */ "./resources/js/uniform-simulator/components/sidebar-items/NameAndNumber.vue")["default"]);
-Vue.component('sidebar-item-shield', __webpack_require__(/*! ./components/sidebar-items/Shield */ "./resources/js/uniform-simulator/components/sidebar-items/Shield.vue")["default"]);
-Vue.component('sidebar-item-import-images', __webpack_require__(/*! ./components/sidebar-items/ImportImages */ "./resources/js/uniform-simulator/components/sidebar-items/ImportImages.vue")["default"]);
+
+var plugin = {
+  install: function install(Vue, options) {
+    Vue.prototype.$helpers = _util_helpers__WEBPACK_IMPORTED_MODULE_0__["default"];
+  }
+};
+Vue.use(plugin);
 Vue.use(Vuex);
 var store = new Vuex.Store({
-  state: {
-    isFront: true,
-    shirtColor: '',
-    neckColor: '',
-    nameColor: '',
-    numberColor: '',
-    nameFont: '',
-    numberFont: '',
-    number: '10',
-    name: 'JOGADOR',
-    hideBrand: false,
-    hideShield: false,
-    replaceShieldForNumber: false,
-    attachs: [],
-    brand: null,
-    shield: null
-  }
+  state: _store_app__WEBPACK_IMPORTED_MODULE_1__["state"],
+  mutations: _store_app__WEBPACK_IMPORTED_MODULE_1__["mutations"],
+  getters: _store_app__WEBPACK_IMPORTED_MODULE_1__["getters"]
 });
 new Vue({
   el: '#app',
@@ -63967,6 +65555,32 @@ window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js")
 window.Swal = sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a;
 window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+/***/ }),
+
+/***/ "./resources/js/uniform-simulator/components.js":
+/*!******************************************************!*\
+  !*** ./resources/js/uniform-simulator/components.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+Vue.component('navbar', __webpack_require__(/*! ./components/Navbar */ "./resources/js/uniform-simulator/components/Navbar.vue")["default"]);
+Vue.component('hamburger', __webpack_require__(/*! ./components/Hamburger */ "./resources/js/uniform-simulator/components/Hamburger.vue")["default"]);
+Vue.component('sidebar', __webpack_require__(/*! ./components/Sidebar */ "./resources/js/uniform-simulator/components/Sidebar.vue")["default"]);
+Vue.component('sidebar-item', __webpack_require__(/*! ./components/SidebarItem */ "./resources/js/uniform-simulator/components/SidebarItem.vue")["default"]);
+Vue.component('uniform', __webpack_require__(/*! ./components/Uniform */ "./resources/js/uniform-simulator/components/Uniform.vue")["default"]);
+Vue.component('color', __webpack_require__(/*! ./components/Color */ "./resources/js/uniform-simulator/components/Color.vue")["default"]);
+Vue.component('masked-input', __webpack_require__(/*! vue-text-mask */ "./node_modules/vue-text-mask/dist/vueTextMask.js")["default"]);
+Vue.component('font-selector', __webpack_require__(/*! ./components/FontSelector */ "./resources/js/uniform-simulator/components/FontSelector.vue")["default"]);
+Vue.component('sidebar-attachs', __webpack_require__(/*! ./components/SidebarAttachs */ "./resources/js/uniform-simulator/components/SidebarAttachs.vue")["default"]);
+Vue.component('sidebar-attach-item', __webpack_require__(/*! ./components/SidebarAttachItem */ "./resources/js/uniform-simulator/components/SidebarAttachItem.vue")["default"]);
+Vue.component('vue-drr', __webpack_require__(/*! ./components/VueDRR */ "./resources/js/uniform-simulator/components/VueDRR.vue")["default"]); // Sidebar items
+
+Vue.component('sidebar-item-colors', __webpack_require__(/*! ./components/sidebar-items/Colors */ "./resources/js/uniform-simulator/components/sidebar-items/Colors.vue")["default"]);
+Vue.component('sidebar-item-name-and-number', __webpack_require__(/*! ./components/sidebar-items/NameAndNumber */ "./resources/js/uniform-simulator/components/sidebar-items/NameAndNumber.vue")["default"]);
+Vue.component('sidebar-item-shield', __webpack_require__(/*! ./components/sidebar-items/Shield */ "./resources/js/uniform-simulator/components/sidebar-items/Shield.vue")["default"]);
+Vue.component('sidebar-item-import-images', __webpack_require__(/*! ./components/sidebar-items/ImportImages */ "./resources/js/uniform-simulator/components/sidebar-items/ImportImages.vue")["default"]);
 
 /***/ }),
 
@@ -64315,6 +65929,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/uniform-simulator/components/SidebarAttachItem.vue":
+/*!*************************************************************************!*\
+  !*** ./resources/js/uniform-simulator/components/SidebarAttachItem.vue ***!
+  \*************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _SidebarAttachItem_vue_vue_type_template_id_023e437d___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SidebarAttachItem.vue?vue&type=template&id=023e437d& */ "./resources/js/uniform-simulator/components/SidebarAttachItem.vue?vue&type=template&id=023e437d&");
+/* harmony import */ var _SidebarAttachItem_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SidebarAttachItem.vue?vue&type=script&lang=js& */ "./resources/js/uniform-simulator/components/SidebarAttachItem.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _SidebarAttachItem_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _SidebarAttachItem_vue_vue_type_template_id_023e437d___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _SidebarAttachItem_vue_vue_type_template_id_023e437d___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/uniform-simulator/components/SidebarAttachItem.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/uniform-simulator/components/SidebarAttachItem.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************!*\
+  !*** ./resources/js/uniform-simulator/components/SidebarAttachItem.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SidebarAttachItem_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./SidebarAttachItem.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/uniform-simulator/components/SidebarAttachItem.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SidebarAttachItem_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/uniform-simulator/components/SidebarAttachItem.vue?vue&type=template&id=023e437d&":
+/*!********************************************************************************************************!*\
+  !*** ./resources/js/uniform-simulator/components/SidebarAttachItem.vue?vue&type=template&id=023e437d& ***!
+  \********************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SidebarAttachItem_vue_vue_type_template_id_023e437d___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./SidebarAttachItem.vue?vue&type=template&id=023e437d& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/uniform-simulator/components/SidebarAttachItem.vue?vue&type=template&id=023e437d&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SidebarAttachItem_vue_vue_type_template_id_023e437d___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SidebarAttachItem_vue_vue_type_template_id_023e437d___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/uniform-simulator/components/SidebarAttachs.vue":
 /*!**********************************************************************!*\
   !*** ./resources/js/uniform-simulator/components/SidebarAttachs.vue ***!
@@ -64522,28 +66205,29 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/uniform-simulator/components/VueDragResize.vue":
-/*!*********************************************************************!*\
-  !*** ./resources/js/uniform-simulator/components/VueDragResize.vue ***!
-  \*********************************************************************/
+/***/ "./resources/js/uniform-simulator/components/VueDRR.vue":
+/*!**************************************************************!*\
+  !*** ./resources/js/uniform-simulator/components/VueDRR.vue ***!
+  \**************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _VueDragResize_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VueDragResize.vue?vue&type=script&lang=js& */ "./resources/js/uniform-simulator/components/VueDragResize.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-var render, staticRenderFns
+/* harmony import */ var _VueDRR_vue_vue_type_template_id_82fc51f6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VueDRR.vue?vue&type=template&id=82fc51f6& */ "./resources/js/uniform-simulator/components/VueDRR.vue?vue&type=template&id=82fc51f6&");
+/* harmony import */ var _VueDRR_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./VueDRR.vue?vue&type=script&lang=js& */ "./resources/js/uniform-simulator/components/VueDRR.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
 
 
 
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
-  _VueDragResize_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"],
-  render,
-  staticRenderFns,
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _VueDRR_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _VueDRR_vue_vue_type_template_id_82fc51f6___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _VueDRR_vue_vue_type_template_id_82fc51f6___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -64553,22 +66237,40 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/uniform-simulator/components/VueDragResize.vue"
+component.options.__file = "resources/js/uniform-simulator/components/VueDRR.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/uniform-simulator/components/VueDragResize.vue?vue&type=script&lang=js&":
-/*!**********************************************************************************************!*\
-  !*** ./resources/js/uniform-simulator/components/VueDragResize.vue?vue&type=script&lang=js& ***!
-  \**********************************************************************************************/
+/***/ "./resources/js/uniform-simulator/components/VueDRR.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************!*\
+  !*** ./resources/js/uniform-simulator/components/VueDRR.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VueDragResize_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./VueDragResize.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/uniform-simulator/components/VueDragResize.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VueDragResize_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VueDRR_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./VueDRR.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/uniform-simulator/components/VueDRR.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VueDRR_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/uniform-simulator/components/VueDRR.vue?vue&type=template&id=82fc51f6&":
+/*!*********************************************************************************************!*\
+  !*** ./resources/js/uniform-simulator/components/VueDRR.vue?vue&type=template&id=82fc51f6& ***!
+  \*********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_VueDRR_vue_vue_type_template_id_82fc51f6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./VueDRR.vue?vue&type=template&id=82fc51f6& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/uniform-simulator/components/VueDRR.vue?vue&type=template&id=82fc51f6&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_VueDRR_vue_vue_type_template_id_82fc51f6___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_VueDRR_vue_vue_type_template_id_82fc51f6___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
 
 /***/ }),
 
@@ -64848,20 +66550,246 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/uniform-simulator/vue-mixins.js":
-/*!******************************************************!*\
-  !*** ./resources/js/uniform-simulator/vue-mixins.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/***/ "./resources/js/uniform-simulator/mixins.js":
+/*!**************************************************!*\
+  !*** ./resources/js/uniform-simulator/mixins.js ***!
+  \**************************************************/
+/*! exports provided: shirtDefaultStateAfterClose */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-window.shirtDefaultStateAfterClose = {
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "shirtDefaultStateAfterClose", function() { return shirtDefaultStateAfterClose; });
+var shirtDefaultStateAfterClose = {
   mounted: function mounted() {
+    var _this = this;
+
     $(this.$parent.$el).on('hidden.bs.dropdown', function () {
-      EventBus.$emit('SHIRT_DEFAULT_STATE');
+      _this.$store.commit('update', {
+        isFront: _this.$store.state.isFrontState
+      });
     });
   }
 };
+
+/***/ }),
+
+/***/ "./resources/js/uniform-simulator/store/app.js":
+/*!*****************************************************!*\
+  !*** ./resources/js/uniform-simulator/store/app.js ***!
+  \*****************************************************/
+/*! exports provided: state, getters, mutations */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "state", function() { return state; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getters", function() { return getters; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mutations", function() { return mutations; });
+var state = __webpack_require__(/*! ./state */ "./resources/js/uniform-simulator/store/state.js")["default"];
+var getters = __webpack_require__(/*! ./getters */ "./resources/js/uniform-simulator/store/getters.js")["default"];
+var mutations = __webpack_require__(/*! ./mutations */ "./resources/js/uniform-simulator/store/mutations.js")["default"];
+
+/***/ }),
+
+/***/ "./resources/js/uniform-simulator/store/getters.js":
+/*!*********************************************************!*\
+  !*** ./resources/js/uniform-simulator/store/getters.js ***!
+  \*********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  brand: function brand(state) {
+    return state.attachs.find(function (el) {
+      return el.classname == 'brand';
+    });
+  },
+  shield: function shield(state) {
+    return state.attachs.find(function (el) {
+      return el.classname == 'shield';
+    });
+  },
+  extraAttachs: function extraAttachs(state) {
+    return state.attachs.filter(function (el) {
+      return !['brand', 'shield'].includes(el.classname);
+    });
+  },
+  hasAttach: function hasAttach(state) {
+    return state.attachs.length !== 0;
+  },
+  hasActiveAttach: function hasActiveAttach(state) {
+    return state.attachs.find(function (el) {
+      return el.active === true;
+    });
+  },
+  frontAttachs: function frontAttachs(state, getters) {
+    return getters.extraAttachs.filter(function (el) {
+      return el.isFront === true;
+    });
+  },
+  backAttachs: function backAttachs(state, getters) {
+    return getters.extraAttachs.filter(function (el) {
+      return el.isFront === false;
+    });
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/uniform-simulator/store/mutations.js":
+/*!***********************************************************!*\
+  !*** ./resources/js/uniform-simulator/store/mutations.js ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  update: function update(state, payload) {
+    var keys = Object.keys(payload);
+    keys.forEach(function (key) {
+      state[key] = payload[key];
+    });
+  },
+  updateAttach: function updateAttach(state, payload) {
+    var keys = Object.keys(payload),
+        attachIndex = payload.index;
+
+    if (keys.includes('id')) {
+      attachIndex = state.attachs.findIndex(function (el) {
+        return el.id == payload.id;
+      });
+    }
+
+    keys.forEach(function (key, index) {
+      if (key != 'id' && key != 'index') {
+        state.attachs[attachIndex][key] = payload[key];
+      }
+    });
+  },
+  deleteAttach: function deleteAttach(state, payload) {
+    state.attachs.splice(payload.index, 1);
+  },
+  appendAttach: function appendAttach(state, payload) {
+    var extraAttachs = ['brand', 'shield'];
+
+    if (extraAttachs.includes(payload.classname)) {
+      var index = state.attachs.findIndex(function (element) {
+        return element.classname == payload.classname;
+      });
+
+      if (index != -1) {
+        payload['id'] = state.attachs[index].id;
+        state.attachs.splice(index, 1, payload);
+        return;
+      }
+    }
+
+    payload['id'] = state.attachCount;
+    state.attachs.push(payload);
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/uniform-simulator/store/state.js":
+/*!*******************************************************!*\
+  !*** ./resources/js/uniform-simulator/store/state.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  isFront: true,
+  isFrontState: true,
+  shirtColor: '#1FBC9C',
+  neckColor: '#3d556e',
+  nameColor: '#FFFFFF',
+  numberColor: '#FFFFFF',
+  nameFont: {},
+  numberFont: {},
+  number: '',
+  name: '',
+  hideBrand: false,
+  hideShield: false,
+  replaceBrandByNumber: false,
+  attachs: [],
+  attachCount: 0
+});
+
+/***/ }),
+
+/***/ "./resources/js/uniform-simulator/util/Attach.js":
+/*!*******************************************************!*\
+  !*** ./resources/js/uniform-simulator/util/Attach.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Attach = function Attach(_ref) {
+  var active = _ref.active,
+      name = _ref.name,
+      image = _ref.image,
+      size = _ref.size,
+      type = _ref.type,
+      width = _ref.width,
+      height = _ref.height,
+      isFront = _ref.isFront,
+      classname = _ref.classname,
+      _ref$x = _ref.x,
+      x = _ref$x === void 0 ? 150 : _ref$x,
+      _ref$y = _ref.y,
+      y = _ref$y === void 0 ? 200 : _ref$y,
+      _ref$angle = _ref.angle,
+      angle = _ref$angle === void 0 ? 0 : _ref$angle,
+      _ref$locked = _ref.locked,
+      locked = _ref$locked === void 0 ? false : _ref$locked;
+
+  _classCallCheck(this, Attach);
+
+  this.active = active;
+  this.name = name;
+  this.image = image;
+  this.size = size;
+  this.type = type;
+  this.width = 100;
+  this.height = height / width * 100;
+  this.isFront = isFront;
+  this.classname = classname;
+  this.x = x;
+  this.y = y;
+  this.angle = angle;
+  this.locked = locked;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (Attach);
+
+/***/ }),
+
+/***/ "./resources/js/uniform-simulator/util/helpers.js":
+/*!********************************************************!*\
+  !*** ./resources/js/uniform-simulator/util/helpers.js ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  roundInStep: function roundInStep(value, step) {
+    return Math.round(value / step) * step;
+  }
+});
 
 /***/ }),
 

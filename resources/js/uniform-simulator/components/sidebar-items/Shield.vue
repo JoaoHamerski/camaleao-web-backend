@@ -8,7 +8,9 @@
         <div class="custom-control custom-checkbox">
           <input v-model="hideBrand" type="checkbox" class="custom-control-input" id="hideBrand">
           <label class="custom-control-label no-select" for="hideBrand">
-            <span class="font-weight-bold text-secondary sidebar-content-label">OCULTAR MARCA</span>
+            <span class="font-weight-bold text-secondary sidebar-content-label">
+              OCULTAR <span v-if="replaceBrandByNumber">NÚMERO</span> <span v-else> MARCA</span>
+            </span>
           </label>
         </div>
 
@@ -16,7 +18,7 @@
           <input v-model="hideShield" type="checkbox" class="custom-control-input" id="hideShield">
           <label class="custom-control-label no-select" for="hideShield">
             <span class="font-weight-bold text-secondary sidebar-content-label">
-              OCULTAR <span v-if="switchShieldToNumber">NÚMERO</span> <span v-else> ESCUDO</span>
+              OCULTAR ESCUDO
             </span>
           </label>
         </div>
@@ -24,8 +26,8 @@
 
       <div class="d-flex justify-content-around">
         <div class="custom-control custom-checkbox">
-          <input v-model="switchShieldToNumber" type="checkbox" class="custom-control-input" id="switchShieldToNumber">
-          <label class="custom-control-label no-select" for="switchShieldToNumber">
+          <input v-model="replaceBrandByNumber" type="checkbox" class="custom-control-input" id="replaceBrandByNumber">
+          <label class="custom-control-label no-select" for="replaceBrandByNumber">
             <span class="font-weight-bold text-secondary sidebar-content-label">SUBSTITUIR ESCUDO POR NÚMERO</span>
           </label>
         </div>
@@ -35,35 +37,28 @@
 </template>
 
 <script>
+  import { shirtDefaultStateAfterClose } from '../../mixins';
+  
   export default {
     mixins: [shirtDefaultStateAfterClose],
-    data() {
-      return {
-        hideBrand: false,
-        hideShield: false,
-        switchShieldToNumber: false
-      }
-    },
-    watch: {
-      hideBrand: function(value) {
-        EventBus.$emit('SHIRT_HIDE_BRAND', value);
+    computed: {
+      hideBrand: {
+        get() { return this.$store.state.hideBrand },
+        set(value) { this.$store.commit('update', { hideBrand: value })}
       },
-      hideShield: function(value) {
-        EventBus.$emit('SHIRT_HIDE_SHIELD', value);
+      hideShield: {
+        get() { return this.$store.state.hideShield },
+        set(value) { this.$store.commit('update', { hideShield: value })}
       },
-      switchShieldToNumber: function(value) {
-        EventBus.$emit('SHIRT_SWITCH_SHIELD', value);
+      replaceBrandByNumber: {
+        get() { return this.$store.state.replaceBrandByNumber },
+        set(value) { this.$store.commit('update', { replaceBrandByNumber: value })}
       }
     },
     mounted() {
       $(this.$parent.$el).on(
         'shown.bs.dropdown', 
-        () => { EventBus.$emit('SHIRT_FRONT_SHOW') }
-      );
-
-      $(this.$parent.$el).on(
-        'hidden.bs.dropdown',
-        () => { EventBus.$emit('SHIRT_DEFAULT_STATE') }
+        () => { this.$store.commit('update', { isFront: true }) }
       );
     }
   }
