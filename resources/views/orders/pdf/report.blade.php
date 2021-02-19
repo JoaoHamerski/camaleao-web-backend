@@ -98,7 +98,7 @@
 		@if ($request->filled('data_de_fechamento'))
 			<br>
 			<div style="font-size: 1rem">
-				<strong>Fechados em {{ Helper::date($request->data_de_fechamento, '%d/%m/%Y') }}</strong>
+				<strong>Fechados em {{ $request->data_de_fechamento }}</strong>
 			</div>
 		@endif
 	</header>
@@ -113,7 +113,8 @@
 								: 3 }}">
 						@isset($order->getPaths('art_paths')[0])
 							<div>
-								<img width="100px" src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[0])) }}" alt="">
+								<img width="100px" 
+								src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[0])) }}">
 							</div>
 						@else
 							[sem imagem]

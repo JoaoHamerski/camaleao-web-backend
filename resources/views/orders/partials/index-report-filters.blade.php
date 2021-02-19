@@ -60,6 +60,19 @@
                 'data-toggle' => 'datepicker'
               ]
             ])
+
+            @input([
+              'id' => 'data_de_entrega',
+              'name' => 'data_de_entrega',
+              'placeholder' => 'dd/mm/aaaa',
+              'formGroupClass' => 'col',
+              'label' => 'Data de entrega',
+              'labelClass' => 'font-weight-bold',
+              'attributes' => [
+                'autocomplete' => 'off',
+                'data-toggle' => 'datepicker'
+              ]
+            ])
           </div>
 
 
