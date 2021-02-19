@@ -8,8 +8,11 @@
 		@if ($request->filled('cidade')) - {{ $request->cidade }} @endif 
 		@if ($request->filled('status')) - {{ \App\Models\Status::find($request->status)->text }} @endif
 		@if ($request->filled('data_de_fechamento'))
-		 - fechados em {{ Helper::date($request->data_de_fechamento, '%d/%m/%Y') }} 
-		 @endif
+		 - fechados em {{ $request->data_de_fechamento }} 
+		@endif
+		@if ($request->filled('data_de_entrega'))
+		- entrega para {{ $request->data_de_entrega }}
+		@endif
 	</title>
 	<style>
 		* {
