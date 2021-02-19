@@ -98,12 +98,21 @@
 				{{ \App\Models\Status::find($request->status)->text }}
 			</div>
 		@endif
+
 		@if ($request->filled('data_de_fechamento'))
 			<br>
 			<div style="font-size: 1rem">
 				<strong>Fechados em {{ $request->data_de_fechamento }}</strong>
 			</div>
 		@endif
+
+		@if ($request->filled('data_de_entrega'))
+			<div style="font-size: 1rem">
+				<strong>Entrega para {{ $request->data_de_entrega }}</strong>
+			</div>
+		@endif
+
+
 	</header>
 
 	@forelse($orders as $order)
