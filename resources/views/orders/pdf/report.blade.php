@@ -103,7 +103,7 @@
 		@endif
 	</header>
 
-	@foreach($orders as $order)
+	@forelse($orders as $order)
 		<table>	
 			<tbody>
 				<tr>
@@ -142,6 +142,8 @@
 				@endif
 			</tbody>
 		</table>
-	@endforeach
+	@empty
+		<h4 style="color: rgba(0, 0, 0, .5)" class="text-center">Nenhum registro encontrado</h4>
+	@endforelse
 </body>
 </html>
