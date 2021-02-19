@@ -98,12 +98,12 @@
 		@if ($request->filled('data_de_fechamento'))
 			<br>
 			<div style="font-size: 1rem">
-				<strong>Fechados em {{ Helper::date($request->data_de_fechamento, '%d/%m/%Y') }}</strong>
+				<strong>Fechados em {{ $request->data_de_fechamento }}</strong>
 			</div>
 		@endif
 	</header>
 
-	@foreach($orders as $order)
+	@forelse($orders as $order)
 		<table>	
 			<tbody>
 				<tr>
@@ -113,7 +113,8 @@
 								: 3 }}">
 						@isset($order->getPaths('art_paths')[0])
 							<div>
-								<img width="100px" src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[0])) }}" alt="">
+								<img width="100px" 
+								src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[0])) }}">
 							</div>
 						@else
 							[sem imagem]
@@ -141,6 +142,8 @@
 				@endif
 			</tbody>
 		</table>
-	@endforeach
+	@empty
+		<h4 style="color: rgba(0, 0, 0, .5)" class="text-center">Nenhum registro encontrado</h4>
+	@endforelse
 </body>
 </html>

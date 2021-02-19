@@ -41,10 +41,7 @@ class OrderFactory extends Factory
             'quantity' => $this->faker->numberBetween(1, 100),
             'price' => $this->faker->randomFloat(2, 0, 3000),
             'delivery_date' => $this->faker->randomElement($delivery_dates),
-            'production_date' => $this->faker->randomElement($production_dates),
-            'art_paths' => '["arte-01.jpg", "arte-02.jpg"]',
-            'size_paths' => '["tamanho-01.jpg", "tamanho-02.jpg"]',
-            'payment_voucher_paths' => '["relatorio-01.pdf", "relatorio-02.pdf"]'
+            'production_date' => $this->faker->randomElement($production_dates)
         ];
     }
 

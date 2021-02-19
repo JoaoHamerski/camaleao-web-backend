@@ -15,7 +15,6 @@ use App\Http\Controllers\FinancialController;
 use App\Http\Controllers\ActivitiesController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ExpenseTypesController;
-use App\Http\Controllers\UniformSimulatorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -129,9 +128,5 @@ Route::middleware('auth')->group(function() {
 
 	Route::name('activities.')->middleware('role:gerencia')->group(function() {
 		Route::get('/atividades', [ActivitiesController::class, 'index'])->name('index');
-	});
-	
-	Route::name('uniform-simulator')->group(function() {
-		Route::get('/simulador-de-uniforme', [UniformSimulatorController::class, 'index'])->name('index');
 	});
 });

@@ -224,7 +224,14 @@ class OrdersController extends Controller
         if ($request->filled('data_de_fechamento')) {
             $orders->whereDate(
                 'closed_at', 
-                Carbon::createFromFormat('d/m/Y', $request->data_de_fechamento)
+                Carbon::createFromFormat('d/m/Y', $request->data_de_fechamento)->toDateString()
+            );
+        }
+
+        if ($request->filled('data_de_entrega')) {
+            $orders->whereDate(
+                'delivery_date',
+                Carbon::createFromFormat('d/m/Y', $request->data_de_entrega)->toDateString()
             );
         }
 

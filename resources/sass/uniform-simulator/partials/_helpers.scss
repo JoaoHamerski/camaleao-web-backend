@@ -1,9 +1,0 @@
-@for $i from 1 through 3 {
-	.border-#{$i} {
-		border-width: #{$i}px !important;
-	}
-}
-
-.text-wrap {
-	word-wrap: break-word;
-}

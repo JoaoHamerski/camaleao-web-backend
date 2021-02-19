@@ -21,7 +21,6 @@
     "dependencies": {
         "@forevolve/bootstrap-dark": "^1.0.0-alpha.1091",
         "@fortawesome/fontawesome-free": "^5.15.1",
-        "@minogin/vue-drag-resize-rotate": "^1.0.5",
         "animate.css": "^4.1.1",
         "axios": "^0.19",
         "bootstrap": "^4.5.3",
@@ -29,12 +28,6 @@
         "cleave.js": "^1.6.0",
         "jquery": "^3.5.1",
         "popper.js": "^1.16.1",
-        "sweetalert2": "^10.12.5",
-        "vue": "^2.6.12",
-        "vue-draggable-resizable": "^2.3.0",
-        "vue-swatches": "^2.1.0",
-        "vue-text-mask": "^6.1.2",
-        "vueperslides": "^2.12.1",
-        "vuex": "^3.6.0"
+        "sweetalert2": "^10.12.5"
     }
 }
