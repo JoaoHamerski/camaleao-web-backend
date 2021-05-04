@@ -11,6 +11,7 @@ class BackupMade extends Mailable
 {
     use Queueable, SerializesModels;
 
+
     /**
      * Create a new message instance.
      *
@@ -28,6 +29,8 @@ class BackupMade extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.backup', ['url' => 'google.com']);
+        return $this->markdown('emails.backup', [
+            'url' => route('backups.download')
+        ]);
     }
 }

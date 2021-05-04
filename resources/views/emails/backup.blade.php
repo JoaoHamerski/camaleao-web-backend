@@ -6,13 +6,17 @@
   @endcomponent
 @endslot
 
-# Aviso semanal de Backup feito
+# Aviso semanal de Backup
 
-Olá, este é um e-mail automático para avisar que o **Sistema Interno - Camaleão Camisas** está fazendo os backups diários às 00:00. Você pode baixar o último backup feito no botão abaixo em formato *.zip*.
+Este é um e-mail automático para avisar que backups diários estão sendo feitos no **Sistema Interno - Camaleão Camisas** às **19h30min**. 
+
+Você sempre pode baixar o último backup feito no botão abaixo em formato **.zip**.
 
 @component('mail::button', ['url' => $url, 'color' => 'primary'])
 BAIXAR AGORA
 @endcomponent
+
+**Obs.:** O backup baixado é sempre o mais recente, independente da data do e-mail, este e-mail tem como unico propósito de lembrete.
 
 @component('mail::subcopy')
 Caso tenha algum problema ao clicar no botão de confirmação, acesse o link: <span class="break-all"><a
