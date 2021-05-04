@@ -61,11 +61,11 @@ class Payment extends Model
 
     public function via()
     {
-    	return $this->belongsTo(Via::class, 'payment_via_id');
+        return $this->belongsTo(Via::class, 'payment_via_id');
     }
 
     public function order()
     {
-    	return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class);
     }
 }

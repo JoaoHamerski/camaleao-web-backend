@@ -17,6 +17,7 @@
 
     <div id="collapse-filter-card" class="collapse {{ Request::anyFilled(['dia_inicial', 'dia_final']) ? 'show' : '' }}">
       <div class="card-body">
+        <p>Filtrar <strong>pagamentos recebidos</strong> e <strong>despesas</strong> pela data</p>
         <form method="GET" accept="{{ route('cash-flow.index') }}">
           <label for="dia_inicial" class="font-weight-bold">Intervalo de datas</label>
           <div class="form-row d-flex flex-column flex-sm-row">
@@ -100,13 +101,62 @@
           </thead>
 
           <tbody>
-            <div class="text-center font-weight-bold">
-              {{ ! Request::filled('dia_inicial') ? '' : Request::query('dia_inicial') }}
-              {{ ! Request::filled('dia_final') ? '' : ' - ' . Request::query('dia_final') }}
+            <div class="text-center">
+              <strong>Todo período</strong>
+              <h5><strong>RECEITA FUTURA: </strong> {!! Mask::money($revenue, true) !!}</h5>
+            </div>  
 
+            @if(Request::anyFilled(['dia_inicial', 'dia_final']))
+              <hr class="mx-5">
+            @endif
+
+            <div class="text-center font-weight-bold mb-2">
+              {{ ! Request::filled('dia_inicial') ? '' : Request::query('dia_inicial') }}
+              {{ ! Request::filled('dia_final') ? '' : ' até ' . Request::query('dia_final') }}
             </div>
 
             @if (Request::anyFilled(['dia_inicial', 'dia_final']))
+            <div class="text-center mb-3 text-primary">
+              <h6>
+                Pedidos criados:
+                <strong> 
+                {{ $ordersMade->count() }} 
+                ({{$ordersMade->sum('quantity') }} camisas)
+                </strong>
+
+                <i  
+                  class="fas fa-info-circle fa-fw fa-lg ml-1" 
+                  data-toggle="tooltip" 
+                  title="Quantidade de pedidos criados no período informado" 
+                ></i>
+              </h6>
+              
+              <h6>
+                Pedidos fechados:
+                <strong> 
+                {{ $ordersClosed->count() }}
+                ({{ $ordersClosed->sum('quantity')}} camisas)
+                </strong>
+
+                <i 
+                  class="fas fa-info-circle fa-fw fa-lg ml-1" 
+                  data-toggle="tooltip"
+                  title="Quantidade de pedidos fechados no período informado"></i>
+              </h6>
+
+              <h6 class="text-primary">
+                Pedidos únicos:
+                <strong> 
+                {{ $ordersUnique->count() }}
+                ({{ $ordersUnique->sum('quantity') }} camisas)
+                </strong>
+
+                <i 
+                  class="fas fa-info-circle fa-fw fa-lg ml-1" 
+                  data-toggle="tooltip"
+                  title="Quantidade de pedidos que receberam ao menos um pagamento no período informado"></i>
+              </h6>
+            </div>
             <h5 class="mx-2 mb-3 text-center {{ $balance < 0 ? 'text-danger' : 'text-success' }}">
               <span class="font-weight-bold">BALANÇO FINAL:</span> 
               <span>{!! Mask::money($balance, true) !!}</span>

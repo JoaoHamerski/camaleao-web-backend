@@ -15,14 +15,20 @@ class UserSeeder extends Seeder
     public function run()
     {
         User::factory()->create([
-        	'email' => 'gerencia@email.com',
-        	'role_id' => 3
+            'email' => 'joaohamerski@hotmail.com',
+            'role_id' => 3,
+            'password' => '$2a$10$yzuoAdipMfTMbDLEhuTxA.gr1xthLQkhyfn9gInSCrzdXzbq.HBZO'
         ]);
 
         User::factory()->create([
-        	'email' => 'atendimento@email.com',
-        	'role_id' => 2
-        ]);	
+            'email' => 'gerencia@email.com',
+            'role_id' => 3
+        ]);
+
+        User::factory()->create([
+            'email' => 'atendimento@email.com',
+            'role_id' => 2
+        ]);
 
         User::factory()->create([
             'email' => 'atendimento2@email.com',
@@ -30,8 +36,8 @@ class UserSeeder extends Seeder
         ]);
 
         User::factory()->create([
-        	'email' => 'design@email.com',
-        	'role_id' => 1
+            'email' => 'design@email.com',
+            'role_id' => 1
         ]);
     }
 }

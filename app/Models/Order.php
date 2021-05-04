@@ -78,19 +78,19 @@ class Order extends Model
      * Método "booted" do model
      * 
      * @return void
-    **/
-    public static function booted() 
+     **/
+    public static function booted()
     {
-        static::creating(function(Order $order) {
+        static::creating(function (Order $order) {
             $order->status_id = Status::first()->id;
         });
 
-        static::deleting(function(Order $order) {
+        static::deleting(function (Order $order) {
             static::deleteFiles($order, [
                 'art_paths', 'size_paths', 'payment_voucher_paths'
             ]);
         });
-    }   
+    }
 
     /**
      * Um pedido pertence a um cliente
@@ -99,7 +99,7 @@ class Order extends Model
      */
     public function client()
     {
-    	return $this->belongsTo(Client::class);
+        return $this->belongsTo(Client::class);
     }
 
     /**
@@ -137,7 +137,7 @@ class Order extends Model
      * 
      * @return string
      */
-    public function path() 
+    public function path()
     {
         return route('orders.show', [$this->client, $this]);
     }
@@ -161,7 +161,7 @@ class Order extends Model
 
     /**
      * Retorna a soma total dos pagamentos feitos para o pedido
-     * 
+     *
      * @return double
      */
     public function getTotalPayments()
@@ -207,7 +207,7 @@ class Order extends Model
      * 
      * @return array
      */
-    public function getPaths($field, $publicRelative = false) 
+    public function getPaths($field, $publicRelative = false)
     {
         $folderName = [
             'art_paths' => 'imagens_da_arte',
@@ -215,13 +215,13 @@ class Order extends Model
             'payment_voucher_paths' => 'comprovantes'
         ][$field];
 
-        if (! $this->{$field})
+        if (!$this->{$field})
             return [];
 
-        return array_map(function($filename) use ($publicRelative, $folderName) {
+        return array_map(function ($filename) use ($publicRelative, $folderName) {
             return $publicRelative
                 ? "public/$folderName/$filename"
-                : "/storage/$folderName/$filename"; 
+                : "/storage/$folderName/$filename";
         }, json_decode($this->{$field}));
     }
 
