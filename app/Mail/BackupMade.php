@@ -29,8 +29,9 @@ class BackupMade extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.backup', [
-            'url' => route('backups.download')
-        ]);
+        return $this->subject('Backup de dados - Camaleão Sistema Interno')
+            ->markdown('emails.backup', [
+                'url' => route('backups.download')
+            ]);
     }
 }
