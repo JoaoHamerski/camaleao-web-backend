@@ -39,8 +39,6 @@ class SendBackupEmail extends Command
      */
     public function handle()
     {
-        Mail::to('joaohamerski@hotmail.com')->send(
-            new BackupMade()
-        );
+        Mail::to('joaohamerski2@gmail.com')->send(new BackupMade());
     }
 }
