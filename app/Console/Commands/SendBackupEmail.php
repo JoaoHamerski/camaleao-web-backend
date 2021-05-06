@@ -39,6 +39,9 @@ class SendBackupEmail extends Command
      */
     public function handle()
     {
-        Mail::to('joaohamerski2@gmail.com')->send(new BackupMade());
+        $address = 'joaohamerski@hotmail.com';
+
+        Mail::to($address)->send(new BackupMade());
+        $this->info("Email enviado para $address");
     }
 }
