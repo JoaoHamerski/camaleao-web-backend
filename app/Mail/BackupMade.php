@@ -11,6 +11,7 @@ class BackupMade extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $url;
 
     /**
      * Create a new message instance.
@@ -19,7 +20,7 @@ class BackupMade extends Mailable
      */
     public function __construct()
     {
-        //
+        $this->url = route('backups.download');
     }
 
     /**
@@ -30,9 +31,8 @@ class BackupMade extends Mailable
     public function build()
     {
         return $this->subject('Backup de dados - Camaleão Sistema Interno')
-            ->from(config('mail.from.address'))
             ->markdown('emails.backup', [
-                'url' => route('backups.download')
+                'url' => $this->url
             ]);
     }
 }
