@@ -15,7 +15,10 @@
 		<hr>
 
 		<div class="text-secondary font-weight-bold">Cidade:</div>
-		<div>{{ $client->city ?? '[não informado]' }}</div>
+		<div>
+			{{ $client->city->name ?? '[não informado]' }}
+			{{ $client->city->state ? ' - ' . $client->city->state->abbreviation : ''}}
+		</div>
 
 		<hr>
 

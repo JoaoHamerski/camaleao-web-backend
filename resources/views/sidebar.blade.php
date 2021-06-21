@@ -55,6 +55,30 @@
       <li class="{{ Request::is('usuarios*') ? 'active' : '' }}">
           <a href="{{ route('users.index') }}"><i class="fas fa-users fa-fw mr-1 text-primary"></i>Usuários</a>
       </li>
+
+      <li class="position-relative">
+        <a class="{{ Request::is('gerenciamento*') ?: 'collapsed' }}" data-toggle="collapse"
+          href="#collapseManagement" aria-expanded="false" aria-controls="collapseManagement">
+          <i class="fas fa-cog fa-fw text-primary"></i> Gerenciamento
+      
+          <div class="icon">
+            <i class="fas fa-chevron-down"></i>
+          </div>
+        </a>
+      
+        <div id="collapseManagement" class="collapse {{ Request::is('gerenciamento*') ? 'show' : '' }}"
+          data-parent="#accordionSidebar">
+          <ul class="list-group-flush list-unstyled">
+            <li class="{{ Request::is('gerenciamento/cidades*') ? 'active' : '' }}">
+              <a href="{{ route('cities.index') }}"><i class="fas fa-city fa-fw mr-1 text-primary"></i>Cidades</a>
+            </li>
+      
+            <li class="{{ Request::is('gerenciamento/filiais*') ? 'active' : '' }}">
+              <a href="{{ route('branches.index') }}"><i class="fas fa-building fa-fw mr-1 text-primary"></i>Filiais</a>
+            </li>
+          </ul>
+        </div>
+      </li>
       @endrole
 
       <li class="{{ Request::is('minha-conta*') ? 'active' : '' }}">

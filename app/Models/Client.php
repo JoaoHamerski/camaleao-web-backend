@@ -18,13 +18,13 @@ class Client extends Model
     protected static $logOnlyDirty = true;
 
     protected $cascadeDeletes = ['orders', 'payments'];
-    
+
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo
      * de evento ocorre no model
-     * 
+     *
      * @param string $eventname
-     * 
+     *
      * @return string
      */
     public function getDescriptionForEvent(string $eventName): string
@@ -62,12 +62,12 @@ class Client extends Model
 
     /**
      * Método booted do model
-     * 
+     *
      * @return void
      */
-    public static function booted() 
+    public static function booted()
     {
-        static::deleting(function($client) {
+        static::deleting(function ($client) {
             static::deleteFiles($client->orders, [
                 'art_paths', 'size_paths', 'payment_voucher_paths'
             ]);
@@ -76,65 +76,71 @@ class Client extends Model
 
     /**
      * Um cliente tem muitos pedidos
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function orders() 
+    public function orders()
     {
-    	return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class);
     }
 
     /**
      * Um cliente tem muitos pagamentos de muitos pedidos
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
     public function payments()
     {
-    	return $this->hasManyThrough(Payment::class, Order::class);
+        return $this->hasManyThrough(Payment::class, Order::class);
     }
 
     /**
      * Retorna a URL para a página do cliente
-     * 
+     *
      * @return string
      */
-    public function path() {
+    public function path()
+    {
         return route('clients.show', $this);
     }
 
     /**
      * Retorna o total que o cliente está devendo
-     * 
+     *
      * @return double
      */
     public function getTotalOwing()
     {
-    	return bcsub($this->getTotalBuyied(), $this->getTotalPaid(), 2);
+        return bcsub($this->getTotalBuyied(), $this->getTotalPaid(), 2);
     }
 
     /**
      * Retorna o total pago pelo cliente
-     * 
+     *
      * @return double
      */
     public function getTotalPaid()
     {
-    	return $this->payments()->sum('value');
+        return $this->payments()->sum('value');
     }
 
     /**
      * Retorna o total comprado pelo cliente
-     * 
+     *
      * @return double
      */
     public function getTotalBuyied()
     {
-    	return $this->orders()->sum('price');
+        return $this->orders()->sum('price');
     }
 
     public function getNewOrderCode()
     {
         return substr($this->phone, -4);
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
     }
 }

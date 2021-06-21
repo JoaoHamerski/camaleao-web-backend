@@ -56,7 +56,7 @@
                 <tr class="clickable-link" data-url="{{ $client->path() }}">
                   <td>{!! $client->name !!}</td>
                   <td nowrap="nowrap">{{ $client->phone ? Mask::phone($client->phone) : '[não informado]' }}</td>
-                  <td nowrap="nowrap">{{ $client->city ?? '[não informado]' }}</td>
+                  <td nowrap="nowrap">{{ $client->city->name ?? '[não informado]' }}</td>
                 </tr>
               @empty
                 <tr class="not-hover">

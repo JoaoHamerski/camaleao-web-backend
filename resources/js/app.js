@@ -1,33 +1,36 @@
-require('./_helpers');
-require('./bootstrap');
-require('./cleave');
-require('./_custom');
-require('./_sidebar');
+require('./bootstrap')
+require('./cleave')
+require('./components/core')
+require('./components/components')
+require('./pwa')
 
-window.addEventListener('load', () => {
-	if ('serviceWorker' in navigator) {
-		navigator.serviceWorker.register('/_service-worker.js');
+// Hacky solution to handle vue DOM render with jQuery code
+$(document).on('vue-loaded', function() {
+	require('./helpers')
+	require('./custom')
+	require('./sidebar')
+})
+
+import helpers from './util/helpers'
+import {swalToast, swalModal} from './swal'
+
+const plugin = {
+	install(Vue) {
+		Vue.prototype.$helpers = helpers
+		Vue.prototype.$toast = swalToast
+		Vue.prototype.$modal = swalModal
 	}
-});
-
-window.addEventListener('beforeinstallprompt', (event) => {
-  window.deferredPrompt = event;
-});
-
-$('#btnInstallPWA').on('click', function(event) {
-	const promptEvent = window.deferredPrompt;
-
-	if (! promptEvent) {
-		return;
-	}
-
-	promptEvent.prompt();
-
-	promptEvent.userChoice.then((result) => {
-		window.deferredPrompt = null;
-	});
-});
-
-if (matchMedia('(display-mode: standalone)').matches) {
-     $('#btnInstallPWA').remove();
 }
+
+Vue.use(plugin)
+Vue.use(VueTippy)
+
+new Vue({
+	el: '#app',
+	mounted() {
+		$(document).trigger('vue-loaded')
+	}
+})
+
+
+

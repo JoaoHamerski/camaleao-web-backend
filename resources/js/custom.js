@@ -1,3 +1,4 @@
+
 $(document).on('focus', 'input, select', function() {
   $(this).removeClass('is-invalid')
     .next('.text-danger')

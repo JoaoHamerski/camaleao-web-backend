@@ -191,7 +191,7 @@
 
 @push('script')
   <script src="{{ mix('js/partials/expenses/index.js') }}"></script>
-  <script src="{{ mix('js/_date-picker.js') }}"></script>
+  <script src="{{ mix('js/date-picker.js') }}"></script>
 
   <script>
     

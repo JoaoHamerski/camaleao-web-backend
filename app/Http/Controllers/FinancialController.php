@@ -8,6 +8,6 @@ class FinancialController extends Controller
 {
     public function index()
     {
-    	return view('financial.index');
+        return view('financial.index');
     }
 }

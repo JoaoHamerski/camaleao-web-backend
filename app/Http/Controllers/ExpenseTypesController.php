@@ -10,27 +10,27 @@ class ExpenseTypesController extends Controller
 {
     public function store(Request $request)
     {
-    	$validator = Validator::make($request->all(), [
-    		'expense_type' => 'required'
-    	]);
+        $validator = Validator::make($request->all(), [
+            'expense_type' => 'required'
+        ]);
 
-    	if ($validator->fails()) {
-    		return response()->json([
-    			'message' => 'error',
-    			'errors' => $validator->errors()
-    		], 422);
-    	}
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
-    	$expenseType = ExpenseType::create([
-    		'name' => $request->expense_type
-    	]);
+        $expenseType = ExpenseType::create([
+            'name' => $request->expense_type
+        ]);
 
-    	return response()->json([
-    		'message' => 'success',
-    		'view' => view('expenses.partials.expense-type-item', [
-    			'expenseType' => $expenseType
-    		])->render()
-    	], 200);
+        return response()->json([
+            'message' => 'success',
+            'view' => view('expenses.partials.expense-type-item', [
+                'expenseType' => $expenseType
+            ])->render()
+        ], 200);
     }
 
     public function patch(ExpenseType $expenseType, Request $request)
@@ -57,12 +57,12 @@ class ExpenseTypesController extends Controller
         ], 200);
     }
 
-    public function destroy(ExpenseType $expenseType) 
+    public function destroy(ExpenseType $expenseType)
     {
-    	$expenseType->delete();
+        $expenseType->delete();
 
-    	return response()->json([
-    		'message' => 'success'
-    	], 200);
+        return response()->json([
+            'message' => 'success'
+        ], 200);
     }
 }

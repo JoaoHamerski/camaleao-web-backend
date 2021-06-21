@@ -13,8 +13,8 @@ const mix = require('laravel-mix');
 
 mix.sass('resources/sass/app.scss', 'public/css')
 	.sass('resources/sass/_date-picker.scss', 'public/css')
-	.js('resources/js/app.js', 'public/js')
-	.js('resources/js/_date-picker.js', 'public/js')
+	.js('resources/js/app.js', 'public/js').vue({version: 2})
+	.js('resources/js/date-picker.js', 'public/js')
 	.js('resources/js/partials/client-form.js', 'public/js/partials')
 	.js('resources/js/partials/orders/show.js', 'public/js/partials/orders')
 	.js('resources/js/partials/orders/form.js', 'public/js/partials/orders')
@@ -25,5 +25,7 @@ mix.sass('resources/sass/app.scss', 'public/css')
 	.js('resources/js/partials/expenses/create.js', 'public/js/partials/expenses')
 	.js('resources/js/partials/payments/index.js', 'public/js/partials/payments')
 	.js('resources/js/partials/cash-flow/index.js', 'public/js/partials/cash-flow')
-	.js('resources/js/_service-worker.js', 'public/')
-	.version();
+	.js('resources/js/service-worker.js', 'public/')
+	.version()
+
+mix.browserSync('http://localhost:8000')

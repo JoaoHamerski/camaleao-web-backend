@@ -11,11 +11,11 @@ class StatusController extends Controller
 {
     public function patch(Client $client, Order $order, Request $request)
     {
-    	if (Status::where('id', $request->status)->exists()) {
-    		$order->status_id = $request->status;
-    		$order->save();
-    	}
+        if (Status::where('id', $request->status)->exists()) {
+            $order->status_id = $request->status;
+            $order->save();
+        }
 
-    	return redirect($order->path());
+        return redirect($order->path());
     }
 }

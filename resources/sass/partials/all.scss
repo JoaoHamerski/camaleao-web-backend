@@ -2,8 +2,21 @@
 @import "_general";
 @import "_hamburger";
 @import "_cards";
+@import "_swal";
 @import "_tables";
+@import "vue-multiselect";
 
 .text-success-darker {
 	color: #16944b
+}
+
+.btn-block + .btn-block {
+    margin-top: 0 !important;
+}
+
+.list-group.list-group-sm {
+    li {
+        padding: .35rem .85rem;
+        font-size: .8rem;
+    }
 }

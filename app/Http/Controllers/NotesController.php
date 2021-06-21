@@ -12,26 +12,26 @@ class NotesController extends Controller
 {
     public function store(Client $client, Order $order, Request $request)
     {
-    	$validator = Validator::make($request->all(), [
-    		'order_note' => 'required'
-    	]);
+        $validator = Validator::make($request->all(), [
+            'order_note' => 'required'
+        ]);
 
-    	if ($validator->fails()) {
-    		return response()->json([
-    			'message' => 'error',
-    			'errors' => $validator->errors()
-    		], 422);
-    	}
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
-    	$note = $order->notes()->create([
-    		'text' => $request->order_note
-    	]);
+        $note = $order->notes()->create([
+            'text' => $request->order_note
+        ]);
 
-    	return response()->json([
-    		'message' => 'success',
-    		'noteListItem' => view('orders.partials.note-list-item', compact('note'))->render(),
+        return response()->json([
+            'message' => 'success',
+            'noteListItem' => view('orders.partials.note-list-item', compact('note'))->render(),
             'countNotes' => $order->notes->count()
-    	], 200);
+        ], 200);
     }
 
     public function destroy(Client $client, Order $order, Note $note)

@@ -129,7 +129,7 @@
 @endpush
 
 @push('script')
-  <script src="{{ mix('js/_date-picker.js') }}"></script>
+  <script src="{{ mix('js/date-picker.js') }}"></script>
   <script>
     applyCleave($('[name=data]'), cleaveDate);
   </script>

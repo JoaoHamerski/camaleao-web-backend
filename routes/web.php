@@ -3,18 +3,21 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\BackupController;
+use App\Http\Controllers\CitiesController;
 use App\Http\Controllers\CookieController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\BranchesController;
+use App\Http\Controllers\CashFlowController;
 use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\PaymentsController;
-use App\Http\Controllers\BackupController;
-use App\Http\Controllers\CashFlowController;
 use App\Http\Controllers\FinancialController;
 use App\Http\Controllers\ActivitiesController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ExpenseTypesController;
+use App\Http\Controllers\ShippingCompaniesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -132,5 +135,28 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:gerencia')->group(function () {
         Route::get('/download-backup', [BackupController::class, 'download'])->name('backups.download');
+    });
+
+    Route::name('cities.')->middleware('role:gerencia')->group(function () {
+        Route::get('/gerenciamento/cidades', [CitiesController::class, 'index'])->name('index');
+        Route::get('/gerenciamento/cidades/list', [CitiesController::class, 'cities'])->name('list');
+        Route::get('/gerenciamento/cidades/{city}', [CitiesController::class, 'show']);
+        Route::patch('/gerenciamento/cidades/{city}', [CitiesController::class, 'patch']);
+        Route::patch('/gerenciamento/cidades', [CitiesController::class, 'patchMany']);
+        Route::get('/gerenciamento/cidades/estados/list', [CitiesController::class, 'states']);
+        Route::post('/gerenciamento/cidades/{city}/replace', [CitiesController::class, 'replace']);
+    });
+
+    Route::name('branches.')->middleware('role:gerencia')->group(function () {
+        Route::get('/gerenciamento/filiais', [BranchesController::class, 'index'])->name('index');
+        Route::post('/gerenciamento/filiais', [BranchesController::class, 'store']);
+        Route::get('/gerenciamento/filiais/list', [BranchesController::class, 'list']);
+    });
+
+    Route::name('shipping-companies.')->middleware('role:gerencia')->group(function () {
+        Route::get('/transportadoras/list', [ShippingCompaniesController::class, 'companies']);
+        Route::patch('/transportadoras/{shippingCompany}', [ShippingCompaniesController::class, 'update']);
+        Route::post('/transportadoras', [ShippingCompaniesController::class, 'store']);
+        Route::delete('/transportadoras/{shippingCompany}', [ShippingCompaniesController::class, 'destroy']);
     });
 });

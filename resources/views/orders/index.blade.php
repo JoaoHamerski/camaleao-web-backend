@@ -102,5 +102,5 @@
 @endpush
 @push ('script')
   <script src="{{ mix('js/partials/orders/index.js') }}"></script>
-  <script src="{{ mix('js/_date-picker.js') }}"></script>
+  <script src="{{ mix('js/date-picker.js') }}"></script>
 @endpush

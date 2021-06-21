@@ -75,3 +75,24 @@ input[disabled="disabled"] {
 .first-upper-case:first-letter {
 	text-transform: uppercase;
 }
+
+.loading {
+  position: absolute;
+  z-index: 2000;
+  overflow: visible;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, .3);
+
+  [class*="spinner"] {
+  	position: absolute;
+  	top: 0;
+  	left: 0;
+  	bottom: 0;
+  	right: 0;
+  	margin: auto;
+  }
+}
