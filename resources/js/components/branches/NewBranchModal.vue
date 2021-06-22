@@ -2,7 +2,7 @@
   <AppModal ref="modal" 
     id="newBranchModal"
     modalDialogClass="modal-dialog-centered"
-    modal-header-class="bg-success text-white"
+    modalHeaderClass="bg-success text-white"
   >
     <template #header>
       <h5 class="font-weight-bold mb-0">
@@ -11,17 +11,17 @@
     </template>
 
     <template #body>
-      <NewBranchForm @created="onCreated" />
+      <BranchForm @created="onCreated" />
     </template>
   </AppModal>
 </template>
 
 <script>
-  import NewBranchForm from './NewBranchForm'
+  import BranchForm from './BranchForm'
 
   export default {
     components: {
-      NewBranchForm
+      BranchForm
     },
     methods: {
       onCreated() {

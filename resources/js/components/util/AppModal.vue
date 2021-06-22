@@ -1,5 +1,7 @@
 <template>
-  <div class="modal fade" :id="id" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" :id="id" tabindex="-1" aria-hidden="true"
+    ref="modal"
+  >
     <div class="modal-dialog" :class="modalDialogClass">
       <div class="modal-content">
         <slot name="content"></slot>
@@ -26,6 +28,11 @@
       id: '',
       modalDialogClass: '',
       modalHeaderClass: '',
+    },
+    methods: {
+      open() {
+        $(this.$refs.modal).modal('show')
+      }
     }
   }
 </script>

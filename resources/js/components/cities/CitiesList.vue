@@ -1,6 +1,13 @@
 <template>
   <div>
     <div class="mb-3">
+      <button class="btn btn-success mb-3 font-weight-bold"
+        data-toggle="modal"
+        data-target="#cityNewModal"
+      >
+        <i class="fas fa-plus fa-fw mr-1"></i>Nova cidade
+      </button>
+
       <div class="mb-3">
         <h6 class="font-weight-bold mb-0">Múltiplas ações</h6>
         <small class="text-secondary">Selecione múltiplas cidades abaixo para editar várias de uma vez</small>
@@ -14,11 +21,12 @@
         <button class="btn btn-primary btn-sm font-weight-bold px-3" 
           data-target="#citiesEditModal"
           data-toggle="modal"
+          @click="$refs.citiesForm.$emit('cities-selected', selectedCities)"
         >Editar</button>
       </div>
     </div>
 
-    <table class="table table-sm">
+    <table class="table table-sm table-hover">
       <thead>
         <th></th>
         <th>Cidade</th>
@@ -39,17 +47,17 @@
 
             </div>
           </td>
-          <td>{{ city.name }}</td>
-          <td>{{ city.state ? city.state.name : 'N/A'}}</td>
+          <td @click="city.selected = ! city.selected">{{ city.name }}</td>
+          <td @click="city.selected = ! city.selected">{{ city.state ? city.state.name : 'N/A'}}</td>
           <td nowrap class="text-center">
             <a :href="`/gerenciamento/cidades/${city.id}`" 
-              class="btn btn-sm btn-outline-primary mr-3"
+              class="btn btn-sm btn-primary mr-3"
               content="Clientes da cidade"
               v-tippy="{placement: 'bottom', duration: 150, arrow: true}"
             >
               <i class="fas fa-users px-2"></i>
             </a>
-            <button @click="selectedCity = city"
+            <button @click="$refs.cityForm.$emit('city-selected', city)"
               content="Editar"
               v-tippy="{placement: 'bottom', duration: 150, arrow: true}" 
               class="btn btn-sm btn-outline-primary mr-3"
@@ -59,7 +67,7 @@
               <i class="fas fa-edit px-2"></i>
             </button>
 
-            <button @click="selectedCity = city" 
+            <button @click="$refs.cityDeleteModal.$emit('city-selected', city)" 
               class="btn btn-sm btn-outline-danger" 
               content="Excluir"
               v-tippy="{placement: 'bottom', duration: 150, arrow: true}" 
@@ -73,37 +81,64 @@
       </tbody>
     </table>
 
-    <CityEditModal v-if="selectedCity" 
+    <InfiniteLoading @infinite="infiniteHandler"
+      :identifier="infiniteId"
+    >
+      <div slot="spinner">
+        <div class="spinner-grow text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+
+      <div slot="no-more"></div>
+
+      <div slot="no-results">
+        <div class="text-secondary small my-5">
+          Nenhuma cidade cadastrada
+        </div>
+      </div>
+    </InfiniteLoading>
+
+    <CityModal
+      id="cityNewModal"
+      ref="cityNewModal"
+    >
+      <template #title>Nova cidade</template>
+      <template #content>
+        <CityForm :isEdit="false" 
+          @created="onCityCreate"
+        />
+      </template>
+    </CityModal>
+
+    <CityModal 
       id="cityEditModal"
       ref="cityEditModal"
       @closed="selectedCity = null"
+      :isEdit="true"
     >
       <template #title>Alterar cidade</template>
       <template #content>
-        <CityForm 
-          :city="selectedCity"
+        <CityForm ref="cityForm"
           @updated="onCityUpdate" 
+          :isEdit="true"
         />
       </template>
-    </CityEditModal>
+    </CityModal>
 
-    <CityEditModal v-if="selectedCities.length"
+    <CityModal
       id="citiesEditModal"
       ref="citiesEditModal"
     >
       <template #title> Alterar cidades</template>
       <template #content>
-        <CitiesForm 
-          :cities="selectedCities" 
+        <CitiesForm ref="citiesForm"
           @updated="onCitiesUpdate"
-
         />
       </template>
-    </CityEditModal>
+    </CityModal>
 
-    <CityDeleteModal v-if="selectedCity"
-      :city="selectedCity"
-      :cities="cities"
+    <CityDeleteModal ref="cityDeleteModal"
       @closed="selectedCity = null"
       @deleted="onDeleted"
     />
@@ -111,14 +146,16 @@
 </template>
 
 <script>
-  import CityEditModal from './CityEditModal'
+  import CityModal from './CityModal'
   import CityDeleteModal from './CityDeleteModal'
   import CityForm from './CityForm'
   import CitiesForm from './CitiesForm'
+  import InfiniteLoading from 'vue-infinite-loading'
 
   export default {
     components: {
-      CityEditModal,
+      InfiniteLoading,
+      CityModal,
       CityDeleteModal,
       CityForm,
       CitiesForm
@@ -126,7 +163,9 @@
     data: function() {
       return {
         selectedCity: null,
-        cities: []
+        cities: [],
+        page: 1,
+        infiniteId: +new Date()
       }
     },
     computed: {
@@ -135,31 +174,52 @@
       }
     },
     methods: {
-      refresh() {
-        axios.get('/gerenciamento/cidades/list')
-          .then(response => {
-            this.cities = response.data.cities.map(city => {
-              return {...city, selected: false}
-            })
+      refreshInfiniteHandler() {
+        this.cities = []
+        this.page = 1
+        this.infiniteId += 1
+      },
+      infiniteHandler($state) {
+        axios.get('/gerenciamento/cidades/list', {
+          params: {
+            page: this.page
+          }
+        })
+          .then(({data}) => {
+            if (data.cities.data.length) {
+              this.page += 1
+              let cities = data.cities.data.map(city => {
+                return {...city, selected: false}
+              })
+
+              this.cities.push(...cities)
+
+              $state.loaded()
+            } else {
+              $state.complete()
+            }
           })
       },
       onUpdate() {
-        this.refresh()
+        this.refreshInfiniteHandler()
       },
       onCityUpdate() {
         this.onUpdate()
         this.$refs.cityEditModal.close()
+      },
+      onCityCreate() {
+        this.$refs.cityNewModal.close()
+        this.refreshInfiniteHandler()
       },
       onCitiesUpdate() {
         this.onUpdate()
         this.$refs.citiesEditModal.close()
       },
       onDeleted() {
-        this.refresh()
+        this.refreshInfiniteHandler()
       }
     },
     mounted() {
-      this.refresh()
     }
   }
 </script>

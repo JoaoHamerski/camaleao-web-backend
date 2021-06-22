@@ -15,23 +15,34 @@
       <div class="text-center mb-2">
         Selecione outra cidade para substituir a cidade que estão cadastrados os clientes de: 
       </div>
-      <h4 class="text-center text-success"> <strong>{{ city.name }}</strong></h4>
+      
+      <h4 class="text-center text-success mb-0"> 
+        <strong>{{ city.name }}</strong>
+      </h4>
+      <div class="text-center font-weight-bold" v-if="city.state">{{ city.state.name }}</div>
 
-      <form @submit.prevent="onSubmit">
+      <form @submit.prevent="onSubmit" class="mt-3">
         <label class="font-weight-bold" for="city">Cidade: </label>
-        <select name="city" 
-          id="city" 
-          class="custom-select" 
-          v-model="form.city_id" 
-          :class="[form.errors.has('city_id') && 'is-invalid']"
+
+        <Multiselect v-model="form.city_id"
+          :options="cities"
+          :custom-label="({name, state}) => {
+            return name + (state ? ' - ' + state.abbreviation : '')
+          }"
+          placeholder="Selecione a cidade"
+          selectLabel="Selecionar"
+          deselectLabel="Remover"
+          selectedLabel=" "
         >
-          <option value="">Selecione a cidade</option>
-          <option v-for="city in cities" :key="city.id" 
-            :value="city.id"
-          >
-            {{ city.name }} {{ city.state ? ' | ' + city.state.abbreviation : '' }}
-          </option>
-        </select>
+          <div slot="noResult">
+            Nenhuma cidade encontrada.
+          </div>
+
+          <div slot="noOptions">
+            Nenhuma cidade cadastrada
+          </div>
+        </Multiselect>
+
         <small class="text-danger" 
           v-if="form.errors.has('city_id')"
         >{{ form.errors.get('city_id') }}</small>
@@ -54,14 +65,16 @@
 
 <script>
   import Form from '../../util/Form'
+  import Multiselect from 'vue-multiselect'
 
   export default {
-    props: {
-      city: { default: null },
-      cities: { default: [] }
+    components:{
+      Multiselect
     },
     data: function() {
       return {
+        city: {},
+        cities: [],
         form: new Form({
           city_id: '',
         })
@@ -82,9 +95,23 @@
       }
     },
     mounted() {
-      $(this.$refs.modal.$el).on('hide.bs.modal', () => {
-        this.$emit('closed')
+      this.$on('city-selected', city => {
+        this.city = city
       })
+
+      $(this.$refs.modal.$el).on('hidden.bs.modal', () => {
+        this.$emit('closed')
+        this.form.reset()
+      })
+
+      axios.get('/gerenciamento/cidades/list', {
+        params: {
+          only_names: true
+        }
+      })
+        .then(response => {
+          this.cities = response.data.cities
+        })
     }
   }
 </script>

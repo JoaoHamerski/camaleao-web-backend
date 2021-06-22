@@ -41,7 +41,7 @@ class ShippingCompaniesController extends Controller
         return response()->json([], 204);
     }
 
-    public function companies()
+    public function list()
     {
         $companies = ShippingCompany::orderBy('name')->get();
 

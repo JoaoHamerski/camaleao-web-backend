@@ -13,6 +13,7 @@ $(document).on('vue-loaded', function() {
 
 import helpers from './util/helpers'
 import {swalToast, swalModal} from './swal'
+import VueObserveVisibility from 'vue-observe-visibility'
 
 const plugin = {
 	install(Vue) {
@@ -24,6 +25,7 @@ const plugin = {
 
 Vue.use(plugin)
 Vue.use(VueTippy)
+Vue.use(VueObserveVisibility)
 
 new Vue({
 	el: '#app',

@@ -82,8 +82,8 @@
     </template>
 
     <template #footer>
-      <form v-if="newCompany" @submit.prevent="onSubmit">
-        <div class="form-group">
+      <form @submit.prevent="onSubmit">
+        <div v-show="newCompany" class="form-group">
           <AppInput ref="newCompanyInput"
             id="name" 
             v-model="form.name"
@@ -92,21 +92,22 @@
           ></AppInput>
         </div>
 
-        <div class="form-group mb-0">
-          <button type="submit" class="btn btn-success font-weight-bold"
-            :disabled="form.isLoading"
-          >
-            <span v-if="form.isLoading" class="spinner-border spinner-border-sm mr-1"></span>
-            Salvar
-          </button>
+        <div class="form-group mb-0 d-flex justify-content-between">
+          <div v-show="newCompany">
+            <button type="submit" class="btn btn-success font-weight-bold"
+              :disabled="form.isLoading"
+            >
+              <span v-if="form.isLoading" class="spinner-border spinner-border-sm mr-1"></span>
+              Salvar
+            </button>
+            <button class="btn btn-light" @click.prevent="newCompany = false">Cancelar</button>
+          </div>
 
-          <button class="btn btn-light" @click.prevent="newCompany = false">Cancelar</button>
+          <button data-dismiss="modal" 
+            class="btn btn-light ml-auto"
+          >Fechar</button>
         </div>
       </form>
-
-      <div class="mt-3 text-right">
-        <button data-dismiss="modal" class="btn btn-light">Fechar</button>
-      </div>
     </template>
   </AppModal>
 </template>
@@ -139,24 +140,36 @@
 
         axios.patch(`/transportadoras/${shippingCompany.id}`, { name })
           .then(() => {
-            this.refresh()
             this.isLoading = false
+            this.$root.$emit('REFRESH_SHIPPING_COMPANIES_LIST')
             this.$toast.success('Nome alterado')
             this.$emit('refresh')
           })
           .catch(() => {})
       },
       destroy(shippingCompany) {
-        this.isLoading = true
-
-        axios.delete(`/transportadoras/${shippingCompany.id}`)
-          .then(() => {
-            this.isLoading = false
-            this.refresh()
-            this.$toast.success('Transportadora deletada')
-            this.$emit('refresh')
+        
+        this.$modal.fire({
+          icon: 'error',
+          iconHtml: '<i class="fas fa-trash-alt fa-fw"></i>',
+          title: 'Você tem certeza?',
+          text: 'Deletando a transportandora você terá que atualizar as filiais dessa transportadora'
+        })
+          .then(response => {
+            if (response.isConfirmed) {
+              this.isLoading = true
+              axios.delete(`/transportadoras/${shippingCompany.id}`)
+                .then(() => {
+                  this.$root.$emit('REFRESH_SHIPPING_COMPANIES_LIST')
+                  this.$toast.success('Transportadora deletada')
+                  this.$emit('refresh')
+                })
+                .catch(() => {})
+                .then(() => {
+                  this.isLoading = false
+                })
+            }
           })
-          .catch(() => {})
       },
       onSubmit() {
         this.form.isLoading = true
@@ -164,7 +177,7 @@
         this.form.submit('POST', '/transportadoras')
           .then(() => {
             this.newCompany = false
-            this.refresh()
+            this.$root.$emit('REFRESH_SHIPPING_COMPANIES_LIST')
             this.form.reset()
             this.$toast.success('Transportadora criada')
             this.$emit('refresh')
@@ -173,18 +186,17 @@
           .then(() => {
             this.form.isLoading = false
           })
-      },
-      refresh() {
+      }
+    },
+    mounted() {
+      this.$root.$on('REFRESH_SHIPPING_COMPANIES_LIST', () => {
         axios.get('/transportadoras/list')
           .then(response => {
             this.companies = response.data.companies.map(company => {
               return {...company, edit: false}
             })
           })
-      }
-    },
-    mounted() {
-      this.refresh()
+      })
     }
   }
 </script>

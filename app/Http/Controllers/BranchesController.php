@@ -32,9 +32,43 @@ class BranchesController extends Controller
         return response()->json([], 201);
     }
 
+    public function update(Request $request, Branch $branch)
+    {
+        $this->validator(
+            $data = $this->getFormattedData($request->all())
+        )->validate();
+        
+        $branch->update([
+            'city_id' => $data['branch_id'],
+            'shipping_company_id' => $data['shipping_company_id']
+        ]);
+
+        City::whereIn('id', $branch->cities->pluck('id'))
+            ->update([
+                'branch_id' => null
+            ]);
+        
+        City::whereIn('id', $data['cities_id'])->update([
+            'branch_id' => $branch->id
+        ]);
+
+        return response()->json([], 200);
+    }
+
+    public function destroy(Branch $branch)
+    {
+        $branch->delete();
+
+        return response()->json([], 204);
+    }
+
     public function list()
     {
-        $branches = Branch::latest()
+        $branches = Branch::with([
+            'shippingCompany',
+            'city' => function ($query) { $query->orderBy('name'); },
+            'cities'
+        ])
             ->paginate(10);
 
         return response()->json(['branches' => $branches], 200);

@@ -1,7 +1,7 @@
 <template>
   <AppModal :id="id" ref="modal" 
     modalDialogClass="modal-dialog-centered"
-    modalHeaderClass="bg-primary"
+    :modalHeaderClass="isEdit ? 'bg-primary' : 'bg-success'"
   >
     <template #header>
       <h5 class="text-white font-weight-bold mb-0">
@@ -18,7 +18,8 @@
 <script>
   export default {
     props: {
-      id: { default: '' }
+      id: { default: '' },
+      isEdit: { default: false }
     },
     methods: {
       close() {
@@ -26,7 +27,7 @@
       }
     },
     mounted() {
-      $(this.$refs.modal.$el).on('hide.bs.modal', () => {
+      $(this.$refs.modal.$el).on('hidden.bs.modal', () => {
         this.$emit('closed')
       })
     }

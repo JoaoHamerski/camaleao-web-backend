@@ -15,9 +15,13 @@
       </div>
 
       <div class="card-body px-0">
-        <h5 class="text-center mx-3 mb-3">
-          Clientes residentes em <strong>{{ $city->name}} {{ $city->state ? ' - ' . $city->state->name : '' }}</strong>
+        <h5 class="text-center mx-3 mb-4">
+          Clientes residentes em 
+          <div>
+            <strong>{{ $city->name}} {{ $city->state ? ' - ' . $city->state->name : '' }}</strong>
+          </div>
         </h5>
+
         <table class="table table-hover">
           <thead>
             <tr>

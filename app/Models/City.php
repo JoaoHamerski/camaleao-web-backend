@@ -12,6 +12,11 @@ class City extends Model
     protected $guarded = [];
     protected $with = ['state'];
     
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
     public function state()
     {
         return $this->belongsTo(State::class);

@@ -7,8 +7,8 @@
       </ul>
 
       <div class="form-group mb-3">
-        <label class="font-weight-bold" for="states">Estado</label>
-        <select name="states" id="states" class="custom-select" v-model="form.state_id"
+        <label class="font-weight-bold" for="cities-states">Estado</label>
+        <select name="states" id="cities-states" class="custom-select" v-model="form.state_id"
           :class="[form.errors.has('state_id') && 'is-invalid']"
         >
           <option value="">Selecione um estado</option>
@@ -39,11 +39,9 @@
   import Form from '../../util/Form'
 
   export default {
-    props: {
-      cities: { default: null }
-    },
     data: function() {
       return {
+        cities: [],
         states: [],
         form: new Form({
           state_id: '',
@@ -68,6 +66,10 @@
       }
     },
     mounted() {
+      this.$on('cities-selected', cities => {
+        this.cities = cities
+      })
+      
       axios.get('/gerenciamento/cidades/estados/list')
         .then(({data}) => {
           this.states = data.states

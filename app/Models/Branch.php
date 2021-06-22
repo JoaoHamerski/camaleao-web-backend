@@ -10,7 +10,6 @@ class Branch extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $with = ['shippingCompany', 'cities', 'city'];
 
     public function shippingCompany()
     {
