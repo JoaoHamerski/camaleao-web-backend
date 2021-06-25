@@ -104,6 +104,15 @@ class BranchesController extends Controller
             'branch_id' => ['required', 'exists:cities,id'],
             'shipping_company_id' => ['required', 'exists:shipping_companies,id'],
             'cities_id' => ['required', 'exists:cities,id']
-        ]);
+        ], $this->errorMessages());
+    }
+
+    public function errorMessages() 
+    {
+        return [
+            'branch_id.required' => 'Por favor, selecione a filial',
+            'shipping_company_id.required' => 'Por favor, selecione a transportadora',
+            'cities_id.required' => 'Por favor, selecione as cidades'
+        ];
     }
 }

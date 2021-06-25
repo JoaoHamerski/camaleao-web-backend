@@ -96,12 +96,18 @@
     },
     mounted() {
       this.$on('city-selected', city => {
+        let index = this.cities.findIndex(_city => _city.id === city.id)
+
         this.city = city
+        this.cities.splice(index, 1, {...city, $isDisabled: true})
       })
 
       $(this.$refs.modal.$el).on('hidden.bs.modal', () => {
         this.$emit('closed')
         this.form.reset()
+
+        let index = this.cities.findIndex(_city => _city.id === this.city.id)
+        this.cities.splice(index, 1, {...this.city, $$isDisabled: false})
       })
 
       axios.get('/gerenciamento/cidades/list', {
