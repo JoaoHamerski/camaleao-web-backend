@@ -4583,7 +4583,7 @@ var swalToastInit = sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().mixin({
   toast: true,
   position: 'top-end',
   showConfirmButton: false,
-  timer: 9999999,
+  timer: 4500,
   timerProgressBar: true,
   showCloseButton: true,
   didOpen: function didOpen(toast) {

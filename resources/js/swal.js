@@ -24,7 +24,7 @@ let swalToastInit = Swal.mixin({
   toast: true,
   position: 'top-end',
   showConfirmButton: false,
-  timer: 9999999,
+  timer: 4500,
   timerProgressBar: true,
   showCloseButton: true,
   didOpen: (toast) => {
