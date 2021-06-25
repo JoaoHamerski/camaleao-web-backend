@@ -105,6 +105,8 @@ class CitiesController extends Controller
                 'exists:cities,id',
                 'not_in:' . $city->id
             ]
+        ], [
+            'city_id.required' => 'Por favor, selecione a cidade'
         ])->validate();
 
         Client::where('city_id', $city->id)
