@@ -111,8 +111,7 @@
           title: 'Você tem certeza?',
           html: `
             Você está deletando a filial 
-            de <strong>${branch.city.name}</strong>
-            ${branch.city.state ? ` - <strong>${branch.city.state.abbreviation}</strong>` : ''}
+            de <strong>${branch.city ? branch.city.name : '[cidade deletada]'}</strong>
           `
         })
           .then(response => {

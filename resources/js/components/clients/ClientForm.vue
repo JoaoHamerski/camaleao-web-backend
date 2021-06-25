@@ -55,7 +55,7 @@
         :class="form.errors.has('branch') && 'is-invalid'"
         id="branches"
         :options="branches"
-        :custom-label="({city}) => city.name"
+        :custom-label="({city}) => city ? city.name : '[cidade da filial deletada]'"
         placeholder="Selecione uma filial"
         selectLabel="Selecionar"
         deselectLabel="Remover"
@@ -183,12 +183,10 @@
       },
       update() {
         this.form.submit('PATCH', `/clientes/${this.id}/`)
-          .then(response => {
+          .then(() => {
             location.reload()
           })
-          .catch(error => {
-            console.log(error)
-          })
+          .catch(() => {})
           .then(() => {
             this.form.isLoading = false
           })
