@@ -61,7 +61,7 @@
                   <td>{!! $client->name !!}</td>
                   <td nowrap="nowrap">{{ $client->phone ? Mask::phone($client->phone) : '[não informado]' }}</td>
                   <td nowrap="nowrap">
-                    {{ $client->city->name ?? '[não informado]' }}
+                    {{ $client->city ? $client->city->name : '[não informado]' }}
                   </td>
                 </tr>
               @empty
