@@ -39,6 +39,14 @@ class ClientsController extends Controller
         ]);
     }
 
+    public function client(Client $client)
+    {
+        $client = Client::with(['city', 'branch', 'shippingCompany'])
+            ->find($client->id);
+
+        return response()-> json(['client' => $client], 200);
+    }
+
     public function store(Request $request)
     {
         $validator = $this->validator(
@@ -60,7 +68,7 @@ class ClientsController extends Controller
         ], 200);
     }
 
-    public function patch(Client $client, Request $request)
+    public function update(Request $request, Client $client)
     {
         $validator = $this->validator(
             $data = $this->getFormattedData($request->all())
@@ -94,23 +102,35 @@ class ClientsController extends Controller
     private function validator($data)
     {
         return Validator::make($data, [
-            'name' => 'required|max:255',
-            'phone' => 'nullable|min:8|max:11',
-            'city' => 'max:255'
+            'name' => ['required', 'max:255'],
+            'phone' => ['nullable', 'min:8', 'max:11'],
+            'branch_id' => ['nullable', 'exists:branches,id'],
+            'city_id' => ['nullable','exists:cities,id'],
+            'shipping_company_id' => ['nullable', 'exists:shipping_companies,id']
         ]);
     }
 
     private function getFormattedData(array $data)
     {
+        $keys = ['branch_id', 'city_id', 'shipping_company_id'];
+        
+        foreach ($keys as $key) {
+            if (isset($data[$key])) {
+                $data[$key] = $data[$key]['id'];
+            }
+        }
+
         foreach ($data as $key => $field) {
-            if (Str::contains($key, ['name', 'city']) && !empty($field)) {
+            if (Str::contains($key, ['name']) && ! empty($field)) {
                 $data[$key] = Sanitizer::name($field);
             }
 
-            if (Str::contains($key, ['phone']) && !empty($field)) {
+            if (Str::contains($key, ['phone']) && ! empty($field)) {
                 $data[$key] = Sanitizer::removeNonDigits($field);
             }
         }
+
+
 
         return $data;
     }

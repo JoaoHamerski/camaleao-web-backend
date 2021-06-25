@@ -8,7 +8,11 @@
     <div class="d-flex justify-content-between flex-column flex-sm-row">
       <div class="mb-2 mb-sm-0">
         @role(['atendimento', 'gerencia'])
-          <button type="button" data-toggle="modal" data-target="#clientCreateModal" class="btn btn-success">
+          <button type="button" 
+            data-toggle="modal"
+            data-target="#clientModal" 
+            class="btn btn-success"
+          >
             <i class="fas fa-user-plus fa-fw mr-1"></i>Novo cliente
           </button>
         @else('design')
@@ -56,7 +60,9 @@
                 <tr class="clickable-link" data-url="{{ $client->path() }}">
                   <td>{!! $client->name !!}</td>
                   <td nowrap="nowrap">{{ $client->phone ? Mask::phone($client->phone) : '[não informado]' }}</td>
-                  <td nowrap="nowrap">{{ $client->city->name ?? '[não informado]' }}</td>
+                  <td nowrap="nowrap">
+                    {{ $client->city->name ?? '[não informado]' }}
+                  </td>
                 </tr>
               @empty
                 <tr class="not-hover">
@@ -68,7 +74,6 @@
             </tbody>  
           </table>
         </div>  
-
       </div>
     </div>
     
@@ -78,6 +83,6 @@
   </div>
 
   @role(['gerencia', 'atendimento'])
-    @include('clients.create-modal')
+   <client-modal />
   @endrole
 @endsection

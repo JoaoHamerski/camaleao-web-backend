@@ -20,7 +20,10 @@ class CitiesController extends Controller
     {
         return view('cities.show', [
             'city' => $city,
-            'clients' => $city->clients()->paginate(10)
+            'clients' => $city
+                ->clients()
+                ->orderBy('name')
+                ->paginate(10)
         ]);
     }
 
@@ -38,8 +41,10 @@ class CitiesController extends Controller
     
     public function list(Request $request)
     {
-        $cities = City::with(['state', 'branch'])
-            ->orderBy('name');
+        $cities = City::with([
+            'state',
+            'branch'
+        ])->orderBy('name');
 
         if ($request->has('page')) {
             $cities = $cities->paginate(10);
@@ -49,10 +54,8 @@ class CitiesController extends Controller
 
         if ($request->filled('only_names') && $request->only_names) {
             $cities = $cities->makeHidden([
-                'branch_id',
                 'state_id',
                 'state',
-                'branch',
                 'created_at',
                 'updated_at'
             ]);

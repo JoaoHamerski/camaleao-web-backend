@@ -33,7 +33,7 @@
 
             @dataList([
               'id' => 'cities',
-              'items' => $cities
+              'items' => $cities->pluck('name')
             ])
 
             @select([

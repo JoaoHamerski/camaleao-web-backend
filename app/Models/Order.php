@@ -215,8 +215,9 @@ class Order extends Model
             'payment_voucher_paths' => 'comprovantes'
         ][$field];
 
-        if (!$this->{$field})
+        if (! $this->{$field}) {
             return [];
+        }
 
         return array_map(function ($filename) use ($publicRelative, $folderName) {
             return $publicRelative

@@ -3,11 +3,13 @@
 @section('title', 'Pedidos')
 
 @section('content')
-  <div class="mt-5">
-    @include('orders.partials.index-report-filters')
+    <div class="mt-5">
+      @include('orders.partials.index-report-filters')
 
-    @include('orders.partials.index-filters')
-
+      @include('orders.partials.index-filters')
+    
+    </div>
+    
     <div>
       <small class="text-secondary">
         @if (Request::query('ordem') == 'mais_antigo')
@@ -95,12 +97,12 @@
   <div class="mt-2">
     {{ $orders->links() }}
   </div>
+  
+  @push('css')
+    <link rel="stylesheet" href="{{ mix('css/_date-picker.css') }}">
+  @endpush
+  @push ('script')
+    <script src="{{ mix('js/partials/orders/index.js') }}"></script>
+    <script src="{{ mix('js/date-picker.js') }}"></script>
+  @endpush
 @endsection
-
-@push('css')
-  <link rel="stylesheet" href="{{ mix('css/_date-picker.css') }}">
-@endpush
-@push ('script')
-  <script src="{{ mix('js/partials/orders/index.js') }}"></script>
-  <script src="{{ mix('js/date-picker.js') }}"></script>
-@endpush

@@ -11,7 +11,7 @@
     </template>
 
     <template #body>
-      <BranchForm 
+      <BranchForm ref="branchForm"
         :isEdit="true" 
         @updated="onUpdated" 
         :branch="branch" 
@@ -48,6 +48,10 @@
 
       $(this.$refs.modal.$el).on('hidden.bs.modal', () => {
         this.branch = null
+      })
+
+      $(this.$refs.modal.$el).on('show.bs.modal', () => {
+        this.$refs.branchForm.$emit('modal-open')
       })
     }
   }

@@ -143,4 +143,14 @@ class Client extends Model
     {
         return $this->belongsTo(City::class);
     }
+
+    public function shippingCompany()
+    {
+        return $this->belongsTo(ShippingCompany::class);
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
 }

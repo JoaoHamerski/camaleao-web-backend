@@ -15,7 +15,9 @@
     <div class="col-md-9 mt-4 mt-md-0">
       <div class="d-flex justify-content-between flex-column flex-md-row mb-2">
         @role(['atendimento', 'gerencia'])
-          <a href="{{ route('orders.create', $client) }}" class="btn d-block d-md-inline btn-primary mb-2 mb-md-0">
+          <a href="{{ route('orders.create', $client) }}" 
+            class="btn d-block d-md-inline btn-primary mb-2 mb-md-0"
+          >
             <i class="fas fa-plus fa-fw mr-1"></i>Novo pedido
           </a>
         @else('design')

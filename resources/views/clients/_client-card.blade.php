@@ -10,14 +10,35 @@
 		<hr>
 
 		<div class="text-secondary font-weight-bold">Telefone/Celular: </div>
-		<div>{{ $client->phone ? Mask::phone($client->phone) : '[não informado]' }}</div>
+		<div>{{ $client->phone ? Mask::phone($client->phone) : 'N/A' }}</div>
 
 		<hr>
 
 		<div class="text-secondary font-weight-bold">Cidade:</div>
 		<div>
-			{{ $client->city->name ?? '[não informado]' }}
+			{{ $client->city->name ?? 'N/A' }}
 			{{ $client->city->state ? ' - ' . $client->city->state->abbreviation : ''}}
+		</div>
+
+		<hr>
+
+		<div class="text-secondary font-weight-bold">Filial: </div>
+		<div>
+			{{ $client->branch ? $client->branch->city->name : 'N/A' }}
+			{{ 
+				$client->branch 
+					? ($client->branch->city->state 
+							? ' - ' . $client->branch->city->state->abbreviation 
+							: '')
+					: ''
+			}}
+		</div>
+		
+		<hr>
+
+		<div class="text-secondary font-weight-bold">Transportadora: </div>
+		<div>
+			{{ $client->shippingCompany ? $client->shippingCompany->name : 'N/A' }}
 		</div>
 
 		<hr>
@@ -31,7 +52,9 @@
 		@role(['atendimento', 'gerencia'])
 			<div class="card-footer">
 				<div class="d-flex flex-column">
-					<a class="mb-2" href="" data-target="#clientEditModal" data-toggle="modal">
+					<a class="mb-2" href="" 
+						data-target="#clientModal" 
+						data-toggle="modal">
 						<i class="fas fa-user-edit fa-fw mr-1"></i>Editar dados
 					</a>
 
@@ -40,8 +63,8 @@
 					</a>
 				</div>
 			</div>
-			
-			@include('clients.edit-modal')
 		@endrole
 	@endif
 </div>
+
+<client-modal :is-edit="true" :id="{{ $client->id}}" />

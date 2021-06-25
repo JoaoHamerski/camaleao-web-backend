@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use \Carbon\Carbon;
 use App\Models\Via;
+use App\Models\City;
 use App\Util\Helper;
 use App\Models\Order;
 use App\Models\Client;
 use App\Models\Status;
 use App\Util\Validate;
 use App\Util\Sanitizer;
-use Barryvdh\DomPDF\PDF;
+use Barryvdh\DomPDF\Facade as PDF;
 use App\Traits\FileManager;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -33,7 +34,7 @@ class OrdersController extends Controller
 
         return view('orders.index', [
             'orders' => $orders->paginate(10)->appends($request->query()),
-            'cities' => Client::all()->pluck('city')->unique()->sort(),
+            'cities' => City::orderBy('name')->get(),
             'status' => Status::all()
         ]);
     }
@@ -92,7 +93,12 @@ class OrdersController extends Controller
 
         $data = array_merge($data, $this->uploadAllFiles($request));
 
-        $order = $client->orders()->create(Arr::except($data, ['down_payment', 'payment_via_id']));
+        $order = $client->orders()->create(
+            Arr::except($data, [
+                'down_payment',
+                'payment_via_id'
+            ])
+        );
 
         if (!empty($data['down_payment']) && !empty($data['payment_via_id'])) {
             $order->createDownPayment(
@@ -199,8 +205,8 @@ class OrdersController extends Controller
         $orders = Order::query();
 
         if ($request->filled('cidade')) {
-            $orders->whereHas('client', function ($query) use ($request) {
-                $query->where('city', $request->cidade);
+            $orders->whereHas('client.city', function ($query) use ($request) {
+                $query->where('name', $request->cidade);
             });
         }
 

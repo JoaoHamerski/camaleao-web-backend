@@ -64,7 +64,15 @@
 		@endif
 
 		<li>
-			<strong>Cidade:</strong> {{ $order->client->city ? $order->client->city : '[não-informado]' }}
+			<strong>Cidade:</strong> 
+			{{ $order->client->city ? $order->client->city->name : '[não-informado]' }}
+			{{ $order->client->city->state ? ' - ' . $order->client->city->state->abbreviation : '' }}
+
+		</li>
+
+		<li>
+			<strong>Frete:</strong>
+			{{ $order->client->shippingCompany ? $order->client->shippingCompany->name : '[não informado]' }}
 		</li>
 
 		<li>	

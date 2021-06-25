@@ -59,8 +59,8 @@
         :class="form.errors.has('cities_id') && 'is-invalid'"
         :multiple="true" 
         :options="citiesWithDisabled"
-        :custom-label="({id, name, branch}) => {
-          return `${name}` + (branch ? ' (Já em uma filial)' : '')
+        :custom-label="city => {
+          return `${city.name}` + (showAlreadyOnBranch(city) ? ' (Já em uma filial)' : '')
         }"
         :closeOnSelect="false"
         placeholder="Selecione as cidades"
@@ -68,6 +68,7 @@
         deselectLabel="Remover"
         selectedLabel=" "
         trackBy="id"
+        @remove="onCityRemoved"
       >
         <div slot="noResult">
           Nenhuma cidade encontrada.
@@ -98,6 +99,7 @@
 <script>
   import Form from '../../util/Form'
   import Multiselect from 'vue-multiselect'
+  import _map from 'lodash/map'
 
   export default {
     components: {
@@ -109,6 +111,7 @@
     },
     data: function() {
       return {
+        originalCities: [],
         cities: [],
         shippingCompanies: [],
         form: new Form({
@@ -130,11 +133,22 @@
     computed: {
       citiesWithDisabled() {
         return this.cities.map(city => {
-          return {...city, $isDisabled: !! city.branch}
+          return {
+            ...city, 
+            $isDisabled: (!! city.branch) && ! _map(this.form.cities_id, 'id').includes(city.id) 
+          }
         })
       }
     },
     methods: {
+      onCityRemoved(city, id) {
+        let index = this.cities.findIndex(_city => _city.id === city.id)
+
+        this.cities.splice(index, 1, {...city, branch: null})
+      },
+      showAlreadyOnBranch(city) {
+         return city.branch && ! this.form.cities_id.includes(city)
+      },
       onSubmit() {
         this.form.isLoading = true
 
@@ -168,6 +182,13 @@
       }
     },
     mounted() {
+      this.$on('modal-open', () => {
+        if (this.originalCities.length) {
+          this.cities = []
+          this.cities.push(...this.originalCities)
+        }
+      })
+
       this.$root.$on('REFRESH_CITIES_LIST', () => {
         axios.get('/gerenciamento/cidades/list', {
           params: {
@@ -176,6 +197,7 @@
         })
           .then(response => {
             this.cities = response.data.cities
+            this.originalCities = response.data.cities
           })
       })
 

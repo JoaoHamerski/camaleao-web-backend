@@ -9,6 +9,7 @@ class City extends Model
 {
     use HasFactory;
 
+    protected $appends = ['shipping_company'];
     protected $guarded = [];
     protected $with = ['state'];
     
@@ -25,5 +26,10 @@ class City extends Model
     public function clients()
     {
         return $this->hasMany(Client::class);
+    }
+
+    public function getShippingCompanyAttribute()
+    {
+        return $this->branch->shippingCompany ?? null;
     }
 }

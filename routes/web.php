@@ -57,10 +57,12 @@ Route::middleware('auth')->group(function () {
 
     Route::name('clients.')->group(function () {
         Route::get('/', [ClientsController::class, 'index'])->name('index');
-        Route::get('/cliente/{client}', [ClientsController::class, 'show'])->name('show');
+        Route::get('/clientes/{client}', [ClientsController::class, 'show'])->name('show');
+        Route::get('/clientes/{client}/json', [ClientsController::class, 'client']);
+
         Route::middleware('role:gerencia,atendimento')->group(function () {
-            Route::post('/novo-cliente', [ClientsController::class, 'store'])->name('store');
-            Route::patch('/cliente/{client}', [ClientsController::class, 'patch'])->name('patch');
+            Route::post('/clientes', [ClientsController::class, 'store'])->name('store');
+            Route::patch('/clientes/{client}', [ClientsController::class, 'update'])->name('update');
             Route::delete('/cliente/{client}', [ClientsController::class, 'destroy'])->name('destroy');
         });
     });
@@ -138,28 +140,34 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::name('cities.')->middleware('role:gerencia')->group(function () {
-        Route::get('/gerenciamento/cidades', [CitiesController::class, 'index'])->name('index');
         Route::get('/gerenciamento/cidades/list', [CitiesController::class, 'list']);
-        Route::post('/gerenciamento/cidades', [CitiesController::class, 'store']);
-        Route::get('/gerenciamento/cidades/{city}', [CitiesController::class, 'show']);
-        Route::patch('/gerenciamento/cidades/{city}', [CitiesController::class, 'patch']);
-        Route::patch('/gerenciamento/cidades', [CitiesController::class, 'patchMany']);
-        Route::get('/gerenciamento/cidades/estados/list', [CitiesController::class, 'states']);
-        Route::post('/gerenciamento/cidades/{city}/replace', [CitiesController::class, 'replace']);
+        Route::middleware('role:gerencia')->group(function () {
+            Route::get('/gerenciamento/cidades', [CitiesController::class, 'index'])->name('index');
+            Route::post('/gerenciamento/cidades', [CitiesController::class, 'store']);
+            Route::get('/gerenciamento/cidades/{city}', [CitiesController::class, 'show']);
+            Route::patch('/gerenciamento/cidades/{city}', [CitiesController::class, 'patch']);
+            Route::patch('/gerenciamento/cidades', [CitiesController::class, 'patchMany']);
+            Route::get('/gerenciamento/cidades/estados/list', [CitiesController::class, 'states']);
+            Route::post('/gerenciamento/cidades/{city}/replace', [CitiesController::class, 'replace']);
+        });
     });
 
-    Route::name('branches.')->middleware('role:gerencia')->group(function () {
-        Route::get('/gerenciamento/filiais', [BranchesController::class, 'index'])->name('index');
-        Route::post('/gerenciamento/filiais', [BranchesController::class, 'store']);
+    Route::name('branches.')->group(function () {
         Route::get('/gerenciamento/filiais/list', [BranchesController::class, 'list']);
-        Route::patch('/gerenciamento/filiais/{branch}', [BranchesController::class, 'update']);
-        Route::delete('/gerenciamento/filiais/{branch}', [BranchesController::class, 'destroy']);
+        Route::middleware('role:gerencia')->group(function () {
+            Route::get('/gerenciamento/filiais', [BranchesController::class, 'index'])->name('index');
+            Route::post('/gerenciamento/filiais', [BranchesController::class, 'store']);
+            Route::patch('/gerenciamento/filiais/{branch}', [BranchesController::class, 'update']);
+            Route::delete('/gerenciamento/filiais/{branch}', [BranchesController::class, 'destroy']);
+        });
     });
 
     Route::name('shipping-companies.')->middleware('role:gerencia')->group(function () {
         Route::get('/transportadoras/list', [ShippingCompaniesController::class, 'list']);
-        Route::patch('/transportadoras/{shippingCompany}', [ShippingCompaniesController::class, 'update']);
-        Route::post('/transportadoras', [ShippingCompaniesController::class, 'store']);
-        Route::delete('/transportadoras/{shippingCompany}', [ShippingCompaniesController::class, 'destroy']);
+        Route::middleware('role:gerencia')->group(function () {
+            Route::patch('/transportadoras/{shippingCompany}', [ShippingCompaniesController::class, 'update']);
+            Route::post('/transportadoras', [ShippingCompaniesController::class, 'store']);
+            Route::delete('/transportadoras/{shippingCompany}', [ShippingCompaniesController::class, 'destroy']);
+        });
     });
 });

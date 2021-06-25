@@ -62,14 +62,21 @@ class BranchesController extends Controller
         return response()->json([], 204);
     }
 
-    public function list()
+    public function list(Request $request)
     {
         $branches = Branch::with([
             'shippingCompany',
-            'city' => function ($query) { $query->orderBy('name'); },
+            'city' => function ($query) {
+                 $query->orderBy('name');
+            },
             'cities'
-        ])
-            ->paginate(10);
+        ]);
+
+        if ($request->filled('no_paginate') && $request->no_paginate == true) {
+            $branches = $branches->get();
+        } else {
+            $branches = $branches->paginate(10);
+        }
 
         return response()->json(['branches' => $branches], 200);
     }

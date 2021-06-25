@@ -218,8 +218,6 @@
       onDeleted() {
         this.refreshInfiniteHandler()
       }
-    },
-    mounted() {
     }
   }
 </script>
