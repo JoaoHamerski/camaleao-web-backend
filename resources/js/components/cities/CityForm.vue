@@ -69,7 +69,7 @@
       Multiselect
     },
     props: {
-      isEdit: { default: false }
+      isEdit: { default: false },
     },
     data: function() {
       return {
@@ -95,9 +95,10 @@
         this.form.isLoading = true
 
         this.form.submit('POST', '/gerenciamento/cidades/')
-          .then(() => {
+          .then(response => {
+            this.form.reset()
             this.$toast.success('Cidade cadastrada')
-            this.$emit('created')
+            this.$emit('created', response.city)
           })
           .catch(() => {})
           .then(() => {
@@ -121,6 +122,10 @@
         this.city = city
         this.form.name = city.name
         this.form.state_id = this.city.state ? this.city.state.id : ''
+      })
+
+      this.$on('pre-form', search => {
+        this.form.name = search
       })
 
       axios.get('/gerenciamento/cidades/estados/list')

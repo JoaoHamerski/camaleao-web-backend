@@ -31,12 +31,12 @@ class CitiesController extends Controller
     {
         $this->validator($request->all())->validate();
 
-        City::create([
+        $city = City::create([
             'name' => $request->name,
             'state_id' => $request->state_id
         ]);
 
-        return response()->json([], 201);
+        return response()->json(['city' => $city], 201);
     }
     
     public function list(Request $request)
@@ -45,6 +45,10 @@ class CitiesController extends Controller
             'state',
             'branch'
         ])->orderBy('name');
+
+        if ($request->filled('name') && ! empty($request->name)) {
+            $cities = $cities->where('name', 'like', '%' . $request->name . '%');
+        }
 
         if ($request->has('page')) {
             $cities = $cities->paginate(10);
@@ -60,6 +64,7 @@ class CitiesController extends Controller
                 'updated_at'
             ]);
         }
+        
         
         return response()->json(['cities' => $cities], 200);
     }

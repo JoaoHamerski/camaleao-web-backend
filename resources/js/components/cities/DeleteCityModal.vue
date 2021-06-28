@@ -1,5 +1,5 @@
 <template>
-  <AppModal id="cityDeleteModal"
+  <AppModal id="deleteCityModal"
     ref="modal"
     modalHeaderClass="bg-danger"
     modalDialogClass="modal-dialog-centered"

@@ -54,8 +54,9 @@ trait LogsActivity
                         return $new === $old ? 0 : 1;
                     }
 
-                    if (is_object($new)) 
+                    if (is_object($new)) {
                         return 1;
+                    }
 
                     return $new <=> $old;
                 }

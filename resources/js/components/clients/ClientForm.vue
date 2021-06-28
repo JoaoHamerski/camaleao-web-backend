@@ -26,6 +26,7 @@
     <div class="form-group">
       <label class="font-weight-bold" for="cities">Cidade: </label>
       <Multiselect v-model="form.city_id"
+        ref="cityMultiselect"
         :class="form.errors.has('city') && 'is-invalid'"
         id="cities"
         :options="cities"
@@ -37,7 +38,10 @@
         @select="onCitySelected"
       >
         <div slot="noResult">
-          Nenhuma cidade encontrada.
+          Nenhuma cidade encontrada, 
+          <a href="" 
+            class="font-weight-bold" 
+            @click.prevent="$emit('open-city-modal', $refs.cityMultiselect.search)">cadastrar nova</a>.
         </div>
 
         <div slot="noOptions">
@@ -122,6 +126,7 @@
   import Form from '../../util/Form'
   import masks from '../../util/masks'
   import Multiselect from 'vue-multiselect'
+  import _map from 'lodash/map'
 
   export default {
     components: {
@@ -192,46 +197,59 @@
           })
       },  
       populateBranches() {
-        axios.get('/gerenciamento/filiais/list', {
-          params: {
-            no_paginate: true
-          }
-        })
-          .then(response => {
-            this.branches.push(...response.data.branches)
+        return new Promise((resolve, reject) => {
+          axios.get('/gerenciamento/filiais/list', {
+            params: {
+              no_paginate: true
+            }
           })
+            .then(response => {
+              this.branches.push(...response.data.branches)
+              resolve()
+            })
+        })
       },
       populateShippingCompanies() {
-        axios.get('/transportadoras/list')
-          .then(response => {
-            this.shipping_companies.push(...response.data.companies)
-          })
+        return new Promise((resolve, reject) => {
+          axios.get('/transportadoras/list')
+            .then(response => {
+              this.shipping_companies.push(...response.data.companies)
+              resolve()
+            })
+        })
       },
       populateCities() {
-        axios.get('/gerenciamento/cidades/list')
-          .then(response => {
-            this.cities.push(...response.data.cities)
-          })
+        return new Promise((resolve, reject) => {
+          axios.get('/gerenciamento/cidades/list')
+            .then(response => {
+              this.cities.push(...response.data.cities)
+              resolve()
+            })
+        })
       },
       populateForm() {
-        axios.get(`/clientes/${this.id}/json`)
-          .then(response => {
-            let client = response.data.client
+        return new Promise((resolve, reject) => {
+          axios.get(`/clientes/${this.id}/json`)
+            .then(response => {
+              let client = response.data.client
 
-            this.form.name = client.name
-            this.form.phone = client.phone
-            this.form.city_id = this.cities.find(
-              city => city.id === client.city.id
-            )
+              this.form.name = client.name
+              this.form.phone = client.phone
+              this.form.city_id = this.cities.find(
+                city => city.id === client.city.id
+              )
 
-            this.form.shipping_company_id = this.shipping_companies.find(
-              company => company.id === client.shipping_company.id
-            )
+              this.form.shipping_company_id = this.shipping_companies.find(
+                company => company.id === client.shipping_company.id
+              )
 
-            this.form.branch_id = this.branches.find(
-              branch => branch.city.id === client.branch.city_id
-            )
-          })
+              this.form.branch_id = this.branches.find(
+                branch => branch.city.id === client.branch.city_id
+              )
+
+              resolve()
+            })
+        })
       },
       async populateData() {
         this.isLoading = true
@@ -249,6 +267,16 @@
     },
     mounted() {
       this.populateData()
+
+      this.$on('city-created', async (city) => {
+        this.cities = []
+        this.populateCities()
+          .then(() => {
+            this.form.city_id = this.cities.find(
+              _city => _city.id === city.id
+            )
+          })
+      })
     }
   }
 </script>

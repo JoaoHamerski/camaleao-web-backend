@@ -4,8 +4,13 @@
 	</div>
 
 	@if (in_array($field, ['name', 'city', 'code', 'quantity', 'note', 'description', 'employee_name']))
-		De <strong>{{ empty($changes['old'][$field]) ? '[vazio]' : $changes['old'][$field] }}</strong>
-		para <strong>{{ empty($changed) ? '[vazio]' : $changed }}</strong> 
+		@if (is_object($field) && $field === 'city') 
+			De <strong>{{ $changes['old'][$field] ? '[vazio]' : $changes['old'][$field]->name }}</strong>
+			para <strong>{{ $changed ? '[vazio]' : $changed }}</strong> 
+		@else
+			De <strong>{{ $changes['old'][$field] ? '[vazio]' : $changes['old'][$field]->name }}</strong>
+			para <strong>{{ $changed ? '[vazio]' : $changed }}</strong> 
+		@endif
 	@endif
 
 	@if (in_array($field, ['phone']))

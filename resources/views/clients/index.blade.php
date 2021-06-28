@@ -83,6 +83,9 @@
   </div>
 
   @role(['gerencia', 'atendimento'])
-   <client-modal />
+    <client-modal ref="clientModal"></client-modal>
+    <new-city-modal ref="newCityModal"
+      @created="$refs.clientModal.$emit('city-created', $event)"
+    ></new-city-modal>
   @endrole
 @endsection

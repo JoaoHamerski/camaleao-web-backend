@@ -5,6 +5,7 @@
     "App\\Models\\Expense": "Despesas",
     "App\\Models\\Note": "Anotações de pagamentos",
     "App\\Models\\ExpenseType": "Tipo de Despesa",
+    "App\\Models\\City": "Cidades",   
     "status_id": "status",
     "payment_via_id": "via",
     "expense_via_id": "via",

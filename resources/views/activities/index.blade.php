@@ -107,7 +107,11 @@
             @endif
 
             @if ($activity->subject_type == \App\Models\ExpenseType::class)
-              @include('activities.list-item', ['viewName' => 'expense-type'])
+              @include('activities.list-item', ['viewName' => 'default'])
+            @endif
+
+            @if ($activity->subject_type == \App\Models\City::class) 
+              @include('activities.list-item', ['viewName' => 'default'])
             @endif
           @empty
             <li class="list-group-item">

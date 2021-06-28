@@ -14,8 +14,10 @@
 
     <template #body>
       <ClientForm v-if="isOpen"
+        ref="clientForm"
         :isEdit="isEdit" 
         :id="id"
+        @open-city-modal="openCityModal"
       />
     </template>
   </AppModal>
@@ -37,7 +39,19 @@
         isOpen: false
       }
     },
+    methods: {
+      openCityModal(search) {
+        $(this.$refs.modal.$el).modal('hide')
+        this.$parent.$refs.newCityModal.$emit('pre-form', search)
+        // $(this.$parent.$refs.newCityModal.$el).modal('show')
+      }
+    },
     mounted() {
+      this.$on('city-created', city => {
+        $(this.$refs.modal.$el).modal('show')
+        this.$refs.clientForm.$emit('city-created', city)
+      })
+
       $(this.$refs.modal.$el).on('show.bs.modal', () => {
         if (! this.isOpen) {
           this.isOpen = true

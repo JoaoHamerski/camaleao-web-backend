@@ -144,6 +144,27 @@ class Client extends Model
         return $this->belongsTo(City::class);
     }
 
+    public function getBranchCityNameAttribute()
+    {
+        return $this->branch
+            ? ($this->branch->city ? $this->branch->city->name : null)
+            : null;
+    }
+
+    public function getBranchStateAbbr()
+    {
+        return $this->branchCityName
+            ? ($this->branch->city->state ? $this->branch->city->state->abbreviation : null)
+            : null;
+    }
+    
+    public function getStateAbbrAttribute()
+    {
+        return $this->city
+            ? ($this->city->state ? $this->city->state->abbreviation : null)
+            : null;
+    }
+
     public function shippingCompany()
     {
         return $this->belongsTo(ShippingCompany::class);

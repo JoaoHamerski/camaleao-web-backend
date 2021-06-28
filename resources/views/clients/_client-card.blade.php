@@ -17,21 +17,15 @@
 		<div class="text-secondary font-weight-bold">Cidade:</div>
 		<div>
 			{{ $client->city->name ?? 'N/A' }}
-			{{ $client->city->state ? ' - ' . $client->city->state->abbreviation : ''}}
+			{{  $client->stateAbbr ? ' - ' . $client->stateAbbr : '' }}
 		</div>
 
 		<hr>
 
 		<div class="text-secondary font-weight-bold">Filial: </div>
 		<div>
-			{{ $client->branch ? $client->branch->city->name : 'N/A' }}
-			{{ 
-				$client->branch 
-					? ($client->branch->city->state 
-							? ' - ' . $client->branch->city->state->abbreviation 
-							: '')
-					: ''
-			}}
+			{{ $client->branchCityName ? $client->branchCityname : 'N/A' }}
+			{{ $client->branchStateAbbr ? ' - ' . $client->branchStateAbbr : '' }}
 		</div>
 		
 		<hr>

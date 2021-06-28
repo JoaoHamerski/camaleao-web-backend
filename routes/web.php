@@ -139,11 +139,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/download-backup', [BackupController::class, 'download'])->name('backups.download');
     });
 
-    Route::name('cities.')->middleware('role:gerencia')->group(function () {
-        Route::get('/gerenciamento/cidades/list', [CitiesController::class, 'list']);
+    Route::name('cities.')->group(function () {
+        Route::middleware('role:atendimento,gerencia')->group(function () {
+            Route::get('/gerenciamento/cidades/list', [CitiesController::class, 'list']);
+            Route::post('/gerenciamento/cidades', [CitiesController::class, 'store']);
+        });
+        
         Route::middleware('role:gerencia')->group(function () {
             Route::get('/gerenciamento/cidades', [CitiesController::class, 'index'])->name('index');
-            Route::post('/gerenciamento/cidades', [CitiesController::class, 'store']);
             Route::get('/gerenciamento/cidades/{city}', [CitiesController::class, 'show']);
             Route::patch('/gerenciamento/cidades/{city}', [CitiesController::class, 'patch']);
             Route::patch('/gerenciamento/cidades', [CitiesController::class, 'patchMany']);

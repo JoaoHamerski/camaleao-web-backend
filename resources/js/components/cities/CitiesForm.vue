@@ -57,6 +57,7 @@
         
         this.form.submit('PATCH', '/gerenciamento/cidades')
           .then(() => {
+            this.$toast.success('Cidades alteradas!')
             this.$emit('updated')
           }) 
           .catch(() => {})
