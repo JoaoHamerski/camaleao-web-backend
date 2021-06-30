@@ -16,11 +16,12 @@ class BackupController extends Controller
 
     private function latestBackupFilepath()
     {
-        $filepaths  = glob(storage_path('app/backup/' . config('app.name') . '/*'));
+        $backupFolder = str_replace(' ', '-', config('app.name'));
+        $filepaths  = glob(storage_path('app/backup/' . $backupFolder . '/*'));
         $filepath = array_values(array_slice($filepaths, -1))[0];
         $filename = basename($filepath);
 
-        return config('app.name') . '/' . $filename;
+        return $backupFolder . '/' . $filename;
     }
 
     private function formatBytes($size, $precision = 2)
