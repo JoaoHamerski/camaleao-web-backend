@@ -173,4 +173,9 @@ Route::middleware('auth')->group(function () {
             Route::delete('/transportadoras/{shippingCompany}', [ShippingCompaniesController::class, 'destroy']);
         });
     });
+
+    Route::name('backup.')->middleware('role:gerencia')->group(function () {
+        Route::get('/backup', [BackupController::class, 'index'])->name('index');
+        Route::get('/backup/download', [BackupController::class, 'download'])->name('download');
+    });
 });

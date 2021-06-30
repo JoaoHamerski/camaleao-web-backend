@@ -7,14 +7,52 @@ use Illuminate\Support\Facades\Storage;
 
 class BackupController extends Controller
 {
+    private $filepath;
+
+    public function __construct()
+    {
+
+    }
+
+    private function latestBackupFilepath()
+    {
+        $filepaths  = glob(storage_path('app/backup/' . config('app.name') . '/*'));
+        $filepath = array_values(array_slice($filepaths, -1))[0];
+        $filename = basename($filepath);
+
+        return config('app.name') . '/' . $filename;
+    }
+
+    private function formatBytes($size, $precision = 2)
+    {
+        $base = log($size, 1024);
+        $suffixes = array('', 'KB', 'MB', 'GB', 'TB');
+
+        $result = round(pow(1024, $base - floor($base)), $precision) . ' ' . $suffixes[floor($base)];
+
+        return str_replace('.', ',', $result);
+    }
+
+    public function index()
+    {
+        $size = Storage::disk('backup')->size(
+            $this->latestBackupFilepath()
+        );
+
+        $lastModified = Storage::disk('backup')->lastModified(
+            $this->latestBackupFilepath()
+        );
+
+        return view('backup.index', [
+            'size' => $this->formatBytes($size),
+            'lastModified' => $lastModified
+        ]);
+    }
+
     public function download()
     {
-        $url = glob(storage_path('app/backup/' . config('app.name') . '/*'))[0];
-        $filename = basename($url);
-
         return Storage::disk('backup')->download(
-            config('app.name') . '/' . $filename,
-            'backup-' . $filename
+            $this->latestBackupFilepath()
         );
     }
 }

@@ -12,7 +12,8 @@
       <li class="{{ Request::is(['/', 'cliente/*']) ? 'active' : '' }}">
         <a href="{{ route('clients.index') }}">
           <i class="fas fa-list fa-fw mr-1 text-primary"></i>
-          Clientes</a>
+          Clientes
+        </a>
       </li>
 
       @role(['gerencia', 'atendimento'])
@@ -74,7 +75,7 @@
         </li>
 
         <li class="position-relative">
-          <a class="{{ Request::is('gerenciamento*') ?: 'collapsed' }}" 
+          <a class="{{ Request::is(['gerenciamento*', 'backup*']) ?: 'collapsed' }}" 
             data-toggle="collapse"
             href="#collapseManagement" 
             aria-expanded="false" 
@@ -89,7 +90,7 @@
           </a>
         
           <div id="collapseManagement" 
-            class="collapse {{ Request::is('gerenciamento*') ? 'show' : '' }}"
+            class="collapse {{ Request::is(['gerenciamento*', 'backup*']) ? 'show' : '' }}"
             data-parent="#accordionSidebar"
           >
             <ul class="list-group-flush list-unstyled">
@@ -104,6 +105,13 @@
                 <a href="{{ route('branches.index') }}">
                   <i class="fas fa-building fa-fw mr-1 text-primary"></i>
                   Filiais
+                </a>
+              </li>
+
+              <li class="{{ Request::is('backup*') ? 'active' : '' }}">
+                <a href="{{ route('backup.index') }}">
+                  <i class="fas fa-download fa-fw mr-1 text-primary"></i>
+                  Backup
                 </a>
               </li>
             </ul>
