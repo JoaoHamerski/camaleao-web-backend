@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ViasController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\BackupController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\FinancialController;
 use App\Http\Controllers\ActivitiesController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ExpenseTypesController;
+use App\Http\Controllers\ClothingTypesController;
 use App\Http\Controllers\ShippingCompaniesController;
 
 /*
@@ -112,6 +114,10 @@ Route::middleware('auth')->group(function () {
         Route::patch('/despesas/tipo-de-despesa/{expense_type}', [ExpenseTypesController::class, 'patch'])->name('patch');
     });
 
+    Route::name('via')->middleware('role:gerencia,atendimento')->group(function () {
+        Route::get('/pagamentos/vias/list', [ViasController::class, 'list']);
+    });
+
     Route::name('payments.')->middleware('role:gerencia,atendimento')->group(function () {
         Route::post('/cliente/{client}/pedido/{order}/new-payment', [PaymentsController::class, 'store'])->name('store');
         Route::get('/cliente/{client}/pedido/{order}/pagamento/{payment}/get-change-payment-view', [PaymentsController::class, 'getChangePaymentView']);
@@ -143,6 +149,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('role:atendimento,gerencia')->group(function () {
             Route::get('/gerenciamento/cidades/list', [CitiesController::class, 'list']);
             Route::post('/gerenciamento/cidades', [CitiesController::class, 'store']);
+            Route::get('/gerenciamento/cidades/estados/list', [CitiesController::class, 'states']);
         });
         
         Route::middleware('role:gerencia')->group(function () {
@@ -150,7 +157,6 @@ Route::middleware('auth')->group(function () {
             Route::get('/gerenciamento/cidades/{city}', [CitiesController::class, 'show']);
             Route::patch('/gerenciamento/cidades/{city}', [CitiesController::class, 'patch']);
             Route::patch('/gerenciamento/cidades', [CitiesController::class, 'patchMany']);
-            Route::get('/gerenciamento/cidades/estados/list', [CitiesController::class, 'states']);
             Route::post('/gerenciamento/cidades/{city}/replace', [CitiesController::class, 'replace']);
         });
     });
@@ -165,7 +171,7 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::name('shipping-companies.')->middleware('role:gerencia')->group(function () {
+    Route::name('shipping-companies.')->middleware('role:gerencia,atendimento')->group(function () {
         Route::get('/transportadoras/list', [ShippingCompaniesController::class, 'list']);
         Route::middleware('role:gerencia')->group(function () {
             Route::patch('/transportadoras/{shippingCompany}', [ShippingCompaniesController::class, 'update']);
@@ -177,5 +183,9 @@ Route::middleware('auth')->group(function () {
     Route::name('backup.')->middleware('role:gerencia')->group(function () {
         Route::get('/backup', [BackupController::class, 'index'])->name('index');
         Route::get('/backup/download', [BackupController::class, 'download'])->name('download');
+    });
+
+    Route::name('clothing-types.')->middleware('role:gerencia, atendimento')->group(function () {
+        Route::get('/tipos-de-roupas/list', [ClothingTypesController::class, 'list']);
     });
 });
