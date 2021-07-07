@@ -145,7 +145,10 @@
             this.$toast.success('Nome alterado')
             this.$emit('refresh')
           })
-          .catch(() => {})
+          .catch(() => {  })
+          .then(() => {
+            this.isLoading = false
+          })
       },
       destroy(shippingCompany) {
         
@@ -153,7 +156,11 @@
           icon: 'error',
           iconHtml: '<i class="fas fa-trash-alt fa-fw"></i>',
           title: 'Você tem certeza?',
-          text: 'Deletando a transportandora você terá que atualizar as filiais dessa transportadora'
+          text: `
+            Deletando a transportandora você 
+            terá que atualizar as 
+            filiais dessa transportadora. E também atualizar os clientes que foram cadastrados nessa transportadora.
+          `
         })
           .then(response => {
             if (response.isConfirmed) {

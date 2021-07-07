@@ -1,6 +1,7 @@
 <template>
   <form @submit.prevent="onSubmit"
     @focus.capture="form.errors.clear($event.target.name)"
+    data-type="vue"
   >
     <div class="form-group">
       <label class="font-weight-bold" :for="isEdit ? 'name-edit' : 'name'">
@@ -14,7 +15,7 @@
         type="text" 
         placeholder="Digite o nome da cidade"
       >
-      <small class="text-danger font-weight-bold" 
+      <small class="text-danger" 
         v-if="form.errors.has('name')"
       >
         {{ form.errors.get('name') }}

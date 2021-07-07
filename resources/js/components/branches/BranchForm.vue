@@ -58,7 +58,7 @@
         @open="form.errors.clear('cities_id')"
         :class="form.errors.has('cities_id') && 'is-invalid'"
         :multiple="true" 
-        :options="citiesWithDisabled"
+        :options="cities"
         :custom-label="city => {
           return `${city.name}` + (showAlreadyOnBranch(city) ? ' (Já em uma filial)' : '')
         }"
@@ -82,7 +82,7 @@
       <small class="text-danger d-block" v-if="form.errors.has('cities_id')">
         {{ form.errors.get('cities_id') }}
       </small>
-      <small class="text-secondary">Você pode fazer múltiplas seleções</small>
+      <div class="text-secondary small">Caso selecione uma cidade que já está em uma filial, ela será removida da filial que pertence.</div>
     </div>
 
     <div class="d-flex flex-row mt-3">
@@ -124,22 +124,18 @@
     watch: {
       branch() {
         if (this.branch) {
-          this.form.branch_id = this.branch.city
-          this.form.shipping_company_id = this.branch.shipping_company
+          this.form.branch_id = this.cities.find(
+            city => city.id === this.branch.city.id
+          )
+
+          this.form.shipping_company_id = this.shippingCompanies.find(
+            company => company.id === this.branch.city.shipping_company.id
+          )
+          
           this.form.cities_id = this.branch.cities
         }
       }
     },  
-    computed: {
-      citiesWithDisabled() {
-        return this.cities.map(city => {
-          return {
-            ...city, 
-            $isDisabled: (!! city.branch) && ! _map(this.form.cities_id, 'id').includes(city.id) 
-          }
-        })
-      }
-    },
     methods: {
       onCityRemoved(city, id) {
         let index = this.cities.findIndex(_city => _city.id === city.id)
@@ -147,7 +143,7 @@
         this.cities.splice(index, 1, {...city, branch: null})
       },
       showAlreadyOnBranch(city) {
-         return city.branch && ! this.form.cities_id.includes(city)
+         return city.branch_id && ! _map(this.form.cities_id, 'id').includes(city.id)
       },
       onSubmit() {
         this.form.isLoading = true

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form @submit.prevent="onSubmit">
+    <form @submit.prevent="onSubmit" data-type="vue">
       <div class="text-secondary mb-2">Selecione um estado para as cidades escolhidas:</div>
       <ul>
         <li v-for="city in cities" :key="city.id">{{ city.name }}</li>

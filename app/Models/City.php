@@ -10,14 +10,13 @@ class City extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $appends = ['shipping_company'];
     protected $guarded = [];
     protected $with = ['state'];
-
+    protected $appends = ['shipping_company'];
+    
     protected static $logName = 'cities';
     protected static $logUnguarded = true;
     protected static $logOnlyDirty = true;
-    protected static $logAttributes = ['state'];
 
     public function getDescriptionForEvent(string $eventName): string
     {
@@ -69,6 +68,12 @@ class City extends Model
 
     public function getShippingCompanyAttribute()
     {
-        return $this->branch->shippingCompany ?? null;
+        $branch =  Branch::find($this->branch_id) ?? null;
+
+        if ($branch === null) {
+            return null;
+        }
+
+        return ShippingCompany::find($branch->shipping_company_id);
     }
 }

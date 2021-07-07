@@ -65,7 +65,6 @@ class BranchesController extends Controller
     public function list(Request $request)
     {
         $branches = Branch::with([
-            'shippingCompany',
             'city' => function ($query) {
                  $query->orderBy('name');
             },
@@ -107,7 +106,7 @@ class BranchesController extends Controller
         ], $this->errorMessages());
     }
 
-    public function errorMessages() 
+    public function errorMessages()
     {
         return [
             'branch_id.required' => 'Por favor, selecione a filial',

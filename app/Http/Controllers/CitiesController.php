@@ -41,10 +41,7 @@ class CitiesController extends Controller
     
     public function list(Request $request)
     {
-        $cities = City::with([
-            'state',
-            'branch'
-        ])->orderBy('name');
+        $cities = City::orderBy('name');
 
         if ($request->filled('name') && ! empty($request->name)) {
             $cities = $cities->where('name', 'like', '%' . $request->name . '%');
@@ -56,7 +53,7 @@ class CitiesController extends Controller
             $cities = $cities->get();
         }
 
-        if ($request->filled('only_names') && $request->only_names) {
+        if ($request->filled('only_names') && $request->only_names && ! $request->has('page')) {
             $cities = $cities->makeHidden([
                 'state_id',
                 'state',
@@ -64,7 +61,6 @@ class CitiesController extends Controller
                 'updated_at'
             ]);
         }
-        
         
         return response()->json(['cities' => $cities], 200);
     }
@@ -93,7 +89,7 @@ class CitiesController extends Controller
     {
         Validator::make($request->all(), [
             'state_id' => ['required', 'exists:states,id']
-        ])->validate();
+        ], $this->errorMessages())->validate();
 
         City::whereIn('id', $request->cities_ids)->update([
             'state_id' => $request->state_id
@@ -110,9 +106,7 @@ class CitiesController extends Controller
                 'exists:cities,id',
                 'not_in:' . $city->id
             ]
-        ], [
-            'city_id.required' => 'Por favor, selecione a cidade'
-        ])->validate();
+        ], $this->errorMessages())->validate();
 
         Client::where('city_id', $city->id)
             ->update(['city_id' => $data['city_id']]);
@@ -120,6 +114,14 @@ class CitiesController extends Controller
         $city->delete();
 
         return response()->json([], 200);
+    }
+
+    public function errorMessages()
+    {
+        return [
+            'state_id.required' => 'A seleção de um estado é obrigatória.',
+            'city_id.required' => 'Por favor, selecione a cidade.'
+        ];
     }
 
     public function getFormattedData(array $data)

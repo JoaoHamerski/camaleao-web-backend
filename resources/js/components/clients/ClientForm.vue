@@ -18,7 +18,7 @@
         id="phone" 
         name="phone" 
         placeholder="Digite o telefone..."
-        :masks="masks.phone"
+        :mask="masks.phone"
         :error="form.errors.get('phone')"
       />
     </div>
@@ -157,14 +157,16 @@
         this.form.branch_id = ''
         this.form.shipping_company_id = ''
 
-        if (city.branch) {
+        if (city.branch_id) {
           this.form.branch_id = this.branches.find(
-            branch => branch.city.id === city.branch.city_id
+            branch => branch.id === city.branch_id
           )
         }
         
         if (city.shipping_company) {
-          this.form.shipping_company_id = city.shipping_company
+          this.form.shipping_company_id = this.shipping_companies.find(
+            company => company.id === city.shipping_company.id
+          )
         }
       },
       onSubmit() {
@@ -240,11 +242,11 @@
               )
 
               this.form.shipping_company_id = this.shipping_companies.find(
-                company => company.id === client.shipping_company.id
+                company => company.id === client.shipping_company_id
               )
 
               this.form.branch_id = this.branches.find(
-                branch => branch.city.id === client.branch.city_id
+                branch => branch.id === client.branch_id
               )
 
               resolve()

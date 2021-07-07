@@ -18,10 +18,15 @@
             <td class="align-middle" v-if="branch.city">
               {{ branch.city.name }} {{ branch.city.state ? ' - ' + branch.city.state.abbreviation : '' }}
             </td>
-            <td class="align-middle text-danger" v-else>[cidade deletada]</td>
+            <td v-else class="align-middle text-danger">[cidade deletada]</td>
 
-            <td v-if="branch.shipping_company" class="align-middle">{{ branch.shipping_company.name }}</td>
-            <td class="align-middle text-danger" v-else>[transportadora deletada]</td>
+            <td v-if="branch.city.shipping_company" class="align-middle">
+              {{ branch.city.shipping_company.name }}
+            </td>
+            <td v-else class="align-middle text-danger">
+              [transportadora deletada]
+            </td>
+
             <td>
               <ul class="list-group list-group-sm">
                 <li v-for="city in branch.cities" :key="`city-${city.id}`"
@@ -31,6 +36,7 @@
                 </li>
               </ul>
             </td>
+            
             <td class="text-center align-middle">
               <button class="btn btn-outline-primary btn-sm mb-2"
                 @click="select(branch)"
@@ -61,9 +67,7 @@
       :identifier="infiniteId"
     >
       <div slot="spinner">
-        <div class="spinner-grow text-primary" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
+        <div class="spinner-grow text-primary"></div>
       </div>
 
       <div slot="no-more"></div>

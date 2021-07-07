@@ -1,22 +1,42 @@
 <template>
 	<div>
 		<label v-if="$slots.default" :for="id" class="font-weight-bold">
-			<slot></slot>
+			<slot></slot> <span v-if="optional" class="text-secondary small">(opcional)</span>
 		</label>
 
-		<div :class="{ 'input-group' : type === 'password' }">
+		<tippy v-if="disabledMessage.length" 
+			:duration="150" 
+			placement="bottom" 
+			arrow
+			:to="'tippy-' + id"
+		>
+			{{ disabledMessage }}
+		</tippy>
+		
+		<div :class="[{ 'input-group' : type === 'password' }, {'custom-file': type === 'file'}]"
+			:name="'tippy-' + id"
+		>
 			<MaskedInput ref="input" class="form-control"  
 				:id="id"
-				:class="[{'is-invalid' : hasError}, inputClass]"
+				:disabled="disabled"
+				:class="[{'is-invalid' : hasError}, inputClass, {'custom-file-input' : type === 'file'}]"
 				:type="inputType"
 				:name="name"
 				@input="$emit('input', $event)" 
+				@change="$emit('change', $event)"
 				:placeholder="placeholder" 
 				:value="value"
 				:autofocus="autofocus"
 				:mask="mask"
 				:autocomplete="autocomplete"
-				:guide="false"/>
+				:multiple="type === 'file' && multiple"
+				:accept="type === 'file' && accept !== '' ? accept : false"
+				:guide="false"
+			/>
+
+			<label class="custom-file-label" v-if="type === 'file'">
+				Escolher arquivos
+			</label>
 
 			<div v-if="type === 'password'" class="input-group-append">
 				<button tabindex="-1" @click.prevent="togglePasswordType" v-if="isTypePassword" class="btn btn-outline-primary">
@@ -36,22 +56,29 @@
 
 <script>
 	import MaskedInput from 'vue-text-mask'
-
+	import { TippyComponent } from "vue-tippy";
+	
 	export default {
 		components: {
-			MaskedInput
+			MaskedInput,
+			'tippy': TippyComponent
 		},
 		props: {
 			id: { required: true }, 
+			optional: { default: false },
+			disabled: { default: false },
 			value: '',
 			inputClass: '',
+			multiple: { default: false },
+			accept: { default: '' },
 			name: { default: false },
 			mask: { default: false },
 			placeholder: { default: false },
 			type: { default: 'text' },
 			autofocus: { default: false },
 			error: { default: '' },
-			autocomplete: { default: false }
+			autocomplete: { default: false },
+			disabledMessage: { default: ''}
 		},
 		data: function() {
 			return {

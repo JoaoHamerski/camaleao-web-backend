@@ -51,11 +51,6 @@ class Branch extends Model
         }
     }
 
-    public function shippingCompany()
-    {
-        return $this->belongsTo(ShippingCompany::class);
-    }
-
     public function city()
     {
         return $this->belongsTo(City::class);
