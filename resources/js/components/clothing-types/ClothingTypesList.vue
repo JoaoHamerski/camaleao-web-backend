@@ -28,7 +28,7 @@
           class="list-group-item d-flex justify-content-between" 
         >
           <div class="d-flex">
-            <span class="mr-2 justify-content-center">
+            <span class="mr-2 justify-content-center" v-if="false">
               <i class="fas fa-bars handle"></i>
             </span>
 
