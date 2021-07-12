@@ -300,7 +300,8 @@
   import accounting from 'accounting-js'
 
   import UploadedFilesList from './UploadedFilesList'
-  
+  import moment from 'moment'
+
   export default {
     components: {
       UploadedFilesList
@@ -461,8 +462,8 @@
 
             this.form.name = order.name
             this.form.code = order.code
-            this.form.production_date = order.production_date
-            this.form.delivery_date= order.delivery_date
+            this.form.production_date = moment(order.production_date).format('DD/MM/YYYY')
+            this.form.delivery_date = moment(order.delivery_date).format('DD/MM/YYYY')
             this.form.discount = order.discount == 0 
               ? ''
               : this.$helpers.valueToBRL(order.discount)
