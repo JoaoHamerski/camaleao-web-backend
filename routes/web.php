@@ -192,6 +192,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/tipos-de-roupas/list', [ClothingTypesController::class, 'list']);
         Route::post('/tipos-de-roupas', [ClothingTypesController::class, 'store']);
         Route::patch('/tipos-de-roupas/{clothingType}/toggle-hide', [ClothingTypesController::class, 'toggleHide']);
+        Route::patch('/tipos-de-roupas/update-order', [ClothingTypesController::class, 'updateOrder']);
         Route::patch('/tipos-de-roupas/{clothingType}', [ClothingTypesController::class, 'update']);
     });
 });

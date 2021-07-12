@@ -11,68 +11,63 @@
       <ClothingTypesForm @created="refresh" />
     </div>
 
-
-    <div class="table-responsive">
-      <table class="table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>NOME</th>
-            <th class="text-center">AÇÕES</th>
-          </tr>
-        </thead>
-
-        <Draggable v-model="clothingTypes" 
-          handle=".handle"
-          :animation="200"
-          @start="drag = true"
-          @stop="drag = false"
+    <Draggable v-model="clothingTypes" 
+      handle=".handle"
+      :animation="200"
+      tag="ul"
+      class="list-group"
+      @start="drag = true"
+      @stop="drag = false"
+      @change="onChange"
+    >
+      <transition-group type="transition"
+        :name="! drag ? 'transition-list' : null"
+        tag="tbody"
+      >
+        <li v-for="type in clothingTypes" :key="type.key"
+          class="list-group-item d-flex justify-content-between" 
         >
-          <transition-group type="transition"
-            :name="! drag ? 'transition-list' : null"
-            tag="tbody"
-          >
-            <tr v-for="type in clothingTypes" :key="type.key">
-              <td>
-                <i class="fas fa-bars handle"></i>
-              </td>
-              <td v-if="type.isEdit">
-                <AppInput v-model="name"
-                  id="name-edit"
-                  name="name-edit"
-                  :error="error"
-                  @focus.capture="this.error = ''"
-                />
-              </td>
-              <td v-else nowrap>{{ type.name }}</td>
-              
-              <td v-if="type.isEdit" class="text-center">
-                <button 
-                  class="btn btn-sm btn-success" 
-                  @click="update(type)"
-                  :disabled="type.isLoading"
-                >
-                  <span v-if="type.isLoading" class="spinner-border spinner-border-sm"></span>
-                  Salvar
-                </button>
-                <button class="btn btn-sm btn-light ml-2" @click="cancelEdit(type)">Cancelar</button>
-              </td>
+          <div class="d-flex">
+            <span class="mr-2 justify-content-center">
+              <i class="fas fa-bars handle"></i>
+            </span>
 
-              <td v-else class="text-center">
-                <button v-if="type.is_hidden" @click="toggleHide(type)" 
-                  class="btn btn-sm btn-outline-success"
-                >EXIBIR</button>
-                <button v-else @click="toggleHide(type)"
-                  class="btn btn-sm btn-outline-primary"
-                >ESCONDER</button>
+            <span v-if="type.isEdit">
+              <AppInput v-model="name"
+                id="name-edit"
+                name="name-edit"
+                :error="error"
+                @focus.capture="this.error = ''"
+              />
+            </span>
+            <span v-else>{{ type.name }}</span>
+          </div>
 
-                <button class="btn btn-sm btn-success ml-2" @click="edit(type)">EDITAR</button>
-              </td>
-            </tr>
-          </transition-group>
-        </Draggable>
-      </table>
-    </div>
+          <span v-if="type.isEdit" class="text-center">
+            <button 
+              class="btn btn-sm btn-success" 
+              @click="update(type)"
+              :disabled="type.isLoading"
+            >
+              <span v-if="type.isLoading" class="spinner-border spinner-border-sm"></span>
+              Salvar
+            </button>
+            <button class="btn btn-sm btn-light ml-2" @click="cancelEdit(type)">Cancelar</button>
+          </span>
+
+          <span v-else class="text-center">
+            <button v-if="type.is_hidden" @click="toggleHide(type)" 
+              class="btn btn-sm btn-outline-success"
+            >EXIBIR</button>
+            <button v-else @click="toggleHide(type)"
+              class="btn btn-sm btn-outline-primary"
+            >ESCONDER</button>
+
+            <button class="btn btn-sm btn-success ml-2" @click="edit(type)">EDITAR</button>
+          </span>
+        </li>
+      </transition-group>
+    </Draggable>
   </div>
 </template>
 
@@ -101,6 +96,20 @@
       }
     },
     methods: {
+      onChange(changed) {
+        this.isLoading = true
+
+        axios.patch('/tipos-de-roupas/update-order', {
+          newIndex: changed.moved.newIndex,
+          oldIndex: changed.moved.oldIndex
+        })
+          .then(() => {})
+          .catch(() => {})
+          .then(() => {
+            this.isLoading = false
+            this.refresh()
+          })
+      },
       update(type) {
         type.isLoading = true
         axios.patch(`/tipos-de-roupas/${type.id}`, {

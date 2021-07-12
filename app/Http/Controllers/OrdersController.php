@@ -29,7 +29,9 @@ class OrdersController extends Controller
 
     public function __construct()
     {
-        $this->clothingTypes = ClothingType::where('is_hidden', 0)->get();
+        $this->clothingTypes = ClothingType::where('is_hidden', 0)
+            ->orderBy('order', 'asc')
+            ->get();
     }
 
     public function json(Client $client, Order $order)

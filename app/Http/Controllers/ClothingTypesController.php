@@ -88,6 +88,28 @@ class ClothingTypesController extends Controller
         ];
     }
 
+    public function updateOrder(Request $request)
+    {
+        Validator::make($request->all(), [
+            'newIndex' => ['required', 'numeric'],
+            'oldIndex' => ['required', 'numeric']
+        ])->validate();
+
+        $clothingOld = ClothingType::where('order', $request->oldIndex)
+            ->first();
+        
+        $clothingNew = ClothingType::where('order', $request->newIndex)
+            ->first();
+        
+        $clothingOld->order = $request->newIndex;
+        $clothingNew->order = $request->oldIndex;
+
+        $clothingOld->save();
+        $clothingNew->save();
+
+        return response()->json([], 200);
+    }
+
     public function list(Request $request)
     {
         $clothingTypes = ClothingType::query();
@@ -97,7 +119,7 @@ class ClothingTypesController extends Controller
         }
 
         return response()->json(
-            ['clothing_types' => $clothingTypes->get()],
+            ['clothing_types' => $clothingTypes->orderBy('order')->get()],
             200
         );
     }

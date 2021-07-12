@@ -176,7 +176,7 @@
                 </thead>
           
                 <tbody>
-                  @foreach ($order->clothingTypes as $type)
+                  @foreach ($order->clothingTypes()->orderBy('order')->get() as $type)
                   <tr>
                     <td>{{ $type->name }}</td>
                     <td>{{ $type->pivot->quantity }}</td>

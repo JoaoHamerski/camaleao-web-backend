@@ -20,7 +20,13 @@ class ClientsController extends Controller
             }
             
             if ($request->opcao === 'telefone') {
-                $clients->where('phone', 'like', '%' . $request->busca . '%');
+                $phone = Sanitizer::removeNonDigits($request->busca);
+
+                if (Str::containsAll($request->busca, ['(', ')'])) {
+                    $clients->where('phone', 'like', $phone . '%');
+                } else {
+                    $clients->where('phone', 'like', '%' . $phone . '%');
+                }
             }
 
             if ($request->opcao === 'cidade') {
