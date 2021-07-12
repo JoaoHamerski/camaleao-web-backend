@@ -209,9 +209,11 @@
             </div>
           </div>
           @else
-          <div class="text-center">
-            <small class="font-weight-bold text-dark">Preço</small>
-            <h5>{!! Mask::money($order->price, true) !!}</h5>
+          <div class="d-flex justify-content-between">
+            <div>
+              <small class="font-weight-bold text-dark">Valor total</small>
+              <h5>{!! Mask::money($order->price, true) !!}</h5>
+            </div>
           </div>
           @endif
 
