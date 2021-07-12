@@ -3,7 +3,7 @@
 @section('title', 'Novo pedido')
 
 @section('content')
-	<div class="col-md-10 mx-auto">
+	<div class="col col-lg-10 mx-auto">
 		<div class="mt-5">
 			<a class="btn btn-outline-primary" href="{{ $client->path() }}">
 				<i class="fas fa-arrow-circle-left fa-fw mr-1"></i>Voltar
@@ -16,7 +16,7 @@
 			</div>
 
 			<div class="card-body">
-				@include('orders._form', ['method' => 'POST'])
+				<order-form></order-form>
 			</div>
 		</div>
 	</div>

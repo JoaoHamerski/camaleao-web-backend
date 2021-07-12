@@ -61,4 +61,12 @@
 	@endif
 </div>
 
-<client-modal :is-edit="true" :id="{{ $client->id}}" />
+<client-modal 
+	:is-edit="true" 
+	:id="{{ $client->id}}" 
+	ref="clientModal"
+></client-modal>
+<new-city-modal 
+	ref="newCityModal" 
+	@created="$refs.clientModal.$emit('city-created', $event)">
+</new-city-modal>

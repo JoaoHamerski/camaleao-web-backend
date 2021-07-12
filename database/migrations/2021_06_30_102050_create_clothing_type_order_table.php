@@ -16,12 +16,12 @@ class CreateClothingTypeOrderTable extends Migration
         Schema::create('clothing_type_order', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id');
-            $table->foreignId('clothing_types_id');
+            $table->foreignId('clothing_type_id');
             $table->decimal('value');
             $table->integer('quantity');
             $table->timestamps();
 
-            $table->foreign('clothing_types_id')
+            $table->foreign('clothing_type_id')
                 ->references('id')
                 ->on('clothing_types')
                 ->onDelete('cascade');

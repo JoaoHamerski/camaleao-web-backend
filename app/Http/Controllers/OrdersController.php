@@ -11,12 +11,13 @@ use App\Models\Client;
 use App\Models\Status;
 use App\Util\Validate;
 use App\Util\Sanitizer;
-use Barryvdh\DomPDF\Facade as PDF;
 use App\Traits\FileManager;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use App\Models\ClothingType;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -24,6 +25,52 @@ class OrdersController extends Controller
 {
     use FileManager;
 
+    protected $clothingTypes = [];
+
+    public function __construct()
+    {
+        $this->clothingTypes = ClothingType::where('is_hidden', 0)->get();
+    }
+
+    public function json(Client $client, Order $order)
+    {
+        $this->authorize('view', [$order, $client->id]);
+        $paths = [
+            'art_paths',
+            'size_paths',
+            'payment_voucher_paths'
+        ];
+
+        $orderClothingTypes = $order->clothingTypes;
+        $jsonOrder = $order->replicate();
+
+        foreach ($orderClothingTypes as $type) {
+            $jsonOrder['value_' . $type->key] = $type->pivot->value;
+            $jsonOrder['quantity_' . $type->key] = $type->pivot->quantity;
+        }
+
+        foreach ($paths as $path) {
+            if (! empty($order[$path])) {
+                $jsonOrder[$path] = json_decode($order->{$path});
+
+                foreach ($order->getPaths($path, true) as $index => $filepath) {
+                    $files = [];
+
+                    $files[] = 'data:'
+                        . Storage::mimeType($filepath)
+                        . ';base64,'
+                        . base64_encode(Storage::get($filepath));
+                }
+
+                $jsonOrder[$path] = $files;
+            }
+        }
+
+        return response()->json([
+            'order' => $jsonOrder
+        ], 200);
+    }
+    
     public function index(Request $request)
     {
         $orders = $this->getRequestQuery($request);
@@ -80,27 +127,21 @@ class OrdersController extends Controller
 
     public function store(Client $client, Request $request)
     {
-        $validator = $this->validator(
+        $this->validator(
             $data = $this->getFormattedData($request->all())
-        );
+        )->validate();
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $data = array_merge($data, $this->uploadAllFiles($request));
-
+        $data = array_merge($data, $this->uploadAllBase64Files($data));
+        
         $order = $client->orders()->create(
-            Arr::except($data, [
-                'down_payment',
-                'payment_via_id'
-            ])
+            Arr::except($data, $this->exceptKeysToStore())
         );
 
-        if (!empty($data['down_payment']) && !empty($data['payment_via_id'])) {
+        $order->clothingTypes()->attach(
+            $this->getFilledClothingTypes($data)
+        );
+
+        if (! empty($data['down_payment']) && ! empty($data['payment_via_id'])) {
             $order->createDownPayment(
                 $data['down_payment'],
                 $data['payment_via_id']
@@ -113,48 +154,168 @@ class OrdersController extends Controller
         ], 200);
     }
 
-    public function patch(Client $client, Order $order, Request $request)
+    private function getFilledClothingTypes(array $data)
     {
-        $this->authorize('update', [$order, $client->id]);
+        $filled = [];
 
-        $validator = $this->validator(
-            $data = $this->getFormattedData($request->all()),
-            true,
-            $order
-        );
+        foreach ($this->clothingTypes as $type) {
+            $quantity = $data['quantity_' . $type->key];
+            $value = $data['value_' . $type->key];
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        foreach (['art_paths', 'size_paths', 'payment_voucher_paths'] as $field) {
-            if ($request->hasFile($field)) {
-                $order->{$field} = $this->appendOrInsertFiles(
-                    $request->only([$field]),
-                    $field,
-                    $order
-                );
+            if (! empty($quantity) && ! empty($value)) {
+                $filled[$type->id] = [
+                    'quantity' => $quantity,
+                    'value' => $value
+                ];
             }
         }
 
-        $order->save();
+        return $filled;
+    }
 
-        $order->update([
-            'code' => $data['code'],
-            'name' => $data['name'],
-            'quantity' => $data['quantity'],
-            'price' => $data['price'],
-            'delivery_date' => $data['delivery_date'],
-            'production_date' => $data['production_date']
-        ]);
+    private function exceptKeysToStore()
+    {
+        $keys = [];
+
+        foreach ($this->clothingTypes as $type) {
+            $keys[] = 'quantity_' . $type->key;
+            $keys[] = 'value_' . $type->key;
+        }
+
+        $keys[] = 'down_payment';
+        $keys[] = 'payment_via_id';
+
+        return $keys;
+    }
+
+    public function update(Client $client, Order $order, Request $request)
+    {
+        $this->authorize('update', [$order, $client->id]);
+
+        $this->validator(
+            $data = $this->getFormattedData($request->all(), true),
+            true
+        )->validate();
+
+
+        $this->deleteField($order, ['art_paths', 'size_paths', 'payment_voucher_paths']);
+
+        $data = array_merge($data, $this->uploadAllBase64Files($data));
+
+        $order->update(Arr::except($data, $this->exceptKeysToStore()));
+
+        $order->clothingTypes()->sync(
+            $this->getFilledClothingTypes($data)
+        );
 
         return response()->json([
             'message' => 'success',
             'redirect' => $order->path()
         ], 200);
+    }
+    
+    private function evaluateTotalQuantity(array $data)
+    {
+        $total = 0;
+
+        foreach ($this->clothingTypes as $type) {
+            if (! empty($data['value_' . $type->key])) {
+                $total = bcadd($total, $data['quantity_' . $type->key]);
+            }
+        }
+
+        return $total;
+    }
+
+    private function evaluateTotalValue(array $data)
+    {
+        $total = 0;
+
+        foreach ($this->clothingTypes as $type) {
+            if (! empty($data['quantity_' . $type->key])) {
+                $mul = bcmul(
+                    $data['quantity_' . $type->key],
+                    $data['value_' . $type->key],
+                    2
+                );
+    
+                $total = bcadd($total, $mul, 2);
+            }
+        }
+
+        return bcsub($total, $data['discount'] ?? 0, 2);
+    }
+
+    private function validator(array $data, $isUpdate = false)
+    {
+        $fields = [
+            'name' => ['required', 'max:50'],
+            'code' => [
+                'required', $isUpdate
+                    ? Rule::unique('orders')->ignore($data['code'], 'code')
+                    : Rule::unique('orders')
+            ],
+            'discount' => ['nullable', 'numeric', 'lte:price'],
+            'price' => ['required', 'numeric', 'min:0.01'],
+            'delivery_date' => ['nullable', 'date_format:Y-m-d'],
+            'production_date' => ['nullable', 'date_format:Y-m-d'],
+            'down_payment' => ['sometimes', 'max_double:price'],
+            'payment_via_id' => ['sometimes', 'nullable', 'required_with:down_payment', 'exists:vias,id'],
+        ];
+
+        foreach ($this->clothingTypes as $type) {
+            $fields['value_' . $type->key] = ['nullable', 'numeric', 'max:999999'];
+            $fields['quantity_' . $type->key] = ['nullable', 'integer', 'max:9999'];
+        }
+
+        return Validator::make($data, $fields, $this->errorMessages());
+    }
+
+    private function errorMessages()
+    {
+        return [
+            'discount.lte' => 'O desconto não pode ser maior que o preço total'
+        ];
+    }
+
+    private function getFormattedData(array $data, $isUpdate = false)
+    {
+        $data['price'] = null;
+        $data['quantity'] = null;
+
+        if (empty($data['discount'])) {
+            $data['discount'] = 0.00;
+        }
+        
+        foreach ($data as $key => $field) {
+            if (Str::contains($key, ['down_payment', 'value_', 'discount']) && ! empty($field)) {
+                $data[$key] = Sanitizer::money($data[$key]);
+            }
+
+            if (Str::contains($key, ['delivery_date', 'production_date'])) {
+                if (Validate::isDate($field)) {
+                    $data[$key] = Carbon::createFromFormat(
+                        'd/m/Y',
+                        $data[$key]
+                    )->toDateString();
+                }
+            }
+            
+            if (Str::contains($key, ['art_paths', 'size_paths', 'payment_voucher_paths'])) {
+                foreach ($field as $index => $file) {
+                    $base64 = $file['base64'];
+
+                    if (! empty($base64)) {
+                        $data[$key][$index] = $this->base64ToUploadedFile($base64);
+                    }
+                }
+            }
+        }
+
+        $data['price'] = $this->evaluateTotalValue($data);
+        $data['quantity'] = $this->evaluateTotalQuantity($data);
+
+        return $data;
     }
 
     public function generateOrderPDF(Client $client, Order $order)
@@ -276,7 +437,7 @@ class OrdersController extends Controller
         $orders = Order::where('production_date', $date->toDateString());
 
         if ($request->has('em_aberto') && $request->em_aberto == 'em_aberto') {
-            $orders->where('is_closed', '0');
+            $orders->whereNull('closed_at');
         }
 
         $pdf = PDF::loadView('orders.pdf.report-production-date', [
@@ -285,7 +446,7 @@ class OrdersController extends Controller
             'totalQuantity' => $orders->sum('quantity')
         ]);
 
-        return $pdf->stream('pedido-por-data(' . Helper::date($date, '%d-%m-%Y') . ').pdf');
+        return $pdf->stream('pedido-por-data (' . Helper::date($date, '%d-%m-%Y') . ').pdf');
     }
 
     public function toggleOrder(Client $client, Order $order, Request $request)
@@ -346,46 +507,5 @@ class OrdersController extends Controller
         return response()->json([
             'message' => 'error'
         ], 422);
-    }
-
-    private function validator(array $data, $isUpdate = false, $order = null)
-    {
-        return Validator::make($data, [
-            'name' => 'nullable|max:255',
-            'code' => [
-                'required', $isUpdate
-                    ? Rule::unique('orders')->ignore($data['code'], 'code')
-                    : Rule::unique('orders')
-            ],
-            'quantity' => 'required',
-            'price' => [
-                'required', $isUpdate
-                    ? 'min_double:' . $order->getTotalPayments()
-                    : ''
-            ],
-            'delivery_date' => 'nullable|date_format:Y-m-d',
-            'production_date' => 'nullable|date_format:Y-m-d',
-            'down_payment' => 'sometimes|max_double:' . $data['price'],
-            'payment_via_id' => 'sometimes|exists:vias,id',
-            'art_paths.*' => 'nullable|image',
-            'size_paths.*' => 'nullable|image'
-        ]);
-    }
-
-    private function getFormattedData(array $data)
-    {
-        foreach ($data as $key => $field) {
-            if (Str::contains($key, ['price', 'down_payment']) && !empty($field)) {
-                $data[$key] = Sanitizer::money($data[$key]);
-            }
-
-            if (Str::contains($key, ['delivery_date', 'production_date'])) {
-                if (Validate::isDate($field)) {
-                    $data[$key] = Carbon::createFromFormat('d/m/Y', $data[$key])->toDateString();
-                }
-            }
-        }
-
-        return $data;
     }
 }

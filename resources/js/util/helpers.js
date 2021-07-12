@@ -22,9 +22,6 @@ export default {
 
 		return newStr.trim();
 	},
-	isImageUrl(str) {
-		return !! (new RegExp(/([^\s]+(\.(jpe?g|png|svg))$)/g).exec(str));
-	},
 	getObjectDiff(obj1, obj2) {
 	    const diff = Object.keys(obj1).reduce((result, key) => {
 	        if (! obj2.hasOwnProperty(key)) {
@@ -47,12 +44,6 @@ export default {
           });
         })[0];	
 	},
-	stringToSVGDOM(str) {
-		let placeholder = document.createElement('div');
-		placeholder.innerHTML = str;
-
-		return placeholder.firstChild;
-	},
 	strLimit(str, limit, lastChars = null) {
 		let newStr = str;
 
@@ -74,8 +65,14 @@ export default {
 
 		return element
 	},
-	reverseClone(value) {
-		return _cloneDeep(value).reverse();
+	valueToBRL(value) {
+		return new Intl.NumberFormat('pt-BR', {
+          style: 'currency', 
+          currency: 'BRL'
+        }).format(value)
 	},
+	getExtension(string) {
+		return string.substr(string.lastIndexOf('.') + 1)
+	}
 }
 

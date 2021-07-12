@@ -1,5 +1,9 @@
 
 $(document).on('focus', 'input, select', function() {
+  if ($(this).closest('form').is('[data-type="vue"]')) {
+    return 
+  }
+
   $(this).removeClass('is-invalid')
     .next('.text-danger')
     .remove();

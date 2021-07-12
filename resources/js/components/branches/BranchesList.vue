@@ -15,19 +15,19 @@
 
         <tbody>
           <tr v-for="branch in branches" :key="branch.id">
-            <td class="align-middle" v-if="branch.city">
+            <td class="align-middle" v-if="branch.city" nowrap>
               {{ branch.city.name }} {{ branch.city.state ? ' - ' + branch.city.state.abbreviation : '' }}
             </td>
             <td v-else class="align-middle text-danger">[cidade deletada]</td>
 
-            <td v-if="branch.city.shipping_company" class="align-middle">
+            <td v-if="branch.city.shipping_company" class="align-middle" nowrap>
               {{ branch.city.shipping_company.name }}
             </td>
             <td v-else class="align-middle text-danger">
               [transportadora deletada]
             </td>
 
-            <td>
+            <td nowrap>
               <ul class="list-group list-group-sm">
                 <li v-for="city in branch.cities" :key="`city-${city.id}`"
                   class="list-group-item"

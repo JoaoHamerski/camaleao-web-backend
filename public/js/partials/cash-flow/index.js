@@ -1,1 +1,56 @@
-applyCleave($("[name*=dia]"),cleaveDate),$(".btn-view-detail").on("click",(function(t){t.preventDefault();var a=$(this).parents("tr").attr("data-expense-id")||$(this).parents("tr").attr("data-payment-id");axios.get(getLocationURL()+"/get-details",{params:{id:a,entity:$(this).parents("tr").get(0).hasAttribute("data-expense-id")?"expense":"payment"}}).then((function(t){$("#detailsModal .modal-body").html(t.data.view)}))})),$(".btn-today").on("click",(function(t){$("[name=dia_final]").val("")})),$(".btn-current-week").on("click",(function(t){t.preventDefault();var a=new Date,e=a.getDate()-a.getDay(),n=new Date(a.setDate(e)),i=new Date(a.setDate(n.getDate()+6));$("[name=dia_inicial]").val(new Intl.DateTimeFormat("pt-BR").format(n)),$("[name=dia_final]").val(new Intl.DateTimeFormat("pt-BR").format(i))})),$(".btn-current-month").on("click",(function(t){t.preventDefault();var a=new Date,e=new Date(a.getFullYear(),a.getMonth(),1),n=new Date(a.getFullYear(),a.getMonth()+1,0);$("[name=dia_inicial]").val(new Intl.DateTimeFormat("pt-BR").format(e)),$("[name=dia_final]").val(new Intl.DateTimeFormat("pt-BR").format(n))})),$("#btnFilter").on("click",(function(t){t.preventDefault();var a=$(this);loadingBtn(a,!0),axios.get(getLocationURL(),{params:{dia_inicial:$("[name=dia_inicial]").val(),dia_final:$("[name=dia_final]").val()}}).then((function(t){a.parents("form").submit()})).catch((function(t){dispatchErrorMessages(t.response.data.errors),loadingBtn(a,!1)}))}));
+/******/ (() => { // webpackBootstrap
+var __webpack_exports__ = {};
+/*!**************************************************!*\
+  !*** ./resources/js/partials/cash-flow/index.js ***!
+  \**************************************************/
+applyCleave($('[name*=dia]'), cleaveDate);
+$('.btn-view-detail').on('click', function (e) {
+  e.preventDefault();
+  var id = $(this).parents('tr').attr('data-expense-id') || $(this).parents('tr').attr('data-payment-id');
+  axios.get(getLocationURL() + '/get-details', {
+    params: {
+      id: id,
+      entity: $(this).parents('tr').get(0).hasAttribute('data-expense-id') ? 'expense' : 'payment'
+    }
+  }).then(function (response) {
+    $('#detailsModal .modal-body').html(response.data.view);
+  });
+});
+$('.btn-today').on('click', function (e) {
+  $('[name=dia_final]').val('');
+});
+$('.btn-current-week').on('click', function (e) {
+  e.preventDefault();
+  var current = new Date();
+  var first = current.getDate() - current.getDay();
+  var firstDay = new Date(current.setDate(first));
+  var lastDay = new Date(current.setDate(firstDay.getDate() + 6));
+  $('[name=dia_inicial]').val(new Intl.DateTimeFormat('pt-BR').format(firstDay));
+  $('[name=dia_final]').val(new Intl.DateTimeFormat('pt-BR').format(lastDay));
+});
+$('.btn-current-month').on('click', function (e) {
+  e.preventDefault();
+  var date = new Date();
+  var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+  var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  $('[name=dia_inicial]').val(new Intl.DateTimeFormat('pt-BR').format(firstDay));
+  $('[name=dia_final]').val(new Intl.DateTimeFormat('pt-BR').format(lastDay));
+});
+$('#btnFilter').on('click', function (e) {
+  e.preventDefault();
+  var $btn = $(this);
+  loadingBtn($btn, true);
+  axios.get(getLocationURL(), {
+    params: {
+      dia_inicial: $('[name=dia_inicial]').val(),
+      dia_final: $('[name=dia_final]').val()
+    }
+  }).then(function (response) {
+    $btn.parents('form').submit();
+  })["catch"](function (error) {
+    dispatchErrorMessages(error.response.data.errors);
+    loadingBtn($btn, false);
+  });
+});
+/******/ })()
+;

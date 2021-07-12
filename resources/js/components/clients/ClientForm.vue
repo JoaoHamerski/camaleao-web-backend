@@ -237,17 +237,24 @@
 
               this.form.name = client.name
               this.form.phone = client.phone
-              this.form.city_id = this.cities.find(
-                city => city.id === client.city.id
-              )
 
-              this.form.shipping_company_id = this.shipping_companies.find(
-                company => company.id === client.shipping_company_id
-              )
+              if (client.city_id) {
+                this.form.city_id = this.cities.find(
+                  city => city.id === client.city.id
+                )
+              }
 
-              this.form.branch_id = this.branches.find(
-                branch => branch.id === client.branch_id
-              )
+              if (client.shipping_company_id) {
+                this.form.shipping_company_id = this.shipping_companies.find(
+                  company => company.id === client.shipping_company_id
+                )
+              }
+
+              if (client.branch_id) {
+                this.form.branch_id = this.branches.find(
+                  branch => branch.id === client.branch_id
+                )
+              }
 
               resolve()
             })

@@ -65,14 +65,18 @@
 
 		<li>
 			<strong>Cidade:</strong> 
-			{{ $order->client->city ? $order->client->city->name : '[não-informado]' }}
-			{{ $order->client->city->state ? ' - ' . $order->client->city->state->abbreviation : '' }}
+			{{ $order->client->city ? $order->client->city->name : 'N/A' }}
+			{{ $order->client->stateAbbr ? ' - ' . $order->client->stateAbbr : '' }}
 
 		</li>
 
 		<li>
 			<strong>Frete:</strong>
-			{{ $order->client->shippingCompany ? $order->client->shippingCompany->name : '[não informado]' }}
+			{{ 
+				$order->client->shippingCompany 
+					? $order->client->shippingCompany->name 
+					: 'N/A' 
+				}}
 		</li>
 
 		<li>	
@@ -92,7 +96,7 @@
 		</li>
 
 		<li class="text-danger">
-			<strong>Data de entrega:</strong> {{ $order->delivery_date ? Helper::date($order->delivery_date, '%d/%m/%Y') : '[não informado]' }}
+			<strong>Data de entrega:</strong> {{ $order->delivery_date ? Helper::date($order->delivery_date, '%d/%m/%Y') : 'N/A' }}
 		</li>
 
 	</ul>
@@ -114,7 +118,7 @@
 				<strong>Quantidade:</strong> {{ $order->quantity }} CAMISAS
 			</li>
 			<li class="text-danger">
-				<strong>Data de entrega: </strong> {{ $order->delivery_date ? Helper::date($order->delivery_date, '%d/%m/%Y') : '[não informado]' }}
+				<strong>Data de entrega: </strong> {{ $order->delivery_date ? Helper::date($order->delivery_date, '%d/%m/%Y') : 'N/A' }}
 			</li>
 			<li>
 				<strong>Costureira / Valor: </strong>

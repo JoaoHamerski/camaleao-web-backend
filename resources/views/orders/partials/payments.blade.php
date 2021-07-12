@@ -1,4 +1,6 @@
-<h4 class="font-weight-bold text-secondary mt-4 mb-3">Pagamentos</h4>
+<h5 class="font-weight-bold text-secondary mt-4 mb-3">
+  &bull; Pagamentos
+</h5>
 
 <div class="d-flex flex-column">
   <ul class="list-group list-group-flush">

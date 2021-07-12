@@ -16,7 +16,7 @@ class Form {
 			this[field] = '';
 		}
 
-		this.errors.clear();
+		this.errors.clear('*');
 	}
 
 	data() {
@@ -29,13 +29,17 @@ class Form {
 		return data;
 	}
 
-	submit(method, url) {
+	submit(method, url, headers = null) {
+		let axiosConfig = {
+			method, url, data: this.data()
+		}
+
+		if (headers) {
+			axiosConfig = {...axiosConfig, headers}
+		}
+
 		return new Promise((resolve, reject) => {
-			axios.request({
-				method: method,
-				url: url,
-				data: this.data()
-			})
+			axios.request(axiosConfig)
 			.then(response => {
 				this.onSuccess();
 

@@ -14,8 +14,20 @@ class ClientsController extends Controller
     {
         $clients = Client::query();
 
-        if ($request->has('nome') && !empty($request->nome)) {
-            $clients->where('name', 'like', '%' . $request->nome . '%');
+        if ($request->has('opcao') && ! empty($request->opcao)) {
+            if ($request->opcao === 'nome') {
+                $clients->where('name', 'like', '%' . $request->busca . '%');
+            }
+            
+            if ($request->opcao === 'telefone') {
+                $clients->where('phone', 'like', '%' . $request->busca . '%');
+            }
+
+            if ($request->opcao === 'cidade') {
+                $clients->whereHas('city', function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->busca . '%');
+                });
+            }
         }
 
         return view('clients.index', [

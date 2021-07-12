@@ -20,3 +20,11 @@
         font-size: .8rem;
     }
 }
+
+.orders small {
+    font-size: .8rem;
+}
+
+.minus-value:before {
+    content: '- '
+}

@@ -69,7 +69,7 @@ class ExpensesController extends Controller
 
             $expenses->transpose()->map(function ($expense, $key) {
                 if (isset($expense['receipt_path'])) {
-                    $filename = $this->uploadFile(
+                    $filename = $this->storeFile(
                         $expense['receipt_path'],
                         $this->getFilepath('receipt_path'),
                         $key
@@ -83,7 +83,7 @@ class ExpensesController extends Controller
             });
         } else {
             if ($request->hasFile('receipt_path')) {
-                $filename = $this->uploadFile(
+                $filename = $this->storeFile(
                     $request->receipt_path,
                     $this->getFilepath('receipt_path')
                 );
@@ -116,7 +116,7 @@ class ExpensesController extends Controller
         }
 
         if ($request->hasFile('receipt_path')) {
-            $filename = $this->uploadFile(
+            $filename = $this->storeFile(
                 $request->receipt_path,
                 $this->getFilepath('receipt_path')
             );

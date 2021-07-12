@@ -75,7 +75,7 @@
         </li>
 
         <li class="position-relative">
-          <a class="{{ Request::is(['gerenciamento*', 'backup*']) ?: 'collapsed' }}" 
+          <a class="{{ Request::is(['gerenciamento*', 'backup*', 'tipos-de-roupas*']) ?: 'collapsed' }}" 
             data-toggle="collapse"
             href="#collapseManagement" 
             aria-expanded="false" 
@@ -90,7 +90,7 @@
           </a>
         
           <div id="collapseManagement" 
-            class="collapse {{ Request::is(['gerenciamento*', 'backup*']) ? 'show' : '' }}"
+            class="collapse {{ Request::is(['gerenciamento*', 'backup*', 'tipos-de-roupas*']) ? 'show' : '' }}"
             data-parent="#accordionSidebar"
           >
             <ul class="list-group-flush list-unstyled">
@@ -112,6 +112,13 @@
                 <a href="{{ route('backup.index') }}">
                   <i class="fas fa-download fa-fw mr-1 text-primary"></i>
                   Backup
+                </a>
+              </li>
+
+              <li class="{{ Request::is('tipos-de-roupas*') ? 'active' : '' }}">
+                <a href="{{ route('clothing-types.index') }}">
+                  <i class="fas fa-tshirt fa-fw mr-1 text-primary"></i>
+                  Tipos de roupa
                 </a>
               </li>
             </ul>

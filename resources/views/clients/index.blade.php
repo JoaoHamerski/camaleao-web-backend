@@ -11,7 +11,7 @@
           <button type="button" 
             data-toggle="modal"
             data-target="#clientModal" 
-            class="btn btn-success"
+            class="btn btn-success font-weight-bold" 
           >
             <i class="fas fa-user-plus fa-fw mr-1"></i>Novo cliente
           </button>
@@ -28,7 +28,21 @@
         <form method="GET" action="{{ route('clients.index') }}">
           <div class="form-group">
             <div class="input-group">
-              <input class="form-control" name="nome" type="text" placeholder="Por nome...">
+              <div class="input-group-prepend">
+                <select class="custom-select" name="opcao" id="opcao">
+                  <option value="nome" {{ request('opcao') == 'nome' ? 'selected="selected"' : '' }}>Nome</option>
+                  <option value="telefone"{{ request('opcao') == 'telefone' ? 'selected="selected"' : '' }}>Telefone</option>
+                  <option value="cidade" {{ request('opcao') == 'cidade' ? 'selected="selected"' : '' }}>Cidade</option>
+                </select>
+              </div>
+
+              <input class="form-control" 
+                name="busca" 
+                type="text" 
+                placeholder="Digite a busca..."
+                value="{{ request('busca') }}"
+              >
+
               <div class="input-group-append">
                 <button class="btn btn-outline-primary">Buscar</button>
               </div>

@@ -20,9 +20,9 @@ class Order extends Model
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo
      * de evento ocorre no model
-     * 
+     *
      * @param string $eventname
-     * 
+     *
      * @return string
      */
     public function getDescriptionForEvent(string $eventName): string
@@ -76,7 +76,7 @@ class Order extends Model
 
     /**
      * Método "booted" do model
-     * 
+     *
      * @return void
      **/
     public static function booted()
@@ -94,7 +94,7 @@ class Order extends Model
 
     /**
      * Um pedido pertence a um cliente
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function client()
@@ -104,7 +104,7 @@ class Order extends Model
 
     /**
      * Um pedido tem muitos pagamentos
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function payments()
@@ -114,7 +114,7 @@ class Order extends Model
 
     /**
      * Um pedido tem muitas anotações
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function notes()
@@ -124,7 +124,7 @@ class Order extends Model
 
     /**
      * Um pedido pertence a um status
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function status()
@@ -132,9 +132,31 @@ class Order extends Model
         return $this->belongsTo(Status::class);
     }
 
+    public function getOriginalPrice()
+    {
+        return bcadd($this->price, $this->discount, 2);
+    }
+
+    public function clothingTypes()
+    {
+        return $this->belongsToMany(ClothingType::class)
+            ->withPivot('quantity', 'value');
+    }
+
+    public function totalClothingsValue()
+    {
+        $total = 0;
+
+        foreach ($this->clothingTypes as $type) {
+            $total = bcadd($type->totalValue(), $total, 2);
+        }
+
+        return $total;
+    }
+
     /**
      * Retorna a URL para a página do pedido
-     * 
+     *
      * @return string
      */
     public function path()
@@ -144,9 +166,9 @@ class Order extends Model
 
     /**
      * Cria um pagamento de entrada
-     * 
+     *
      * @param double $value
-     * 
+     *
      * @return App\Models\Payment
      */
     public function createDownPayment($value, $viaId)
@@ -170,18 +192,8 @@ class Order extends Model
     }
 
     /**
-     * Retorna o valor unitário do pedido
-     * 
-     * @return double
-     */
-    public function getUnityValue()
-    {
-        return bcdiv($this->price, $this->quantity, 2);
-    }
-
-    /**
      * Retorna o total que falta pagar no pedido
-     * 
+     *
      * @return double
      */
     public function getTotalOwing()
@@ -191,7 +203,7 @@ class Order extends Model
 
     /**
      * Verifica se o pedido está pago
-     * 
+     *
      * @return bool
      */
     public function isPaid()
@@ -201,10 +213,10 @@ class Order extends Model
 
     /**
      * Retorna o caminho para os arquivos do campo especificado
-     * 
+     *
      * @param $field
      * @param $publicRelative Determina se o caminho deve ser relativo a pasta public
-     * 
+     *
      * @return array
      */
     public function getPaths($field, $publicRelative = false)

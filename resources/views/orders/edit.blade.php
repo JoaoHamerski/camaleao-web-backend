@@ -17,7 +17,7 @@
 	</div>
 
 	<div class="row mt-2">
-		<div class="col-md-3">
+		<div class="col-md-3 mb-3">
 			@include('clients._client-card')
 		</div>
 
@@ -28,7 +28,11 @@
 				</div>
 
 				<div class="card-body">
-					@include('orders._form', ['method' => 'PATCH'])
+					<order-form 
+						:is-edit="true"
+						order-code="{{ $order->code }}"
+						client-id="{{ $order->client->id }}"
+					></order-form>
 				</div>
 			</div>
 		</div>

@@ -20,6 +20,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ExpenseTypesController;
 use App\Http\Controllers\ClothingTypesController;
 use App\Http\Controllers\ShippingCompaniesController;
+use App\Models\ClothingType;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,13 +76,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/cliente/{client}/pedido/{order}/file-view', [OrdersController::class, 'showFile'])->name('showFile');
 
         Route::middleware('role:gerencia,atendimento')->group(function () {
+            Route::get('/cliente/{client}/pedido/{order}/json', [OrdersController::class, 'json']);
             Route::get('/pedidos', [OrdersController::class, 'index'])->name('index');
             Route::get('/pedidos/relatorio-data-producao', [OrdersController::class, 'generateReportProductionDate'])->name('reportProductionDate');
             Route::get('/pedidos/relatorio', [OrdersController::class, 'generateReport'])->name('report');
             Route::get('/cliente/{client}/novo-pedido', [OrdersController::class, 'create'])->name('create');
             Route::post('/cliente/{client}/novo-pedido', [OrdersController::class, 'store'])->name('store');
             Route::get('/cliente/{client}/pedido/{order}/editar', [OrdersController::class, 'edit'])->name('edit');
-            Route::patch('/cliente/{client}/pedido/{order}/editar', [OrdersController::class, 'patch'])->name('patch');
+            Route::patch('/cliente/{client}/pedido/{order}/editar', [OrdersController::class, 'update'])->name('patch');
             Route::post('/cliente/{client}/pedido/{order}/toggle-order', [OrdersController::class, 'toggleOrder'])->name('toggleOrder');
             Route::delete('/cliente/{client}/pedido/{order}/deletar', [OrdersController::class, 'destroy'])->name('destroy');
             Route::post('/cliente/{client}/pedido/{order}/editar/delete-file', [OrdersController::class, 'deleteFile']);
@@ -186,6 +188,10 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::name('clothing-types.')->middleware('role:gerencia, atendimento')->group(function () {
+        Route::get('/tipos-de-roupas', [ClothingTypesController::class, 'index'])->name('index');
         Route::get('/tipos-de-roupas/list', [ClothingTypesController::class, 'list']);
+        Route::post('/tipos-de-roupas', [ClothingTypesController::class, 'store']);
+        Route::patch('/tipos-de-roupas/{clothingType}/toggle-hide', [ClothingTypesController::class, 'toggleHide']);
+        Route::patch('/tipos-de-roupas/{clothingType}', [ClothingTypesController::class, 'update']);
     });
 });

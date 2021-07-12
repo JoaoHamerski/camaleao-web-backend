@@ -85,6 +85,22 @@
 				inputType: this.type
 			}
 		},
+		watch: {
+			// Atualiza a máscara do input após ele receber 
+			// alguma mudança programaticamente.
+			// A biblioteca não atualiza a mascara sozinha.
+			value(val, oldVal) {
+				if (val === null || oldVal === null) {
+					return
+				}
+				
+				if (oldVal.length === 0 && val.length > 0) {
+					setTimeout(() => {
+						this.$refs.input.updateValue()
+					}, 100)
+				}
+			}
+		},
 		methods: {
 			togglePasswordType() {
 				this.inputType = this.inputType === 'password' 
