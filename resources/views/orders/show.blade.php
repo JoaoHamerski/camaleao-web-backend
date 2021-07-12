@@ -162,7 +162,7 @@
             </div>
           </div>
           
-          @if (! empty($order->clothingTypes))
+          @if (! $order->clothingTypes->isEmpty())
           <div class="mt-3">
             <small class="text-secondary font-weight-bold">Tipos de roupa</small>
             <div class="table-responsive mt-2">
