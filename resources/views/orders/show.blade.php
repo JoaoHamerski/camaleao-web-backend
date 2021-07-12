@@ -161,7 +161,8 @@
               <h5>{{ $order->quantity }}</h5>
             </div>
           </div>
-
+          
+          @if (! empty($order->clothingTypes))
           <div class="mt-3">
             <small class="text-secondary font-weight-bold">Tipos de roupa</small>
             <div class="table-responsive mt-2">
@@ -207,6 +208,12 @@
               </table>
             </div>
           </div>
+          @else
+          <div class="text-center">
+            <small class="font-weight-bold text-dark">Preço</small>
+            <h5>{!! Mask::money($order->price, true) !!}</h5>
+          </div>
+          @endif
 
           <div class="d-flex justify-content-around mt-4">
             <div class="text-success">
