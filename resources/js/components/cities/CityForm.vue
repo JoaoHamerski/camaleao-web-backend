@@ -97,11 +97,14 @@
 
         this.form.submit('POST', '/gerenciamento/cidades/')
           .then(response => {
+            console.log(response)
             this.form.reset()
             this.$toast.success('Cidade cadastrada')
             this.$emit('created', response.city)
           })
-          .catch(() => {})
+          .catch(error => {
+            console.log(error.response)
+          })
           .then(() => {
             this.form.isLoading = false
           })
