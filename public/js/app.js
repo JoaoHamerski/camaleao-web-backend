@@ -3354,7 +3354,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.form.isLoading = true;
-      this.form.submit('POST', '/gerenciamento/cidades/').then(function (response) {
+      this.form.submit('POST', '/gerenciamento/cidades').then(function (response) {
         console.log(response);
 
         _this.form.reset();
