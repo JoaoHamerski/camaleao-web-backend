@@ -173,8 +173,11 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::name('shipping-companies.')->middleware('role:gerencia,atendimento')->group(function () {
-        Route::get('/transportadoras/list', [ShippingCompaniesController::class, 'list']);
+    Route::name('shipping-companies.')->group(function () {
+        Route::middleware('role:gerencia,atendimento')->group(function () {
+            Route::get('/transportadoras/list', [ShippingCompaniesController::class, 'list']);
+        });
+        
         Route::middleware('role:gerencia')->group(function () {
             Route::patch('/transportadoras/{shippingCompany}', [ShippingCompaniesController::class, 'update']);
             Route::post('/transportadoras', [ShippingCompaniesController::class, 'store']);
@@ -187,12 +190,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/backup/download', [BackupController::class, 'download'])->name('download');
     });
 
-    Route::name('clothing-types.')->middleware('role:gerencia, atendimento')->group(function () {
-        Route::get('/tipos-de-roupas', [ClothingTypesController::class, 'index'])->name('index');
-        Route::get('/tipos-de-roupas/list', [ClothingTypesController::class, 'list']);
-        Route::post('/tipos-de-roupas', [ClothingTypesController::class, 'store']);
-        Route::patch('/tipos-de-roupas/{clothingType}/toggle-hide', [ClothingTypesController::class, 'toggleHide']);
-        Route::patch('/tipos-de-roupas/update-order', [ClothingTypesController::class, 'updateOrder']);
-        Route::patch('/tipos-de-roupas/{clothingType}', [ClothingTypesController::class, 'update']);
+    Route::name('clothing-types.')->group(function () {
+        Route::middleware('role:gerencia,atendimento')->group(function () {
+            Route::get('/tipos-de-roupas/list', [ClothingTypesController::class, 'list']);
+        });
+
+        Route::middleware('role:gerencia')->group(function () {
+            Route::get('/tipos-de-roupas', [ClothingTypesController::class, 'index'])->name('index');
+            Route::post('/tipos-de-roupas', [ClothingTypesController::class, 'store']);
+            Route::patch('/tipos-de-roupas/{clothingType}/toggle-hide', [ClothingTypesController::class, 'toggleHide']);
+            Route::patch('/tipos-de-roupas/update-order', [ClothingTypesController::class, 'updateOrder']);
+            Route::patch('/tipos-de-roupas/{clothingType}', [ClothingTypesController::class, 'update']);
+        });
     });
 });
