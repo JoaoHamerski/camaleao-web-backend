@@ -147,7 +147,7 @@
             <h5 class="font-weight-bold text-secondary">
               &bull; Detalhes do pedido 
             </h5>
-            <div class="font-weight-bold">{{ $order->name }} ({{ $order->code }})</div>
+            <div class="font-weight-bold">{{ $order->name }} - <span class="text-primary">{{ $order->code }}</span></div>
           </div>
 
           <div class="d-flex justify-content-between">
