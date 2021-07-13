@@ -95,16 +95,13 @@
       create() {
         this.form.isLoading = true
 
-        this.form.submit('POST', '/gerenciamento/cidades')
+        this.form.submit('POST', '/gerenciamento/cidades/')
           .then(response => {
-            console.log(response)
             this.form.reset()
             this.$toast.success('Cidade cadastrada')
             this.$emit('created', response.city)
           })
-          .catch(error => {
-            console.log(error.response)
-          })
+          .catch(() => {})
           .then(() => {
             this.form.isLoading = false
           })

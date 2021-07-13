@@ -129,6 +129,7 @@
     </InfiniteLoading>
 
     <NewCityModal @created="refreshInfiniteHandler" />
+    
     <EditCityModal @updated="refreshInfiniteHandler" 
       ref="editCityModal" 
     />

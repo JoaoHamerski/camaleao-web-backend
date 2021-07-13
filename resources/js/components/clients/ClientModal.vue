@@ -1,7 +1,7 @@
 <template>
   <AppModal id="clientModal"
     ref="modal"
-    modalDialogClass="modal-dialog-centered"
+    modalDialogClass="modal-dialog-centered modal-dialog-scrollable"
     :modalHeaderClass="isEdit ? 'bg-primary' : 'bg-success'"
   >
     <template #header>

@@ -11,6 +11,8 @@
     </template>
 
     <template #body>
+      <AppLoading v-if="isLoading" />
+
       <h5 class="text-center font-weight-bold">ATENÇÃO</h5>
       <div class="text-center mb-2">
         Selecione outra cidade para substituir a cidade que estão cadastrados os clientes de: 
@@ -73,6 +75,7 @@
     },
     data: function() {
       return {
+        isLoading: true,
         city: {},
         cities: [],
         form: new Form({
@@ -96,10 +99,23 @@
     },
     mounted() {
       this.$on('city-selected', city => {
+        this.isLoading = true
         let index = this.cities.findIndex(_city => _city.id === city.id)
 
-        this.city = city
-        this.cities.splice(index, 1, {...city, $isDisabled: true})
+        axios.get('/gerenciamento/cidades/list', {
+          params: {
+            only_names: true
+          }
+        })
+          .then(response => {
+            this.cities = response.data.cities
+            this.city = city
+            this.cities.splice(index, 1, {...city, $isDisabled: true})
+          })
+          .catch(() => {})
+          .then(() => {
+            this.isLoading = false
+          })
       })
 
       $(this.$refs.modal.$el).on('hidden.bs.modal', () => {
@@ -109,15 +125,6 @@
         let index = this.cities.findIndex(_city => _city.id === this.city.id)
         this.cities.splice(index, 1, {...this.city, $$isDisabled: false})
       })
-
-      axios.get('/gerenciamento/cidades/list', {
-        params: {
-          only_names: true
-        }
-      })
-        .then(response => {
-          this.cities = response.data.cities
-        })
     }
   }
 </script>
