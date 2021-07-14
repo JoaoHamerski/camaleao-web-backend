@@ -332,10 +332,8 @@ class OrdersController extends Controller
     public function generateReport(Request $request)
     {
         if ($request->wantsJson()) {
-            $cities = Client::all()->pluck('city')->unique()->all();
-
             $validator = Validator::make($request->all(), [
-                'cidade' => ['nullable', Rule::in($cities)],
+                'cidade' => ['nullable', 'exists:cities,name'],
                 'status' => 'nullable|exists:status,id',
                 'data_de_fechamento' => 'nullable|date_format:d/m/Y'
             ]);
