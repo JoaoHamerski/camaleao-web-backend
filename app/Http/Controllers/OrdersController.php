@@ -54,7 +54,10 @@ class OrdersController extends Controller
 
         foreach ($paths as $path) {
             if (! empty($order[$path])) {
+                $files = [];
+                
                 foreach ($order->getPaths($path, true) as $index => $filepath) {
+
                     $files[] = 'data:'
                     . Storage::mimeType($filepath)
                     . ';base64,'
