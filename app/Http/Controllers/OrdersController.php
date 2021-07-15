@@ -37,6 +37,7 @@ class OrdersController extends Controller
     public function json(Client $client, Order $order)
     {
         $this->authorize('view', [$order, $client->id]);
+
         $paths = [
             'art_paths',
             'size_paths',
@@ -53,15 +54,11 @@ class OrdersController extends Controller
 
         foreach ($paths as $path) {
             if (! empty($order[$path])) {
-                $jsonOrder[$path] = json_decode($order->{$path});
-
                 foreach ($order->getPaths($path, true) as $index => $filepath) {
-                    $files = [];
-
                     $files[] = 'data:'
-                        . Storage::mimeType($filepath)
-                        . ';base64,'
-                        . base64_encode(Storage::get($filepath));
+                    . Storage::mimeType($filepath)
+                    . ';base64,'
+                    . base64_encode(Storage::get($filepath));
                 }
 
                 $jsonOrder[$path] = $files;
@@ -103,6 +100,7 @@ class OrdersController extends Controller
         return view('orders.show', [
             'client' => $client,
             'order' => $order,
+            'payments' => $order->payments()->orderBy('created_at', 'desc')->get(),
             'status' => Status::all(),
             'vias' => Via::all()
         ]);
