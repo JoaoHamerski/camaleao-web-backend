@@ -1,5 +1,5 @@
 <ul id="listGroupNotes" class="list-group">
-  @foreach($order->notes as $note)
+  @foreach($order->notes()->whereNull('is_reminder')->get() as $note)
     @include('orders.partials.note-list-item')
   @endforeach
 </ul>

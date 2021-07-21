@@ -118,18 +118,37 @@
       </div>
       
       <div class="card">
-        <div class="card-header {{ $order->isClosed() ?  'bg-secondary' : 'bg-primary' }} font-weight-bold text-white">
-          <i class="fas fa-box-open fa-fw mr-1"></i>
-          Pedido - {{ $order->name ?? $order->code }} 
-          @if ($order->isClosed())
-            - FECHADO EM {{ Helper::date($order->closed_at, '%d/%m/%Y') }} 
+        <div class="card-header @if($order->isClosed()) bg-secondary @elseif($order->isPreRegistered()) bg-warning d-flex justify-content-between @else bg-primary @endif  font-weight-bold text-white">
+          <div> 
+            <i class="fas fa-box-open fa-fw mr-1"></i>
+            Pedido - {{ $order->name ?? $order->code }} 
+            @if ($order->isClosed())
+              - FECHADO EM {{ Helper::date($order->closed_at, '%d/%m/%Y') }} 
+            @endif
+          </div>
+          @if ($order->isPreRegistered())
+            <div>
+              PEDIDO EM PRÉ-REGISTRO
+            </div>
           @endif
         </div>
 
         <div class="card-body">
+          @if ($order->isPreRegistered())
+          <div class="text-center text-secondary mb-3">
+            @if ($order->getReminder())
+              <div class="text-dark">
+                <strong>LEMBRETE: </strong> {{ $order->getReminder()->text }}
+              </div>
+            @endif
+
+            <small>Use a opção <strong>editar</strong> para preencher os dados restantes do pedido</small>
+          </div>
+          @endif
+
           <div class="mb-3 d-flex flex-row justify-content-between">
             <button data-toggle="modal" data-target="#notesModal" class="btn btn-outline-primary">
-              <i class="fas fa-sticky-note fa-fw mr-1"></i>Anotações ({{ $order->notes->count() }})
+              <i class="fas fa-sticky-note fa-fw mr-1"></i>Anotações ({{ $order->notes->WhereNull('is_reminder')->count() }})
             </button>
 
             @if ($order->isClosed())
@@ -147,7 +166,8 @@
             <h5 class="font-weight-bold text-secondary">
               &bull; Detalhes do pedido 
             </h5>
-            <div class="font-weight-bold">{{ $order->name }} - <span class="text-primary">{{ $order->code }}</span></div>
+            <div class="font-weight-bold">
+              @if ($order->name) {{ $order->name }} - @endif <span class="text-primary">{{ $order->code }}</span></div>
           </div>
 
           <div class="d-flex justify-content-between">
@@ -158,7 +178,7 @@
 
             <div>
               <small class="font-weight-bold text-secondary">Quantidade</small>
-              <h5>{{ $order->quantity }}</h5>
+              <h5>{{ $order->quantity ?? 'N/A' }}</h5>
             </div>
           </div>
           

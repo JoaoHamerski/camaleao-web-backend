@@ -98,6 +98,7 @@ class OrdersController extends Controller
         }
 
         return view('orders.index', [
+            'preRegisteredCount' => Order::preRegistered()->count(),
             'orders' => $orders->paginate(10)->appends($request->query()),
             'cities' => City::orderBy('name')->get(),
             'status' => Status::all()
@@ -423,6 +424,10 @@ class OrdersController extends Controller
                 'delivery_date',
                 Carbon::createFromFormat('d/m/Y', $request->data_de_entrega)->toDateString()
             );
+        }
+
+        if ($request->filled('filtro') && $request->filtro == 'pre-registro') {
+            $orders->preRegistered();
         }
 
         return $orders;

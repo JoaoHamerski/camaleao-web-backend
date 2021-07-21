@@ -133,6 +133,16 @@ class Order extends Model
         return $this->belongsTo(Status::class);
     }
 
+    public function isPreRegistered()
+    {
+        return $this->quantity === null;
+    }
+
+    public function scopePreRegistered($query)
+    {
+        return $query->whereNull('quantity');
+    }
+
     public function getOriginalPrice()
     {
         return bcadd($this->price, $this->discount, 2);
@@ -192,6 +202,12 @@ class Order extends Model
         return $this->payments()
             ->where('is_confirmed', true)
             ->sum('value');
+    }
+
+
+    public function getReminder()
+    {
+        return $this->notes()->whereNotNull('is_reminder')->first();
     }
 
     /**

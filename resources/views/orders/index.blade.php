@@ -4,30 +4,34 @@
 
 @section('content')
     <div class="mt-5">
-      @include('orders.partials.index-report-filters')
+      @include('orders._general-report')
 
-      @include('orders.partials.index-filters')
+      @include('orders._production-date-report')
+
+      @include('orders._general-filters')
     
     </div>
     
     <div>
       <small class="text-secondary">
         @if (Request::query('ordem') == 'mais_antigo')
-          Exibindo pedidos por ordem de cadastro mais antigos primeiros, incluindo pedidos fechados
+          Exibindo pedidos por ordem de cadastro mais antigos primeiros, incluindo pedidos fechados.
         @elseif (Request::query('ordem') == 'mais_recente')
-          Exibindo pedidos por ordem de cadastro mais recente primeiros, incluindo pedidos fechados
+          Exibindo pedidos por ordem de cadastro mais recente primeiros, incluindo pedidos fechados.
         @elseif (Request::query('ordem') == 'data_de_entrega')
           Exibindo pedidos por ordem de data de entrega mais antiga primeiro, apenas pedidos em aberto
           <br>
-          (pedidos sem data de entrega informada ficam por último)
-        @else
-          Exibindo pedidos por ordem de cadastro mais antigo primeiros, apenas pedidos em aberto
+          (pedidos sem data de entrega informada ficam por último).
+        @elseif (Request::query('filtro') == 'pre-registro')
+          <span class="text-danger font-weight-bold">Pedidos que precisam ter seus dados completados.</span>
+        @else 
+          Exibindo pedidos por ordem de cadastro mais antigo primeiros, apenas pedidos em aberto.
         @endif
       </small>
     </div>  
 
   <div class="card">
-    <div class="card-header bg-primary font-weight-bold text-white position-relative">
+    <div class="card-header @if(Request::query('filtro') == 'pre-registro') bg-warning @else bg-primary @endif font-weight-bold text-white position-relative">
       <a href="{{ route('orders.index') }}" class="stretched-link"></a>
       <i class="fas fa-boxes fa-fw mr-1"></i>Lista de todos pedidos
     </div>
@@ -42,31 +46,31 @@
               <th>Quantidade</th>
               <th>Valor total</th>
               <th>Total pago</th>
-              <th>Data de produção</th>
-              <th>Data de entrega</th>
+              <th class="text-center">Produção</th>
+              <th class="text-center">Entrega</th>
             </tr>
           </thead>
 
           <tbody>
             @forelse($orders as $order)
-              <tr data-url="{{ $order->path() }}" class="clickable-link @if ($order->isClosed()) table-secondary @endif">
+              <tr data-url="{{ $order->path() }}" class="clickable-link @if ($order->isClosed()) table-secondary @elseif ($order->isPreRegistered()) table-warning @endif">
                 <td>{{ $order->client->name }}</td>
                 <td>{{ $order->code }}</td>
-                <td>{{ $order->quantity }}</td>
+                <td>{{ $order->quantity ?? 'N/A' }}</td>
                 <td>{{ Mask::money($order->price) }}</td>
                 <td>{{ Mask::money($order->getTotalPayments()) }}</td>
-                <td>
+                <td class="text-center">
                   {{
                     $order->production_date 
                       ? Helper::date($order->production_date, '%d/%m/%Y')
-                      : '[não informado]' 
+                      : 'N/A' 
                    }}
                 </td>
-                <td>
+                <td class="text-center">
                   {{ 
                     $order->delivery_date 
                       ? Helper::date($order->delivery_date, '%d/%m/%Y')
-                      : '[não informado]' 
+                      : 'N/A' 
                     }}
                 </td>
               </tr>

@@ -69,12 +69,13 @@
               <tbody>
                 @forelse ($orders as $order)
                   <tr data-url="{{ $order->path() }}"
-                    class="clickable-link @if ($order->isClosed()) table-secondary @endif"
-                    data-id="{{ $order->id }}">
+                    class="clickable-link @if ($order->isClosed()) table-secondary @elseif ($order->isPreRegistered()) table-warning @endif"
+                    data-id="{{ $order->id }}"
+                  >
                     <td>{{ $order->code }}</td>
                     <td>{{ Mask::money($order->price) }}</td>
                     <td>{{ Mask::money($order->getTotalPayments()) }}</td>
-                    <td>{{ $order->quantity }}</td>
+                    <td>{{ $order->quantity ?? 'N/A'}}</td>
                     <td>
                       {{
                         $order->production_date

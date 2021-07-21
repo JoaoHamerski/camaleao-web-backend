@@ -19,9 +19,9 @@ class Note extends Model
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo
      * de evento ocorre no model
-     * 
+     *
      * @param string $eventname
-     * 
+     *
      * @return string
      */
     public function getDescriptionForEvent(string $eventName): string
@@ -63,11 +63,11 @@ class Note extends Model
 
     /**
      * Uma anotação pertence a um pedido
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function order()
     {
-    	return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class);
     }
 }
