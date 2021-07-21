@@ -23,6 +23,13 @@
             Pedidos
           </a>
         </li>
+
+        <li class="{{ Request::is('caixa-diario') ? 'active' : '' }}">
+          <a href="{{ route('payments.daily') }}">
+            <i class="fas fa-cash-register  fa-fw mr-1 text-primary"></i>
+            Caixa diário
+          </a>
+        </li>
       @endrole
       
       @role(['gerencia', 'atendimento'])
@@ -67,15 +74,13 @@
       @endrole
 
       @role('gerencia')
-        <li class="{{ Request::is('usuarios*') ? 'active' : '' }}">
-            <a href="{{ route('users.index') }}">
-              <i class="fas fa-users fa-fw mr-1 text-primary"></i>
-              Usuários
-            </a>
-        </li>
-
         <li class="position-relative">
-          <a class="{{ Request::is(['gerenciamento*', 'backup*', 'tipos-de-roupas*']) ?: 'collapsed' }}" 
+          <a class="{{ Request::is([
+              'usuarios*',
+              'gerenciamento*', 
+              'backup*', 
+              'tipos-de-roupas*'
+            ]) ?: 'collapsed' }}" 
             data-toggle="collapse"
             href="#collapseManagement" 
             aria-expanded="false" 
@@ -90,10 +95,22 @@
           </a>
         
           <div id="collapseManagement" 
-            class="collapse {{ Request::is(['gerenciamento*', 'backup*', 'tipos-de-roupas*']) ? 'show' : '' }}"
+            class="collapse {{ Request::is([
+              'usuarios*',
+              'gerenciamento*', 
+              'backup*', 
+              'tipos-de-roupas*'
+            ]) ? 'show' : '' }}"
             data-parent="#accordionSidebar"
           >
             <ul class="list-group-flush list-unstyled">
+              <li class="{{ Request::is('usuarios*') ? 'active' : '' }}">
+                <a href="{{ route('users.index') }}">
+                  <i class="fas fa-users fa-fw mr-1 text-primary"></i>
+                  Usuários
+                </a>
+              </li>
+
               <li class="{{ Request::is('gerenciamento/cidades*') ? 'active' : '' }}">
                 <a href="{{ route('cities.index') }}">
                   <i class="fas fa-city fa-fw mr-1 text-primary"></i>
@@ -107,18 +124,18 @@
                   Filiais
                 </a>
               </li>
+              
+              <li class="{{ Request::is('tipos-de-roupas*') ? 'active' : '' }}">
+                <a href="{{ route('clothing-types.index') }}">
+                  <i class="fas fa-tshirt fa-fw mr-1 text-primary"></i>
+                  Tipos de roupa
+                </a>
+              </li>
 
               <li class="{{ Request::is('backup*') ? 'active' : '' }}">
                 <a href="{{ route('backup.index') }}">
                   <i class="fas fa-download fa-fw mr-1 text-primary"></i>
                   Backup
-                </a>
-              </li>
-
-              <li class="{{ Request::is('tipos-de-roupas*') ? 'active' : '' }}">
-                <a href="{{ route('clothing-types.index') }}">
-                  <i class="fas fa-tshirt fa-fw mr-1 text-primary"></i>
-                  Tipos de roupa
                 </a>
               </li>
             </ul>

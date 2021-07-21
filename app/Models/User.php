@@ -46,7 +46,7 @@ class User extends Authenticatable
 
     /**
      * Um usuário pertence a uma regra
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function role()
@@ -56,25 +56,31 @@ class User extends Authenticatable
 
     /**
      * Verifica se o usuário possui determinada regra
-     * 
+     *
      * @param int | array $role
      * @return boolean
      */
     public function hasRole($role)
     {
         if (is_array($role)) {
-            foreach($role as $r) {
-                if ($this->role()->where('name', $r)->exists())
+            foreach ($role as $r) {
+                if ($this->role()->where('name', $r)->exists()) {
                     return true;
+                }
             }
         }
 
         return $this->role()->where('name', $role)->exists();
     }
 
+    public function isAdmin()
+    {
+        return $this->hasRole('Gerencia');
+    }
+
     /**
      * Um usuário possui muitas despesas
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function expenses()

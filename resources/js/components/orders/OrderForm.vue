@@ -272,17 +272,24 @@
         v-for="(file, index) in form.payment_voucher_paths"
         :key="file.key"
       >
-        <div class="text-primary">
+        <a href="#viewFileModal" 
+          data-toggle="modal" 
+          data-target="#viewFileModal"
+          class="text-primary"
+          @click="selectedFile = file"
+        >
           <i class="fas fa-file fa-fw mr-1"></i>
           
-          Comprovante {{ index + 1}}
-        </div>
+          Comprovante {{ index + 1}} - (visualizar)
+        </a>
 
         <div class="text-danger clickable" @click="deleteFile(file, 'payment_voucher_paths')">
           <i class="fas fa-trash-alt fa-fw"></i>
         </div>
       </li>
     </ul>
+    
+    <ViewFileModal :file="selectedFile" />
 
     <button type="submit" 
       class="font-weight-bold btn btn-success mt-3"
@@ -299,12 +306,14 @@
   import Form from '../../util/Form'
   import accounting from 'accounting-js'
 
+  import ViewFileModal from './ViewFileModal'
   import UploadedFilesList from './UploadedFilesList'
   import moment from 'moment'
 
   export default {
     components: {
-      UploadedFilesList
+      UploadedFilesList,
+      ViewFileModal
     },
     props: {
       isEdit: { default: false },
@@ -314,6 +323,7 @@
     data: function() {
       return {
         masks,
+        selectedFile: null,
         clothingTypes: [],
         paymentVias: [],
         form: new Form({
@@ -391,7 +401,6 @@
           })
           .catch(error => {
             this.$toast.error('Verifique os campos incorretos')
-            console.log(error)
           })
           .then(() => {
             this.form.isLoading = false
@@ -468,15 +477,15 @@
               ? ''
               : this.$helpers.valueToBRL(order.discount)
 
-            for (let path of paths) {
+            paths.forEach((path, index) => {
               if (order[path].length) {
-                let files = order[path].map(_path => {
-                  return {key: + new Date(), base64: _path}
+                let files = order[path].map((_path, index2)=> {
+                  return {key: `${index}${index2}`, base64: _path}
                 })
 
                 this.form[path].push(...files)
               }
-            }
+            })
 
             for (let type of this.clothingTypes) {
               if (order[`value_${type.key}`]) {

@@ -55,9 +55,8 @@ class OrdersController extends Controller
         foreach ($paths as $path) {
             if (! empty($order[$path])) {
                 $files = [];
-                
-                foreach ($order->getPaths($path, true) as $index => $filepath) {
 
+                foreach ($order->getPaths($path, true) as $index => $filepath) {
                     $files[] = 'data:'
                     . Storage::mimeType($filepath)
                     . ';base64,'
@@ -73,6 +72,23 @@ class OrdersController extends Controller
         ], 200);
     }
     
+    public function list(Request $request, Client $client)
+    {
+        $orders = Client::find($client->id)
+            ->orders()
+            ->whereNull('closed_at')
+            ->orderBy('created_at', 'asc')
+            ->get();
+        
+        $orders = $orders->filter(function ($order) {
+            return $order->getTotalOwing() > 0;
+        });
+
+        return response()->json([
+            'orders' => $orders
+        ], 200);
+    }
+
     public function index(Request $request)
     {
         $orders = $this->getRequestQuery($request);

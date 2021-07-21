@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
 
     Route::name('clients.')->group(function () {
         Route::get('/', [ClientsController::class, 'index'])->name('index');
+        Route::get('/clientes/list', [ClientsController::class, 'list']);
         Route::get('/clientes/{client}', [ClientsController::class, 'show'])->name('show');
         Route::get('/clientes/{client}/json', [ClientsController::class, 'client']);
 
@@ -77,15 +78,16 @@ Route::middleware('auth')->group(function () {
 
         Route::middleware('role:gerencia,atendimento')->group(function () {
             Route::get('/cliente/{client}/pedido/{order}/json', [OrdersController::class, 'json']);
+            Route::get('/cliente/{client}/pedidos/list', [OrdersController::class, 'list']);
             Route::get('/pedidos', [OrdersController::class, 'index'])->name('index');
-            Route::get('/pedidos/relatorio-data-producao', [OrdersController::class, 'generateReportProductionDate'])->name('reportProductionDate');
-            Route::get('/pedidos/relatorio', [OrdersController::class, 'generateReport'])->name('report');
             Route::get('/cliente/{client}/novo-pedido', [OrdersController::class, 'create'])->name('create');
             Route::post('/cliente/{client}/novo-pedido', [OrdersController::class, 'store'])->name('store');
             Route::get('/cliente/{client}/pedido/{order}/editar', [OrdersController::class, 'edit'])->name('edit');
             Route::patch('/cliente/{client}/pedido/{order}/editar', [OrdersController::class, 'update'])->name('patch');
-            Route::post('/cliente/{client}/pedido/{order}/toggle-order', [OrdersController::class, 'toggleOrder'])->name('toggleOrder');
             Route::delete('/cliente/{client}/pedido/{order}/deletar', [OrdersController::class, 'destroy'])->name('destroy');
+            Route::get('/pedidos/relatorio-data-producao', [OrdersController::class, 'generateReportProductionDate'])->name('reportProductionDate');
+            Route::get('/pedidos/relatorio', [OrdersController::class, 'generateReport'])->name('report');
+            Route::post('/cliente/{client}/pedido/{order}/toggle-order', [OrdersController::class, 'toggleOrder'])->name('toggleOrder');
             Route::post('/cliente/{client}/pedido/{order}/editar/delete-file', [OrdersController::class, 'deleteFile']);
         });
     });
@@ -201,6 +203,15 @@ Route::middleware('auth')->group(function () {
             Route::patch('/tipos-de-roupas/{clothingType}/toggle-hide', [ClothingTypesController::class, 'toggleHide']);
             Route::patch('/tipos-de-roupas/update-order', [ClothingTypesController::class, 'updateOrder']);
             Route::patch('/tipos-de-roupas/{clothingType}', [ClothingTypesController::class, 'update']);
+        });
+    });
+
+    Route::name('payments.')->group(function () {
+        Route::middleware('role:gerencia,atendimento')->group(function () {
+            Route::get('/caixa-diario', [PaymentsController::class, 'index'])->name('daily');
+            Route::get('/caixa-diario/payments', [PaymentsController::class, 'todayPayments']);
+            Route::post('/caixa-diario/{payment}/assign-confirmation', [PaymentsController::class, 'assignConfirmation']);
+            Route::post('/caixa-diario/clientes/daily-payment', [PaymentsController::class, 'dailyPayment']);
         });
     });
 });

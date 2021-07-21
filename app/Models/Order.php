@@ -16,6 +16,7 @@ class Order extends Model
     protected static $logUnguarded = true;
     protected static $logOnlyDirty = true;
     protected static $logAttributes = ['client'];
+    protected $appends = ['total_owing'];
 
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo
@@ -188,7 +189,9 @@ class Order extends Model
      */
     public function getTotalPayments()
     {
-        return $this->payments()->sum('value');
+        return $this->payments()
+            ->where('is_confirmed', true)
+            ->sum('value');
     }
 
     /**
@@ -199,6 +202,22 @@ class Order extends Model
     public function getTotalOwing()
     {
         return bcsub($this->price, $this->getTotalPayments(), 2);
+    }
+
+    public function getTotalOwingAttribute()
+    {
+        return $this->getTotalOwing();
+    }
+
+    public function getTotalPossibleOwing()
+    {
+        $totalPayments = $this->payments()
+            ->where(function ($query) {
+                $query->where('is_confirmed', null)
+                    ->orWhere('is_confirmed', true);
+            })->sum('value');
+
+        return bcsub($this->price, $totalPayments, 2);
     }
 
     /**

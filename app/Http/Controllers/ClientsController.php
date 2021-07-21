@@ -41,6 +41,24 @@ class ClientsController extends Controller
             'cities' => Client::all()->pluck('city')->unique()->sort()
         ]);
     }
+
+    public function list(Request $request)
+    {
+        $clients = Client::query();
+
+        if ($request->filled('name')) {
+            if (is_numeric($request->name)) {
+                $clients = Client::where('phone', 'like', "%$request->name%");
+            } else {
+                $clients = Client::where('name', 'like', "%$request->name%");
+            }
+        }
+
+
+        return response()->json([
+            'clients' => $clients->limit(50)->get()
+        ], 200);
+    }
     
     public function show(Client $client, Request $request)
     {

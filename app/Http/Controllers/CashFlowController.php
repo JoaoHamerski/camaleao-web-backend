@@ -15,7 +15,7 @@ class CashFlowController extends Controller
     public function index(Request $request)
     {
         $expenses = Expense::query();
-        $payments = Payment::query();
+        $payments = Payment::where('is_confirmed', true);
 
         if ($request->hasAny(['dia_inicial', 'dia_final'])) {
             $validator = Validator::make($request->all(), [

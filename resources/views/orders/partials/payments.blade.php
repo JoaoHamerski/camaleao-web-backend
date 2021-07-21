@@ -4,8 +4,11 @@
 
 <div class="d-flex flex-column">
   <ul class="list-group list-group-flush">
-    @forelse($order->payments->reverse() as $payment)
-      <li data-id="{{ $payment->id }}" class="list-group-item d-flex justify-content-between">
+    @forelse($payments as $payment)
+      <li data-id="{{ $payment->id }}" 
+        class="list-group-item d-flex justify-content-between 
+        @if($payment->is_confirmed === null) list-group-item-warning @elseif($payment->is_confirmed == false) list-group-item-danger @endif"
+      >
         <div>
           <strong>
             {{ Mask::money($payment->value) }}
@@ -28,15 +31,23 @@
               (ver anotação)
             </a>
           @endif
+
+          @if ($payment->is_confirmed === null)
+            <span class="font-weight-bold"> - [PENDENTE]</span>
+          @elseif($payment->is_confirmed == false)
+            <span class="font-weight-bold"> - [RECUSADO]</span>
+          @endif
         </div>
 
         <div>
           @role(['gerencia', 'atendimento'])
-            <button class="btn btn-sm btn-outline-primary" 
-              data-toggle="modal" 
-                data-target="#changePaymentModal">
-              <i class="fas fa-edit fa-fw"></i>
-            </button>
+            @if ($payment->is_confirmed === null)
+              <button class="btn btn-sm btn-outline-primary" 
+                data-toggle="modal" 
+                  data-target="#changePaymentModal">
+                <i class="fas fa-edit fa-fw"></i>
+              </button>
+            @endif
           @else
             @button([
               'title' => 'Você não tem permissão para isso',

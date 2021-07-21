@@ -121,7 +121,9 @@ class Client extends Model
      */
     public function getTotalPaid()
     {
-        return $this->payments()->sum('value');
+        return $this->payments()
+            ->where('is_confirmed', true)
+            ->sum('value');
     }
 
     /**

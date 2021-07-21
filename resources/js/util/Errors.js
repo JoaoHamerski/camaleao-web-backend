@@ -30,6 +30,14 @@ class Errors {
 			return;
 		}
 
+		if (Array.isArray(field)) {
+			for (let f of field) {
+				Vue.delete(this.errors, f)
+			}
+
+			return
+		}
+
 		if (field) {
 			Vue.delete(this.errors, field);
 

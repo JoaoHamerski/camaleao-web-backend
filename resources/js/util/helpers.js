@@ -73,6 +73,54 @@ export default {
 	},
 	getExtension(string) {
 		return string.substr(string.lastIndexOf('.') + 1)
+	},
+	dataURLtoFile(dataurl, filename) {
+		var arr = dataurl.split(','), 
+			mime = arr[0].match(/:(.*?);/)[1],
+			bstr = atob(arr[1]), 
+			n = bstr.length, 
+			u8arr = new Uint8Array(n)
+
+		while(n--) {
+				u8arr[n] = bstr.charCodeAt(n)
+		}
+
+		return new File([u8arr], filename, {type: mime})
+	},
+	mask(mask, str) {
+		const replaceAt = function(str, index, replacement) {
+				return str.substr(0, index) + replacement + str.substr(index + replacement.length);
+		}
+		
+		mask = JSON.parse(JSON.stringify(mask))
+
+		str = str.replaceAll(' ', '')
+
+		for (let i = 0; i < str.length; i++) {
+			mask = replaceAt(mask, mask.indexOf('#'), str[i])
+		}
+
+		return mask
+	},
+	maskPhone(str)  {
+		if (! str) {
+			return ''
+		}
+		
+		let masksMap = {
+			8: '####-####',
+			9: '# ####-####',
+			10: '(##) ####-####',
+			11: '(##) # ####-####',
+		}
+
+		for (let index in masksMap) {
+			if (index == str.length) {
+				return this.mask(masksMap[index], str)
+			}
+		}
+
+		return ''
 	}
 }
 
