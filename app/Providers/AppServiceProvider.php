@@ -38,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * Inicializa as macros customizadas das Collections
-     * 
+     *
      * @return void
      */
     private function bootCollectionMacros()
@@ -59,7 +59,7 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * Inicializa tudo relativo ao blade no service provider
-     * 
+     *
      * @return void
      */
     private function bootBlade()
@@ -71,19 +71,19 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * Estruturas de condições customizadas do blade
-     * 
+     *
      * @return void
      */
     private function bootBladeIfs()
     {
-        Blade::if('role', function($role) {
+        Blade::if('role', function ($role) {
             return (auth()->check() && auth()->user()->hasRole($role));
         });
     }
 
     /**
      * Validações customizadas do blade
-     * 
+     *
      * @return void
      */
     private function bootBladeValidation()
@@ -91,11 +91,11 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('max_double', 'App\Rules\MaxDouble@passes');
         Validator::extend('min_double', 'App\Rules\MinDouble@passes');
 
-        Validator::replacer('max_double', function($message, $attribute, $rule, $parameters) {
+        Validator::replacer('max_double', function ($message, $attribute, $rule, $parameters) {
             return str_replace(':max', Mask::money($parameters[0]), $message);
         });
 
-        Validator::replacer('min_double', function($message, $attribute, $rule, $parameters) {
+        Validator::replacer('min_double', function ($message, $attribute, $rule, $parameters) {
             return str_replace(':min', Mask::money($parameters[0]), $message);
         });
     }

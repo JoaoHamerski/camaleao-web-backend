@@ -1,12 +1,15 @@
-<div class="card">
+<div class="card {{ $attributes['class'] }}">
     <div class="card-header bg-{{ $headerColor }} text-white position-relative">
         @if ($isCollapsed)
-        <a href="#collapse-card-{{ $collapseId }}" class="stretched-link" data-toggle="collapse" aria-expanded="true"></a>
+        <a href="#collapse-card-{{ $collapseId }}" class="stretched-link collapsed" data-toggle="collapse" aria-expanded="true"></a>
             
         <div class="card-collapse">
         @endif
-
-            <div class="font-weight-bold">
+        
+        @if (! empty($headerUrl))
+            <a href="{{ $headerUrl }}" class="stretched-link"></a>
+        @endif
+            <div class="font-weight-bold text-white">
                 @if ($icon) <i class="{{ $icon }} fa-fw mr-1"></i> @endif{{ $header }}
             </div>
 

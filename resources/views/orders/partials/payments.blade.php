@@ -49,11 +49,13 @@
               </button>
             @endif
           @else
-            @button([
-              'title' => 'Você não tem permissão para isso',
-              'icon' => 'fas fa-edit',
-              'class' => 'btn btn-outline-primary btn-sm'
-            ])
+            @if ($payment->is_confirmed === null)
+              @button([
+                'title' => 'Você não tem permissão para isso',
+                'icon' => 'fas fa-edit',
+                'class' => 'btn btn-outline-primary btn-sm'
+              ])
+            @endif
           @endrole
         </div>
       </li>

@@ -6644,15 +6644,17 @@ try {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue_tippy__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-tippy */ "./node_modules/vue-tippy/dist/vue-tippy.esm.js");
 
-vue__WEBPACK_IMPORTED_MODULE_0__.default.component('cities-list', __webpack_require__(/*! ./cities/CitiesList */ "./resources/js/components/cities/CitiesList.vue").default);
-vue__WEBPACK_IMPORTED_MODULE_0__.default.component('branches-list', __webpack_require__(/*! ./branches/BranchesList */ "./resources/js/components/branches/BranchesList.vue").default);
-vue__WEBPACK_IMPORTED_MODULE_0__.default.component('client-modal', __webpack_require__(/*! ./clients/ClientModal */ "./resources/js/components/clients/ClientModal.vue").default);
-vue__WEBPACK_IMPORTED_MODULE_0__.default.component('new-city-modal', __webpack_require__(/*! ./cities/NewCityModal */ "./resources/js/components/cities/NewCityModal.vue").default);
-vue__WEBPACK_IMPORTED_MODULE_0__.default.component('order-form', __webpack_require__(/*! ./orders/OrderForm */ "./resources/js/components/orders/OrderForm.vue").default);
-vue__WEBPACK_IMPORTED_MODULE_0__.default.component('clothing-types-list', __webpack_require__(/*! ./clothing-types/ClothingTypesList */ "./resources/js/components/clothing-types/ClothingTypesList.vue").default);
-vue__WEBPACK_IMPORTED_MODULE_0__.default.component('daily-cash-list', __webpack_require__(/*! ./daily-cash/DailyCashList */ "./resources/js/components/daily-cash/DailyCashList.vue").default);
+
+vue__WEBPACK_IMPORTED_MODULE_1__.default.component('cities-list', __webpack_require__(/*! ./cities/CitiesList */ "./resources/js/components/cities/CitiesList.vue").default);
+vue__WEBPACK_IMPORTED_MODULE_1__.default.component('branches-list', __webpack_require__(/*! ./branches/BranchesList */ "./resources/js/components/branches/BranchesList.vue").default);
+vue__WEBPACK_IMPORTED_MODULE_1__.default.component('client-modal', __webpack_require__(/*! ./clients/ClientModal */ "./resources/js/components/clients/ClientModal.vue").default);
+vue__WEBPACK_IMPORTED_MODULE_1__.default.component('new-city-modal', __webpack_require__(/*! ./cities/NewCityModal */ "./resources/js/components/cities/NewCityModal.vue").default);
+vue__WEBPACK_IMPORTED_MODULE_1__.default.component('order-form', __webpack_require__(/*! ./orders/OrderForm */ "./resources/js/components/orders/OrderForm.vue").default);
+vue__WEBPACK_IMPORTED_MODULE_1__.default.component('clothing-types-list', __webpack_require__(/*! ./clothing-types/ClothingTypesList */ "./resources/js/components/clothing-types/ClothingTypesList.vue").default);
+vue__WEBPACK_IMPORTED_MODULE_1__.default.component('daily-cash-list', __webpack_require__(/*! ./daily-cash/DailyCashList */ "./resources/js/components/daily-cash/DailyCashList.vue").default);
 
 /***/ }),
 

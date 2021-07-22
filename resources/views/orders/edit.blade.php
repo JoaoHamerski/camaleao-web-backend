@@ -11,9 +11,6 @@
 			</a>	
 		</div>
 
-		<div class="col-md-9">
-			
-		</div>
 	</div>
 
 	<div class="row mt-2">
@@ -22,19 +19,19 @@
 		</div>
 
 		<div class="col-md-9">
-			<div class="card">
-				<div class="card-header bg-primary text-white font-weight-bold">
-					<i class="fas fa-edit fa-fw mr-1"></i>Alterar dados do pedido
-				</div>
-
-				<div class="card-body">
+			<x-card
+				header-color="primary"
+				icon="fas fa-edit"
+			>
+				<x-slot name="header">Alterar dados do pedido</x-slot>
+				<x-slot name="body">
 					<order-form 
 						:is-edit="true"
 						order-code="{{ $order->code }}"
 						client-id="{{ $order->client->id }}"
-					></order-form>
-				</div>
-			</div>
+					/>
+				</x-slot>
+			</x-card>
 		</div>
 	</div>
 @endsection

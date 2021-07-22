@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { TippyComponent } from "vue-tippy";
 
 Vue.component('cities-list', require('./cities/CitiesList').default)
 Vue.component('branches-list', require('./branches/BranchesList').default)

@@ -7,21 +7,24 @@
   <div class="col col-md-10 mx-auto mt-5 px-0">
     <div class="d-flex justify-content-between flex-column flex-sm-row">
       <div class="mb-2 mb-sm-0">
-        @role(['atendimento', 'gerencia'])
+        <span class="d-inline-block"
+          @role('design')
+            content="Você não tem permissão para isso"
+            v-tippy="{placement: 'bottom', arrow: true, duration: 150}"
+          @endrole
+        >
           <button type="button" 
-            data-toggle="modal"
-            data-target="#clientModal" 
+            @role(['atendimento', 'gerencia'])
+              data-toggle="modal"
+              data-target="#clientModal" 
+            @else
+              disabled=disabled
+            @endrole
             class="btn btn-success font-weight-bold" 
           >
             <i class="fas fa-user-plus fa-fw mr-1"></i>Novo cliente
           </button>
-        @else('design')
-          <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Você não tem permissão para isso">
-            <button style="pointer-events: none;" class="btn btn-success" disabled="disabled">
-              <i class="fas fa-user-plus fa-fw mr-1"></i>Novo cliente
-            </button>
-          </span>
-        @endrole
+        </span>
       </div>
 
       <div>
@@ -30,9 +33,17 @@
             <div class="input-group">
               <div class="input-group-prepend">
                 <select class="custom-select" name="opcao" id="opcao">
-                  <option value="nome" {{ request('opcao') == 'nome' ? 'selected="selected"' : '' }}>Nome</option>
-                  <option value="telefone"{{ request('opcao') == 'telefone' ? 'selected="selected"' : '' }}>Telefone</option>
-                  <option value="cidade" {{ request('opcao') == 'cidade' ? 'selected="selected"' : '' }}>Cidade</option>
+                  <option value="nome" {{ request('opcao') == 'nome' ? 'selected="selected"' : '' }}>
+                    Nome
+                  </option>
+
+                  <option value="telefone"{{ request('opcao') == 'telefone' ? 'selected="selected"' : '' }}>
+                    Telefone
+                  </option>
+
+                  <option value="cidade" {{ request('opcao') == 'cidade' ? 'selected="selected"' : '' }}>
+                    Cidade
+                  </option>
                 </select>
               </div>
 
@@ -52,13 +63,17 @@
       </div>
     </div>
 
-    <div class="card mt-2">
-      <div class="card-header bg-primary font-weight-bold text-white position-relative">
-        <a href="{{ route('clients.index') }}" class="stretched-link"></a>
-        <i class="fas fa-list fa-fw mr-1"></i> Lista de clientes
-      </div>
+    <x-card
+      header-color="primary"
+      :header-url="route('clients.index')"
+      icon="fas fa-list"
+      :has-body-padding="false"
+    >
+      <x-slot name="header">
+        Lista de clientes
+      </x-slot>
 
-      <div class="card-body px-0">
+      <x-slot name="body">
         <div class="table-responsive">
           <table class="table table-hover">
             <thead>
@@ -68,14 +83,16 @@
                 <th>Cidade</th>
               </tr>
             </thead>
-
+        
             <tbody>
               @forelse($clients as $client)
                 <tr class="clickable-link" data-url="{{ $client->path() }}">
                   <td>{!! $client->name !!}</td>
-                  <td nowrap="nowrap">{{ $client->phone ? Mask::phone($client->phone) : '[não informado]' }}</td>
                   <td nowrap="nowrap">
-                    {{ $client->city->name ?? '[não informado]' }}
+                    {{ $client->phone ? Mask::phone($client->phone) : 'N/A' }}
+                  </td>
+                  <td nowrap="nowrap">
+                    {{ $client->city->name ?? 'N/A' }}
                   </td>
                 </tr>
               @empty
@@ -85,11 +102,11 @@
                   </td>
                 </tr>
               @endforelse
-            </tbody>  
+            </tbody>
           </table>
-        </div>  
-      </div>
-    </div>
+        </div>
+      </x-slot>
+    </x-card>
     
     <div class="mt-2">
       {{ $clients->links() }}
@@ -97,9 +114,9 @@
   </div>
 
   @role(['gerencia', 'atendimento'])
-    <client-modal ref="clientModal"></client-modal>
+    <client-modal ref="clientModal" />
     <new-city-modal ref="newCityModal"
       @created="$refs.clientModal.$emit('city-created', $event)"
-    ></new-city-modal>
+    />
   @endrole
 @endsection

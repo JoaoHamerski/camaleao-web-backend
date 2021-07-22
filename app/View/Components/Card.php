@@ -29,6 +29,13 @@ class Card extends Component
     public $headerColor;
 
     /**
+     * Header URL to be redirected when clicked
+     *
+     * @var string
+     */
+    public $headerUrl;
+
+    /**
      * Header icon
      *
      * @var string
@@ -59,13 +66,40 @@ class Card extends Component
         $collapseId = '',
         $icon = null,
         $headerColor = 'light',
+        $headerUrl = '',
         $hasBodyPadding = true
     ) {
-        $this->headerColor = $headerColor;
+        $this->headerColor = $this->getFromMultiples($headerColor);
+        $this->headerUrl = $headerUrl;
         $this->icon = $icon;
         $this->hasBodyPadding = $hasBodyPadding;
         $this->isCollapsed = $isCollapsed;
         $this->collapseId = $collapseId;
+    }
+
+    /**
+     * Retorna um atribute caso seja informado um array com multiplos
+     * possíveis atributos
+     *
+     * @param string | array $attribute
+     *
+     * @return string $
+     */
+    private function getFromMultiples($attribute)
+    {
+        if (is_array($attribute)) {
+            foreach ($attribute as $key => $value) {
+                if ($value === true) {
+                    return $key;
+                }
+            }
+
+            if (! is_bool($attribute[array_key_last($attribute)])) {
+                return $attribute[array_key_last($attribute)];
+            }
+        }
+
+        return $attribute;
     }
 
     /**

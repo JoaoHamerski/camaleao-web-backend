@@ -14,19 +14,25 @@
 
     <div class="col-md-9 mt-4 mt-md-0">
       <div class="d-flex justify-content-between flex-column flex-md-row mb-2">
-        @role(['atendimento', 'gerencia'])
-          <a href="{{ route('orders.create', $client) }}" 
-            class="btn d-block d-md-inline btn-primary mb-2 mb-md-0"
+        <span class="d-block mb-2 mb-md-0"
+          @role('design')
+            content="Você não tem permissão para isso"
+            v-tippy="{arrow: true, placement: 'bottom',  duration: 150}"
+          @endrole
+        >
+          <a
+            @class([
+              'btn btn-primary',
+              'disabled' => Auth::user()->hasRole('design')
+            ])
+
+            @role(['gerencia', 'atendimento'])
+              href="{{ route('orders.create', $client) }}"
+            @endrole
           >
             <i class="fas fa-plus fa-fw mr-1"></i>Novo pedido
           </a>
-        @else('design')
-          <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Você não tem permissão para isso">
-            <button style="pointer-events: none;" disabled="disabled" class="btn d-block d-md-inline btn-primary mb-2 mb-md-0">
-              <i class="fas fa-plus fa-fw mr-1"></i>Novo pedido
-            </button>
-          </span>
-        @endrole
+        </span>
 
         <div>
           <form action="{{ route('clients.show', $client) }}" method="GET">
@@ -35,7 +41,8 @@
                 name="codigo" 
                 class="form-control" 
                 placeholder="Buscar por código"
-                @if(Request::has('codigo')) value="{{ Request::query('codigo') }}" @endif>
+                @if(Request::has('codigo')) value="{{ Request::query('codigo') }}" @endif
+              >
 
               <div class="input-group-append">
                 <button class="btn btn-outline-primary" type="submit">Buscar</button>
@@ -45,12 +52,14 @@
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-header text-white bg-primary font-weight-bold">
-          <i class="fas fa-boxes fa-fw mr-1"></i>Pedidos
-        </div>
+      <x-card
+        header-color="primary"
+        icon="fas fa-boxes"
+        :has-body-padding="false"
+      >
+        <x-slot name="header">Pedidos</x-slot>
 
-        <div class="card-body px-0">
+        <x-slot name="body">
           <div class="table-responsive">
             <table class="table table-hover">
               @if ($orders->count())
@@ -65,11 +74,15 @@
                   </tr>
                 </thead>
               @endif
-
+  
               <tbody>
                 @forelse ($orders as $order)
                   <tr data-url="{{ $order->path() }}"
-                    class="clickable-link @if ($order->isClosed()) table-secondary @elseif ($order->isPreRegistered()) table-warning @endif"
+                    @class([
+                      'clickable-link',
+                      'table-secondary' => $order->isClosed(),
+                      'table-warning' => $order->isPreRegistered()
+                    ])
                     data-id="{{ $order->id }}"
                   >
                     <td>{{ $order->code }}</td>
@@ -80,14 +93,14 @@
                       {{
                         $order->production_date
                           ? Helper::date($order->production_date, '%d/%m/%Y')
-                          : '[não informado]'
+                          : 'N/A'
                       }}
                     </td>
                     <td>
                       {{
                         $order->delivery_date
                           ? Helper::date($order->delivery_date, '%d/%m/%Y')
-                          : '[não informado]'
+                          : 'N/A'
                       }}
                     </td>
                   </tr>
@@ -101,15 +114,14 @@
                         Nenhum pedido foi cadastrado para este cliente ainda.
                       @endif
                       </h5>
-
                     </td>
                   </tr>
                 @endforelse
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
+        </x-slot>
+      </x-card>
 
       <div class="mt-2">
         {{ $orders->links() }}

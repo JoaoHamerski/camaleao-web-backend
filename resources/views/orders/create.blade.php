@@ -10,14 +10,14 @@
 			</a>
 		</div>
 
-		<div class="card mt-3">
-			<div class="card-header bg-primary text-white font-weight-bold">
-				<i class="fas fa-box-open fa-fw mr-1"></i>Novo pedido para {{ $client->name }}
-			</div>
-
-			<div class="card-body">
+		<x-card class="mt-3"
+			header-color="primary"
+			icon="fas fa-box-open"
+		>
+			<x-slot name="header">Novo pedido para {{ $client->name }}</x-slot>
+			<x-slot name="body">
 				<order-form></order-form>
-			</div>
-		</div>
+			</x-slot>
+		</x-card>
 	</div>
 @endsection
