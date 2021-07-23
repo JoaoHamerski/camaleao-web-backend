@@ -5,7 +5,11 @@
     <select class="custom-select" name="status" id="status">
       <option value="">Selecione o status</option>
       @foreach($status as $stat)
-        <option @if($stat->id == $order->status->id) selected="selected" @endif value="{{ $stat->id }}">{{ $stat->text }}</option>
+        <option 
+          @if($stat->id == $order->status->id) selected="selected" @endif 
+          value="{{ $stat->id }}">
+          {{ $stat->text }}
+        </option>
       @endforeach
     </select>
   </div>

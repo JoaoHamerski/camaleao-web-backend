@@ -11,6 +11,7 @@ use App\Models\Payment;
 use App\Util\Sanitizer;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,18 +23,41 @@ class PaymentsController extends Controller
         return view('payments.index');
     }
     
-    public function todayPayments()
+    public function getPaymentsOfDay(Request $request)
     {
-        $payments = Payment::with(['order', 'order.client', 'via'])
-            ->whereDate(
-                'created_at',
-                Carbon::now()->toDateString()
-            )
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $payments = Payment::with(['order', 'order.client', 'via']);
+        $date = Carbon::now()->toDateString();
+
+        if ($request->filled('date')) {
+            $date = $request->date;
+        }
+
+        $payments = $payments->whereDate(
+            'created_at',
+            $date
+        )->orderBy('created_at', 'desc');
+
+        if ($request->filled('only_pendency') && $request->only_pendency === 'true') {
+            $payments = $payments->whereNull('is_confirmed');
+        }
         
         return response()->json([
-            'payments' => $payments
+            'payments' => $payments->get()
+        ], 200);
+    }
+
+    public function getPendencies()
+    {
+        $pendencies = Payment::pendencies()
+            ->groupBy('date')
+            ->orderBy(DB::raw('DATE(created_at)'), 'desc')
+            ->get([
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('COUNT(*) as total'),
+            ]);
+
+        return response()->json([
+            'pendencies' => $pendencies
         ], 200);
     }
 
@@ -62,6 +86,13 @@ class PaymentsController extends Controller
         ]);
 
         return response()->json([], 204);
+    }
+
+    public function getTotalPendencies()
+    {
+        return response()->json([
+            'totalPendencies' => Payment::pendencies()->count()
+        ], 200);
     }
 
     private function errorMessages($isNewOrder)
@@ -167,15 +198,12 @@ class PaymentsController extends Controller
 
         $order = getOrder($data, getClient($data));
 
-        $payment = $order->payments()->create([
+        $order->payments()->create([
             'value' => $data['value'],
             'payment_via_id' => $data['via_id'],
-            'date' => now()
+            'date' => now(),
+            'is_confirmed' => Auth::user()->isAdmin() ? true : null
         ]);
-
-        if (Auth::user()->isAdmin()) {
-            $payment->update(['is_confirmed' => true]);
-        }
 
         return response()->json([], 204);
     }

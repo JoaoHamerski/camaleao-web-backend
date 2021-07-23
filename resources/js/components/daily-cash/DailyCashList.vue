@@ -3,29 +3,56 @@
     <AppLoading v-if="isLoading" />
     
     <div class="d-flex justify-content-between">
-      <button class="btn btn-lg btn-primary font-weight-bold"
-        data-toggle="modal"
-        data-target="#dailyPaymentModal"
-      >
-        <i class="fas fa-plus fa-fw mr-1"></i>Nova entrada
-      </button>
+      <div>
+        <button class="btn btn-lg btn-primary font-weight-bold"
+          data-toggle="modal"
+          data-target="#dailyPaymentModal"
+        >
+          <i class="fas fa-plus fa-fw mr-1"></i>Nova entrada
+        </button>
+      </div>
+      
+      <div>
+        <Tippy v-if="! totalPendencies" 
+          to="pendenciesBtn" 
+          placement="bottom" 
+          :duration="150" 
+          arrow
+        >
+          Sem pendências no momento
+        </Tippy>
 
-      <button class="btn btn-outline-primary"
-        @click="refreshPayments"
-      >
-        <i class="fas fa-sync-alt fa-fw"></i>
-      </button>
+        <span class="d-inline-block" name="pendenciesBtn">
+          <button class="btn text-white font-weight-bold"
+            :class="! totalPendencies ? 'btn-success' : 'btn-warning'"
+            data-toggle="modal"
+            data-target="#pendenciesModal"
+            :disabled="! totalPendencies"
+          >
+            Pendências
+            <span class="badge badge-pill badge-light">{{ totalPendencies }}</span>
+          </button>
+        </span>
+
+        <button class="btn btn-outline-primary"
+          @click="refresh"
+        >
+          <i class="fas fa-sync-alt fa-fw"></i>
+        </button>
+      </div>
     </div>
 
     <div class="text-center mt-4">
       <h4 class="font-weight-bold mb-0 horizontal-line mb-3"
         v-tippy="{duration: 150}"
-        :content="moment().format('DD [de] MMMM')"
+        :content="moment(currentDate).format('DD [de] MMMM')"
       >
-        <span>{{ moment().format('DD/MM') }}</span>
+        <span>{{ moment(currentDate).format('DD/MM') }}</span>
       </h4>
 
-      <h6 class="text-secondary">Pagamentos de hoje</h6>
+      <h6 class="text-secondary">
+        {{ moment(currentDate).isSame(moment(), 'day') ? 'Pagamentos de hoje' : 'Pagamentos antigos'}}
+      </h6>
     </div>
 
     <div v-if="!! payments.length" class="table-responsive mt-4">
@@ -101,18 +128,23 @@
     </div>
 
     <DailyPaymentModal @created="onPaymentCreated" />
+    <PendenciesModal ref="pendenciesModal" @load-pendencies="onLoadPendencies($event)" />
   </div>
 </template>
 
 <script>
-  import DailyPaymentModal from './DailyPaymentModal.vue'
+  import DailyPaymentModal from './DailyPaymentModal'
+  import PendenciesModal from './PendenciesModal'
 
+  import { TippyComponent } from 'vue-tippy'
   import moment from 'moment'
   moment.locale('pt-BR')
 
   export default {
     components: {
-      DailyPaymentModal
+      DailyPaymentModal,
+      PendenciesModal,
+      Tippy: TippyComponent
     },
     props: {
       userRole: {default: 0}
@@ -121,12 +153,17 @@
       return {
         moment,
         isLoading: false,
-        payments: []
+        payments: [],
+        totalPendencies: 0,
+        currentDate: ''
       }
     },
     methods: {
+      onLoadPendencies(date) {
+        this.refreshPayments({date, only_pendency: true})
+      },
       onPaymentCreated() {
-        this.refreshPayments()
+        this.refresh()
       },
       assign(payment, confirmation) {
         payment.isLoading = true
@@ -141,7 +178,13 @@
                 : 'Pagamento rejeitado'
             )
             
-            this.refreshPayments()
+
+            if (moment(payment.created_at).isBefore(moment(), 'day')) {
+              this.refresh({date: this.currentDate, only_pendency: true})
+              this.$refs.pendenciesModal.$emit('refresh-pendencies')
+            } else {
+              this.refresh()
+            }
           })
           .catch(({response}) => {
             if (response) {
@@ -167,10 +210,22 @@
             payment.isLoading = false
           })
       },
-      refreshPayments() {
+      refreshTotalPendencies(params = {}) {
+        axios.get('/caixa-diario/get-total-pendencies ', { params })
+          .then(response => {
+            this.totalPendencies = response.data.totalPendencies
+          })
+      },
+      refreshPayments(params = {}) {
         this.isLoading = true
 
-        axios.get('/caixa-diario/payments')
+        if (params.date) {
+          this.currentDate = params.date
+        } else {
+          this.currentDate = new Date()
+        }
+
+        axios.get('/caixa-diario/payments', { params })
           .then(response => {
             let payments = response.data.payments.map(payment => {
               return {...payment, isLoading: false}
@@ -183,10 +238,15 @@
           .then(() => {
             this.isLoading = false
           })
+
+          this.refreshTotalPendencies()
+      },
+      refresh(params) {
+        this.refreshPayments(params)
       }
     },
     mounted() {
-      this.refreshPayments()
+      this.refresh()
     }
   }
 </script>

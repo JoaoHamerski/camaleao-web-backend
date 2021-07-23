@@ -208,10 +208,35 @@ Route::middleware('auth')->group(function () {
 
     Route::name('payments.')->group(function () {
         Route::middleware('role:gerencia,atendimento')->group(function () {
-            Route::get('/caixa-diario', [PaymentsController::class, 'index'])->name('daily');
-            Route::get('/caixa-diario/payments', [PaymentsController::class, 'todayPayments']);
-            Route::post('/caixa-diario/{payment}/assign-confirmation', [PaymentsController::class, 'assignConfirmation']);
-            Route::post('/caixa-diario/clientes/daily-payment', [PaymentsController::class, 'dailyPayment']);
+            Route::get('/caixa-diario', [
+                PaymentsController::class,
+                'index'
+            ])->name('daily');
+            
+            Route::get('/caixa-diario/payments', [
+                PaymentsController::class,
+                'getPaymentsOfDay'
+            ]);
+
+            Route::get('/caixa-diario/get-total-pendencies', [
+                PaymentsController::class,
+                'getTotalPendencies'
+            ]);
+
+            Route::get('/caixa-diario/get-pendencies', [
+                PaymentsController::class,
+                'getPendencies'
+            ]);
+
+            Route::post('/caixa-diario/{payment}/assign-confirmation', [
+                PaymentsController::class,
+                'assignConfirmation'
+            ]);
+
+            Route::post('/caixa-diario/clientes/daily-payment', [
+                PaymentsController::class,
+                'dailyPayment'
+            ]);
         });
     });
 });

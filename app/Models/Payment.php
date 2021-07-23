@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 use App\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Payment extends Model
 {
@@ -19,9 +20,9 @@ class Payment extends Model
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo
      * de evento ocorre no model
-     * 
+     *
      * @param string $eventname
-     * 
+     *
      * @return string
      */
     public function getDescriptionForEvent(string $eventName): string
@@ -67,5 +68,13 @@ class Payment extends Model
     public function order()
     {
         return $this->belongsTo(Order::class);
+    }
+
+    public function scopePendencies()
+    {
+        return $this->where(function ($query) {
+            $query->whereNull('is_confirmed');
+            $query->where('created_at', '<', Carbon::now()->toDateString());
+        });
     }
 }
