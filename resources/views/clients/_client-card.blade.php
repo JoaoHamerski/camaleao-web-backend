@@ -50,7 +50,10 @@
 					<i class="fas fa-user-edit fa-fw mr-1"></i>Editar dados
 				</a>
 
-				<a class="text-danger" id="btnDeleteClient" href="">
+				<a class="text-danger" 
+					href="#clientDeleteModal" 
+					data-toggle="modal"
+				>
 					<i class="fas fa-trash-alt fa-fw mr-1"></i>Deletar cliente
 				</a>
 			</div>
@@ -58,13 +61,16 @@
 	@endif
 </x-card>
 
+@if (Request::routeIs('clients.show'))
 <client-modal 
 	:is-edit="true" 
 	:id="{{ $client->id}}" 
 	ref="clientModal"
-/>
+></client-modal>
 
+<client-delete-modal id="{{ $client->id }}"></client-delete-modal>
 <new-city-modal 
 	ref="newCityModal" 
 	@created="$refs.clientModal.$emit('city-created', $event)"
-/>
+></new-city-modal>
+@endif

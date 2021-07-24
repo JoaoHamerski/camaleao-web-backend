@@ -10,9 +10,15 @@
 
       <div class="modal-body">
         <ul class="list-group list-group-flush">
-          @foreach($changes['attributes'] as $field => $changed)
+          @foreach ($changes['attributes'] as $field => $changed)
               @includeWhen(
-                ! in_array($field, ['client', 'order', 'payment', 'updated_at']), 
+                ! in_array($field, [
+                  'client', 
+                  'order', 
+                  'payment', 
+                  'updated_at', 
+                  'confirmed_at'
+                ]), 
                 'activities._modal-apply-changes'
               )
           @endforeach

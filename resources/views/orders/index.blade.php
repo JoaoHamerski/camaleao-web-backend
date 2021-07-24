@@ -21,6 +21,16 @@
     >
       <x-slot name="header">Lista de todos pedidos</x-slot>
 
+      <x-slot name="headerRight">
+        <div class="dropleft">
+          <i class="fas fa-exclamation-circle fa-lg tooltip-light dropdown-hover" data-toggle="dropdown"
+            id="dropdownOrderLegend"></i>
+          <div class="dropdown-menu" style="min-width: 200px" aria-labelledby="dropdownOrederLegend">
+            @include('orders.order-types-legend')
+          </div>
+        </div>
+      </x-slot>
+      
       <x-slot name="body">
         <div class="table-responsive">
           <table class="table table-hover">
@@ -38,7 +48,14 @@
   
             <tbody>
               @forelse($orders as $order)
-                <tr data-url="{{ $order->path() }}" class="clickable-link @if ($order->isClosed()) table-secondary @elseif ($order->isPreRegistered()) table-warning @endif">
+                <tr data-url="{{ $order->path() }}" 
+                  @class([
+                    'clickable-link',
+                    'table-success' => $order->isClosed() === false && $order->isPaid(),
+                    'table-secondary' => $order->isClosed(),
+                    'table-warning' => $order->isPreRegistered()
+                  ])
+                >
                   <td>{{ $order->client->name }}</td>
                   <td>{{ $order->code }}</td>
                   <td>{{ $order->quantity ?? 'N/A' }}</td>

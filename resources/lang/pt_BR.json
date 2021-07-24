@@ -29,5 +29,6 @@
     "delivery_date": "data de entrega",
     "production_date": "data de produção",
     "costureira_valor": "valor da costureira",
-    "updated_at": "atualizado em"
+    "updated_at": "atualizado em",
+    "is_confirmed": "confirmação do pedido"
 }

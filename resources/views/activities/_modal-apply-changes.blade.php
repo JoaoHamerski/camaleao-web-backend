@@ -8,7 +8,7 @@
 			De <strong>{{ $changes['old'][$field] ? '[vazio]' : $changes['old'][$field]->name }}</strong>
 			para <strong>{{ $changed ? '[vazio]' : $changed }}</strong> 
 		@else
-			De <strong>{{ $changes['old'][$field] ? '[vazio]' : $changes['old'][$field]->name }}</strong>
+			De <strong>{{ $changes['old'][$field] ? '[vazio]' : $changes['old'][$field] }}</strong>
 			para <strong>{{ $changed ? '[vazio]' : $changed }}</strong> 
 		@endif
 	@endif
@@ -62,5 +62,10 @@
 		@else
 			Imagens da arte alterada
 		@endempty	
+	@endif
+
+	
+	@if (in_array($field, ['is_confirmed']))
+		Pedido <strong>{{ $changes['old'][$field] ? 'confirmado' : 'rejeitado' }}</strong>
 	@endif
 </li>

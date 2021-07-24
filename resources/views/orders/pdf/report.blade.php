@@ -140,8 +140,10 @@
 				<tr>
 					<td>
 						<strong>Quantidade: </strong>
-						{{ $order->quantity }} 
-						{{ $order->quantity == 1 ? 'CAMISA' : 'CAMISAS' }} 
+						{{ $order->quantity ?? 'N/A' }} 
+						@if ($order->quantity)
+							{{ $order->quantity == 1 ? 'CAMISA' : 'CAMISAS' }} 
+						@endif
 					</td>
 				</tr>
 

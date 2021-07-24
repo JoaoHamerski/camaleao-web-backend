@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Util\Sanitizer;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class ClientsController extends Controller
@@ -125,8 +126,16 @@ class ClientsController extends Controller
         ], 200);
     }
 
-    public function destroy(Client $client)
+    public function destroy(Request $request, Client $client)
     {
+        if (! Hash::check($request->password, $request->user()->password)) {
+            return response()->json([
+                'errors' => [
+                    'password' => ['A senha informada não confere.']
+                ]
+            ], 422);
+        }
+
         $client->delete();
 
         return response()->json([

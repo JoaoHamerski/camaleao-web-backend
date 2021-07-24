@@ -57,7 +57,23 @@
         icon="fas fa-boxes"
         :has-body-padding="false"
       >
-        <x-slot name="header">Pedidos</x-slot>
+        <x-slot name="header">
+          Pedidos
+        </x-slot>
+
+        <x-slot name="headerRight">
+          <div class="dropleft">
+            <i class="fas fa-exclamation-circle fa-lg tooltip-light dropdown-hover"
+              data-toggle="dropdown"
+              id="dropdownOrderLegend"
+            ></i>
+            <div class="dropdown-menu" style="min-width: 200px" 
+              aria-labelledby="dropdownOrederLegend"
+            >
+              @include('orders.order-types-legend')
+            </div>
+          </div>
+        </x-slot>
 
         <x-slot name="body">
           <div class="table-responsive">
@@ -80,6 +96,7 @@
                   <tr data-url="{{ $order->path() }}"
                     @class([
                       'clickable-link',
+                      'table-success' => $order->isClosed() === false && $order->isPaid(),
                       'table-secondary' => $order->isClosed(),
                       'table-warning' => $order->isPreRegistered()
                     ])

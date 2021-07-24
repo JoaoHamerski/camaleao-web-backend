@@ -108,12 +108,15 @@
         <div v-if="form.errors.has('price')" 
           class="small text-danger text-center my-3"
         >
-        <span v-if="totalValue < 0">
-          O valor final deve ser maior que R$ 0,00
-        </span>
-        <span v-else>
-          É necessário informar o valor de pelo menos um tipo acima para gerar o preço final do pedido
-        </span>
+          <span v-if="totalValue <= 0">
+            O valor final deve ser maior que R$ 0,00
+          </span>
+          <span v-else-if="isEdit">
+            {{ form.errors.get('price') }}
+          </span>
+          <span v-else>
+            É necessário informar o valor de pelo menos um tipo acima para gerar o preço final do pedido
+          </span>
         </div>
 
         <div class="small mt-2 text-right">
@@ -414,6 +417,7 @@
             window.location.href = response.redirect
           })
           .catch(error => {
+            console.log(error)
             this.$toast.error('Verifique os campos incorretos')
           })
           .then(() => {
@@ -478,7 +482,7 @@
               : this.$helpers.valueToBRL(order.discount)
 
             paths.forEach((path, index) => {
-              if (order[path].length) {
+              if (order[path] !== null && order[path].length) {
                 let files = order[path].map((_path, index2)=> {
                   return {key: `${index}${index2}`, base64: _path}
                 })

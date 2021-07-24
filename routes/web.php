@@ -67,7 +67,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('role:gerencia,atendimento')->group(function () {
             Route::post('/clientes', [ClientsController::class, 'store'])->name('store');
             Route::patch('/clientes/{client}', [ClientsController::class, 'update'])->name('update');
-            Route::delete('/cliente/{client}', [ClientsController::class, 'destroy'])->name('destroy');
+            Route::delete('/clientes/{client}', [ClientsController::class, 'destroy'])->name('destroy');
         });
     });
 

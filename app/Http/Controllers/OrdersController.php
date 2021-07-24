@@ -214,7 +214,7 @@ class OrdersController extends Controller
 
         $this->validator(
             $data = $this->getFormattedData($request->all(), true),
-            true
+            $order
         )->validate();
 
 
@@ -266,17 +266,23 @@ class OrdersController extends Controller
         return bcsub($total, $data['discount'] ?? 0, 2);
     }
 
-    private function validator(array $data, $isUpdate = false)
+    private function validator(array $data, $order = null)
     {
         $fields = [
-            'name' => ['required', 'max:50'],
+            'name' => ['nullable', 'max:50'],
             'code' => [
-                'required', $isUpdate
+                'required', $order
                     ? Rule::unique('orders')->ignore($data['code'], 'code')
                     : Rule::unique('orders')
             ],
             'discount' => ['nullable', 'numeric', 'lte:price'],
-            'price' => ['required', 'numeric', 'min:0.01'],
+            'price' => [
+                'required',
+                'numeric',
+                'min_double:' . ($order
+                    ? $order->getTotalPayments()
+                    : '0.01')
+            ],
             'delivery_date' => ['nullable', 'date_format:Y-m-d'],
             'production_date' => ['nullable', 'date_format:Y-m-d'],
             'down_payment' => ['sometimes', 'max_double:price'],

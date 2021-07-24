@@ -102,23 +102,6 @@
         Nenhuma transportada relacionada a cidade selecionada foi encontrada
       </div>
     </div>
-
-    <div class="d-flex justify-content-between">
-      <button class="btn btn-success font-weight-bold"
-        :disabled="form.isLoading"
-        type="submit"
-      >
-        <span class="spinner-border spinner-border-sm mr-1" 
-          v-if="form.isLoading"
-        ></span>
-        {{ isEdit ? 'Atualizar' : 'Cadastrar' }}
-      </button>
-
-      <button class="btn btn-light"
-        type="button"
-        data-dismiss="modal"
-      >Fechar</button>
-    </div>
   </form>
 </template>
 
@@ -170,6 +153,7 @@
         }
       },
       onSubmit() {
+        this.$emit('loading', true)
         this.form.isLoading = true
 
         if (this.isEdit) {
@@ -185,6 +169,7 @@
           })
           .catch(() => {})
           .then(() => {
+            this.$emit('loading', false)
             this.form.isLoading = false
           })
       },
@@ -195,6 +180,7 @@
           })
           .catch(() => {})
           .then(() => {
+            this.$emit('loading', false)
             this.form.isLoading = false
           })
       },  

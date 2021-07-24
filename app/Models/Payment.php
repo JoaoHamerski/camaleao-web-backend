@@ -31,7 +31,7 @@ class Payment extends Model
             return '
                 <div data-event="created">
                     <strong>:causer.name</strong> 
-                    adicionou um pagamento de 
+                    registrou um pagamento de 
                     <span class="font-weight-bold" data-mask="money">:subject.value</span> 
                     para o pedido 
                     <strong>:properties.attributes.order.code</strong>

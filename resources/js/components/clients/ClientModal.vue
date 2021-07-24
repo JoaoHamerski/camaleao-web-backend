@@ -1,7 +1,7 @@
 <template>
   <AppModal id="clientModal"
     ref="modal"
-    modalDialogClass="modal-dialog-centered modal-dialog-scrollable"
+    modalDialogClass="modal-dialog-centered"
     :modalHeaderClass="isEdit ? 'bg-primary' : 'bg-success'"
   >
     <template #header>
@@ -18,7 +18,23 @@
         :isEdit="isEdit" 
         :id="id"
         @open-city-modal="openCityModal"
+        @loading="isLoading = $event"
       />
+    </template>
+
+    <template #footer>
+      <div class="d-flex justify-content-between">
+        <button class="btn btn-success font-weight-bold" 
+          @click="submitForm"
+          :disabled="isLoading"
+        >
+          <span class="spinner-border spinner-border-sm mr-1" 
+            v-if="isLoading"
+          ></span>
+          {{ isEdit ? 'Atualizar' : 'Cadastrar' }}
+        </button>
+        <button class="btn btn-light" data-dismiss="modal">Fechar</button>
+      </div>
     </template>
   </AppModal>
 </template>
@@ -36,14 +52,19 @@
     },
     data: () => {
       return {
-        isOpen: false
+        isOpen: false,
+        isLoading: false
       }
     },
     methods: {
+      submitForm() {
+        this.$refs.clientForm.onSubmit()
+      },
       openCityModal(search) {
         $(this.$refs.modal.$el).modal('hide')
+        console.log(this.$parent)
         this.$parent.$refs.newCityModal.$emit('pre-form', search)
-        // $(this.$parent.$refs.newCityModal.$el).modal('show')
+        $(this.$parent.$refs.newCityModal.$el).modal('show')
       }
     },
     mounted() {

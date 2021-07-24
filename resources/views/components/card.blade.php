@@ -1,5 +1,10 @@
 <div class="card {{ $attributes['class'] }}">
-    <div class="card-header bg-{{ $headerColor }} text-white position-relative">
+    <div 
+        @class([
+            'card-header bg-' . $headerColor . ' text-white position-relative',
+            'd-flex justify-content-between' => !! ($headerRight ?? false)
+        ])
+    >
         @if ($isCollapsed)
         <a href="#collapse-card-{{ $collapseId }}" class="stretched-link collapsed" data-toggle="collapse" aria-expanded="true"></a>
             
@@ -12,6 +17,12 @@
             <div class="font-weight-bold text-white">
                 @if ($icon) <i class="{{ $icon }} fa-fw mr-1"></i> @endif{{ $header }}
             </div>
+            
+            @isset($headerRight)
+            <div class="position-relative" style="z-index: 2">
+                {{ $headerRight }}
+            </div>
+            @endisset
 
         @if ($isCollapsed)
             <div class="collapse-icon">
