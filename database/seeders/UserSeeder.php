@@ -16,8 +16,7 @@ class UserSeeder extends Seeder
     {
         User::factory()->create([
             'email' => 'joaohamerski@hotmail.com',
-            'role_id' => 3,
-            'password' => '$2a$10$yzuoAdipMfTMbDLEhuTxA.gr1xthLQkhyfn9gInSCrzdXzbq.HBZO'
+            'role_id' => 3
         ]);
 
         User::factory()->create([

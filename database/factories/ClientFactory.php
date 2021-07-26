@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\City;
 use App\Models\Client;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -21,16 +22,19 @@ class ClientFactory extends Factory
      */
     public function definition()
     {
-        $cities = [
-            'Sara do Norte',
-            'Santa Luana',
-            'Vila Beatriz'
-        ];
+        $gender = ['male', 'female'];
+
+        $firstName = $this->faker->firstName(
+            $this->faker->randomElement($gender)
+        );
+        $lastName = $this->faker->lastName;
 
         return [
-            'name' => $this->faker->firstName . ' ' . $this->faker->lastName,
+            'name' => $firstName . ' ' . $lastName,
             'phone' => $this->faker->phoneNumberCleared,
-            'city' => $this->faker->randomElement($cities)
+            'city_id' => $this->faker->randomElement([true, false])
+                ? City::inRandomOrder()->first()->id
+                : null
         ];
     }
 }

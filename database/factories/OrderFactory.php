@@ -2,10 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Note;
+use Carbon\Carbon;
 use App\Models\Order;
-use App\Models\Status;
+use App\Models\Payment;
+use App\Models\ClothingType;
+use App\Models\ClothingTypeOrder;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 
 class OrderFactory extends Factory
 {
@@ -23,36 +26,48 @@ class OrderFactory extends Factory
      */
     public function definition()
     {
-        $delivery_dates = [
-            '2020-08-20',
-            '2020-08-21',
-            '2020-08-22',
-        ];
-
-        $production_dates = [
-            '2020-09-10',
-            '2020-09-11',
-            '2020-09-12',
-        ];
-
         return [
-            'code' => $this->faker->unique()->numberBetween(1, 1000),
-            'status_id' => $this->faker->numberBetween(1, 6),
-            'quantity' => $this->faker->numberBetween(1, 100),
-            'price' => $this->faker->randomFloat(2, 0, 3000),
-            'delivery_date' => $this->faker->randomElement($delivery_dates),
-            'production_date' => $this->faker->randomElement($production_dates)
+            'code' => $this->faker->unique()->randomNumber(5),
+            'name' => $this->faker->words(3, true),
+            'client_id' => 1
         ];
     }
 
     public function configure()
     {
-        $times = [0, 0, 0, 1, 2, 3, 4];
+        return $this->afterCreating(function (Order $order) {
+            $clothingTypes = ClothingType::all();
+            $totalValue = 0;
+            $totalQuantity = 0;
+            
+            foreach ($clothingTypes as $type) {
+                if ($this->faker->randomElement([true, false])) {
+                    $value = $this->faker->randomFloat(2, 10, 350);
+                    $quantity = $this->faker->numberBetween(1, 5);
 
-        return $this->afterCreating(function(Order $order) use ($times) {
-            Note::factory()
-                ->times($this->faker->randomElement($times))
-                ->create(['order_id' => $order->id]);
+                    ClothingTypeOrder::create([
+                        'order_id' => $order->id,
+                        'clothing_type_id' => $type->id,
+                        'value' => $value,
+                        'quantity' => $quantity
+                    ]);
+
+                    $totalValue += $value;
+                    $totalQuantity += $quantity;
+                }
+            }
+
+            $order->update([
+                'quantity' => $totalQuantity,
+                'price' => $order->totalClothingsValue() - $order->discount
+            ]);
+
+            Payment::factory()->count(rand(0, 10))->state(new Sequence(
+                fn ($sequence) => [
+                    'order_id' => $order->id,
+                    'value' => $this->faker->randomFloat(2, 10, 100)
+                ]
+            ))->create();
         });
     }
 }

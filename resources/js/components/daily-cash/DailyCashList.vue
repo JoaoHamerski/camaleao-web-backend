@@ -76,8 +76,12 @@
               'table-warning': payment.is_confirmed == null
             }"
           >
-            <td>{{ payment.order.code }}</td>
-            <td nowrap>{{ payment.order.client.name }}</td>
+            <td class="font-weight-bold">
+              <a :href="payment.order.path" target="_blank">{{ payment.order.code }}</a>
+            </td>
+            <td nowrap class="font-weight-bold">
+              <a :href="payment.order.client.path" target="_blank">{{ payment.order.client.name }}</a>
+            </td>
             <td class="font-weight-bold">{{ $helpers.valueToBRL(payment.value) }}</td>
             <td nowrap>{{ payment.via.name }}</td>
             <td class="text-center">

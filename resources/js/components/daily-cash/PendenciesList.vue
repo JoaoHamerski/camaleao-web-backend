@@ -2,11 +2,11 @@
   <div>
     <ul class="list-group list-hover">
       <li v-for="pendency in pendencies" 
-        :key="pendency.date"
+        :key="pendency.date_registered"
         class="list-group-item d-flex justify-content-between list-group-item-action clickable font-weight-bold"  
         @click="onItemClick(pendency)"
       >
-        {{ moment(pendency.date).format('DD/MM/YYYY') }}
+        {{ moment(pendency.date_registered).format('DD/MM/YYYY') }}
         <h5 class="mb-0">
           <span class="badge badge-primary">{{ pendency.total }}</span>
         </h5>
@@ -28,7 +28,7 @@
     },
     methods: {
       onItemClick(pendency) {
-        this.$emit('load-pendencies', pendency.date)
+        this.$emit('load-pendencies', pendency.date_registered)
       },
       refreshPendencies() {
         axios.get('/caixa-diario/get-pendencies')

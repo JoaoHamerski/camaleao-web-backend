@@ -74,7 +74,7 @@ class Payment extends Model
     {
         return $this->where(function ($query) {
             $query->whereNull('is_confirmed');
-            $query->where('created_at', '<', Carbon::now()->toDateString());
+            $query->whereDate('created_at', '<', Carbon::now()->toDateString());
         });
     }
 }

@@ -49,10 +49,10 @@ class PaymentsController extends Controller
     public function getPendencies()
     {
         $pendencies = Payment::pendencies()
-            ->groupBy('date')
+            ->groupBy('date_registered')
             ->orderBy(DB::raw('DATE(created_at)'), 'desc')
             ->get([
-                DB::raw('DATE(created_at) as date'),
+                DB::raw('DATE(created_at) as date_registered'),
                 DB::raw('COUNT(*) as total'),
             ]);
 

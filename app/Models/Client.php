@@ -19,6 +19,8 @@ class Client extends Model
 
     protected $cascadeDeletes = ['orders', 'payments'];
 
+    protected $appends = ['path'];
+
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo
      * de evento ocorre no model
@@ -102,6 +104,11 @@ class Client extends Model
     public function path()
     {
         return route('clients.show', $this);
+    }
+
+    public function getPathAttribute()
+    {
+        return $this->path();
     }
 
     /**

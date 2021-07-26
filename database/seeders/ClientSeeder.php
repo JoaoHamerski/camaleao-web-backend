@@ -2,8 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Order;
 use App\Models\Client;
+use App\Models\Payment;
 use Illuminate\Database\Seeder;
+use Faker\Factory as Faker;
 
 class ClientSeeder extends Seeder
 {
@@ -14,9 +17,12 @@ class ClientSeeder extends Seeder
      */
     public function run()
     {
+        $faker = Faker::create();
+        
         Client::factory()
-        	->times(5)
-        	->hasOrders(6)
-        	->create();
+            ->count(1)
+            ->has(
+                Order::factory()->count(1)
+            )->create();
     }
 }

@@ -26,7 +26,7 @@ class UserFactory extends Factory
             'name' => $this->faker->firstName . ' ' . $this->faker->lastName,
             'email' => 'admin@email.com',
             'email_verified_at' => now(),
-            'password' => '$2a$10$tJJM84SkQBkUb8rHYjlF..qT2r7mnjQXv04a1zGsKdIXrKu5SG.UO',
+            'password' => '$2a$10$XDRh7cgIxMI0mmfR.SuMtOtZlAaSa8T58gxfGkDy3DlNbTWi8SBou',
             'remember_token' => Str::random(10),
         ];
     }

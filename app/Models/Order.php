@@ -16,7 +16,7 @@ class Order extends Model
     protected static $logUnguarded = true;
     protected static $logOnlyDirty = true;
     protected static $logAttributes = ['client'];
-    protected $appends = ['total_owing'];
+    protected $appends = ['total_owing', 'path'];
 
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo
@@ -173,6 +173,11 @@ class Order extends Model
     public function path()
     {
         return route('orders.show', [$this->client, $this]);
+    }
+
+    public function getPathAttribute()
+    {
+        return $this->path();
     }
 
     /**
