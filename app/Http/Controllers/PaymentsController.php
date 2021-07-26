@@ -105,6 +105,7 @@ class PaymentsController extends Controller
             'order.id.required' => 'Por favor, selecione um pedido.',
             'order.id.required_with' => 'Por favor, selecione um pedido.',
             'order_value.required' => 'Por favor, informe o valor.',
+            'order.not_regex' => 'O código deve conter apenas letras, numeros ou traços.',
             'value.lte' => $isNewOrder
                 ? 'O pagamento não pode ser maior que o valor do pedido.'
                 : 'O pagamento não pode ser maior que o total restante.',
@@ -130,8 +131,8 @@ class PaymentsController extends Controller
     {
         if ($isNewOrder) {
             return [
-                'order' => ['required', 'unique:orders,code'],
-                'order_value' => ['required', 'numeric', 'min:0.01']
+                'order' => ['required', 'unique:orders,code', 'not_regex:/[^a-z\-0-9]/i'],
+                'order_value' => ['required', 'numeric', 'min:0.01'],
             ];
         }
 

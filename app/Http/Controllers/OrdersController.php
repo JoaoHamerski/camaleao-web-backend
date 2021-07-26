@@ -273,7 +273,8 @@ class OrdersController extends Controller
             'code' => [
                 'required', $order
                     ? Rule::unique('orders')->ignore($data['code'], 'code')
-                    : Rule::unique('orders')
+                    : Rule::unique('orders'),
+                'not_regex:/[^a-z\-0-9]/i'
             ],
             'discount' => ['nullable', 'numeric', 'lte:price'],
             'price' => [
@@ -300,7 +301,8 @@ class OrdersController extends Controller
     private function errorMessages()
     {
         return [
-            'discount.lte' => 'O desconto não pode ser maior que o preço total'
+            'discount.lte' => 'O desconto não pode ser maior que o preço total.',
+            'code.not_regex' => 'O código deve conter apenas letras, numeros ou traços.'
         ];
     }
 
