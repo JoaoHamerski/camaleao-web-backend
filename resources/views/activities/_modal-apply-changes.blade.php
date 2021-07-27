@@ -66,6 +66,6 @@
 
 	
 	@if (in_array($field, ['is_confirmed']))
-		Pedido <strong>{{ $changes['old'][$field] ? 'confirmado' : 'rejeitado' }}</strong>
+		Pagamento <strong>{{ $changes['old'][$field] ? 'rejeitado' : 'confirmado' }}</strong>
 	@endif
 </li>
