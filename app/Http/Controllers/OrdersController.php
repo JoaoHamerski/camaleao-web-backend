@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use \Carbon\Carbon;
 use App\Models\Via;
 use App\Models\City;
+use App\Models\User;
 use App\Util\Helper;
 use App\Models\Order;
 use App\Models\Client;
+use App\Models\Config;
 use App\Models\Status;
 use App\Util\Validate;
 use App\Util\Sanitizer;
+use App\Models\Commission;
 use App\Traits\FileManager;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -113,6 +116,62 @@ class OrdersController extends Controller
         ]);
     }
 
+    public function isComissionConfirmed(User $user, $commissionId)
+    {
+        $commission = $user->commissions()->find($commissionId);
+
+        if (! $commission) {
+            return null;
+        }
+
+        return !! $commission->pivot->confirmed_at;
+    }
+
+    public function storeUserCommissions(Commission $commission, $wasQuantityChanged = false)
+    {
+        $users = User::production()->get();
+
+        foreach ($users as $user) {
+            $data = [];
+            $data['commission_value'] = $commission->getUserCommission($user);
+
+            if ($this->isComissionConfirmed($user, $commission->id) && $wasQuantityChanged) {
+                $data['confirmed_at'] = null;
+                $data['was_quantity_changed'] = true;
+            }
+
+            $user->commissions()->syncWithoutDetaching([
+                $commission->id => $data,
+            ]);
+        }
+    }
+
+    public function storeCommissions(Order $order, $isUpdate = false)
+    {
+        $data = [
+            'print_commission' => Config::get('app', 'order_commission'),
+            'seam_commission' => $order->getCommissions()->toJson()
+        ];
+
+        $isQuantityChanged = false;
+        
+        if (! $isUpdate) {
+            $commission = $order->commissions()->create($data);
+        } else {
+            if (! $order->commission) {
+                $commission = $order->commissions()->create($data);
+            } else {
+                $commission = Commission::where('order_id', $order->id)->first();
+                $commission->update($data);
+                $commission = $commission->fresh();
+            }
+
+            $isQuantityChanged = $order->fresh()->isQuantityChanged();
+        }
+
+        $this->storeUserCommissions($commission, $isQuantityChanged);
+    }
+
     public function show(Client $client, Order $order)
     {
         $this->authorize('view', [$order, $client->id]);
@@ -161,6 +220,10 @@ class OrdersController extends Controller
             $this->getFilledClothingTypes($data)
         );
 
+        if (! $order->isPreRegistered()) {
+            $this->storeCommissions($order);
+        }
+
         if (! empty($data['down_payment']) && ! empty($data['payment_via_id'])) {
             $order->createDownPayment(
                 $data['down_payment'],
@@ -208,6 +271,28 @@ class OrdersController extends Controller
         return $keys;
     }
 
+    public function getOrderCommission()
+    {
+        return response()->json([
+            'commission' => Config::get('app', 'order_commission')
+        ], 200);
+    }
+
+    public function changeOrderCommission(Request $request)
+    {
+        if ($request->filled('value')) {
+            $data['value'] = Sanitizer::money($request->value);
+        }
+
+        Validator::make($data, [
+            'value' => ['required', 'numeric']
+        ])->validate();
+
+        Config::set('app', 'order_commission', $data['value']);
+
+        return response()->json([], 204);
+    }
+
     public function update(Client $client, Order $order, Request $request)
     {
         $this->authorize('update', [$order, $client->id]);
@@ -227,6 +312,10 @@ class OrdersController extends Controller
         $order->clothingTypes()->sync(
             $this->getFilledClothingTypes($data)
         );
+
+        if (! $order->fresh()->isPreRegistered()) {
+            $this->storeCommissions($order, true);
+        }
 
         return response()->json([
             'message' => 'success',

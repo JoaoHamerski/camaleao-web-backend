@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Util\Sanitizer;
 use Illuminate\Support\Str;
 use App\Models\ClothingType;
 use Illuminate\Http\Request;
@@ -45,6 +46,24 @@ class ClothingTypesController extends Controller
         ]);
 
         return response()->json([], 204);
+    }
+
+    public function changeComission(Request $request, ClothingType $clothingType)
+    {
+        if ($request->filled('value')) {
+            $data['value'] = Sanitizer::money($request->value);
+        }
+        
+        Validator::make($data, [
+            'value' => ['required', 'numeric']
+        ])->validate();
+
+
+        $clothingType->update([
+            'commission' => $data['value']
+        ]);
+
+        return response()->json([], 200);
     }
 
     public function toggleHide(ClothingType $clothingType)

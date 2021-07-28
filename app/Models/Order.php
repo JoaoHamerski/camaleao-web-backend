@@ -123,6 +123,11 @@ class Order extends Model
         return $this->hasMany(Note::class);
     }
 
+    public function commissions()
+    {
+        return $this->hasMany(Commission::class);
+    }
+
     /**
      * Um pedido pertence a um status
      *
@@ -133,6 +138,54 @@ class Order extends Model
         return $this->belongsTo(Status::class);
     }
 
+    public function commission()
+    {
+        return $this->hasOne(Commission::class);
+    }
+
+    public function isQuantityChanged()
+    {
+        $commissionClothingTypes = collect(
+            json_decode($this->commission->seam_commission)
+        )->map(function ($type) {
+            return [
+                'key' => $type->key,
+                'quantity' => $type->quantity
+            ];
+        });
+
+        $clothingTypes = $this->clothingTypes->map(function ($type) {
+            return [
+                'key' => $type->key,
+                'quantity' => $type->pivot->quantity
+            ];
+        });
+
+        $hasDifference = $clothingTypes->pluck('key')
+            ->diff(
+                $commissionClothingTypes->pluck('key')
+            );
+
+        if (! $hasDifference->isEmpty()) {
+            return true;
+        }
+
+
+        foreach ($clothingTypes as $type) {
+            $commission = $commissionClothingTypes
+                ->where('key', $type['key'])
+                ->first();
+
+            if ($type['quantity'] != $commission['quantity']) {
+                return true;
+            }
+        }
+
+        
+        
+        return false;
+    }
+
     public function isPreRegistered()
     {
         return $this->quantity === null;
@@ -141,6 +194,20 @@ class Order extends Model
     public function scopePreRegistered($query)
     {
         return $query->whereNull('quantity');
+    }
+
+    public function getCommissions()
+    {
+        return $this->clothingTypes
+            ->map(function ($type) {
+                return [
+                    'key' => $type->key,
+                    'name' => $type->name,
+                    'quantity' => $type->pivot->quantity,
+                    'total' => $type->totalValue(),
+                    'commission' => $type->commission
+                ];
+            });
     }
 
     public function getOriginalPrice()

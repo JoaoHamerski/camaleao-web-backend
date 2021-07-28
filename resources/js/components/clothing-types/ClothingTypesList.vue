@@ -1,10 +1,21 @@
 <template>
   <div class="position-relative">
     <AppLoading v-if="isLoading" />
+
     <div class="mb-4 text-secondary text-center small">
       Você pode criar um novo tipo de camisa para o formulário de pedidos.
       <hr>
       Ou esconder tipos que não quer que seja mais preenchido, os tipos escondidos ainda aparecerão em pedidos antigos, porém não aparecerão em formulários novos. 
+    </div>
+
+    <div class="mb-2">
+      <button class="btn btn-primary"
+        @click="isOrderComission = true"
+        data-toggle="modal"
+        data-target="#changeCommissionModal"
+      >
+        Comissão de estampa
+      </button>
     </div>
 
     <div class="mb-2 ">
@@ -25,7 +36,7 @@
         tag="tbody"
       >
         <li v-for="type in clothingTypes" :key="type.key"
-          class="list-group-item d-flex justify-content-between" 
+          class="list-group-item d-flex justify-content-between align-items-center" 
         >
           <div class="d-flex">
             <span class="mr-2 justify-content-center" v-if="false">
@@ -40,7 +51,14 @@
                 @focus.capture="this.error = ''"
               />
             </span>
-            <span v-else>{{ type.name }}</span>
+            <div v-else>
+              <div>
+                {{ type.name }}
+              </div>
+              <small class="text-secondary">
+                Comissão: <strong>{{ $helpers.valueToBRL(type.commission) }}</strong>
+              </small>
+            </div>
           </div>
 
           <span v-if="type.isEdit" class="text-center">
@@ -63,11 +81,25 @@
               class="btn btn-sm btn-outline-primary"
             >ESCONDER</button>
 
-            <button class="btn btn-sm btn-success ml-2" @click="edit(type)">EDITAR</button>
+            <button class="btn btn-sm btn-success" @click="edit(type)">
+              EDITAR
+            </button>
+
+            <button class="btn btn-sm btn-primary"
+              data-toggle="modal"
+              data-target="#changeCommissionModal"
+              @click="selectedClothingType = type"
+            >COMISSÃO</button>
           </span>
         </li>
       </transition-group>
     </Draggable>
+
+    <ChangeCommissionModal v-if="selectedClothingType || isOrderComission"
+      :clothingType="selectedClothingType" 
+      :isOrderComission="isOrderComission"
+      @changed="refresh"
+    />
   </div>
 </template>
 
@@ -79,15 +111,20 @@
 
 <script>
   import ClothingTypesForm from './ClothingTypesForm'
+  import ChangeCommissionModal from './ChangeCommissionModal'
   import Draggable from 'vuedraggable'
+  
 
   export default {
     components: {
       ClothingTypesForm,
-      Draggable
+      Draggable,
+      ChangeCommissionModal
     },
     data: function() {
       return {
+        selectedClothingType: null,
+        isOrderComission: false,
         drag: false,
         name: '',
         error: '',

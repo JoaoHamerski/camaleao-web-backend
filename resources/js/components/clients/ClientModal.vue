@@ -62,7 +62,6 @@
       },
       openCityModal(search) {
         $(this.$refs.modal.$el).modal('hide')
-        console.log(this.$parent)
         this.$parent.$refs.newCityModal.$emit('pre-form', search)
         $(this.$parent.$refs.newCityModal.$el).modal('show')
       }

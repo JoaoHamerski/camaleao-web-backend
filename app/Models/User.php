@@ -87,4 +87,23 @@ class User extends Authenticatable
     {
         return $this->hasMany(Expense::class);
     }
+
+    public function commissions()
+    {
+        return $this->belongsToMany(Commission::class)
+            ->withPivot([
+                'id',
+                'commission_value',
+                'confirmed_at',
+                'was_quantity_changed'
+            ]);
+    }
+
+    public function scopeProduction()
+    {
+        return $this->whereHas('role', function ($query) {
+            $query->where('name', 'estampa');
+            $query->orWhere('name', 'costura');
+        });
+    }
 }

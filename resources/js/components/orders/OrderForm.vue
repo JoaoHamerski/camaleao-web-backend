@@ -403,7 +403,9 @@
             window.location.href = response.redirect
           })
           .catch(error => {
+            console.log(error)
             this.$toast.error('Verifique os campos incorretos')
+            
           })
           .then(() => {
             this.form.isLoading = false

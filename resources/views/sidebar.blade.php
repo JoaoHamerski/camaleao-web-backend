@@ -9,6 +9,16 @@
 
   <div class="accordion accordion-sidebar" id="accordionSidebar">
     <ul class="list-group-flush list-unstyled">
+      @role(['costura', 'estampa'])
+        <li class="{{ Request::is(['producao*']) ? 'active' : '' }}">
+          <a href="{{ route('production.home') }}">
+            <i class="fas fa-home fa-fw mr-1 text-primary"></i>
+            Início
+          </a>
+        </li>
+      @endrole
+
+      @role(['gerencia', 'atendimento', 'design'])
       <li class="{{ Request::is(['/', 'cliente/*']) ? 'active' : '' }}">
         <a href="{{ route('clients.index') }}">
           <i class="fas fa-list fa-fw mr-1 text-primary"></i>
@@ -16,7 +26,6 @@
         </a>
       </li>
 
-      @role(['gerencia', 'atendimento'])
         <li class="{{ Request::is('pedidos') ? 'active' : '' }}">
           <a href="{{ route('orders.index') }}">
             <i class="fas fa-boxes fa-fw mr-1 text-primary"></i>
@@ -140,6 +149,16 @@
               </li>
             </ul>
           </div>
+        </li>
+      @endrole
+
+
+      @role('gerencia')
+        <li class="{{ Request::is('lista-de-producao*') ? 'active' : '' }}">
+          <a href="{{ route('production.indexAdmin') }}">
+            <i class="fas fa-list fa-fw mr-1 text-primary"></i>
+            Produção
+          </a>
         </li>
       @endrole
 

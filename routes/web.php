@@ -19,6 +19,7 @@ use App\Http\Controllers\ActivitiesController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ExpenseTypesController;
 use App\Http\Controllers\ClothingTypesController;
+use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\ShippingCompaniesController;
 use App\Models\ClothingType;
 
@@ -44,6 +45,16 @@ Route::name('auth.')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/sair', [LoginController::class, 'logout'])->name('auth.logout');
 
+    Route::name('production.')->group(function () {
+        Route::get('/producao', [ProductionController::class, 'index'])->name('home');
+        Route::get('/producao/get-commissions', [ProductionController::class, 'getCommissions']);
+        Route::post('/producao/{commissionUser}/confirm', [ProductionController::class, 'assignConfirmation']);
+
+        Route::middleware('role:gerencia')->group(function () {
+            Route::get('/lista-de-producao', [ProductionController::class, 'indexAdmin'])->name('indexAdmin');
+        });
+    });
+
     Route::name('users.')->group(function () {
         Route::middleware('role:gerencia')->group(function () {
             Route::get('/usuarios', [UsersController::class, 'index'])->name('index');
@@ -59,14 +70,19 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::name('clients.')->group(function () {
-        Route::get('/', [ClientsController::class, 'index'])->name('index');
-        Route::get('/clientes/list', [ClientsController::class, 'list']);
-        Route::get('/clientes/{client}', [ClientsController::class, 'show'])->name('show');
-        Route::get('/clientes/{client}/json', [ClientsController::class, 'client']);
+        Route::middleware('role:gerencia,atendimento,design')->group(function () {
+            Route::get('/', [ClientsController::class, 'index'])->name('index');
+            Route::get('/clientes/list', [ClientsController::class, 'list']);
+            Route::get('/clientes/{client}', [ClientsController::class, 'show'])->name('show');
+            Route::get('/clientes/{client}/json', [ClientsController::class, 'client']);
+        });
 
         Route::middleware('role:gerencia,atendimento')->group(function () {
             Route::post('/clientes', [ClientsController::class, 'store'])->name('store');
             Route::patch('/clientes/{client}', [ClientsController::class, 'update'])->name('update');
+        });
+        
+        Route::middleware('role:gerencia')->group(function () {
             Route::delete('/clientes/{client}', [ClientsController::class, 'destroy'])->name('destroy');
         });
     });
@@ -80,6 +96,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/cliente/{client}/pedido/{order}/json', [OrdersController::class, 'json']);
             Route::get('/cliente/{client}/pedidos/list', [OrdersController::class, 'list']);
             Route::get('/pedidos', [OrdersController::class, 'index'])->name('index');
+            Route::get('/pedidos/order-commission', [OrdersController::class, 'getOrderCommission']);
+            Route::post('/pedidos/change-order-commission', [OrdersController::class, 'changeOrderCommission']);
             Route::get('/cliente/{client}/novo-pedido', [OrdersController::class, 'create'])->name('create');
             Route::post('/cliente/{client}/novo-pedido', [OrdersController::class, 'store'])->name('store');
             Route::get('/cliente/{client}/pedido/{order}/editar', [OrdersController::class, 'edit'])->name('edit');
@@ -200,6 +218,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('role:gerencia')->group(function () {
             Route::get('/tipos-de-roupas', [ClothingTypesController::class, 'index'])->name('index');
             Route::post('/tipos-de-roupas', [ClothingTypesController::class, 'store']);
+            Route::post('/tipos-de-roupas/{clothingType}/change-commission', [ClothingTypesController::class, 'changeComission']);
             Route::patch('/tipos-de-roupas/{clothingType}/toggle-hide', [ClothingTypesController::class, 'toggleHide']);
             Route::patch('/tipos-de-roupas/update-order', [ClothingTypesController::class, 'updateOrder']);
             Route::patch('/tipos-de-roupas/{clothingType}', [ClothingTypesController::class, 'update']);
