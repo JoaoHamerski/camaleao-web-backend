@@ -18,6 +18,6 @@ class CommissionUser extends Pivot
 
     public function user()
     {
-        return $this->belongsto(User::class);
+        return $this->belongsTo(User::class);
     }
 }

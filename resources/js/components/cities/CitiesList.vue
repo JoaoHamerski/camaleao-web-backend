@@ -115,7 +115,7 @@
     >
       <div slot="spinner">
         <div class="spinner-grow text-primary" role="status">
-          <span class="sr-only">Loading...</span>
+          <span class="sr-only">Carregando...</span>
         </div>
       </div>
 

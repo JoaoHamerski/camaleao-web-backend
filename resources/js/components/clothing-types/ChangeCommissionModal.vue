@@ -78,11 +78,10 @@
         return new Promise((resolve, reject) => {
           axios.get('/pedidos/order-commission')
             .then(response => {
-              this.form.value = this.$helpers.valueToBRL(response.data.commission)
+              this.form.value = this.$helpers.valueToBRL(
+                response.data.commission
+              )
               resolve()
-            })
-            .catch(error => {
-              console.log(error.response)
             })
         })
       },
@@ -93,7 +92,7 @@
             $(this.$refs.modal.$el).modal('hide')
             this.$emit('changed')
           })
-          .catch()
+          .catch(() => {})
           .then(() => {
             this.form.isLoading = false
           })

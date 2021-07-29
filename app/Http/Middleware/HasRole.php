@@ -16,7 +16,12 @@ class HasRole
      */
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        foreach($roles as $role) {
+        foreach ($roles as $role) {
+            if ($request->user()->hasRole(['costura', 'estampa'])
+                && $request->getRequestUri() === '/') {
+                return redirect()->route('production.home');
+            }
+
             if ($request->user()->hasRole($role)) {
                 return $next($request);
             }

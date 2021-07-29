@@ -81,7 +81,8 @@
                   :disabled="commission.isLoading"
                   @click="confirm(commission)"
                 >
-                  <i class="fas fa-check fa-fw"></i>
+                  <i v-if="! commission.isLoading" class="fas fa-check fa-fw"></i>
+                  <span v-else class="spinner-border spinner-border-sm"></span>
                 </button>
               </div>
               <div v-else>
@@ -93,6 +94,24 @@
       </table>
     </div>
 
+    <InfiniteLoading @infinite="infiniteHandler"
+      :identifier="infiniteId"
+    >
+      <div slot="spinner">
+        <div class="spinner-grow text-primary" role="status">
+          <span class="sr-only">Carregando...</span>
+        </div>
+      </div>
+
+      <div slot="no-more"></div>
+
+      <div slot="no-results">
+        <div class="text-secondary my-5">
+          Nenhum pedido encontrado
+        </div>
+      </div>
+    </InfiniteLoading>
+
     <CommissionImageModal v-if="images.length" 
       :images="images"
     />
@@ -102,6 +121,7 @@
 <script>
   import CommissionImageModal from './CommissionImageModal'
   import CommissionDetailsDropdown from './CommissionDetailsDropdown'
+  import InfiniteLoading from 'vue-infinite-loading'
 
   import moment from 'moment'
   import { TippyComponent } from 'vue-tippy'
@@ -110,7 +130,8 @@
     components: {
       CommissionImageModal,
       CommissionDetailsDropdown,
-      Tippy: TippyComponent 
+      Tippy: TippyComponent,
+      InfiniteLoading
     },
     props: {
       userRole: { default: '' }
@@ -119,7 +140,9 @@
       return {
         moment,
         images: [],
-        commissions: []
+        commissions: [],
+        page: 1,
+        infiniteId: +new Date()
       }
     },
     computed: {
@@ -129,14 +152,26 @@
     },
     methods: {
       confirm(commission) {
-        commission.isLoading = true
-        
-        axios.post(`/producao/${commission.pivot.id}/confirm`)
+        this.$modal.fire({
+          icon: 'info',
+          iconHtml:'<i class="fas fa-info-circle"></i>',
+          iconColor: '#3490dc',
+          title: 'Você tem certeza?',
+          text: 'Você está confirmando que a produção deste pedido foi efetuada.'
+        })
           .then(response => {
-            this.$toast.success('Comissão confirmada')
-            commission.isLoading = false
-            this.refresh()
+            if (response.isConfirmed) {
+                commission.isLoading = true
+
+                axios.post(`/producao/${commission.pivot.id}/confirm`)
+                  .then(response => {
+                    this.$toast.success('Comissão confirmada')
+                    commission.isLoading = false
+                    this.refresh()
+                  })
+            }
           })
+        
       },
       selectImages(commission) {
         if (commission.order.art_paths.length) {
@@ -144,19 +179,32 @@
         }
       },  
       refresh() {
-        axios.get('/producao/get-commissions')
-          .then(response => {
-            this.commissions = response.data.commissions.map((commission) => {
-              return {...commission, isLoading: false}
-            })
-          })
-          .catch(error => {
-            console.log(error.response)
+        this.commissions = []
+        this.page = 1
+        this.infiniteId += 1
+      },
+      infiniteHandler($state) {
+        axios.get('/producao/get-commissions', {
+          params: {
+            page: this.page
+          }
+        })
+          .then(({data}) => {
+            if (data.commissions.data.length) {
+              this.page += 1
+
+              let commissions = data.commissions.data.map(commission => {
+                return {...commission, isLoading: false}
+              })
+
+              this.commissions = commissions
+
+              $state.loaded()
+            } else {
+              $state.complete()
+            }
           })
       }
-    },
-    mounted() {
-      this.refresh()
     }
   }
 </script>

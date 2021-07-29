@@ -4388,8 +4388,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         axios.get('/pedidos/order-commission').then(function (response) {
           _this.form.value = _this.$helpers.valueToBRL(response.data.commission);
           resolve();
-        })["catch"](function (error) {
-          console.log(error.response);
         });
       });
     },
@@ -4401,7 +4399,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         $(_this2.$refs.modal.$el).modal('hide');
 
         _this2.$emit('changed');
-      })["catch"]().then(function () {
+      })["catch"](function () {}).then(function () {
         _this2.form.isLoading = false;
       });
     },
@@ -6551,9 +6549,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _CommissionImageModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CommissionImageModal */ "./resources/js/components/production/CommissionImageModal.vue");
 /* harmony import */ var _CommissionDetailsDropdown__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CommissionDetailsDropdown */ "./resources/js/components/production/CommissionDetailsDropdown.vue");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var vue_tippy__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-tippy */ "./node_modules/vue-tippy/dist/vue-tippy.esm.js");
+/* harmony import */ var vue_infinite_loading__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-infinite-loading */ "./node_modules/vue-infinite-loading/dist/vue-infinite-loading.js");
+/* harmony import */ var vue_infinite_loading__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue_infinite_loading__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var vue_tippy__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue-tippy */ "./node_modules/vue-tippy/dist/vue-tippy.esm.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -6661,6 +6661,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -6669,7 +6689,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   components: {
     CommissionImageModal: _CommissionImageModal__WEBPACK_IMPORTED_MODULE_0__.default,
     CommissionDetailsDropdown: _CommissionDetailsDropdown__WEBPACK_IMPORTED_MODULE_1__.default,
-    Tippy: vue_tippy__WEBPACK_IMPORTED_MODULE_3__.TippyComponent
+    Tippy: vue_tippy__WEBPACK_IMPORTED_MODULE_4__.TippyComponent,
+    InfiniteLoading: (vue_infinite_loading__WEBPACK_IMPORTED_MODULE_2___default())
   },
   props: {
     userRole: {
@@ -6678,9 +6699,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
-      moment: (moment__WEBPACK_IMPORTED_MODULE_2___default()),
+      moment: (moment__WEBPACK_IMPORTED_MODULE_3___default()),
       images: [],
-      commissions: []
+      commissions: [],
+      page: 1,
+      infiniteId: +new Date()
     };
   },
   computed: {
@@ -6694,13 +6717,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     confirm: function confirm(commission) {
       var _this = this;
 
-      commission.isLoading = true;
-      axios.post("/producao/".concat(commission.pivot.id, "/confirm")).then(function (response) {
-        _this.$toast.success('Comissão confirmada');
+      this.$modal.fire({
+        icon: 'info',
+        iconHtml: '<i class="fas fa-info-circle"></i>',
+        iconColor: '#3490dc',
+        title: 'Você tem certeza?',
+        text: 'Você está confirmando que a produção deste pedido foi efetuada.'
+      }).then(function (response) {
+        if (response.isConfirmed) {
+          commission.isLoading = true;
+          axios.post("/producao/".concat(commission.pivot.id, "/confirm")).then(function (response) {
+            _this.$toast.success('Comissão confirmada');
 
-        commission.isLoading = false;
+            commission.isLoading = false;
 
-        _this.refresh();
+            _this.refresh();
+          });
+        }
       });
     },
     selectImages: function selectImages(commission) {
@@ -6709,21 +6742,34 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     refresh: function refresh() {
+      this.commissions = [];
+      this.page = 1;
+      this.infiniteId += 1;
+    },
+    infiniteHandler: function infiniteHandler($state) {
       var _this2 = this;
 
-      axios.get('/producao/get-commissions').then(function (response) {
-        _this2.commissions = response.data.commissions.map(function (commission) {
-          return _objectSpread(_objectSpread({}, commission), {}, {
-            isLoading: false
+      axios.get('/producao/get-commissions', {
+        params: {
+          page: this.page
+        }
+      }).then(function (_ref) {
+        var data = _ref.data;
+
+        if (data.commissions.data.length) {
+          _this2.page += 1;
+          var commissions = data.commissions.data.map(function (commission) {
+            return _objectSpread(_objectSpread({}, commission), {}, {
+              isLoading: false
+            });
           });
-        });
-      })["catch"](function (error) {
-        console.log(error.response);
+          _this2.commissions = commissions;
+          $state.loaded();
+        } else {
+          $state.complete();
+        }
       });
     }
-  },
-  mounted: function mounted() {
-    this.refresh();
   }
 });
 
@@ -85512,7 +85558,11 @@ var render = function() {
                 staticClass: "spinner-grow text-primary",
                 attrs: { role: "status" }
               },
-              [_c("span", { staticClass: "sr-only" }, [_vm._v("Loading...")])]
+              [
+                _c("span", { staticClass: "sr-only" }, [
+                  _vm._v("Carregando...")
+                ])
+              ]
             )
           ]),
           _vm._v(" "),
@@ -89655,7 +89705,14 @@ var render = function() {
                                 }
                               }
                             },
-                            [_c("i", { staticClass: "fas fa-check fa-fw" })]
+                            [
+                              !commission.isLoading
+                                ? _c("i", { staticClass: "fas fa-check fa-fw" })
+                                : _c("span", {
+                                    staticClass:
+                                      "spinner-border spinner-border-sm"
+                                  })
+                            ]
                           )
                         ])
                       : _c("div", [
@@ -89671,6 +89728,38 @@ var render = function() {
           )
         ])
       ]),
+      _vm._v(" "),
+      _c(
+        "InfiniteLoading",
+        {
+          attrs: { identifier: _vm.infiniteId },
+          on: { infinite: _vm.infiniteHandler }
+        },
+        [
+          _c("div", { attrs: { slot: "spinner" }, slot: "spinner" }, [
+            _c(
+              "div",
+              {
+                staticClass: "spinner-grow text-primary",
+                attrs: { role: "status" }
+              },
+              [
+                _c("span", { staticClass: "sr-only" }, [
+                  _vm._v("Carregando...")
+                ])
+              ]
+            )
+          ]),
+          _vm._v(" "),
+          _c("div", { attrs: { slot: "no-more" }, slot: "no-more" }),
+          _vm._v(" "),
+          _c("div", { attrs: { slot: "no-results" }, slot: "no-results" }, [
+            _c("div", { staticClass: "text-secondary my-5" }, [
+              _vm._v("\n        Nenhum pedido encontrado\n      ")
+            ])
+          ])
+        ]
+      ),
       _vm._v(" "),
       _vm.images.length
         ? _c("CommissionImageModal", { attrs: { images: _vm.images } })

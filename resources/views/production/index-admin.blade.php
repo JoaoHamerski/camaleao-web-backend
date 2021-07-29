@@ -3,6 +3,29 @@
 @section('title', 'Setor de produção - Listagem')
 
 @section('content')
+<div class="mt-5">
+  <form action="{{ route('production.indexAdmin') }}" method="GET">
+    <div class="input-group col-5 px-0">
+      @if (! empty(request('filtro')))
+        <input type="text" 
+          class="d-none" 
+          name="filtro" 
+          value="{{ request('filtro') }}"
+        >
+      @endif
+      <input type="text" 
+        name="codigo" 
+        class="form-control"
+        placeholder="Cód. do pedido..."
+        value="{{ request('codigo') }}"
+      >
+      <div class="input-group-append">
+        <button class="btn btn-outline-primary">Buscar</button>
+      </div>
+    </div>
+  </form>
+</div>
+
 <x-card class="mt-4" header-color="primary" icon="fas fa-box">
   <x-slot name="header">
     Pedidos confirmados pela produção
@@ -10,11 +33,19 @@
 
   <x-slot name="body">
     <nav class="nav nav-pills flex-column flex-sm-row mb-4">
+      <a href="{{ route('production.indexAdmin') }}"
+        @class([
+          'flex-sm-fill text-sm-center nav-link',
+          'active font-weight-bold' => empty(request('filtro'))
+        ])
+      >
+        <i class="fas fa-list fa-fw fa-lg"></i>
+      </a>
       <a @class([
           'flex-sm-fill text-sm-center nav-link',
-          'active font-weight-bold' => request('filtro') !== 'pendentes'
+          'active font-weight-bold' => request('filtro') === 'confirmados'
         ]) 
-        href="{{ route('production.indexAdmin') }}"
+        href="{{ route('production.indexAdmin', ['filtro' => 'confirmados']) }}"
       >Confirmados</a>
 
       <a @class([

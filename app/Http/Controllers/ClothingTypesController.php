@@ -50,6 +50,7 @@ class ClothingTypesController extends Controller
 
     public function changeComission(Request $request, ClothingType $clothingType)
     {
+        $data = [];
         if ($request->filled('value')) {
             $data['value'] = Sanitizer::money($request->value);
         }

@@ -17,21 +17,41 @@ class ProductionController extends Controller
 
     public function indexAdmin(Request $request)
     {
-        $commissions = CommissionUser::orderBy('confirmed_at', 'desc');
+        $commissions = CommissionUser::join(
+            'commissions',
+            'commission_user.commission_id',
+            '=',
+            'commissions.id'
+        )->orderBy('commissions.created_at', 'desc');
 
-        if ($request->filled('filtro') && $request->filtro == 'pendentes') {
-            $commissions->whereNull('confirmed_at');
-        } else {
-            $commissions->whereNotNull('confirmed_at');
+        if ($request->filled('filtro')) {
+            if ($request->filtro == 'pendentes') {
+                $commissions->whereNull('confirmed_at');
+            } elseif ($request->filtro == 'confirmados') {
+                $commissions->whereNotNull('confirmed_at');
+            }
+        }
+        if ($request->filled('codigo')) {
+            $code = $request->codigo;
+
+            $commissions->whereHas('commission.order', function ($query) use ($code) {
+                $query->where('code', 'like', '%' . $code . '%');
+            });
         }
 
         return view('production.index-admin', [
-            'commissions' => $commissions->paginate(10)->appends($request->query())
+            'commissions' => $commissions
+                ->paginate(10)
+                ->appends($request->query())
         ]);
     }
 
     public function assignConfirmation(CommissionUser $commissionUser)
     {
+        if ($commissionUser->user_id !== Auth::id()) {
+            abort(403);
+        }
+        
         $commissionUser->update([
             'confirmed_at' => now(),
             'was_quantity_changed' => false
@@ -45,12 +65,12 @@ class ProductionController extends Controller
         $commissions = Auth::user()
             ->commissions()
             ->orderByPivot('was_quantity_changed', 'desc')
+            ->orderBy('confirmed_at', 'asc')
             ->orderBy('created_at', 'desc')
-            ->with('order')
-            ->get();
+            ->with('order');
 
         return response()->json([
-            'commissions' => $commissions
+            'commissions' => $commissions->paginate(10)
         ], 200);
     }
 }
