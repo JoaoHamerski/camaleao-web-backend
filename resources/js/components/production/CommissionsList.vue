@@ -44,7 +44,6 @@
 
                 <CommissionDetailsDropdown 
                   :commission="commission" 
-                  :userRole="userRole"
                 />
               </div>
             </td>
@@ -132,9 +131,6 @@
       CommissionDetailsDropdown,
       Tippy: TippyComponent,
       InfiniteLoading
-    },
-    props: {
-      userRole: { default: '' }
     },
     data() {
       return {

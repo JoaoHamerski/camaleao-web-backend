@@ -95,7 +95,8 @@ class User extends Authenticatable
                 'id',
                 'commission_value',
                 'confirmed_at',
-                'was_quantity_changed'
+                'was_quantity_changed',
+                'role_id'
             ]);
     }
 

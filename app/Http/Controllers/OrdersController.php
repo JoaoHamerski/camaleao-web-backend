@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use \Carbon\Carbon;
 use App\Models\Via;
 use App\Models\City;
+use App\Models\Role;
 use App\Models\User;
 use App\Util\Helper;
 use App\Models\Order;
@@ -133,7 +134,16 @@ class OrdersController extends Controller
 
         foreach ($users as $user) {
             $data = [];
-            $data['commission_value'] = $commission->getUserCommission($user);
+            $commissionWithPivot = $user->commissions()->find($commission->id);
+
+            if (! $commissionWithPivot) {
+                $data['commission_value'] = $commission->getUserCommission($user);
+                $data['role_id'] = $user->role_id;
+            } else {
+                $data['commission_value'] = Role::find($commissionWithPivot->pivot->role_id)->name == 'Costura'
+                    ? $commission->getSeamTotalCommission()
+                    : $commission->getPrintTotalCommission();
+            }
 
             if ($this->isComissionConfirmed($user, $commission->id) && $wasQuantityChanged) {
                 $data['confirmed_at'] = null;

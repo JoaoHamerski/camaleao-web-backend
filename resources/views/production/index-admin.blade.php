@@ -71,7 +71,9 @@
             <tr>
               <td>
                 {{ $commission->user->name }} 
-                <small class="text-secondary">({{ $commission->user->role->name }})</small>
+                <small class="text-secondary">
+                  ({{ \App\Models\Role::find($commission->role_id)->name }})
+                </small>
               </td>
               <td>
                 <a class="font-weight-bold" 
