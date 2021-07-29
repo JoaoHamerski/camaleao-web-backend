@@ -3,6 +3,8 @@
 @section('title', 'Setor de produção - Listagem')
 
 @section('content')
+
+
 <div class="mt-5">
   <form action="{{ route('production.indexAdmin') }}" method="GET">
     <div class="input-group col-5 px-0">
@@ -25,6 +27,21 @@
     </div>
   </form>
 </div>
+
+
+  <x-card :is-collapsed="true" 
+    class="mt-4" 
+    collapsed-id="totalComission" 
+    header-color="success"
+  >
+    <x-slot name="header">
+      Comissão mensal
+    </x-slot>
+  
+    <x-slot name="body">
+      <month-commission :is-admin="{{ Auth::user()->hasRole('gerencia') }}"></month-commission>
+    </x-slot>
+  </x-card>
 
 <x-card class="mt-4" header-color="primary" icon="fas fa-box">
   <x-slot name="header">

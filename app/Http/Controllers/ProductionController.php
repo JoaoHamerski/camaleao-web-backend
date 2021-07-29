@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Commission;
 use Illuminate\Http\Request;
 use App\Models\CommissionUser;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
 
@@ -58,6 +59,44 @@ class ProductionController extends Controller
         ]);
 
         return response()->json([], 204);
+    }
+    
+    public function calculateMonthCommission(Request $request)
+    {
+        if (Auth::user()->hasRole('gerencia')) {
+            $commissions = CommissionUser::where('role_id', $request->user_role);
+        } else {
+            $commissions = CommissionUser::where('user_id', Auth::id());
+        }
+
+        $selectedMonth = Carbon::createFromDate(
+            Carbon::now()->year,
+            $request->month,
+            1
+        );
+
+        if ($selectedMonth->greaterThan(Carbon::now())) {
+            $selectedMonth->subYear(1);
+        }
+
+        $commissions->where(function ($query) use ($selectedMonth) {
+            $query->whereNotNull('confirmed_at');
+            $query->whereRaw(
+                "(confirmed_at >= ? AND confirmed_at <= ?)",
+                [
+                    $selectedMonth->startOfMonth()->toDateString(),
+                    $selectedMonth->endOfMonth()->toDateString()
+                ]
+            );
+        });
+        $totalValue = $commissions->sum('commission_value');
+        
+        return response()->json([
+            'has_commission' => !! $commissions->count(),
+            'commission' => $totalValue,
+            'year' => $selectedMonth->year,
+            'month' => $selectedMonth->month
+        ], 200);
     }
 
     public function getCommissions()

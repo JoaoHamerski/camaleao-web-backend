@@ -74,22 +74,29 @@
           </span>
 
           <span v-else class="text-center">
-            <button v-if="type.is_hidden" @click="toggleHide(type)" 
-              class="btn btn-sm btn-outline-success"
-            >EXIBIR</button>
-            <button v-else @click="toggleHide(type)"
-              class="btn btn-sm btn-outline-primary"
-            >ESCONDER</button>
+            <div class="mb-2 d-flex justify-content-between">
+              <button @click="toggleHide(type)" 
+                v-tippy="{duration: 150, arrow: true, placement: 'top'}"
+                :content="type.is_hidden ? 'Exibir' : 'Esconder'"
+                class="btn btn-sm btn-outline-primary px-4"
+              >
+                <i class="fas fa-eye-slash fa-fw" v-if="type.is_hidden"></i>
+                <i class="fas fa-eye fa-fw" v-else></i>
+              </button>
 
-            <button class="btn btn-sm btn-success" @click="edit(type)">
-              EDITAR
-            </button>
-
+              <button class="btn btn-sm btn-success px-4" 
+                @click="edit(type)"
+                v-tippy="{duration: 150, arrow: true, placement: 'top'}"
+                content="Editar"
+              >
+                <i class="fas fa-edit fa-fw"></i>
+              </button>
+            </div>
             <button class="btn btn-sm btn-primary"
               data-toggle="modal"
               data-target="#changeCommissionModal"
               @click="selectedClothingType = type"
-            >COMISSÃO</button>
+            >COMISSÃO COSTURA</button>
           </span>
         </li>
       </transition-group>

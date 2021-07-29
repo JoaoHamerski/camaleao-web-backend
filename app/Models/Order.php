@@ -162,14 +162,11 @@ class Order extends Model
         });
 
         $hasDifference = $clothingTypes->pluck('key')
-            ->diff(
-                $commissionClothingTypes->pluck('key')
-            );
+            ->diff($commissionClothingTypes->pluck('key'));
 
         if (! $hasDifference->isEmpty()) {
             return true;
         }
-
 
         foreach ($clothingTypes as $type) {
             $commission = $commissionClothingTypes
@@ -181,8 +178,6 @@ class Order extends Model
             }
         }
 
-        
-        
         return false;
     }
 

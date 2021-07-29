@@ -21,7 +21,7 @@
       </h5>
 
       <form @submit.prevent="onSubmit">
-        <div class="form-group ">
+        <div class="form-group">
           <AppInput v-model="form.value"
             id="value"
             name="value"
@@ -90,6 +90,7 @@
         this.form.submit('POST', `/tipos-de-roupas/${this.clothingType.id}/change-commission`)
           .then(response => {
             $(this.$refs.modal.$el).modal('hide')
+            this.$toast.success('Valor da comissão alterada')
             this.$emit('changed')
           })
           .catch(() => {})
@@ -101,7 +102,7 @@
         this.form.isLoading = true
         this.form.submit('POST', '/pedidos/change-order-commission')
           .then(response => {
-
+            this.$toast.success('Valor da comissão alterada')
           })
           .catch(() => {})
           .then(() => {

@@ -117,7 +117,7 @@ class OrdersController extends Controller
         ]);
     }
 
-    public function isComissionConfirmed(User $user, $commissionId)
+    public function isCommissionConfirmed(User $user, $commissionId)
     {
         $commission = $user->commissions()->find($commissionId);
 
@@ -145,7 +145,9 @@ class OrdersController extends Controller
                     : $commission->getPrintTotalCommission();
             }
 
-            if ($this->isComissionConfirmed($user, $commission->id) && $wasQuantityChanged) {
+            var_dump($wasQuantityChanged);
+
+            if ($this->isCommissionConfirmed($user, $commission->id) && $wasQuantityChanged) {
                 $data['confirmed_at'] = null;
                 $data['was_quantity_changed'] = true;
             }
@@ -173,13 +175,16 @@ class OrdersController extends Controller
             } else {
                 $commission = Commission::where('order_id', $order->id)->first();
                 $commission->update($data);
-                $commission = $commission->fresh();
             }
 
-            $isQuantityChanged = $order->fresh()->isQuantityChanged();
+            $isQuantityChanged = $order->isQuantityChanged();
         }
+        
 
-        $this->storeUserCommissions($commission, $isQuantityChanged);
+        $this->storeUserCommissions(
+            $commission->fresh(),
+            $isQuantityChanged
+        );
     }
 
     public function show(Client $client, Order $order)
@@ -247,6 +252,36 @@ class OrdersController extends Controller
         ], 200);
     }
 
+    public function update(Client $client, Order $order, Request $request)
+    {
+        $this->authorize('update', [$order, $client->id]);
+
+        $this->validator(
+            $data = $this->getFormattedData($request->all(), true),
+            $order
+        )->validate();
+
+
+        $this->deleteField($order, ['art_paths', 'size_paths', 'payment_voucher_paths']);
+
+        $data = array_merge($data, $this->uploadAllBase64Files($data));
+
+        $order->update(Arr::except($data, $this->exceptKeysToStore()));
+
+        $order->clothingTypes()->sync(
+            $this->getFilledClothingTypes($data)
+        );
+
+        if (! $order->fresh()->isPreRegistered()) {
+            $this->storeCommissions($order, true);
+        }
+
+        return response()->json([
+            'message' => 'success',
+            'redirect' => $order->path()
+        ], 200);
+    }
+
     private function getFilledClothingTypes(array $data)
     {
         $filled = [];
@@ -301,36 +336,6 @@ class OrdersController extends Controller
         Config::set('app', 'order_commission', $data['value']);
 
         return response()->json([], 204);
-    }
-
-    public function update(Client $client, Order $order, Request $request)
-    {
-        $this->authorize('update', [$order, $client->id]);
-
-        $this->validator(
-            $data = $this->getFormattedData($request->all(), true),
-            $order
-        )->validate();
-
-
-        $this->deleteField($order, ['art_paths', 'size_paths', 'payment_voucher_paths']);
-
-        $data = array_merge($data, $this->uploadAllBase64Files($data));
-
-        $order->update(Arr::except($data, $this->exceptKeysToStore()));
-
-        $order->clothingTypes()->sync(
-            $this->getFilledClothingTypes($data)
-        );
-
-        if (! $order->fresh()->isPreRegistered()) {
-            $this->storeCommissions($order, true);
-        }
-
-        return response()->json([
-            'message' => 'success',
-            'redirect' => $order->path()
-        ], 200);
     }
     
     private function evaluateTotalQuantity(array $data)
