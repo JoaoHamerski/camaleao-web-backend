@@ -221,6 +221,11 @@ class PaymentsController extends Controller
             'date' => 'required|date_format:Y-m-d'
         ])->validate();
 
+        if (Auth::user()->hasRole('gerencia')) {
+            $data['confirmed_at'] = Carbon::now();
+            $data['is_confirmed'] = true;
+        }
+ 
         $order->payments()->create($data);
 
         return response()->json([
