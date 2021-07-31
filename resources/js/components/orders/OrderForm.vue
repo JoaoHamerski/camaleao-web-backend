@@ -232,6 +232,9 @@
       >
         Imagens da arte
       </AppInput>
+      <div v-if="form.errors.get('art_paths.0')" class="small text-danger">
+        {{ form.errors.get('art_paths.0') }}
+      </div>
     </div>
     
     <UploadedFilesList 
@@ -251,6 +254,10 @@
       >
         Imagens do tamanho
       </AppInput>
+      <div v-if="form.errors.get('size_paths.0')" class="small text-danger">
+        {{ form.errors.get('size_paths.0') }}
+      </div>
+      
     </div>
 
     <UploadedFilesList 
@@ -270,6 +277,9 @@
       >
         Comprovantes de pagamento
       </AppInput>
+      <div v-if="form.errors.get('payment_voucher_paths.0')" class="small text-danger">
+        {{ form.errors.get('payment_voucher_paths.0') }}
+      </div>
     </div>
 
     <ul class="list-group">

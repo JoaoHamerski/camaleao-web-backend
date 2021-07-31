@@ -125,11 +125,9 @@
 								: 3 }}">
 						@isset($order->getPaths('art_paths')[0])
 							<div>
-								@if (filesize(public_path($order->getPaths('art_paths')[0])) < 4000000)
 								<img width="100px" 
 									src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[0])) }}"
 								>
-								@endif
 							</div>
 						@else
 							[sem imagem]

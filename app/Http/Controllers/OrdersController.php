@@ -390,6 +390,9 @@ class OrdersController extends Controller
             'production_date' => ['nullable', 'date_format:Y-m-d'],
             'down_payment' => ['sometimes', 'max_double:price'],
             'payment_via_id' => ['sometimes', 'nullable', 'required_with:down_payment', 'exists:vias,id'],
+            'art_paths.*' => ['file', 'max:1024'],
+            'size_paths.*' => ['file', 'max:1024'],
+            'payment_voucher_paths.*' => ['file', 'max:1024'],
         ];
 
         foreach ($this->clothingTypes as $type) {
@@ -404,7 +407,10 @@ class OrdersController extends Controller
     {
         return [
             'discount.lte' => 'O desconto não pode ser maior que o preço total.',
-            'code.not_regex' => 'O código deve conter apenas letras, numeros ou traços.'
+            'code.not_regex' => 'O código deve conter apenas letras, numeros ou traços.',
+            'art_paths.*.max' => 'A imagem armazenada deve ser menor que 1MB, por favor, redimensione-a para diminuir seu tamanho.',
+            'size_paths.*.max' => 'A imagem armazenada deve ser menor que 1MB, por favor, redimensione-a para diminuir seu tamanho.',
+            'payment_voucher_paths.*.max' => 'O arquivo armazenada deve ser menor que 1MB.',
         ];
     }
 
