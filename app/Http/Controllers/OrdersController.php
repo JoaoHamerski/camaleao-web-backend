@@ -145,8 +145,6 @@ class OrdersController extends Controller
                     : $commission->getPrintTotalCommission();
             }
 
-            var_dump($wasQuantityChanged);
-
             if ($this->isCommissionConfirmed($user, $commission->id) && $wasQuantityChanged) {
                 $data['confirmed_at'] = null;
                 $data['was_quantity_changed'] = true;

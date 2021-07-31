@@ -1,7 +1,9 @@
 <template>
   <form @submit.prevent="onSubmit" data-type="vue"
     @focus.capture="form.errors.clear($event.target.name)"
+    class="position-relative"
   >
+    <AppLoading  v-if="isLoading" />
     <h5 class="font-weight-bold text-secondary">Informações básicas</h5>
 
     <div class="form-row d-flex flex-column flex-md-row">
@@ -326,6 +328,7 @@
     data: function() {
       return {
         masks,
+        isLoading: false,
         selectedFile: null,
         clothingTypes: [],
         paymentVias: [],
@@ -469,6 +472,8 @@
           })
       },
       populateForm() {
+        this.isLoading = true
+
         axios.get(`/cliente/${this.clientId}/pedido/${this.orderCode}/json`)
           .then(response => {
             let order = response.data.order,
@@ -503,6 +508,8 @@
                 this.form[`quantity_${type.key}`] = `${order[`quantity_${type.key}`]}`
               }
             }
+
+            this.isLoading = false
           })
       }
     },
