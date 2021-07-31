@@ -125,8 +125,8 @@
 								: 3 }}">
 						@isset($order->getPaths('art_paths')[0])
 							<div>
-								<img width="100px" 
-								src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[0])) }}">
+								{{-- <img width="100px" 
+								src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[0])) }}"> --}}
 							</div>
 						@else
 							[sem imagem]
