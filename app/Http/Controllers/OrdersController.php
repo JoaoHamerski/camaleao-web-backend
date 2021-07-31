@@ -459,6 +459,7 @@ class OrdersController extends Controller
 
     public function generateReport(Request $request)
     {
+        ini_set('memory_limit', '-1');
         if ($request->wantsJson()) {
             $validator = Validator::make($request->all(), [
                 'cidade' => ['nullable', 'exists:cities,name'],
