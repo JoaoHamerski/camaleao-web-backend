@@ -1,22 +1,30 @@
 <template>
-  <AppModal id="clientModal"
+  <AppModal
+    id="clientModal"
     ref="modal"
-    modalDialogClass="modal-dialog-centered"
-    :modalHeaderClass="isEdit ? 'bg-primary' : 'bg-success'"
+    modal-dialog-class="modal-dialog-centered"
+    :modal-header-class="isEdit ? 'bg-primary' : 'bg-success'"
   >
     <template #header>
-      <h5 class="mb-0 font-weight-bold text-white"> 
-        <i class="fas fa-user" v-if="isEdit"></i>
-        <i v-else class="fas fa-user-plus"></i>
+      <h5 class="mb-0 font-weight-bold text-white">
+        <i
+          v-if="isEdit"
+          class="fas fa-user"
+        />
+        <i
+          v-else
+          class="fas fa-user-plus"
+        />
         {{ ! isEdit ? 'Novo cliente' : 'Alterar dados' }}
       </h5>
     </template>
 
     <template #body>
-      <ClientForm v-if="isOpen"
-        ref="clientForm"
-        :isEdit="isEdit" 
+      <ClientForm
+        v-if="isOpen"
         :id="id"
+        ref="clientForm"
+        :is-edit="isEdit"
         @open-city-modal="openCityModal"
         @loading="isLoading = $event"
       />
@@ -24,59 +32,72 @@
 
     <template #footer>
       <div class="d-flex justify-content-between">
-        <button class="btn btn-success font-weight-bold" 
-          @click="submitForm"
+        <button
+          class="btn btn-success font-weight-bold"
           :disabled="isLoading"
+          @click="submitForm"
         >
-          <span class="spinner-border spinner-border-sm mr-1" 
+          <span
             v-if="isLoading"
-          ></span>
+            class="spinner-border spinner-border-sm mr-1"
+          />
           {{ isEdit ? 'Atualizar' : 'Cadastrar' }}
         </button>
-        <button class="btn btn-light" data-dismiss="modal">Fechar</button>
+        <button
+          class="btn btn-light"
+          data-dismiss="modal"
+        >
+          Fechar
+        </button>
       </div>
     </template>
   </AppModal>
 </template>
 
 <script>
-  import ClientForm from './ClientForm.vue'
+import ClientForm from './ClientForm.vue'
 
-  export default {
+export default {
     components: {
-      ClientForm
+        ClientForm
     },
     props: {
-      id: { default: '' },
-      isEdit: { default: false }
+        id: {
+            type: String,
+            default: ''
+        },
+        isEdit: {
+            type: Boolean,
+            default: false
+        }
     },
     data: () => {
-      return {
-        isOpen: false,
-        isLoading: false
-      }
-    },
-    methods: {
-      submitForm() {
-        this.$refs.clientForm.onSubmit()
-      },
-      openCityModal(search) {
-        $(this.$refs.modal.$el).modal('hide')
-        this.$parent.$refs.newCityModal.$emit('pre-form', search)
-        $(this.$parent.$refs.newCityModal.$el).modal('show')
-      }
+        return {
+            isOpen: false,
+            isLoading: false
+        }
     },
     mounted() {
-      this.$on('city-created', city => {
-        $(this.$refs.modal.$el).modal('show')
-        this.$refs.clientForm.$emit('city-created', city)
-      })
+        this.$on('city-created', city => {
+            $(this.$refs.modal.$el).modal('show')
+            this.$refs.clientForm.$emit('city-created', city)
+        })
 
-      $(this.$refs.modal.$el).on('show.bs.modal', () => {
-        if (! this.isOpen) {
-          this.isOpen = true
+        $(this.$refs.modal.$el).on('show.bs.modal', () => {
+            if (! this.isOpen) {
+                this.isOpen = true
+            }
+        })
+    },
+    methods: {
+        submitForm() {
+            this.$refs.clientForm.onSubmit()
+        },
+        openCityModal(search) {
+            $(this.$refs.modal.$el).modal('hide')
+            this.$parent.$refs.newCityModal.$emit('pre-form', search)
+            $(this.$parent.$refs.newCityModal.$el).modal('show')
         }
-      })
     }
-  }
+}
 </script>

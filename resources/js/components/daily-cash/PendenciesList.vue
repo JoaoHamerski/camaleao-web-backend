@@ -1,7 +1,8 @@
 <template>
   <div>
     <ul class="list-group list-hover">
-      <li v-for="pendency in pendencies" 
+      <li
+        v-for="pendency in pendencies" 
         :key="pendency.date_registered"
         class="list-group-item d-flex justify-content-between list-group-item-action clickable font-weight-bold"  
         @click="onItemClick(pendency)"
@@ -16,36 +17,36 @@
 </template>
 
 <script>
-  import moment from 'moment'
-  moment.locale('pt-br')
+import moment from 'moment'
+moment.locale('pt-br')
 
-  export default {
+export default {
     data() {
-      return {
-        pendencies: [],
-        moment
-      }
-    },
-    methods: {
-      onItemClick(pendency) {
-        this.$emit('load-pendencies', pendency.date_registered)
-      },
-      refreshPendencies() {
-        axios.get('/caixa-diario/get-pendencies')
-          .then(response => {
-            this.pendencies = response.data.pendencies
-          })
-      },
-      refresh() {
-        this.refreshPendencies()
-      }
+        return {
+            pendencies: [],
+            moment
+        }
     },
     mounted() {
-      this.refresh()
-      
-      this.$on('refresh-pendencies', () => {
         this.refresh()
-      })
+      
+        this.$on('refresh-pendencies', () => {
+            this.refresh()
+        })
+    },
+    methods: {
+        onItemClick(pendency) {
+            this.$emit('load-pendencies', pendency.date_registered)
+        },
+        refreshPendencies() {
+            axios.get('/caixa-diario/get-pendencies')
+                .then(response => {
+                    this.pendencies = response.data.pendencies
+                })
+        },
+        refresh() {
+            this.refreshPendencies()
+        }
     }
-  }
+}
 </script>

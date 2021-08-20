@@ -1,11 +1,12 @@
 <template>
-  <AppModal id="dailyPaymentModal"
-    modalHeaderClass="bg-primary"
+  <AppModal
+    id="dailyPaymentModal"
     ref="modal"
+    modal-header-class="bg-primary"
   >
     <template #header>
       <h5 class="font-weight-bold text-white mb-0">
-        <i class="fas fa-plus fa-fw mr-1"></i>Nova entrada
+        <i class="fas fa-plus fa-fw mr-1" />Nova entrada
       </h5>
     </template>
 
@@ -16,17 +17,17 @@
 </template>
 
 <script>
-  import DailyPaymentForm from './DailyPaymentForm.vue'
+import DailyPaymentForm from './DailyPaymentForm.vue'
   
-  export default {
+export default {
     components: {
-      DailyPaymentForm
+        DailyPaymentForm
     },
     methods: {
-      onPaymentCreated() {
-        $(this.$refs.modal.$el).modal('hide')
-        this.$emit('created')
-      }
+        onPaymentCreated() {
+            $(this.$refs.modal.$el).modal('hide')
+            this.$emit('created')
+        }
     }
-  }
+}
 </script>

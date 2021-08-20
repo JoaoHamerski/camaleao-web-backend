@@ -1,21 +1,35 @@
 <template>
-  <div class="modal fade" :id="id" tabindex="-1" aria-hidden="true"
+  <div
+    :id="id"
     ref="modal"
+    class="modal fade"
+    tabindex="-1"
+    aria-hidden="true"
   >
-    <div class="modal-dialog" :class="modalDialogClass">
+    <div
+      class="modal-dialog"
+      :class="modalDialogClass"
+    >
       <div class="modal-content">
-        <slot name="content"></slot>
+        <slot name="content" />
 
-        <div class="modal-header" v-if="!! this.$slots.header" :class="modalHeaderClass">
-          <slot name="header"></slot>
+        <div
+          v-if="!! $slots.header"
+          class="modal-header"
+          :class="modalHeaderClass"
+        >
+          <slot name="header" />
         </div>
 
         <div class="modal-body">
-          <slot name="body"></slot>
+          <slot name="body" />
         </div>
 
-        <div class="modal-footer bg-light d-block" v-if="!! this.$slots.footer">
-          <slot name="footer"></slot>
+        <div
+          v-if="!! $slots.footer"
+          class="modal-footer bg-light d-block"
+        >
+          <slot name="footer" />
         </div>
       </div>
     </div>
@@ -23,16 +37,25 @@
 </template>
 
 <script>
-  export default {
+export default {
     props: {
-      id: '',
-      modalDialogClass: '',
-      modalHeaderClass: '',
+        id: {
+            type: [String, Number],
+            default: ''
+        },
+        modalDialogClass: {
+            type: String,
+            default: ''
+        },
+        modalHeaderClass: {
+            type: String,
+            default: ''
+        },
     },
     methods: {
-      open() {
-        $(this.$refs.modal).modal('show')
-      }
+        open() {
+            $(this.$refs.modal).modal('show')
+        }
     }
-  }
+}
 </script>

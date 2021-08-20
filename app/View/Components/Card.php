@@ -83,7 +83,7 @@ class Card extends Component
      *
      * @param string | array $attribute
      *
-     * @return string $
+     * @return string
      */
     private function getFromMultiples($attribute)
     {
@@ -94,7 +94,7 @@ class Card extends Component
                 }
             }
 
-            if (! is_bool($attribute[array_key_last($attribute)])) {
+            if (!is_bool($attribute[array_key_last($attribute)])) {
                 return $attribute[array_key_last($attribute)];
             }
         }

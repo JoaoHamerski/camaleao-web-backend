@@ -1,18 +1,20 @@
 <template>
   <div>
     <div class="d-flex justify-content-between">
-      <button class="btn btn-success font-weight-bold"
+      <button
+        class="btn btn-success font-weight-bold"
         data-toggle="modal"
         data-target="#newBranchModal"
       >
-        <i class="fas fa-plus fa-fa mr-1"></i>  Nova filial
+        <i class="fas fa-plus fa-fa mr-1" />  Nova filial
       </button>
 
-      <button class="btn btn-primary font-weight-bold"
+      <button
+        class="btn btn-primary font-weight-bold"
         data-toggle="modal"
         data-target="#shippingCompaniesModal"
       >
-        <i class="fas fa-truck"></i> Transportadoras
+        <i class="fas fa-truck" /> Transportadoras
       </button>
     </div>
 
@@ -22,13 +24,13 @@
 </template>
 
 <script>  
-  import NewBranchModal from './NewBranchModal'
-  import ShippingCompaniesModal from '../shipping-companies/ShippingCompaniesModal'
+import NewBranchModal from './NewBranchModal'
+import ShippingCompaniesModal from '../shipping-companies/ShippingCompaniesModal'
 
-  export default {
+export default {
     components: {
-      ShippingCompaniesModal,
-      NewBranchModal
+        ShippingCompaniesModal,
+        NewBranchModal
     }
-  }
+}
 </script>

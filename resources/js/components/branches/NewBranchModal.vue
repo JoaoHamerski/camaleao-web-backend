@@ -1,12 +1,13 @@
 <template>
-  <AppModal ref="modal" 
-    id="newBranchModal"
-    modalDialogClass="modal-dialog-centered"
-    modalHeaderClass="bg-success text-white"
+  <AppModal
+    id="newBranchModal" 
+    ref="modal"
+    modal-dialog-class="modal-dialog-centered"
+    modal-header-class="bg-success text-white"
   >
     <template #header>
       <h5 class="font-weight-bold mb-0">
-        <i class="fas fa-plus fa-fw m-r1"></i>  Adicione uma nova filial
+        <i class="fas fa-plus fa-fw m-r1" />  Adicione uma nova filial
       </h5>
     </template>
 
@@ -17,20 +18,20 @@
 </template>
 
 <script>
-  import BranchForm from './BranchForm'
+import BranchForm from './BranchForm'
 
-  export default {
+export default {
     components: {
-      BranchForm
+        BranchForm
     },
     methods: {
-      onCreated() {
-        this.$emit('refresh')
+        onCreated() {
+            this.$emit('refresh')
 
-        $(this.$refs.modal.$el).modal('hide')
+            $(this.$refs.modal.$el).modal('hide')
 
-        this.$toast.success('Filial cadastrada')
-      }
+            this.$toast.success('Filial cadastrada')
+        }
     }
-  }
+}
 </script>

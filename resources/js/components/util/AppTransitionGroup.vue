@@ -1,32 +1,31 @@
 <template>
-  <transition-group 
+  <transition-group
     :mode="mode"
     :name="name"
     :enter-active-class="`animate__animated animate__${enter} animate__${speed}`"
     :leave-active-class="`animate__animated animate__${leave} animate__${speed}`"
   >
-    <slot></slot>
+    <slot />
   </transition-group>
 </template>
 
 <script>
-  export default {
+export default {
     props: {
-      enter: {
-        required: false
-      },
-      leave: {
-        required: false
-      },
-      speed: {
-        default: 'fast'
-      },
-      mode: {
-        default: false
-      },
-      name: {
-        default: ''
-      }
+        enter: undefined,
+        leave: undefined,
+        speed: {
+            type: String,
+            default: 'fast'
+        },
+        mode: {
+            type: Boolean,
+            default: false
+        },
+        name: {
+            type: String,
+            default: ''
+        }
     }
-  }
+}
 </script>

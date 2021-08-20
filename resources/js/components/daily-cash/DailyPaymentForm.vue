@@ -1,38 +1,50 @@
 <template>
-  <form @submit.prevent="onSubmit" data-type="vue"
+  <form
+    data-type="vue"
+    @submit.prevent="onSubmit"
     @focus.capture="form.errors.clear($event.target.name)"
   >
-    <div class="form-group mb-4" v-if="! form.isNewClient">
+    <div
+      v-if="! form.isNewClient"
+      class="form-group mb-4"
+    >
       <h6 class="d-flex justify-content-between">
-        <label for="clients" class="text-primary font-weight-bold">Cliente</label> 
+        <label
+          for="clients"
+          class="text-primary font-weight-bold"
+        >Cliente</label>
 
-        <button type="button" 
+        <button
+          type="button"
           class="btn btn-sm btn-success font-weight-bold ml-2 py-0"
-          @click="setIsNewClient(true)"  
+          @click="setIsNewClient(true)"
         >
           Cadastrar novo
         </button>
       </h6>
 
-      <Multiselect v-model="form.client"
-        :class="{'is-invalid': form.errors.has('client.id')}"
+      <Multiselect
         id="clients"
-        :customLabel="({name, phone}) => `${name} ${phone ? ' - ' + $helpers.maskPhone(phone) : ''}`"
+        v-model="form.client"
+        :class="{'is-invalid': form.errors.has('client.id')}"
+        :custom-label="({name, phone}) => `${name} ${phone ? ' - ' + $helpers.maskPhone(phone) : ''}`"
         placeholder="Procure por nome ou telefone"
-        :internalSearch="false"
+        :internal-search="false"
         :options="clients.items"
         :loading="clients.isLoading"
-        :clearOnSelect="false"
-        selectLabel="Selecionar"
-        selectedLabel="Selecionado"
-        deselectLabel="Remover"
+        :clear-on-select="false"
+        select-label="Selecionar"
+        selected-label="Selecionado"
+        deselect-label="Remover"
         @search-change="asyncFindClients"
         @select="onClientSelect"
         @open="form.errors.clear('client.id')"
       >
         <template slot="noResult">
-          Nenhum cliente encontrado, 
-          <a class="font-weight-bold" href="" 
+          Nenhum cliente encontrado,
+          <a
+            class="font-weight-bold"
+            href=""
             @click.prevent="setIsNewClient(true)"
           >cadastrar novo</a>.
         </template>
@@ -41,15 +53,25 @@
           Faça uma busca para exibir resultados
         </template>
       </Multiselect>
-      <small v-if="form.errors.has('client.id')" class="text-danger">
+      <small
+        v-if="form.errors.has('client.id')"
+        class="text-danger"
+      >
         {{ form.errors.get('client.id') }}
       </small>
     </div>
 
-    <div v-else class="form-group">
+    <div
+      v-else
+      class="form-group"
+    >
       <h6 class="d-flex justify-content-between">
-        <label for="client" class="font-weight-bold">Nome do cliente</label>
-        <button type="button" 
+        <label
+          for="client"
+          class="font-weight-bold"
+        >Nome do cliente</label>
+        <button
+          type="button"
           class="btn btn-sm btn-primary font-weight-bold py-0"
           @click="setIsNewClient(false)"
         >
@@ -57,54 +79,76 @@
         </button>
       </h6>
 
-      <AppInput v-model="form.client" 
+      <AppInput
         id="client"
+        v-model="form.client"
         name="client"
         placeholder="Digite o nome..."
         :error="form.errors.get('client')"
       />
     </div>
 
-    <div class="form-group" v-if="! form.isNewOrder">
+    <div
+      v-if="! form.isNewOrder"
+      class="form-group"
+    >
       <h6 class="d-flex justify-content-between">
-        <label for="orders" class="font-weight-bold text-primary">Pedido</label>
+        <label
+          for="orders"
+          class="font-weight-bold text-primary"
+        >Pedido</label>
 
-        <button v-if="form.client" type="button"
-          @click="setIsNewOrder(true)" 
+        <button
+          v-if="form.client"
+          type="button"
           class="btn btn-sm btn-success font-weight-bold py-0"
-        >Cadastrar novo</button>
+          @click="setIsNewOrder(true)"
+        >
+          Cadastrar novo
+        </button>
       </h6>
 
-      <Tippy v-if="! form.client" 
+      <Tippy
+        v-if="! form.client"
         to="tippy-order"
         :duration="150"
         arrow
-      >Selecione o cliente primeiro</Tippy>
+      >
+        Selecione o cliente primeiro
+      </Tippy>
 
-      <span class="d-block" name="tippy-order">
-        <Multiselect v-model="form.order"
-          :class="{'is-invalid': form.errors.has('order.id')}"
+      <span
+        class="d-block"
+        name="tippy-order"
+      >
+        <Multiselect
           id="orders"
-          :customLabel="({code, price}) => `${code} - ${$helpers.valueToBRL(price)}`"
+          v-model="form.order"
+          :class="{'is-invalid': form.errors.has('order.id')}"
+          :custom-label="({code, price}) => `${code} - ${$helpers.valueToBRL(price)}`"
           :options="orders.items"
           :disabled="! form.client"
           :loading="orders.isLoading"
           placeholder="Procure por código"
-          selectLabel="Selecionar"
-          selectedLabel="Selecionado"
-          deselectLabel="Remover"
+          select-label="Selecionar"
+          selected-label="Selecionado"
+          deselect-label="Remover"
           @open="form.errors.clear('order.id')"
         >
           <template slot="noResult">
-            Nenhum pedido encontrado, 
-            <a href="" class="font-weight-bold" 
+            Nenhum pedido encontrado,
+            <a
+              href=""
+              class="font-weight-bold"
               @click.prevent="setIsNewOrder(true)"
             >cadastrar novo</a>
           </template>
 
           <template slot="noOptions">
-            Nenhum pedido em aberto, 
-            <a href="" class="font-weight-bold" 
+            Nenhum pedido em aberto,
+            <a
+              href=""
+              class="font-weight-bold"
               @click.prevent="setIsNewOrder(true)"
             >
               cadastrar novo
@@ -112,21 +156,25 @@
           </template>
         </Multiselect>
 
-        <small v-if="form.errors.has('order.id')" class="text-danger">
+        <small
+          v-if="form.errors.has('order.id')"
+          class="text-danger"
+        >
           {{ form.errors.get('order.id') }}
         </small>
       </span>
 
-      <div v-if="form.order && typeof form.order === 'object'"
+      <div
+        v-if="form.order && typeof form.order === 'object'"
         class="small text-secondary"
       >
         <div v-if="form.order.name">
-          Nome: <span class="font-weight-bold">{{ form.order.name }}</span> 
+          Nome: <span class="font-weight-bold">{{ form.order.name }}</span>
         </div>
 
         <div>
           Falta pagar: <span class="font-weight-bold">{{ $helpers.valueToBRL(form.order.total_owing) }}
-        </span>
+          </span>
         </div>
       </div>
     </div>
@@ -134,17 +182,23 @@
     <div v-else>
       <div class="form-group">
         <h6 class="d-flex justify-content-between">
-          <label for="order" class="font-weight-bold">Código</label>
-          <button v-if="! form.isNewClient" type="button" 
-            @click="setIsNewOrder(false)"
+          <label
+            for="order"
+            class="font-weight-bold"
+          >Código</label>
+          <button
+            v-if="! form.isNewClient"
+            type="button"
             class="btn btn-sm btn-primary py-0 font-weight-bold"
+            @click="setIsNewOrder(false)"
           >
             Procurar pedidos
           </button>
         </h6>
 
-        <AppInput v-model="form.order"
+        <AppInput
           id="order"
+          v-model="form.order"
           name="order"
           placeholder="Digite o código do pedido..."
           :error="form.errors.get('order')"
@@ -152,39 +206,51 @@
       </div>
 
       <div class="form-group">
-        <AppInput v-model="form.order_value"
+        <AppInput
           id="order_value"
+          v-model="form.order_value"
           name="order_value"
           placeholder="Digite o valor do pedido"
           :mask="masks.valueBRL"
           :error="form.errors.get('order_value')"
-        >Valor </AppInput>
+        >
+          Valor
+        </AppInput>
       </div>
 
       <div class="form-group">
         <div class="custom-control custom-checkbox">
-          <input type="checkbox" v-model="form.hasReminder" 
-            class="custom-control-input" 
+          <input
             id="reminderCheck"
+            v-model="form.hasReminder"
+            type="checkbox"
+            class="custom-control-input"
           >
-          <label class="custom-control-label" for="reminderCheck">
+          <label
+            class="custom-control-label"
+            for="reminderCheck"
+          >
             Adicionar lembrete
           </label>
-          <i class="fas fa-question-circle fa-fw ml-1 text-primary"
+          <i
             v-tippy="{arrow: true, duration: 150, placement: 'top'}"
+            class="fas fa-question-circle fa-fw ml-1 text-primary"
             content="Você pode adicionar uma nota sobre o pedido para lembrar dele, visto que ele terá informações gerais pouco identificáveis."
-          ></i>
+          />
         </div>
       </div>
 
       <div class="form-group">
-
-        <AppInput v-model="form.reminder" v-if="form.hasReminder"
+        <AppInput
+          v-if="form.hasReminder"
           id="reminder"
+          v-model="form.reminder"
           name="reminder"
           placeholder="Algo que lembre o pedido..."
           :optional="true"
-        >Lembrete: </AppInput>
+        >
+          Lembrete:
+        </AppInput>
       </div>
     </div>
 
@@ -194,45 +260,67 @@
 
     <div class="d-flex form-row">
       <div class="form-group col">
-        <AppInput v-model="form.value"
+        <AppInput
           id="value"
+          v-model="form.value"
           name="value"
           placeholder="R$ "
           :mask="masks.valueBRL"
           :error="form.errors.get('value')"
-        >Valor</AppInput>
+        >
+          Valor
+        </AppInput>
       </div>
 
       <div class="form-group col">
-        <label for="via_id" class="font-weight-bold">Via</label>
-        <select v-model="form.via_id" 
-          name="via_id" 
-          id="via_id" 
+        <label
+          for="via_id"
+          class="font-weight-bold"
+        >Via</label>
+        <select
+          id="via_id"
+          v-model="form.via_id"
+          name="via_id"
           class="custom-select"
           :class="{'is-invalid': form.errors.has('via_id')}"
         >
-          <option value="">Selecione uma via</option>
-          <option v-for="via in vias" 
-            :key="via.id" 
+          <option value="">
+            Selecione uma via
+          </option>
+          <option
+            v-for="via in vias"
+            :key="via.id"
             :value="via.id"
-          >{{ via.name }}</option>
+          >
+            {{ via.name }}
+          </option>
         </select>
-        <small v-if="form.errors.has('via_id')" class="text-danger">
+        <small
+          v-if="form.errors.has('via_id')"
+          class="text-danger"
+        >
           {{ form.errors.get('via_id') }}
         </small>
       </div>
     </div>
 
     <div class="d-flex justify-content-between mt-3">
-      <button class="btn btn-success font-weight-bold" 
+      <button
+        class="btn btn-success font-weight-bold"
         type="submit"
         :disabled="form.isLoading"
       >
-          <span v-if="form.isLoading" class="spinner-border spinner-border-sm mr-1"></span>
-          Registrar
+        <span
+          v-if="form.isLoading"
+          class="spinner-border spinner-border-sm mr-1"
+        />
+        Registrar
       </button>
 
-      <button class="btn btn-light" data-dismiss="modal">
+      <button
+        class="btn btn-light"
+        data-dismiss="modal"
+      >
         Fechar
       </button>
     </div>
@@ -240,131 +328,131 @@
 </template>
 
 <script>
-  import Form from '../../util/Form'
-  import masks from '../../util/masks'
-  import Multiselect from 'vue-multiselect'
-  import { TippyComponent }  from 'vue-tippy'
+import Form from '../../util/Form'
+import masks from '../../util/masks'
+import Multiselect from 'vue-multiselect'
+import { TippyComponent }  from 'vue-tippy'
 
-  export default {
+export default {
     components: {
-      'Tippy': TippyComponent,
-      Multiselect
+        Tippy: TippyComponent,
+        Multiselect
     },
     data() {
-      return {
-        masks,
-        vias: [],
-        clients: {
-          isLoading: false,
-          items: []
-        },
-        orders: {
-          isLoading: false,
-          items: []
-        },
-        form: new Form({
-          isNewClient: false,
-          isNewOrder: false,
-          via_id: '',
-          value: '',
-          client: '',
-          order: '',
-          reminder: '',
-          hasReminder: false,
-          order_value: ''
-        })
-      }
-    },
-    methods: {
-      clearClientAndOrderErrors() {
-        this.form.errors.clear([
-          'client.id', 
-          'client', 
-          'order', 
-          'order.id'
-        ])
-      },
-      setIsNewClient(isNewClient) {
-        this.clearClientAndOrderErrors()
-
-        this.form.client = ''
-        this.form.order = ''
-
-        this.form.isNewClient = isNewClient
-
-        if (isNewClient) {
-          this.form.isNewOrder = true
-
-          return
+        return {
+            masks,
+            vias: [],
+            clients: {
+                isLoading: false,
+                items: []
+            },
+            orders: {
+                isLoading: false,
+                items: []
+            },
+            form: new Form({
+                isNewClient: false,
+                isNewOrder: false,
+                via_id: '',
+                value: '',
+                client: '',
+                order: '',
+                reminder: '',
+                hasReminder: false,
+                order_value: ''
+            })
         }
-
-        this.form.isNewOrder = false
-      },
-      setIsNewOrder(isNewOrder) {
-        this.clearClientAndOrderErrors()
-        
-        this.form.order = ''
-        this.form.isNewOrder = isNewOrder
-      },  
-      onSubmit() {
-        this.form.isLoading = true
-
-        this.form.submit('POST', '/caixa-diario/clientes/daily-payment')
-          .then(response => {
-            this.$toast.success('Pagamento registrado!')
-            this.form.reset()
-            this.$emit('created')
-          })
-          .catch(error => {})
-          .then(() => {
-            this.form.isLoading = false
-          })
-      },
-      onClientSelect(client) {
-        this.orders.isLoading = true
-
-        axios.get(`/cliente/${client.id}/pedidos/list`)
-          .then(response => {
-            let orders = response.data.orders
-
-            if (typeof orders === 'object') {
-              orders = Object.values(response.data.orders)
-            }
-
-            this.form.order = ''
-            this.orders.items = []
-
-            this.orders.items = orders
-            this.orders.isLoading = false
-          })
-      },
-      asyncFindClients(search) {
-        if (! search.length) {
-          this.clients.items = []
-          return
-        }
-
-        this.clients.isLoading = true
-
-        axios.get('/clientes/list', {
-          params: {
-            name: search
-          }
-        })
-          .then(response => {
-            this.clients.items = response.data.clients
-            this.clients.isLoading = false
-          })
-      },
-      populateVias() {
-        axios.get('/pagamentos/vias/list')
-          .then(response => {
-            this.vias = response.data.vias
-          })
-      }
     },
     mounted() {
-      this.populateVias()
+        this.populateVias()
+    },
+    methods: {
+        clearClientAndOrderErrors() {
+            this.form.errors.clear([
+                'client.id',
+                'client',
+                'order',
+                'order.id'
+            ])
+        },
+        setIsNewClient(isNewClient) {
+            this.clearClientAndOrderErrors()
+
+            this.form.client = ''
+            this.form.order = ''
+
+            this.form.isNewClient = isNewClient
+
+            if (isNewClient) {
+                this.form.isNewOrder = true
+
+                return
+            }
+
+            this.form.isNewOrder = false
+        },
+        setIsNewOrder(isNewOrder) {
+            this.clearClientAndOrderErrors()
+
+            this.form.order = ''
+            this.form.isNewOrder = isNewOrder
+        },
+        onSubmit() {
+            this.form.isLoading = true
+
+            this.form.submit('POST', '/caixa-diario/clientes/daily-payment')
+                .then(() => {
+                    this.$toast.success('Pagamento registrado!')
+                    this.form.reset()
+                    this.$emit('created')
+                })
+                .catch(() => {})
+                .then(() => {
+                    this.form.isLoading = false
+                })
+        },
+        onClientSelect(client) {
+            this.orders.isLoading = true
+
+            axios.get(`/cliente/${client.id}/pedidos/list`)
+                .then(response => {
+                    let orders = response.data.orders
+
+                    if (typeof orders === 'object') {
+                        orders = Object.values(response.data.orders)
+                    }
+
+                    this.form.order = ''
+                    this.orders.items = []
+
+                    this.orders.items = orders
+                    this.orders.isLoading = false
+                })
+        },
+        asyncFindClients(search) {
+            if (! search.length) {
+                this.clients.items = []
+                return
+            }
+
+            this.clients.isLoading = true
+
+            axios.get('/clientes/list', {
+                params: {
+                    name: search
+                }
+            })
+                .then(response => {
+                    this.clients.items = response.data.clients
+                    this.clients.isLoading = false
+                })
+        },
+        populateVias() {
+            axios.get('/pagamentos/vias/list')
+                .then(response => {
+                    this.vias = response.data.vias
+                })
+        }
     }
-  }
+}
 </script>

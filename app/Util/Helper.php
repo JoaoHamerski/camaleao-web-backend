@@ -3,6 +3,7 @@
 namespace App\Util;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Route;
 
 class Helper
 {
@@ -38,7 +39,7 @@ class Helper
      */
     public static function date($datetime, $format)
     {
-        if (! $datetime) {
+        if (!$datetime) {
             return '';
         }
 
@@ -181,5 +182,15 @@ class Helper
         }
 
         return $attr;
+    }
+
+    public static function mapRoutes(array $map, string $path = '/routes/partials/')
+    {
+        foreach ($map as $route) {
+            $routeName = ($route['name'] ?? $route) . '.';
+            $routeFilepath = base_path() . $path . ($route['filename'] ?? $route) . '.php';
+
+            Route::name($routeName)->group($routeFilepath);
+        }
     }
 }

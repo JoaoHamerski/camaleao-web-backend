@@ -1,53 +1,53 @@
 import Vue from 'vue'
 
 class Errors {
-	constructor() {
-		this.errors = { };
-	}
+    constructor() {
+        this.errors = { }
+    }
 
-	get(field) {
-		if (this.errors[field]) {
-			return this.errors[field][0];
-		}
-	}
+    get(field) {
+        if (this.errors[field]) {
+            return this.errors[field][0]
+        }
+    }
 
-	has(field) {
-		return this.errors.hasOwnProperty(field);
-	}
+    has(field) {
+        return this.errors.hasOwnProperty.call(field)
+    }
 
-	any() {
-		return this.count() > 0;
-	}
+    any() {
+        return this.count() > 0
+    }
 
-	count() {
-		return Object.keys(this.errors).length;
-	}
+    count() {
+        return Object.keys(this.errors).length
+    }
 
-	clear(field = null) {
-		if (field == '*') {
-			this.errors = {};
-			
-			return;
-		}
+    clear(field = null) {
+        if (field == '*') {
+            this.errors = {}
 
-		if (Array.isArray(field)) {
-			for (let f of field) {
-				Vue.delete(this.errors, f)
-			}
+            return
+        }
 
-			return
-		}
+        if (Array.isArray(field)) {
+            for (const f of field) {
+                Vue.delete(this.errors, f)
+            }
 
-		if (field) {
-			Vue.delete(this.errors, field);
+            return
+        }
 
-			return;	
-		}
-	}
+        if (field) {
+            Vue.delete(this.errors, field)
 
-	record(errors) {
-		this.errors = errors;
-	}
+            return
+        }
+    }
+
+    record(errors) {
+        this.errors = errors
+    }
 }
 
-export default Errors;
+export default Errors

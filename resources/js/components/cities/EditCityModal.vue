@@ -1,17 +1,20 @@
 <template>
-  <AppModal id="editCityModal"
+  <AppModal
+    id="editCityModal"
     ref="modal"
-    modalDialogClass="modal-dialog-centered"
-    modalHeaderClass="bg-primary"
+    modal-dialog-class="modal-dialog-centered"
+    modal-header-class="bg-primary"
   >
     <template #header>
       <h5 class="text-white font-weight-bold mb-0">
-        <i class="fas fa-edit fa-fw mr-1"></i>Editar cidade
+        <i class="fas fa-edit fa-fw mr-1" />Editar cidade
       </h5>
     </template>
 
     <template #body>
-      <CityForm ref="cityForm" :isEdit="true" 
+      <CityForm
+        ref="cityForm"
+        :is-edit="true" 
         @updated="onUpdate"
       />
     </template>
@@ -19,17 +22,17 @@
 </template>
 
 <script>
-  import CityForm from './CityForm'
+import CityForm from './CityForm'
 
-  export default {
+export default {
     components: {
-      CityForm
+        CityForm
     },
     methods: {
-      onUpdate() {
-        $(this.$refs.modal.$el).modal('hide')
-        this.$emit('updated')
-      }
+        onUpdate() {
+            $(this.$refs.modal.$el).modal('hide')
+            this.$emit('updated')
+        }
     }
-  }
+}
 </script>

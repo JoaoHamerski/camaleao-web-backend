@@ -1,0 +1,6 @@
+{
+    "search.exclude": {
+        "public/css": true,
+        "public/js": true
+    }
+}

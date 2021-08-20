@@ -1,21 +1,35 @@
 <template>
-  <AppModal id="viewFileModal"
-    modalHeaderClass="bg-primary"
-    modalDialogClass="modal-dialog-centered modal-dialog-scrollable"
+  <AppModal
+    id="viewFileModal"
+    modal-header-class="bg-primary"
+    modal-dialog-class="modal-dialog-centered modal-dialog-scrollable"
   >
     <template #header>
-      <h5 class="font-weight-bold text-white mb-0">Comprovante</h5>
+      <h5 class="font-weight-bold text-white mb-0">
+        Comprovante
+      </h5>
     </template>
 
     <template #body>
       <div v-if="fileObject">
-        <div v-if="fileObject.type === 'application/pdf'" 
+        <div
+          v-if="fileObject.type === 'application/pdf'"
           class="embed-responsive embed-responsive-16by9 mb-3"
         >
-          <iframe class="embed-responsive-item" :src="file.base64" allowfullscreen></iframe>
+          <iframe
+            class="embed-responsive-item"
+            :src="file.base64"
+            allowfullscreen
+          />
         </div>
-        <div v-else class="text-center">
-          <img class="img-fluid" :src="file.base64">
+        <div
+          v-else
+          class="text-center"
+        >
+          <img
+            class="img-fluid"
+            :src="file.base64"
+          >
         </div>
       </div>
     </template>
@@ -23,25 +37,25 @@
 </template>
 
 <script>
-  export default {
+export default {
     props: {
-      file: { default: null },
+        file: undefined,
     },
     data: () => {
-      return {
-        fileObject: null
-      }
+        return {
+            fileObject: null
+        }
     },
     watch: {
-      file() {
-        this.fileObject = null
+        file() {
+            this.fileObject = null
 
-        if (this.file) {
-          this.fileObject = this.$helpers.dataURLtoFile(
-            this.file.base64, 'file'
-          )
+            if (this.file) {
+                this.fileObject = this.$helpers.dataURLtoFile(
+                    this.file.base64, 'file'
+                )
+            }
         }
-      }
     }
-  }
+}
 </script>

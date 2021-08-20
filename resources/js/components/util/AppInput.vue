@@ -1,130 +1,205 @@
 <template>
-	<div>
-		<label v-if="$slots.default" :for="id" class="font-weight-bold">
-			<slot></slot> <span v-if="optional" class="text-secondary small">(opcional)</span>
-		</label>
+  <div>
+    <label
+      v-if="$slots.default"
+      :for="id"
+      class="font-weight-bold"
+    >
+      <slot /> <span
+        v-if="optional"
+        class="text-secondary small"
+      >(opcional)</span>
+    </label>
 
-		<tippy v-if="disabledMessage.length" 
-			:duration="150" 
-			placement="bottom" 
-			arrow
-			:to="'tippy-' + id"
-		>
-			{{ disabledMessage }}
-		</tippy>
-		
-		<div :class="[{ 'input-group' : type === 'password' }, {'custom-file': type === 'file'}]"
-			:name="'tippy-' + id"
-		>
-			<MaskedInput ref="input" class="form-control"  
-				:id="id"
-				:disabled="disabled"
-				:class="[{'is-invalid' : hasError}, inputClass, {'custom-file-input' : type === 'file'}]"
-				:type="inputType"
-				:name="name"
-				@input="$emit('input', $event)" 
-				@change="$emit('change', $event)"
-				:placeholder="placeholder" 
-				:value="value"
-				:autofocus="autofocus"
-				:mask="mask"
-				:autocomplete="autocomplete"
-				:multiple="type === 'file' && multiple"
-				:accept="type === 'file' && accept !== '' ? accept : false"
-				:guide="false"
-			/>
+    <tippy
+      v-if="disabledMessage.length"
+      :duration="150"
+      placement="bottom"
+      arrow
+      :to="'tippy-' + id"
+    >
+      {{ disabledMessage }}
+    </tippy>
 
-			<label class="custom-file-label" v-if="type === 'file'">
-				Escolher arquivos
-			</label>
+    <div
+      :class="[{ 'input-group' : type === 'password' }, {'custom-file': type === 'file'}]"
+      :name="'tippy-' + id"
+    >
+      <MaskedInput
+        :id="id"
+        ref="input"
+        class="form-control"
+        :disabled="disabled"
+        :class="[{'is-invalid' : hasError}, inputClass, {'custom-file-input' : type === 'file'}]"
+        :type="inputType"
+        :name="name"
+        :placeholder="placeholder"
+        :value="value"
+        :autofocus="autofocus"
+        :mask="mask"
+        :autocomplete="autocomplete"
+        :multiple="type === 'file' && multiple"
+        :accept="type === 'file' && accept !== '' ? accept : false"
+        :guide="false"
+        @input="$emit('input', $event)"
+        @change="$emit('change', $event)"
+      />
 
-			<div v-if="type === 'password'" class="input-group-append">
-				<button tabindex="-1" @click.prevent="togglePasswordType" v-if="isTypePassword" class="btn btn-outline-primary">
-					<i class="fas fa-eye-slash fa-fw"></i>
-				</button>
-				<button tabindex="-1" @click.prevent="togglePasswordType" v-else class="btn btn-outline-primary">
-					<i class="fas fa-eye fa-fw"></i>
-				</button>
-			</div>
-		</div>
-		
-		<div class="small text-danger justify" v-if="hasError">
-			{{ error }}
-		</div>
-	</div>
+      <label
+        v-if="type === 'file'"
+        class="custom-file-label"
+      >
+        Escolher arquivos
+      </label>
+
+      <div
+        v-if="type === 'password'"
+        class="input-group-append"
+      >
+        <button
+          v-if="isTypePassword"
+          tabindex="-1"
+          class="btn btn-outline-primary"
+          @click.prevent="togglePasswordType"
+        >
+          <i class="fas fa-eye-slash fa-fw" />
+        </button>
+        <button
+          v-else
+          tabindex="-1"
+          class="btn btn-outline-primary"
+          @click.prevent="togglePasswordType"
+        >
+          <i class="fas fa-eye fa-fw" />
+        </button>
+      </div>
+    </div>
+
+    <div
+      v-if="hasError"
+      class="small text-danger justify"
+    >
+      {{ error }}
+    </div>
+  </div>
 </template>
 
 <script>
-	import MaskedInput from 'vue-text-mask'
-	import { TippyComponent } from "vue-tippy";
-	
-	export default {
-		components: {
-			MaskedInput,
-			'tippy': TippyComponent
-		},
-		props: {
-			id: { required: true }, 
-			optional: { default: false },
-			disabled: { default: false },
-			value: '',
-			inputClass: '',
-			multiple: { default: false },
-			accept: { default: '' },
-			name: { default: false },
-			mask: { default: false },
-			placeholder: { default: false },
-			type: { default: 'text' },
-			autofocus: { default: false },
-			error: { default: '' },
-			autocomplete: { default: false },
-			disabledMessage: { default: ''}
-		},
-		data: function() {
-			return {
-				inputType: this.type
-			}
-		},
-		watch: {
-			// Atualiza a máscara do input após ele receber 
-			// alguma mudança programaticamente.
-			// A biblioteca não atualiza a mascara sozinha.
-			value(val, oldVal) {
-				if (val === null || oldVal === null) {
-					return
-				}
-				
-				if (oldVal.length === 0 && val.length > 0) {
-					setTimeout(() => {
-						this.$refs.input.updateValue()
-					}, 100)
-				}
-			}
-		},
-		methods: {
-			togglePasswordType() {
-				this.inputType = this.inputType === 'password' 
-					? 'text' 
-					: 'password';
+import MaskedInput from 'vue-text-mask'
+import { TippyComponent } from 'vue-tippy'
 
-				this.focusInput();
-			},
-			focusInput() {
-				let input = this.$refs.input.$el,
-					length = input.value.length;
+export default {
+    components: {
+        MaskedInput,
+        tippy: TippyComponent
+    },
+    props: {
+        id: {
+            type: String,
+            required: true
+        },
+        optional: {
+            type: Boolean,
+            default: false
+        },
+        disabled: {
+            type: Boolean,
+            default: false
+        },
+        value: {
+            type: String,
+            default: ''
+        },
+        inputClass: {
+            type: String,
+            default: ''
+        },
+        multiple: {
+            type: Boolean,
+            default: false
+        },
+        accept: {
+            type: String,
+            default: ''
+        },
+        name: {
+            type: null,
+            default: false
+        },
+        mask: {
+            type: undefined,
+            default: false
+        },
+        placeholder: {
+            type: undefined,
+            default: false
+        },
+        type: {
+            type: String,
+            default: 'text'
+        },
+        autofocus: {
+            type: Boolean,
+            default: false
+        },
+        error: {
+            type: String,
+            default: ''
+        },
+        autocomplete: {
+            type: Boolean,
+            default: false
+        },
+        disabledMessage: {
+            type: String,
+            default: ''
+        }
+    },
+    data: function() {
+        return {
+            inputType: this.type
+        }
+    },
+    computed: {
+        isTypePassword() {
+            return this.inputType === 'password'
+        },
+        hasError () {
+            return ! this.$helpers.isEmpty(this.error)
+        }
+    },
+    watch: {
+        // Atualiza a máscara do input após ele receber
+        // alguma mudança programaticamente.
+        // A biblioteca não atualiza a mascara sozinha.
+        value(val, oldVal) {
+            if (val === null || oldVal === null) {
+                return
+            }
 
-				input.focus();
+            if (oldVal.length === 0 && val.length > 0) {
+                setTimeout(() => {
+                    this.$refs.input.updateValue()
+                }, 100)
+            }
+        }
+    },
+    methods: {
+        togglePasswordType() {
+            this.inputType = this.inputType === 'password'
+                ? 'text'
+                : 'password'
 
-				setTimeout(() => { input.setSelectionRange(length, length) }, 0);
-			}
-		},
-		computed: {
-			isTypePassword() {
-				return this.inputType === 'password';
-			},
-			hasError () {
-				return ! this.$helpers.isEmpty(this.error);
-			}
-		}
-	}
+            this.focusInput()
+        },
+        focusInput() {
+            const input = this.$refs.input.$el,
+                length = input.value.length
+
+            input.focus()
+
+            setTimeout(() => { input.setSelectionRange(length, length) }, 0)
+        }
+    }
+}
 </script>

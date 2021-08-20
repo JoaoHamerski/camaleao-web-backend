@@ -1,8 +1,7 @@
 import jQuery from 'jquery'
-import Cleave from 'cleave.js'
 import Swal from 'sweetalert2'
 import Vue from 'vue'
-import VueTippy from "vue-tippy"
+import VueTippy from 'vue-tippy'
 
 require('popper.js').default
 require('bootstrap')

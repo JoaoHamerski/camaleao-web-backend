@@ -39,6 +39,13 @@
                     Caixa diário
                 </a>
             </li>
+
+            <li class="{{ Request::is('calendario-de-producao') ? 'active' : '' }}">
+                <a href="{{ route('production-calendar.index') }}">
+                    <i class="fas fa-calendar-alt fa-fw mr-1 text-primary"></i>
+                    Calendário de produção
+                </a>
+            </li>
             @endrole
 
             @role(['gerencia', 'atendimento'])
@@ -82,11 +89,11 @@
             @role('gerencia')
             <li class="position-relative">
                 <a class="{{ Request::is([
-              'usuarios*',
-              'gerenciamento*',
-              'backup*',
-              'tipos-de-roupas*'
-            ]) ?: 'collapsed' }}" data-toggle="collapse" href="#collapseManagement" aria-expanded="false"
+                    'usuarios*',
+                    'gerenciamento*',
+                    'backup*',
+                    'tipos-de-roupas*'
+                    ]) ?: 'collapsed' }}" data-toggle="collapse" href="#collapseManagement" aria-expanded="false"
                     aria-controls="collapseManagement">
                     <i class="fas fa-cog fa-fw text-primary"></i>
                     Gerenciamento

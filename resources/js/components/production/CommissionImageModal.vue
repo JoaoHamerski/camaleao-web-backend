@@ -1,11 +1,18 @@
 <template>
-  <AppModal id="commissionImageModal"
-    modalDialogClass="modal-dialog-centered"
+  <AppModal
+    id="commissionImageModal"
+    modal-dialog-class="modal-dialog-centered"
   >
     <template #body>
-      <div v-for="(image, index) in images" :key="image">
-        <h5 class="font-weight-bold text-secondary text-center">Imagem {{index + 1}}</h5>
-        <img class="img-fluid" 
+      <div
+        v-for="(image, index) in images"
+        :key="image"
+      >
+        <h5 class="font-weight-bold text-secondary text-center">
+          Imagem {{ index + 1 }}
+        </h5>
+        <img
+          class="img-fluid"
           :src="`/storage/imagens_da_arte/${image}`"
         >
       </div>
@@ -14,9 +21,12 @@
 </template>
 
 <script>
-  export default {
+export default {
     props: {
-      images: { default: () => [] }
+        images: {
+            type: Array,
+            default: () => []
+        }
     }
-  }
+}
 </script>

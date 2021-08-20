@@ -1,8 +1,9 @@
 <template>
-  <AppModal id="pendenciesModal"
+  <AppModal
+    id="pendenciesModal"
     ref="modal"
-    modalHeaderClass="bg-warning"
-    modalDialogClass="modal-dialog-centered modal-dialog-scrollable"
+    modal-header-class="bg-warning"
+    modal-dialog-class="modal-dialog-centered modal-dialog-scrollable"
   >
     <template #header>
       <h5 class="text-white font-weight-bold mb-0">
@@ -11,34 +12,40 @@
     </template>
 
     <template #body>
-      <PendenciesList ref="pendenciesList" 
+      <PendenciesList
+        ref="pendenciesList" 
         @load-pendencies="onLoadPendencies" 
       />
     </template>
 
     <template #footer>
-      <button class="btn btn-light" data-dismiss="modal">Fechar</button>
+      <button
+        class="btn btn-light"
+        data-dismiss="modal"
+      >
+        Fechar
+      </button>
     </template>
   </AppModal>
 </template>
 
 <script>
-  import PendenciesList from './PendenciesList'
+import PendenciesList from './PendenciesList'
 
-  export default {
+export default {
     components: {
-      PendenciesList
-    },
-    methods: {
-      onLoadPendencies(date) {
-        $(this.$refs.modal.$el).modal('hide')
-        this.$emit('load-pendencies', date)
-      }
+        PendenciesList
     },
     mounted() {
-      this.$on('refresh-pendencies', () => {
-        this.$refs.pendenciesList.$emit('refresh-pendencies')
-      })
+        this.$on('refresh-pendencies', () => {
+            this.$refs.pendenciesList.$emit('refresh-pendencies')
+        })
+    },
+    methods: {
+        onLoadPendencies(date) {
+            $(this.$refs.modal.$el).modal('hide')
+            this.$emit('load-pendencies', date)
+        }
     }
-  }
+}
 </script>
