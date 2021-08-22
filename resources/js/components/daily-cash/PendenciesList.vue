@@ -21,32 +21,32 @@ import moment from 'moment'
 moment.locale('pt-br')
 
 export default {
-    data() {
-        return {
-            pendencies: [],
-            moment
-        }
-    },
-    mounted() {
-        this.refresh()
+  data() {
+    return {
+      pendencies: [],
+      moment
+    }
+  },
+  mounted() {
+    this.refresh()
       
-        this.$on('refresh-pendencies', () => {
-            this.refresh()
+    this.$on('refresh-pendencies', () => {
+      this.refresh()
+    })
+  },
+  methods: {
+    onItemClick(pendency) {
+      this.$emit('load-pendencies', pendency.date_registered)
+    },
+    refreshPendencies() {
+      axios.get('/caixa-diario/get-pendencies')
+        .then(response => {
+          this.pendencies = response.data.pendencies
         })
     },
-    methods: {
-        onItemClick(pendency) {
-            this.$emit('load-pendencies', pendency.date_registered)
-        },
-        refreshPendencies() {
-            axios.get('/caixa-diario/get-pendencies')
-                .then(response => {
-                    this.pendencies = response.data.pendencies
-                })
-        },
-        refresh() {
-            this.refreshPendencies()
-        }
+    refresh() {
+      this.refreshPendencies()
     }
+  }
 }
 </script>

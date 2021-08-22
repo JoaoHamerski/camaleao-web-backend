@@ -4,25 +4,25 @@ import camelCase from 'lodash/camelCase'
 
 // Auto register globally every base component: "App*.vue"
 const requireComponent = require.context(
-    '../components',
-    true,
-    /App[A-z]\w+\.(vue)$/
+  '../components',
+  true,
+  /App[A-z]\w+\.(vue)$/
 )
 
 for (const fileName of requireComponent.keys()) {
-    const componentConfig = requireComponent(fileName)
+  const componentConfig = requireComponent(fileName)
   
-    const componentName = upperFirst(
-        camelCase(
-            fileName
-                .split('/')
-                .pop()
-                .replace(/\.\w+$/, '')
-        )
+  const componentName = upperFirst(
+    camelCase(
+      fileName
+        .split('/')
+        .pop()
+        .replace(/\.\w+$/, '')
     )
+  )
   
-    Vue.component(
-        componentName,
-        componentConfig.default || componentConfig
-    )
+  Vue.component(
+    componentName,
+    componentConfig.default || componentConfig
+  )
 }

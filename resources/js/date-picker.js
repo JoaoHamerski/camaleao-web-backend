@@ -12,7 +12,7 @@ $.fn.datepicker.defaults.todayHighlight = true
 $.fn.datepicker.defaults.autoclose = true
 
 $('[data-toggle="datepicker"]').datepicker().on('changeDate', function() {
-    $(this).focus().blur()
+  $(this).focus().blur()
 })
 
 

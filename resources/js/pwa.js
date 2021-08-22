@@ -1,27 +1,27 @@
 window.addEventListener('load', () => {
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/service-worker.js')
-    }
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+  }
 })
 
 window.addEventListener('beforeinstallprompt', (event) => {
-    window.deferredPrompt = event
+  window.deferredPrompt = event
 })
 
 $('#btnInstallPWA').on('click', function() {
-    const promptEvent = window.deferredPrompt
+  const promptEvent = window.deferredPrompt
 
-    if (! promptEvent) {
-        return
-    }
+  if (! promptEvent) {
+    return
+  }
 
-    promptEvent.prompt()
+  promptEvent.prompt()
 
-    promptEvent.userChoice.then(() => {
-        window.deferredPrompt = null
-    })
+  promptEvent.userChoice.then(() => {
+    window.deferredPrompt = null
+  })
 })
 
 if (matchMedia('(display-mode: standalone)').matches) {
-    $('#btnInstallPWA').remove()
+  $('#btnInstallPWA').remove()
 }

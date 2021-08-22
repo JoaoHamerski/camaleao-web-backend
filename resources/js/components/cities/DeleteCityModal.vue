@@ -92,61 +92,61 @@ import Form from '../../util/Form'
 import Multiselect from 'vue-multiselect'
 
 export default {
-    components:{
-        Multiselect
-    },
-    data: function() {
-        return {
-            isLoading: true,
-            city: {},
-            cities: [],
-            form: new Form({
-                city_id: '',
-            })
-        }
-    },
-    mounted() {
-        this.$on('city-selected', city => {
-            this.isLoading = true
-            const index = this.cities.findIndex(_city => _city.id === city.id)
-
-            axios.get('/gerenciamento/cidades/list', {
-                params: {
-                    only_names: true
-                }
-            })
-                .then(response => {
-                    this.cities = response.data.cities
-                    this.city = city
-                    this.cities.splice(index, 1, {...city, $isDisabled: true})
-                })
-                .catch(() => {})
-                .then(() => {
-                    this.isLoading = false
-                })
-        })
-
-        $(this.$refs.modal.$el).on('hidden.bs.modal', () => {
-            this.$emit('closed')
-            this.form.reset()
-
-            const index = this.cities.findIndex(_city => _city.id === this.city.id)
-            this.cities.splice(index, 1, {...this.city, $$isDisabled: false})
-        })
-    },
-    methods: {
-        onSubmit() {
-            this.form.isLoading = true
-            this.form.submit('POST', `/gerenciamento/cidades/${this.city.id}/replace`)
-                .then(() => {
-                    $(this.$refs.modal.$el).modal('hide')
-                    this.$emit('deleted')
-                })
-                .catch(() => {})
-                .then(() => {
-                    this.form.isLoading = false
-                })
-        }
+  components:{
+    Multiselect
+  },
+  data: function() {
+    return {
+      isLoading: true,
+      city: {},
+      cities: [],
+      form: new Form({
+        city_id: '',
+      })
     }
+  },
+  mounted() {
+    this.$on('city-selected', city => {
+      this.isLoading = true
+      const index = this.cities.findIndex(_city => _city.id === city.id)
+
+      axios.get('/gerenciamento/cidades/list', {
+        params: {
+          only_names: true
+        }
+      })
+        .then(response => {
+          this.cities = response.data.cities
+          this.city = city
+          this.cities.splice(index, 1, {...city, $isDisabled: true})
+        })
+        .catch(() => {})
+        .then(() => {
+          this.isLoading = false
+        })
+    })
+
+    $(this.$refs.modal.$el).on('hidden.bs.modal', () => {
+      this.$emit('closed')
+      this.form.reset()
+
+      const index = this.cities.findIndex(_city => _city.id === this.city.id)
+      this.cities.splice(index, 1, {...this.city, $$isDisabled: false})
+    })
+  },
+  methods: {
+    onSubmit() {
+      this.form.isLoading = true
+      this.form.submit('POST', `/gerenciamento/cidades/${this.city.id}/replace`)
+        .then(() => {
+          $(this.$refs.modal.$el).modal('hide')
+          this.$emit('deleted')
+        })
+        .catch(() => {})
+        .then(() => {
+          this.form.isLoading = false
+        })
+    }
+  }
 }
 </script>

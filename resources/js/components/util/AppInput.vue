@@ -89,117 +89,117 @@ import MaskedInput from 'vue-text-mask'
 import { TippyComponent } from 'vue-tippy'
 
 export default {
-    components: {
-        MaskedInput,
-        tippy: TippyComponent
+  components: {
+    MaskedInput,
+    tippy: TippyComponent
+  },
+  props: {
+    id: {
+      type: [String, Number],
+      required: true
     },
-    props: {
-        id: {
-            type: String,
-            required: true
-        },
-        optional: {
-            type: Boolean,
-            default: false
-        },
-        disabled: {
-            type: Boolean,
-            default: false
-        },
-        value: {
-            type: String,
-            default: ''
-        },
-        inputClass: {
-            type: String,
-            default: ''
-        },
-        multiple: {
-            type: Boolean,
-            default: false
-        },
-        accept: {
-            type: String,
-            default: ''
-        },
-        name: {
-            type: null,
-            default: false
-        },
-        mask: {
-            type: undefined,
-            default: false
-        },
-        placeholder: {
-            type: undefined,
-            default: false
-        },
-        type: {
-            type: String,
-            default: 'text'
-        },
-        autofocus: {
-            type: Boolean,
-            default: false
-        },
-        error: {
-            type: String,
-            default: ''
-        },
-        autocomplete: {
-            type: Boolean,
-            default: false
-        },
-        disabledMessage: {
-            type: String,
-            default: ''
-        }
+    optional: {
+      type: Boolean,
+      default: false
     },
-    data: function() {
-        return {
-            inputType: this.type
-        }
+    disabled: {
+      type: Boolean,
+      default: false
     },
-    computed: {
-        isTypePassword() {
-            return this.inputType === 'password'
-        },
-        hasError () {
-            return ! this.$helpers.isEmpty(this.error)
-        }
+    value: {
+      type: String,
+      default: ''
     },
-    watch: {
-        // Atualiza a máscara do input após ele receber
-        // alguma mudança programaticamente.
-        // A biblioteca não atualiza a mascara sozinha.
-        value(val, oldVal) {
-            if (val === null || oldVal === null) {
-                return
-            }
-
-            if (oldVal.length === 0 && val.length > 0) {
-                setTimeout(() => {
-                    this.$refs.input.updateValue()
-                }, 100)
-            }
-        }
+    inputClass: {
+      type: String,
+      default: ''
     },
-    methods: {
-        togglePasswordType() {
-            this.inputType = this.inputType === 'password'
-                ? 'text'
-                : 'password'
-
-            this.focusInput()
-        },
-        focusInput() {
-            const input = this.$refs.input.$el,
-                length = input.value.length
-
-            input.focus()
-
-            setTimeout(() => { input.setSelectionRange(length, length) }, 0)
-        }
+    multiple: {
+      type: Boolean,
+      default: false
+    },
+    accept: {
+      type: String,
+      default: ''
+    },
+    name: {
+      type: null,
+      default: false
+    },
+    mask: {
+      type: undefined,
+      default: false
+    },
+    placeholder: {
+      type: undefined,
+      default: false
+    },
+    type: {
+      type: String,
+      default: 'text'
+    },
+    autofocus: {
+      type: Boolean,
+      default: false
+    },
+    error: {
+      type: String,
+      default: ''
+    },
+    autocomplete: {
+      type: String,
+      default: ''
+    },
+    disabledMessage: {
+      type: String,
+      default: ''
     }
+  },
+  data: function() {
+    return {
+      inputType: this.type
+    }
+  },
+  computed: {
+    isTypePassword() {
+      return this.inputType === 'password'
+    },
+    hasError () {
+      return ! this.$helpers.isEmpty(this.error)
+    }
+  },
+  watch: {
+    // Atualiza a máscara do input após ele receber
+    // alguma mudança programaticamente.
+    // A biblioteca não atualiza a mascara sozinha.
+    value(val, oldVal) {
+      if (val === null || oldVal === null) {
+        return
+      }
+
+      if (oldVal.length === 0 && val.length > 0) {
+        setTimeout(() => {
+          this.$refs.input.updateValue()
+        }, 100)
+      }
+    }
+  },
+  methods: {
+    togglePasswordType() {
+      this.inputType = this.inputType === 'password'
+        ? 'text'
+        : 'password'
+
+      this.focusInput()
+    },
+    focusInput() {
+      const input = this.$refs.input.$el,
+        length = input.value.length
+
+      input.focus()
+
+      setTimeout(() => { input.setSelectionRange(length, length) }, 0)
+    }
+  }
 }
 </script>

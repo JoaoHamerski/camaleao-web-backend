@@ -150,81 +150,81 @@ import moment from 'moment'
 import { TippyComponent } from 'vue-tippy'
 
 export default {
-    components: {
-        CommissionImageModal,
-        CommissionDetailsDropdown,
-        Tippy: TippyComponent,
-        InfiniteLoading
-    },
-    data() {
-        return {
-            moment,
-            images: [],
-            commissions: [],
-            page: 1,
-            infiniteId: +new Date()
-        }
-    },
-    computed: {
-        somethingWasChanged() {
-            return this.commissions.some((commission) => commission.pivot.was_quantity_changed)
-        }
-    },
-    methods: {
-        confirm(commission) {
-            this.$modal.fire({
-                icon: 'info',
-                iconHtml:'<i class="fas fa-info-circle"></i>',
-                iconColor: '#3490dc',
-                title: 'Você tem certeza?',
-                text: 'Você está confirmando que a produção deste pedido foi efetuada.'
-            })
-                .then(response => {
-                    if (response.isConfirmed) {
-                        commission.isLoading = true
-
-                        axios.post(`/producao/${commission.pivot.id}/confirm`)
-                            .then(() => {
-                                this.$toast.success('Comissão confirmada')
-                                commission.isLoading = false
-                                this.refresh()
-                            })
-                    }
-                })
-
-        },
-        selectImages(commission) {
-            if (commission.order.art_paths.length) {
-                this.images = JSON.parse(commission.order.art_paths)
-            }
-        },
-        refresh() {
-            this.commissions = []
-            this.page = 1
-            this.infiniteId += 1
-        },
-        infiniteHandler($state) {
-            axios.get('/producao/get-commissions', {
-                params: {
-                    page: this.page
-                }
-            })
-                .then(({data}) => {
-                    if (data.commissions.data.length) {
-                        this.page += 1
-
-                        const commissions = data.commissions.data.map(commission => {
-                            return {...commission, isLoading: false}
-                        })
-
-                        this.commissions = commissions
-
-                        $state.loaded()
-                    } else {
-                        $state.complete()
-                    }
-                })
-        }
+  components: {
+    CommissionImageModal,
+    CommissionDetailsDropdown,
+    Tippy: TippyComponent,
+    InfiniteLoading
+  },
+  data() {
+    return {
+      moment,
+      images: [],
+      commissions: [],
+      page: 1,
+      infiniteId: +new Date()
     }
+  },
+  computed: {
+    somethingWasChanged() {
+      return this.commissions.some((commission) => commission.pivot.was_quantity_changed)
+    }
+  },
+  methods: {
+    confirm(commission) {
+      this.$modal.fire({
+        icon: 'info',
+        iconHtml:'<i class="fas fa-info-circle"></i>',
+        iconColor: '#3490dc',
+        title: 'Você tem certeza?',
+        text: 'Você está confirmando que a produção deste pedido foi efetuada.'
+      })
+        .then(response => {
+          if (response.isConfirmed) {
+            commission.isLoading = true
+
+            axios.post(`/producao/${commission.pivot.id}/confirm`)
+              .then(() => {
+                this.$toast.success('Comissão confirmada')
+                commission.isLoading = false
+                this.refresh()
+              })
+          }
+        })
+
+    },
+    selectImages(commission) {
+      if (commission.order.art_paths.length) {
+        this.images = JSON.parse(commission.order.art_paths)
+      }
+    },
+    refresh() {
+      this.commissions = []
+      this.page = 1
+      this.infiniteId += 1
+    },
+    infiniteHandler($state) {
+      axios.get('/producao/get-commissions', {
+        params: {
+          page: this.page
+        }
+      })
+        .then(({data}) => {
+          if (data.commissions.data.length) {
+            this.page += 1
+
+            const commissions = data.commissions.data.map(commission => {
+              return {...commission, isLoading: false}
+            })
+
+            this.commissions = commissions
+
+            $state.loaded()
+          } else {
+            $state.complete()
+          }
+        })
+    }
+  }
 }
 </script>

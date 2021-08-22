@@ -24,21 +24,21 @@
 import CityForm from './CityForm'
   
 export default {
-    components: {
-        CityForm
-    },
-    mounted() {
-        this.$on('pre-form', search => {
-            this.$refs.cityForm.$emit('pre-form', search)
-            $(this.$refs.modal.$el).modal('show')
+  components: {
+    CityForm
+  },
+  mounted() {
+    this.$on('pre-form', search => {
+      this.$refs.cityForm.$emit('pre-form', search)
+      $(this.$refs.modal.$el).modal('show')
 
-        })
-    },
-    methods: {
-        onCreate(city) {
-            $(this.$refs.modal.$el).modal('hide')
-            this.$emit('created', city)
-        }
+    })
+  },
+  methods: {
+    onCreate(city) {
+      $(this.$refs.modal.$el).modal('hide')
+      this.$emit('created', city)
     }
+  }
 }
 </script>

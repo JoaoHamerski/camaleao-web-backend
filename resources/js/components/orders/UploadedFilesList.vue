@@ -23,16 +23,16 @@
 
 <script>
 export default {
-    props: {
-        field: {
-            type: String,
-            default: ''
-        },
-        files: {
-            type: Array,
-            default: () => []
-        },
-        deleteFile: undefined
-    }
+  props: {
+    field: {
+      type: String,
+      default: ''
+    },
+    files: {
+      type: Array,
+      default: () => []
+    },
+    deleteFile: undefined
+  }
 }
 </script>

@@ -22,11 +22,11 @@
 
 <script>
 export default {
-    props: {
-        images: {
-            type: Array,
-            default: () => []
-        }
+  props: {
+    images: {
+      type: Array,
+      default: () => []
     }
+  }
 }
 </script>

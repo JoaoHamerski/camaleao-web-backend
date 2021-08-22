@@ -65,86 +65,86 @@ import Form from '../../util/Form'
 import masks from '../../util/masks'
 
 export default {
-    props: {
-        clothingType: undefined,
-        isOrderComission: {
-            type: Boolean,
-            default: false
-        }
-    },
-    data() {
-        return {
-            masks,
-            orderComission: 0,
-            form: new Form({
-                value: ''
-            })
-        }
-    },
-    mounted() {
-        $(this.$refs.modal.$el).on('show.bs.modal', async () => {
-            if (this.clothingType) {
-                this.populateIfClothingTypes()
-            } else {
-                await this.populateIfOrderCommission()
-            }
+  props: {
+    clothingType: undefined,
+    isOrderComission: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      masks,
+      orderComission: 0,
+      form: new Form({
+        value: ''
+      })
+    }
+  },
+  mounted() {
+    $(this.$refs.modal.$el).on('show.bs.modal', async () => {
+      if (this.clothingType) {
+        this.populateIfClothingTypes()
+      } else {
+        await this.populateIfOrderCommission()
+      }
 
-            this.$nextTick(() => {
-                this.$refs.inputValue.$refs.input.updateValue()
-            })
+      this.$nextTick(() => {
+        this.$refs.inputValue.$refs.input.updateValue()
+      })
+    })
+  },
+  methods: {
+    populateIfClothingTypes() {
+      this.form.value = this.$helpers.valueToBRL(
+        this.clothingType.commission
+      )
+    },
+    populateIfOrderCommission() {
+      return new Promise((resolve) => {
+        axios.get('/pedidos/order-commission')
+          .then(response => {
+            this.form.value = this.$helpers.valueToBRL(
+              response.data.commission
+            )
+            resolve()
+          })
+      })
+    },
+    changeClothingTypesComission() {
+      this.form.isLoading = true
+      this.form.submit('POST', `/tipos-de-roupas/${this.clothingType.id}/change-commission`)
+        .then(() => {
+          $(this.$refs.modal.$el).modal('hide')
+          this.$toast.success('Valor da comissão alterada')
+          this.$emit('changed')
+        })
+        .catch(() => {})
+        .then(() => {
+          this.form.isLoading = false
         })
     },
-    methods: {
-        populateIfClothingTypes() {
-            this.form.value = this.$helpers.valueToBRL(
-                this.clothingType.commission
-            )
-        },
-        populateIfOrderCommission() {
-            return new Promise((resolve) => {
-                axios.get('/pedidos/order-commission')
-                    .then(response => {
-                        this.form.value = this.$helpers.valueToBRL(
-                            response.data.commission
-                        )
-                        resolve()
-                    })
-            })
-        },
-        changeClothingTypesComission() {
-            this.form.isLoading = true
-            this.form.submit('POST', `/tipos-de-roupas/${this.clothingType.id}/change-commission`)
-                .then(() => {
-                    $(this.$refs.modal.$el).modal('hide')
-                    this.$toast.success('Valor da comissão alterada')
-                    this.$emit('changed')
-                })
-                .catch(() => {})
-                .then(() => {
-                    this.form.isLoading = false
-                })
-        },
-        changeOrderComission() {
-            this.form.isLoading = true
-            this.form.submit('POST', '/pedidos/change-order-commission')
-                .then(() => {
-                    this.$toast.success('Valor da comissão alterada')
-                })
-                .catch(() => {})
-                .then(() => {
-                    this.form.isLoading = false
-                    $(this.$refs.modal.$el).modal('hide')
-                })
-        },
-        onSubmit() {
-            if (this.isOrderComission) {
-                this.changeOrderComission()
+    changeOrderComission() {
+      this.form.isLoading = true
+      this.form.submit('POST', '/pedidos/change-order-commission')
+        .then(() => {
+          this.$toast.success('Valor da comissão alterada')
+        })
+        .catch(() => {})
+        .then(() => {
+          this.form.isLoading = false
+          $(this.$refs.modal.$el).modal('hide')
+        })
+    },
+    onSubmit() {
+      if (this.isOrderComission) {
+        this.changeOrderComission()
 
-                return
-            }
+        return
+      }
 
-            this.changeClothingTypesComission()
-        }
+      this.changeClothingTypesComission()
     }
+  }
 }
 </script>

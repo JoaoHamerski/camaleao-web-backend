@@ -25,14 +25,14 @@
 import CityForm from './CityForm'
 
 export default {
-    components: {
-        CityForm
-    },
-    methods: {
-        onUpdate() {
-            $(this.$refs.modal.$el).modal('hide')
-            this.$emit('updated')
-        }
+  components: {
+    CityForm
+  },
+  methods: {
+    onUpdate() {
+      $(this.$refs.modal.$el).modal('hide')
+      this.$emit('updated')
     }
+  }
 }
 </script>

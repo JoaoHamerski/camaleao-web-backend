@@ -194,115 +194,115 @@ import moment from 'moment'
 moment.locale('pt-BR')
 
 export default {
-    components: {
-        DailyPaymentModal,
-        PendenciesModal,
-        Tippy: TippyComponent
+  components: {
+    DailyPaymentModal,
+    PendenciesModal,
+    Tippy: TippyComponent
+  },
+  props: {
+    userRole: {
+      type: Number,
+      default: 0
+    }
+  },
+  data: () => {
+    return {
+      moment,
+      isLoading: false,
+      payments: [],
+      totalPendencies: 0,
+      currentDate: ''
+    }
+  },
+  mounted() {
+    this.refresh()
+  },
+  methods: {
+    onLoadPendencies(date) {
+      this.refreshPayments({date, only_pendency: true})
     },
-    props: {
-        userRole: {
-            type: Number,
-            default: 0
-        }
+    onPaymentCreated() {
+      this.refresh()
     },
-    data: () => {
-        return {
-            moment,
-            isLoading: false,
-            payments: [],
-            totalPendencies: 0,
-            currentDate: ''
-        }
-    },
-    mounted() {
-        this.refresh()
-    },
-    methods: {
-        onLoadPendencies(date) {
-            this.refreshPayments({date, only_pendency: true})
-        },
-        onPaymentCreated() {
+    assign(payment, confirmation) {
+      payment.isLoading = true
+
+      axios.post(`/caixa-diario/${payment.id}/assign-confirmation`, {
+        confirmation
+      })
+        .then(() => {
+          this.$toast.success(
+            confirmation
+              ? 'Pagamento aceito'
+              : 'Pagamento rejeitado'
+          )
+
+
+          if (moment(payment.created_at).isBefore(moment(), 'day')) {
+            this.refresh({date: this.currentDate, only_pendency: true})
+            this.$refs.pendenciesModal.$emit('refresh-pendencies')
+          } else {
             this.refresh()
-        },
-        assign(payment, confirmation) {
-            payment.isLoading = true
+          }
+        })
+        .catch(({response}) => {
+          if (response) {
+            const totalOwing = response.data.totalOwing,
+              payment = response.data.payment
 
-            axios.post(`/caixa-diario/${payment.id}/assign-confirmation`, {
-                confirmation
-            })
-                .then(() => {
-                    this.$toast.success(
-                        confirmation
-                            ? 'Pagamento aceito'
-                            : 'Pagamento rejeitado'
-                    )
-
-
-                    if (moment(payment.created_at).isBefore(moment(), 'day')) {
-                        this.refresh({date: this.currentDate, only_pendency: true})
-                        this.$refs.pendenciesModal.$emit('refresh-pendencies')
-                    } else {
-                        this.refresh()
-                    }
-                })
-                .catch(({response}) => {
-                    if (response) {
-                        const totalOwing = response.data.totalOwing,
-                            payment = response.data.payment
-
-                        this.$modal.fire({
-                            icon: 'error',
-                            iconHtml: '<i class="fas fa-exclamation-circle"></i>',
-                            title: 'Erro ao confirmar',
-                            html: `
+            this.$modal.fire({
+              icon: 'error',
+              iconHtml: '<i class="fas fa-exclamation-circle"></i>',
+              title: 'Erro ao confirmar',
+              html: `
                   <div class="small">Este pagamento excede o total que resta pagar do pedido.</div>
                   <br/>
                   <div>Valor do pagamento: <strong>${this.$helpers.valueToBRL(payment)}</strong></div>
                   <div class="mb-1">Resta pagar: <strong>${this.$helpers.valueToBRL(totalOwing)}</strong></div>
                 `,
-                            confirmButtonText: 'OK',
-                            showCancelButton: false
-                        })
-                    }
-                })
-                .then(() => {
-                    payment.isLoading = false
-                })
-        },
-        refreshTotalPendencies(params = {}) {
-            axios.get('/caixa-diario/get-total-pendencies ', { params })
-                .then(response => {
-                    this.totalPendencies = response.data.totalPendencies
-                })
-        },
-        refreshPayments(params = {}) {
-            this.isLoading = true
+              confirmButtonText: 'OK',
+              showCancelButton: false
+            })
+          }
+        })
+        .then(() => {
+          payment.isLoading = false
+        })
+    },
+    refreshTotalPendencies(params = {}) {
+      axios.get('/caixa-diario/get-total-pendencies ', { params })
+        .then(response => {
+          this.totalPendencies = response.data.totalPendencies
+        })
+    },
+    refreshPayments(params = {}) {
+      this.isLoading = true
 
-            if (params.date) {
-                this.currentDate = params.date
-            } else {
-                this.currentDate = new Date()
-            }
+      if (params.date) {
+        this.currentDate = params.date
+      } else {
+        this.currentDate = new Date()
+      }
 
-            axios.get('/caixa-diario/payments', { params })
-                .then(response => {
-                    const payments = response.data.payments.map(payment => {
-                        return {...payment, isLoading: false}
-                    })
+      axios.get('/caixa-diario/payments', { params })
+        .then(response => {
+          const payments = response.data.payments.map(payment => {
+            return {...payment, isLoading: false}
+          })
 
-                    this.payments = []
-                    this.payments.push(...payments)
-                })
-                .catch(() => {})
-                .then(() => {
-                    this.isLoading = false
-                })
+          this.payments = []
+          this.payments.push(...payments)
+        })
+        .catch(() => {})
+        .then(() => {
+          this.isLoading = false
+        })
 
-            this.refreshTotalPendencies()
-        },
-        refresh(params) {
-            this.refreshPayments(params)
-        }
+      this.refreshTotalPendencies()
+    },
+    refresh(params) {
+      this.refreshPayments(params)
     }
+  }
 }
 </script>

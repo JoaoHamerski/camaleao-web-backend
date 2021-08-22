@@ -88,73 +88,73 @@
 import Form from '../../util/Form'
 
 export default {
-    props: {
-        isEdit: {
-            type: Boolean,
-            default: false
-        },
+  props: {
+    isEdit: {
+      type: Boolean,
+      default: false
     },
-    data: function() {
-        return {
-            city: null,
-            states: [],
-            form: new Form({
-                name: '',
-                state_id: ''
-            })
-        }
-    },
-    mounted() {
-        this.$on('city-selected', city => {
-            this.city = city
-            this.form.name = city.name
-            this.form.state_id = this.city.state ? this.city.state.id : ''
-        })
-
-        this.$on('pre-form', search => {
-            this.form.name = search
-        })
-
-        axios.get('/gerenciamento/cidades/estados/list')
-            .then(response => {
-                this.states = response.data.states
-            })
-    },
-    methods: {
-        onSubmit() {
-            this.form.isLoading = true
-
-            if (this.isEdit) {
-                this.update()
-            } else {
-                this.create()
-            }
-        },
-        create() {
-            this.form.isLoading = true
-
-            this.form.submit('POST', '/gerenciamento/cidades/')
-                .then(response => {
-                    this.form.reset()
-                    this.$toast.success('Cidade cadastrada')
-                    this.$emit('created', response.city)
-                })
-                .catch(() => {})
-                .then(() => {
-                    this.form.isLoading = false
-                })
-        },
-        update() {
-            this.form.submit('PATCH', '/gerenciamento/cidades/' + this.city.id)
-                .then(() => {
-                    this.$toast.success('Cidade atualizada')
-                    this.$emit('updated')
-                })
-                .catch(() => {})
-                .then(() => {
-                    this.form.isLoading = false
-                })
-        }
+  },
+  data: function() {
+    return {
+      city: null,
+      states: [],
+      form: new Form({
+        name: '',
+        state_id: ''
+      })
     }
+  },
+  mounted() {
+    this.$on('city-selected', city => {
+      this.city = city
+      this.form.name = city.name
+      this.form.state_id = this.city.state ? this.city.state.id : ''
+    })
+
+    this.$on('pre-form', search => {
+      this.form.name = search
+    })
+
+    axios.get('/gerenciamento/cidades/estados/list')
+      .then(response => {
+        this.states = response.data.states
+      })
+  },
+  methods: {
+    onSubmit() {
+      this.form.isLoading = true
+
+      if (this.isEdit) {
+        this.update()
+      } else {
+        this.create()
+      }
+    },
+    create() {
+      this.form.isLoading = true
+
+      this.form.submit('POST', '/gerenciamento/cidades/')
+        .then(response => {
+          this.form.reset()
+          this.$toast.success('Cidade cadastrada')
+          this.$emit('created', response.city)
+        })
+        .catch(() => {})
+        .then(() => {
+          this.form.isLoading = false
+        })
+    },
+    update() {
+      this.form.submit('PATCH', '/gerenciamento/cidades/' + this.city.id)
+        .then(() => {
+          this.$toast.success('Cidade atualizada')
+          this.$emit('updated')
+        })
+        .catch(() => {})
+        .then(() => {
+          this.form.isLoading = false
+        })
+    }
+  }
 }
 </script>

@@ -77,42 +77,42 @@
 import Form from '../../util/Form'
 
 export default {
-    props: {
-        id: {
-            type: String,
-            default: ''
-        }
-    },
-    data() {
-        return {
-            client: '',
-            form: new Form({
-                password: ''
-            })
-        }
-    },
-    mounted() {
-        this.getClient()
-    },
-    methods: {
-        onSubmit() {
-            this.form.isLoading = true
-            this.form.submit('delete', `/clientes/${this.id}`)
-                .then(response => {
-                    window.location.href = response.redirect
-                })
-                .catch(() => {})
-                .then(() => {
-                    this.form.password = ''
-                    this.form.isLoading = false
-                })
-        },
-        getClient() {
-            axios.get(`/clientes/${this.id}/json`)
-                .then(response => {
-                    this.client = response.data.client
-                })
-        }
+  props: {
+    id: {
+      type: String,
+      default: ''
     }
+  },
+  data() {
+    return {
+      client: '',
+      form: new Form({
+        password: ''
+      })
+    }
+  },
+  mounted() {
+    this.getClient()
+  },
+  methods: {
+    onSubmit() {
+      this.form.isLoading = true
+      this.form.submit('delete', `/clientes/${this.id}`)
+        .then(response => {
+          window.location.href = response.redirect
+        })
+        .catch(() => {})
+        .then(() => {
+          this.form.password = ''
+          this.form.isLoading = false
+        })
+    },
+    getClient() {
+      axios.get(`/clientes/${this.id}/json`)
+        .then(response => {
+          this.client = response.data.client
+        })
+    }
+  }
 }
 </script>

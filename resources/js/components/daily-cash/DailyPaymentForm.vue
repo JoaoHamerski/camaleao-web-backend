@@ -334,125 +334,125 @@ import Multiselect from 'vue-multiselect'
 import { TippyComponent }  from 'vue-tippy'
 
 export default {
-    components: {
-        Tippy: TippyComponent,
-        Multiselect
-    },
-    data() {
-        return {
-            masks,
-            vias: [],
-            clients: {
-                isLoading: false,
-                items: []
-            },
-            orders: {
-                isLoading: false,
-                items: []
-            },
-            form: new Form({
-                isNewClient: false,
-                isNewOrder: false,
-                via_id: '',
-                value: '',
-                client: '',
-                order: '',
-                reminder: '',
-                hasReminder: false,
-                order_value: ''
-            })
-        }
-    },
-    mounted() {
-        this.populateVias()
-    },
-    methods: {
-        clearClientAndOrderErrors() {
-            this.form.errors.clear([
-                'client.id',
-                'client',
-                'order',
-                'order.id'
-            ])
-        },
-        setIsNewClient(isNewClient) {
-            this.clearClientAndOrderErrors()
-
-            this.form.client = ''
-            this.form.order = ''
-
-            this.form.isNewClient = isNewClient
-
-            if (isNewClient) {
-                this.form.isNewOrder = true
-
-                return
-            }
-
-            this.form.isNewOrder = false
-        },
-        setIsNewOrder(isNewOrder) {
-            this.clearClientAndOrderErrors()
-
-            this.form.order = ''
-            this.form.isNewOrder = isNewOrder
-        },
-        onSubmit() {
-            this.form.isLoading = true
-
-            this.form.submit('POST', '/caixa-diario/clientes/daily-payment')
-                .then(() => {
-                    this.$toast.success('Pagamento registrado!')
-                    this.form.reset()
-                    this.$emit('created')
-                })
-                .catch(() => {})
-                .then(() => {
-                    this.form.isLoading = false
-                })
-        },
-        onClientSelect(client) {
-            this.orders.isLoading = true
-
-            axios.get(`/cliente/${client.id}/pedidos/list`)
-                .then(response => {
-                    let orders = response.data.orders
-
-                    if (typeof orders === 'object') {
-                        orders = Object.values(response.data.orders)
-                    }
-
-                    this.form.order = ''
-                    this.orders.items = []
-
-                    this.orders.items = orders
-                    this.orders.isLoading = false
-                })
-        },
-        asyncFindClients(search) {
-            if (! search.length) {
-                this.clients.items = []
-                return
-            }
-
-            this.clients.isLoading = true
-
-            axios.get('/clientes/list', {
-                params: {
-                    name: search
-                }
-            })
-                .then(response => {
-                    this.clients.items = response.data.clients
-                    this.clients.isLoading = false
-                })
-        },
-        populateVias() {
-            axios.get('/pagamentos/vias/list')
-                .then(response => {
-                    this.vias = response.data.vias
-                })
-        }
+  components: {
+    Tippy: TippyComponent,
+    Multiselect
+  },
+  data() {
+    return {
+      masks,
+      vias: [],
+      clients: {
+        isLoading: false,
+        items: []
+      },
+      orders: {
+        isLoading: false,
+        items: []
+      },
+      form: new Form({
+        isNewClient: false,
+        isNewOrder: false,
+        via_id: '',
+        value: '',
+        client: '',
+        order: '',
+        reminder: '',
+        hasReminder: false,
+        order_value: ''
+      })
     }
+  },
+  mounted() {
+    this.populateVias()
+  },
+  methods: {
+    clearClientAndOrderErrors() {
+      this.form.errors.clear([
+        'client.id',
+        'client',
+        'order',
+        'order.id'
+      ])
+    },
+    setIsNewClient(isNewClient) {
+      this.clearClientAndOrderErrors()
+
+      this.form.client = ''
+      this.form.order = ''
+
+      this.form.isNewClient = isNewClient
+
+      if (isNewClient) {
+        this.form.isNewOrder = true
+
+        return
+      }
+
+      this.form.isNewOrder = false
+    },
+    setIsNewOrder(isNewOrder) {
+      this.clearClientAndOrderErrors()
+
+      this.form.order = ''
+      this.form.isNewOrder = isNewOrder
+    },
+    onSubmit() {
+      this.form.isLoading = true
+
+      this.form.submit('POST', '/caixa-diario/clientes/daily-payment')
+        .then(() => {
+          this.$toast.success('Pagamento registrado!')
+          this.form.reset()
+          this.$emit('created')
+        })
+        .catch(() => {})
+        .then(() => {
+          this.form.isLoading = false
+        })
+    },
+    onClientSelect(client) {
+      this.orders.isLoading = true
+
+      axios.get(`/cliente/${client.id}/pedidos/list`)
+        .then(response => {
+          let orders = response.data.orders
+
+          if (typeof orders === 'object') {
+            orders = Object.values(response.data.orders)
+          }
+
+          this.form.order = ''
+          this.orders.items = []
+
+          this.orders.items = orders
+          this.orders.isLoading = false
+        })
+    },
+    asyncFindClients(search) {
+      if (! search.length) {
+        this.clients.items = []
+        return
+      }
+
+      this.clients.isLoading = true
+
+      axios.get('/clientes/list', {
+        params: {
+          name: search
+        }
+      })
+        .then(response => {
+          this.clients.items = response.data.clients
+          this.clients.isLoading = false
+        })
+    },
+    populateVias() {
+      axios.get('/pagamentos/vias/list')
+        .then(response => {
+          this.vias = response.data.vias
+        })
+    }
+  }
 }
 </script>

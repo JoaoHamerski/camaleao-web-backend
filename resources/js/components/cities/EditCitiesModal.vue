@@ -24,14 +24,14 @@
 import CitiesForm from './CitiesForm'
 
 export default {
-    components: {
-        CitiesForm
-    },
-    methods: {
-        onUpdate() {
-            $(this.$refs.modal.$el).modal('hide')
-            this.$emit('updated')
-        }
+  components: {
+    CitiesForm
+  },
+  methods: {
+    onUpdate() {
+      $(this.$refs.modal.$el).modal('hide')
+      this.$emit('updated')
     }
+  }
 }
 </script>

@@ -165,94 +165,94 @@
 import Form from '../../util/Form'
 
 export default {
-    data: function() {
-        return {
-            companyName: '',
-            isLoading: false,
-            newCompany: false,
-            companies: [],
-            form: new Form({
-                name: ''
-            })
-        }
+  data: function() {
+    return {
+      companyName: '',
+      isLoading: false,
+      newCompany: false,
+      companies: [],
+      form: new Form({
+        name: ''
+      })
+    }
+  },
+  mounted() {
+    this.$root.$on('REFRESH_SHIPPING_COMPANIES_LIST', () => {
+      axios.get('/transportadoras/list')
+        .then(response => {
+          this.companies = response.data.companies.map(company => {
+            return {...company, edit: false}
+          })
+        })
+    })
+  },
+  methods: {
+    enableEdit(shippingCompany) {
+      for (const company of this.companies) {
+        company.edit = false
+      }
+
+      shippingCompany.edit = true
     },
-    mounted() {
-        this.$root.$on('REFRESH_SHIPPING_COMPANIES_LIST', () => {
-            axios.get('/transportadoras/list')
-                .then(response => {
-                    this.companies = response.data.companies.map(company => {
-                        return {...company, edit: false}
-                    })
-                })
+    update(shippingCompany, name) {
+      this.isLoading = true
+
+      axios.patch(`/transportadoras/${shippingCompany.id}`, { name })
+        .then(() => {
+          this.isLoading = false
+          this.$root.$emit('REFRESH_SHIPPING_COMPANIES_LIST')
+          this.$toast.success('Nome alterado')
+          this.$emit('refresh')
+        })
+        .catch(() => {  })
+        .then(() => {
+          this.isLoading = false
         })
     },
-    methods: {
-        enableEdit(shippingCompany) {
-            for (const company of this.companies) {
-                company.edit = false
-            }
-
-            shippingCompany.edit = true
-        },
-        update(shippingCompany, name) {
-            this.isLoading = true
-
-            axios.patch(`/transportadoras/${shippingCompany.id}`, { name })
-                .then(() => {
-                    this.isLoading = false
-                    this.$root.$emit('REFRESH_SHIPPING_COMPANIES_LIST')
-                    this.$toast.success('Nome alterado')
-                    this.$emit('refresh')
-                })
-                .catch(() => {  })
-                .then(() => {
-                    this.isLoading = false
-                })
-        },
-        destroy(shippingCompany) {
+    destroy(shippingCompany) {
         
-            this.$modal.fire({
-                icon: 'error',
-                iconHtml: '<i class="fas fa-trash-alt fa-fw"></i>',
-                title: 'Você tem certeza?',
-                text: `
+      this.$modal.fire({
+        icon: 'error',
+        iconHtml: '<i class="fas fa-trash-alt fa-fw"></i>',
+        title: 'Você tem certeza?',
+        text: `
             Deletando a transportandora você 
             terá que atualizar as 
             filiais dessa transportadora. E também atualizar os clientes que foram cadastrados nessa transportadora.
           `
-            })
-                .then(response => {
-                    if (response.isConfirmed) {
-                        this.isLoading = true
-                        axios.delete(`/transportadoras/${shippingCompany.id}`)
-                            .then(() => {
-                                this.$root.$emit('REFRESH_SHIPPING_COMPANIES_LIST')
-                                this.$toast.success('Transportadora deletada')
-                                this.$emit('refresh')
-                            })
-                            .catch(() => {})
-                            .then(() => {
-                                this.isLoading = false
-                            })
-                    }
-                })
-        },
-        onSubmit() {
-            this.form.isLoading = true
+      })
+        .then(response => {
+          if (response.isConfirmed) {
+            this.isLoading = true
+            axios.delete(`/transportadoras/${shippingCompany.id}`)
+              .then(() => {
+                this.$root.$emit('REFRESH_SHIPPING_COMPANIES_LIST')
+                this.$toast.success('Transportadora deletada')
+                this.$emit('refresh')
+              })
+              .catch(() => {})
+              .then(() => {
+                this.isLoading = false
+              })
+          }
+        })
+    },
+    onSubmit() {
+      this.form.isLoading = true
 
-            this.form.submit('POST', '/transportadoras')
-                .then(() => {
-                    this.newCompany = false
-                    this.$root.$emit('REFRESH_SHIPPING_COMPANIES_LIST')
-                    this.form.reset()
-                    this.$toast.success('Transportadora criada')
-                    this.$emit('refresh')
-                })
-                .catch(() => {})
-                .then(() => {
-                    this.form.isLoading = false
-                })
-        }
+      this.form.submit('POST', '/transportadoras')
+        .then(() => {
+          this.newCompany = false
+          this.$root.$emit('REFRESH_SHIPPING_COMPANIES_LIST')
+          this.form.reset()
+          this.$toast.success('Transportadora criada')
+          this.$emit('refresh')
+        })
+        .catch(() => {})
+        .then(() => {
+          this.form.isLoading = false
+        })
     }
+  }
 }
 </script>

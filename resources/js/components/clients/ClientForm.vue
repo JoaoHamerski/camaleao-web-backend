@@ -142,172 +142,172 @@ import masks from '../../util/masks'
 import Multiselect from 'vue-multiselect'
 
 export default {
-    components: {
-        Multiselect
+  components: {
+    Multiselect
+  },
+  props: {
+    id: {
+      type: String,
+      default: ''
     },
-    props: {
-        id: {
-            type: String,
-            default: ''
-        },
-        isEdit: {
-            type: Boolean,
-            default: false
-        }
-    },
-    data: function() {
-        return {
-            masks,
-            isLoading: false,
-            branches: [],
-            shipping_companies: [],
-            cities: [],
-            form: new Form({
-                name: '',
-                phone: '',
-                branch_id: '',
-                city_id: '',
-                shipping_company_id: ''
-            })
-        }
-    },
-    mounted() {
-        this.populateData()
+    isEdit: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data: function() {
+    return {
+      masks,
+      isLoading: false,
+      branches: [],
+      shipping_companies: [],
+      cities: [],
+      form: new Form({
+        name: '',
+        phone: '',
+        branch_id: '',
+        city_id: '',
+        shipping_company_id: ''
+      })
+    }
+  },
+  mounted() {
+    this.populateData()
 
-        this.$on('city-created', async (city) => {
-            this.cities = []
-            this.populateCities()
-                .then(() => {
-                    this.form.city_id = this.cities.find(
-                        _city => _city.id === city.id
-                    )
-                })
+    this.$on('city-created', async (city) => {
+      this.cities = []
+      this.populateCities()
+        .then(() => {
+          this.form.city_id = this.cities.find(
+            _city => _city.id === city.id
+          )
+        })
+    })
+  },
+  methods: {
+    onCitySelected(city) {
+      this.form.branch_id = ''
+      this.form.shipping_company_id = ''
+
+      if (city.branch_id) {
+        this.form.branch_id = this.branches.find(
+          branch => branch.id === city.branch_id
+        )
+      }
+
+      if (city.shipping_company) {
+        this.form.shipping_company_id = this.shipping_companies.find(
+          company => company.id === city.shipping_company.id
+        )
+      }
+    },
+    onSubmit() {
+      this.$emit('loading', true)
+      this.form.isLoading = true
+
+      if (this.isEdit) {
+        this.update()
+      } else {
+        this.create()
+      }
+    },
+    create() {
+      this.form.submit('POST', '/clientes')
+        .then(() => {
+          location.reload()
+        })
+        .catch(() => {})
+        .then(() => {
+          this.$emit('loading', false)
+          this.form.isLoading = false
         })
     },
-    methods: {
-        onCitySelected(city) {
-            this.form.branch_id = ''
-            this.form.shipping_company_id = ''
+    update() {
+      this.form.submit('PATCH', `/clientes/${this.id}/`)
+        .then(() => {
+          location.reload()
+        })
+        .catch(() => {})
+        .then(() => {
+          this.$emit('loading', false)
+          this.form.isLoading = false
+        })
+    },
+    populateBranches() {
+      return new Promise((resolve) => {
+        axios.get('/gerenciamento/filiais/list', {
+          params: {
+            no_paginate: true
+          }
+        })
+          .then(response => {
+            this.branches.push(...response.data.branches)
+            resolve()
+          })
+      })
+    },
+    populateShippingCompanies() {
+      return new Promise((resolve) => {
+        axios.get('/transportadoras/list')
+          .then(response => {
+            this.shipping_companies.push(...response.data.companies)
+            resolve()
+          })
+      })
+    },
+    populateCities() {
+      return new Promise((resolve) => {
+        axios.get('/gerenciamento/cidades/list')
+          .then(response => {
+            this.cities.push(...response.data.cities)
+            resolve()
+          })
+      })
+    },
+    populateForm() {
+      return new Promise((resolve) => {
+        axios.get(`/clientes/${this.id}/json`)
+          .then(response => {
+            const client = response.data.client
 
-            if (city.branch_id) {
-                this.form.branch_id = this.branches.find(
-                    branch => branch.id === city.branch_id
-                )
+            this.form.name = client.name
+            this.form.phone = client.phone
+
+            if (client.city_id) {
+              this.form.city_id = this.cities.find(
+                city => city.id === client.city.id
+              )
             }
 
-            if (city.shipping_company) {
-                this.form.shipping_company_id = this.shipping_companies.find(
-                    company => company.id === city.shipping_company.id
-                )
-            }
-        },
-        onSubmit() {
-            this.$emit('loading', true)
-            this.form.isLoading = true
-
-            if (this.isEdit) {
-                this.update()
-            } else {
-                this.create()
-            }
-        },
-        create() {
-            this.form.submit('POST', '/clientes')
-                .then(() => {
-                    location.reload()
-                })
-                .catch(() => {})
-                .then(() => {
-                    this.$emit('loading', false)
-                    this.form.isLoading = false
-                })
-        },
-        update() {
-            this.form.submit('PATCH', `/clientes/${this.id}/`)
-                .then(() => {
-                    location.reload()
-                })
-                .catch(() => {})
-                .then(() => {
-                    this.$emit('loading', false)
-                    this.form.isLoading = false
-                })
-        },
-        populateBranches() {
-            return new Promise((resolve) => {
-                axios.get('/gerenciamento/filiais/list', {
-                    params: {
-                        no_paginate: true
-                    }
-                })
-                    .then(response => {
-                        this.branches.push(...response.data.branches)
-                        resolve()
-                    })
-            })
-        },
-        populateShippingCompanies() {
-            return new Promise((resolve) => {
-                axios.get('/transportadoras/list')
-                    .then(response => {
-                        this.shipping_companies.push(...response.data.companies)
-                        resolve()
-                    })
-            })
-        },
-        populateCities() {
-            return new Promise((resolve) => {
-                axios.get('/gerenciamento/cidades/list')
-                    .then(response => {
-                        this.cities.push(...response.data.cities)
-                        resolve()
-                    })
-            })
-        },
-        populateForm() {
-            return new Promise((resolve) => {
-                axios.get(`/clientes/${this.id}/json`)
-                    .then(response => {
-                        const client = response.data.client
-
-                        this.form.name = client.name
-                        this.form.phone = client.phone
-
-                        if (client.city_id) {
-                            this.form.city_id = this.cities.find(
-                                city => city.id === client.city.id
-                            )
-                        }
-
-                        if (client.shipping_company_id) {
-                            this.form.shipping_company_id = this.shipping_companies.find(
-                                company => company.id === client.shipping_company_id
-                            )
-                        }
-
-                        if (client.branch_id) {
-                            this.form.branch_id = this.branches.find(
-                                branch => branch.id === client.branch_id
-                            )
-                        }
-
-                        resolve()
-                    })
-            })
-        },
-        async populateData() {
-            this.isLoading = true
-
-            await this.populateBranches()
-            await this.populateShippingCompanies()
-            await this.populateCities()
-
-            if (this.isEdit) {
-                await this.populateForm()
+            if (client.shipping_company_id) {
+              this.form.shipping_company_id = this.shipping_companies.find(
+                company => company.id === client.shipping_company_id
+              )
             }
 
-            this.isLoading = false
-        }
+            if (client.branch_id) {
+              this.form.branch_id = this.branches.find(
+                branch => branch.id === client.branch_id
+              )
+            }
+
+            resolve()
+          })
+      })
+    },
+    async populateData() {
+      this.isLoading = true
+
+      await this.populateBranches()
+      await this.populateShippingCompanies()
+      await this.populateCities()
+
+      if (this.isEdit) {
+        await this.populateForm()
+      }
+
+      this.isLoading = false
     }
+  }
 }
 </script>

@@ -10,4 +10,9 @@ Route::prefix('calendario-de-producao')
             ProductionCalendarController::class,
             'index'
         ])->name('index');
+
+        Route::get('/pedidos/semana', [
+            ProductionCalendarController::class,
+            'ordersByWeek'
+        ]);
     });

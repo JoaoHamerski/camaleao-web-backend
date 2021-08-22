@@ -28,9 +28,9 @@ import NewBranchModal from './NewBranchModal'
 import ShippingCompaniesModal from '../shipping-companies/ShippingCompaniesModal'
 
 export default {
-    components: {
-        ShippingCompaniesModal,
-        NewBranchModal
-    }
+  components: {
+    ShippingCompaniesModal,
+    NewBranchModal
+  }
 }
 </script>

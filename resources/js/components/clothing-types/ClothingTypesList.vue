@@ -148,104 +148,104 @@ import Draggable from 'vuedraggable'
 
 
 export default {
-    components: {
-        ClothingTypesForm,
-        Draggable,
-        ChangeCommissionModal
-    },
-    data: function() {
-        return {
-            selectedClothingType: null,
-            isOrderComission: false,
-            drag: false,
-            name: '',
-            error: '',
-            isLoading: false,
-            clothingTypes: []
-        }
-    },
-    mounted() {
-        this.refresh()
-    },
-    methods: {
-        onChange(changed) {
-            this.isLoading = true
-
-            axios.patch('/tipos-de-roupas/update-order', {
-                newIndex: changed.moved.newIndex,
-                oldIndex: changed.moved.oldIndex
-            })
-                .then(() => {})
-                .catch(() => {})
-                .then(() => {
-                    this.isLoading = false
-                    this.refresh()
-                })
-        },
-        update(type) {
-            type.isLoading = true
-            axios.patch(`/tipos-de-roupas/${type.id}`, {
-                name: this.name
-            })
-                .then(() => {
-                    this.cancelEdit(type)
-                    this.refresh()
-                })
-                .catch(error => {
-                    if (error.response.data.errors) {
-                        this.error = error.response.data.errors.name[0]
-                    }
-                })
-                .then(() => {
-                    type.isLoading = false
-                })
-        },
-        edit(type) {
-            for (const _type of this.clothingTypes) {
-                _type.isEdit = false
-            }
-
-            type.isEdit = true
-            this.name = type.name
-        },
-        cancelEdit(type) {
-            this.name = ''
-            type.isEdit = false
-        },
-        toggleHide(type) {
-            this.isLoading = true
-
-            axios.patch(`/tipos-de-roupas/${type.id}/toggle-hide`)
-                .then(() => {
-                    if (type.is_hidden) {
-                        this.$toast.success(type.name + ' está sendo exibido')
-                    } else {
-                        this.$toast.success(type.name + ' está ocultado')
-                    }
-                    this.refresh()
-                })
-                .catch(() => {})
-                .then(() => {
-                    this.isLoading = false
-                })
-        },
-        refresh() {
-            this.isLoading = true
-            axios.get('/tipos-de-roupas/list')
-                .then(response => {
-                    const clothingTypes = response.data.clothing_types.map(type => {
-                        return {...type, isEdit: false, isLoading: false}
-                    })
-
-                    this.clothingTypes = []
-                    this.clothingTypes.push(...clothingTypes)
-                })
-                .catch(() => {})
-                .then(() => {
-                    this.isLoading = false
-                })
-        }
+  components: {
+    ClothingTypesForm,
+    Draggable,
+    ChangeCommissionModal
+  },
+  data: function() {
+    return {
+      selectedClothingType: null,
+      isOrderComission: false,
+      drag: false,
+      name: '',
+      error: '',
+      isLoading: false,
+      clothingTypes: []
     }
+  },
+  mounted() {
+    this.refresh()
+  },
+  methods: {
+    onChange(changed) {
+      this.isLoading = true
+
+      axios.patch('/tipos-de-roupas/update-order', {
+        newIndex: changed.moved.newIndex,
+        oldIndex: changed.moved.oldIndex
+      })
+        .then(() => {})
+        .catch(() => {})
+        .then(() => {
+          this.isLoading = false
+          this.refresh()
+        })
+    },
+    update(type) {
+      type.isLoading = true
+      axios.patch(`/tipos-de-roupas/${type.id}`, {
+        name: this.name
+      })
+        .then(() => {
+          this.cancelEdit(type)
+          this.refresh()
+        })
+        .catch(error => {
+          if (error.response.data.errors) {
+            this.error = error.response.data.errors.name[0]
+          }
+        })
+        .then(() => {
+          type.isLoading = false
+        })
+    },
+    edit(type) {
+      for (const _type of this.clothingTypes) {
+        _type.isEdit = false
+      }
+
+      type.isEdit = true
+      this.name = type.name
+    },
+    cancelEdit(type) {
+      this.name = ''
+      type.isEdit = false
+    },
+    toggleHide(type) {
+      this.isLoading = true
+
+      axios.patch(`/tipos-de-roupas/${type.id}/toggle-hide`)
+        .then(() => {
+          if (type.is_hidden) {
+            this.$toast.success(type.name + ' está sendo exibido')
+          } else {
+            this.$toast.success(type.name + ' está ocultado')
+          }
+          this.refresh()
+        })
+        .catch(() => {})
+        .then(() => {
+          this.isLoading = false
+        })
+    },
+    refresh() {
+      this.isLoading = true
+      axios.get('/tipos-de-roupas/list')
+        .then(response => {
+          const clothingTypes = response.data.clothing_types.map(type => {
+            return {...type, isEdit: false, isLoading: false}
+          })
+
+          this.clothingTypes = []
+          this.clothingTypes.push(...clothingTypes)
+        })
+        .catch(() => {})
+        .then(() => {
+          this.isLoading = false
+        })
+    }
+  }
 }
 </script>
 

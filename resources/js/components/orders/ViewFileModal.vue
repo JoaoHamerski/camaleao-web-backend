@@ -38,24 +38,24 @@
 
 <script>
 export default {
-    props: {
-        file: undefined,
-    },
-    data: () => {
-        return {
-            fileObject: null
-        }
-    },
-    watch: {
-        file() {
-            this.fileObject = null
-
-            if (this.file) {
-                this.fileObject = this.$helpers.dataURLtoFile(
-                    this.file.base64, 'file'
-                )
-            }
-        }
+  props: {
+    file: undefined,
+  },
+  data: () => {
+    return {
+      fileObject: null
     }
+  },
+  watch: {
+    file() {
+      this.fileObject = null
+
+      if (this.file) {
+        this.fileObject = this.$helpers.dataURLtoFile(
+          this.file.base64, 'file'
+        )
+      }
+    }
+  }
 }
 </script>

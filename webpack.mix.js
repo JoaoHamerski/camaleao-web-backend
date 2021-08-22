@@ -1,5 +1,5 @@
 const mix = require('laravel-mix'),
-    path = require('path')
+  path = require('path')
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
@@ -12,38 +12,39 @@ const mix = require('laravel-mix'),
  */
 
 mix.sass('resources/sass/app.scss', 'public/css')
-    .sass('resources/sass/_date-picker.scss', 'public/css')
-    .js('resources/js/app.js', 'public/js').vue({version: 2})
-    .js('resources/js/date-picker.js', 'public/js')
-    .js('resources/js/partials/client-form.js', 'public/js/partials')
-    .js('resources/js/partials/orders/show.js', 'public/js/partials/orders')
-    .js('resources/js/partials/orders/form.js', 'public/js/partials/orders')
-    .js('resources/js/partials/orders/index.js', 'public/js/partials/orders')
-    .js('resources/js/partials/users.js', 'public/js/partials')
-    .js('resources/js/partials/my-account.js', 'public/js/partials')
-    .js('resources/js/partials/expenses/index.js', 'public/js/partials/expenses')
-    .js('resources/js/partials/expenses/create.js', 'public/js/partials/expenses')
-    .js('resources/js/partials/payments/index.js', 'public/js/partials/payments')
-    .js('resources/js/partials/cash-flow/index.js', 'public/js/partials/cash-flow')
-    .js('resources/js/service-worker.js', 'public/')
-    .version()
+  .sass('resources/sass/_date-picker.scss', 'public/css')
+  .js('resources/js/app.js', 'public/js').vue({version: 2})
+  .js('resources/js/date-picker.js', 'public/js')
+  .js('resources/js/partials/client-form.js', 'public/js/partials')
+  .js('resources/js/partials/orders/show.js', 'public/js/partials/orders')
+  .js('resources/js/partials/orders/form.js', 'public/js/partials/orders')
+  .js('resources/js/partials/orders/index.js', 'public/js/partials/orders')
+  .js('resources/js/partials/users.js', 'public/js/partials')
+  .js('resources/js/partials/my-account.js', 'public/js/partials')
+  .js('resources/js/partials/expenses/index.js', 'public/js/partials/expenses')
+  .js('resources/js/partials/expenses/create.js', 'public/js/partials/expenses')
+  .js('resources/js/partials/payments/index.js', 'public/js/partials/payments')
+  .js('resources/js/partials/cash-flow/index.js', 'public/js/partials/cash-flow')
+  .js('resources/js/service-worker.js', 'public/')
+  .version()
 
 mix.browserSync('http://localhost:8000')
+mix.disableSuccessNotifications()
 
 mix.webpackConfig({
-    module: {
-        rules: [
-            {
-                enforce: 'pre',
-                exclude: /node_modules/,
-                loader: 'eslint-loader',
-                test: /\.(js|vue)?$/
-            },
-        ]
-    },
-    resolve: {
-        alias: {
-            '@': path.resolve('resources/js')
-        }
+  module: {
+    rules: [
+      {
+        enforce: 'pre',
+        exclude: /node_modules/,
+        loader: 'eslint-loader',
+        test: /\.(js|vue)?$/
+      },
+    ]
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve('resources/js')
     }
+  }
 })

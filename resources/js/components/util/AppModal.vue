@@ -38,24 +38,24 @@
 
 <script>
 export default {
-    props: {
-        id: {
-            type: [String, Number],
-            default: ''
-        },
-        modalDialogClass: {
-            type: String,
-            default: ''
-        },
-        modalHeaderClass: {
-            type: String,
-            default: ''
-        },
+  props: {
+    id: {
+      type: [String, Number],
+      default: ''
     },
-    methods: {
-        open() {
-            $(this.$refs.modal).modal('show')
-        }
+    modalDialogClass: {
+      type: String,
+      default: ''
+    },
+    modalHeaderClass: {
+      type: String,
+      default: ''
+    },
+  },
+  methods: {
+    open() {
+      $(this.$refs.modal).modal('show')
     }
+  }
 }
 </script>

@@ -58,46 +58,46 @@
 import ClientForm from './ClientForm.vue'
 
 export default {
-    components: {
-        ClientForm
+  components: {
+    ClientForm
+  },
+  props: {
+    id: {
+      type: [String, Number],
+      default: ''
     },
-    props: {
-        id: {
-            type: String,
-            default: ''
-        },
-        isEdit: {
-            type: Boolean,
-            default: false
-        }
-    },
-    data: () => {
-        return {
-            isOpen: false,
-            isLoading: false
-        }
-    },
-    mounted() {
-        this.$on('city-created', city => {
-            $(this.$refs.modal.$el).modal('show')
-            this.$refs.clientForm.$emit('city-created', city)
-        })
-
-        $(this.$refs.modal.$el).on('show.bs.modal', () => {
-            if (! this.isOpen) {
-                this.isOpen = true
-            }
-        })
-    },
-    methods: {
-        submitForm() {
-            this.$refs.clientForm.onSubmit()
-        },
-        openCityModal(search) {
-            $(this.$refs.modal.$el).modal('hide')
-            this.$parent.$refs.newCityModal.$emit('pre-form', search)
-            $(this.$parent.$refs.newCityModal.$el).modal('show')
-        }
+    isEdit: {
+      type: Boolean,
+      default: false
     }
+  },
+  data: () => {
+    return {
+      isOpen: false,
+      isLoading: false
+    }
+  },
+  mounted() {
+    this.$on('city-created', city => {
+      $(this.$refs.modal.$el).modal('show')
+      this.$refs.clientForm.$emit('city-created', city)
+    })
+
+    $(this.$refs.modal.$el).on('show.bs.modal', () => {
+      if (! this.isOpen) {
+        this.isOpen = true
+      }
+    })
+  },
+  methods: {
+    submitForm() {
+      this.$refs.clientForm.onSubmit()
+    },
+    openCityModal(search) {
+      $(this.$refs.modal.$el).modal('hide')
+      this.$parent.$refs.newCityModal.$emit('pre-form', search)
+      $(this.$parent.$refs.newCityModal.$el).modal('show')
+    }
+  }
 }
 </script>

@@ -59,14 +59,14 @@
 
 <script>
 export default {
-    props: {
-        commission: {
-            type: String,
-            default: ''
-        },
+  props: {
+    commission: {
+      type: String,
+      default: ''
     },
-    computed: {
+  },
+  computed: {
 
-    }
+  }
 }
 </script>

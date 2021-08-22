@@ -11,21 +11,21 @@
 
 <script>
 export default {
-    props: {
-        enter: undefined,
-        leave: undefined,
-        speed: {
-            type: String,
-            default: 'fast'
-        },
-        mode: {
-            type: Boolean,
-            default: false
-        },
-        name: {
-            type: String,
-            default: ''
-        }
+  props: {
+    enter: undefined,
+    leave: undefined,
+    speed: {
+      type: String,
+      default: 'fast'
+    },
+    mode: {
+      type: Boolean,
+      default: false
+    },
+    name: {
+      type: String,
+      default: ''
     }
+  }
 }
 </script>

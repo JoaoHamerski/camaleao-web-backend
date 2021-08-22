@@ -20482,6 +20482,27 @@ input[disabled=disabled] {
   margin: auto;
 }
 
+.has-divider:last-child .divider {
+  display: none;
+}
+
+.viewer-transition {
+  transition: all 0.2s !important;
+}
+
+.selection-none {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Old versions of Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+}
+
 .hamburger {
   position: fixed;
   z-index: 1010;

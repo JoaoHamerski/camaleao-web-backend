@@ -74,42 +74,42 @@
 import Form from '../../util/Form'
 
 export default {
-    data: function() {
-        return {
-            cities: [],
-            states: [],
-            form: new Form({
-                state_id: '',
-                cities_ids: []
-            })
-        }
-    },
-    mounted() {
-        this.$on('cities-selected', cities => {
-            this.cities = cities
-        })
-      
-        axios.get('/gerenciamento/cidades/estados/list')
-            .then(({data}) => {
-                this.states = data.states
-            })
-    },
-    methods: {
-        onSubmit() {
-            this.form.cities_ids = this.cities.map(city => city.id)
-
-            this.form.isLoading = true
-        
-            this.form.submit('PATCH', '/gerenciamento/cidades')
-                .then(() => {
-                    this.$toast.success('Cidades alteradas!')
-                    this.$emit('updated')
-                }) 
-                .catch(() => {})
-                .then(() => {
-                    this.form.isLoading = false
-                })
-        }
+  data: function() {
+    return {
+      cities: [],
+      states: [],
+      form: new Form({
+        state_id: '',
+        cities_ids: []
+      })
     }
+  },
+  mounted() {
+    this.$on('cities-selected', cities => {
+      this.cities = cities
+    })
+      
+    axios.get('/gerenciamento/cidades/estados/list')
+      .then(({data}) => {
+        this.states = data.states
+      })
+  },
+  methods: {
+    onSubmit() {
+      this.form.cities_ids = this.cities.map(city => city.id)
+
+      this.form.isLoading = true
+        
+      this.form.submit('PATCH', '/gerenciamento/cidades')
+        .then(() => {
+          this.$toast.success('Cidades alteradas!')
+          this.$emit('updated')
+        }) 
+        .catch(() => {})
+        .then(() => {
+          this.form.isLoading = false
+        })
+    }
+  }
 }
 </script>

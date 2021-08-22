@@ -21,17 +21,17 @@
 import BranchForm from './BranchForm'
 
 export default {
-    components: {
-        BranchForm
-    },
-    methods: {
-        onCreated() {
-            this.$emit('refresh')
+  components: {
+    BranchForm
+  },
+  methods: {
+    onCreated() {
+      this.$emit('refresh')
 
-            $(this.$refs.modal.$el).modal('hide')
+      $(this.$refs.modal.$el).modal('hide')
 
-            this.$toast.success('Filial cadastrada')
-        }
+      this.$toast.success('Filial cadastrada')
     }
+  }
 }
 </script>

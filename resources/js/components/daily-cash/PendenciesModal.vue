@@ -33,19 +33,19 @@
 import PendenciesList from './PendenciesList'
 
 export default {
-    components: {
-        PendenciesList
-    },
-    mounted() {
-        this.$on('refresh-pendencies', () => {
-            this.$refs.pendenciesList.$emit('refresh-pendencies')
-        })
-    },
-    methods: {
-        onLoadPendencies(date) {
-            $(this.$refs.modal.$el).modal('hide')
-            this.$emit('load-pendencies', date)
-        }
+  components: {
+    PendenciesList
+  },
+  mounted() {
+    this.$on('refresh-pendencies', () => {
+      this.$refs.pendenciesList.$emit('refresh-pendencies')
+    })
+  },
+  methods: {
+    onLoadPendencies(date) {
+      $(this.$refs.modal.$el).modal('hide')
+      this.$emit('load-pendencies', date)
     }
+  }
 }
 </script>

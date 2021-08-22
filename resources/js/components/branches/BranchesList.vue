@@ -120,66 +120,66 @@ import InfiniteLoading from 'vue-infinite-loading'
 import EditBranchModal from './EditBranchModal'
 
 export default {
-    components: {
-        BranchesButtons,
-        InfiniteLoading,
-        EditBranchModal
+  components: {
+    BranchesButtons,
+    InfiniteLoading,
+    EditBranchModal
+  },
+  data: function() {
+    return {
+      selectedBranch: null,
+      branches: [],
+      page: 1,
+      infiniteId: +new Date()
+    }
+  },
+  methods: {
+    select(branch) {
+      this.$refs.editBranchModal.$emit('branch-selected', branch)
     },
-    data: function() {
-        return {
-            selectedBranch: null,
-            branches: [],
-            page: 1,
-            infiniteId: +new Date()
-        }
-    },
-    methods: {
-        select(branch) {
-            this.$refs.editBranchModal.$emit('branch-selected', branch)
-        },
-        destroy(branch) {
-            this.$modal.fire({
-                icon: 'error',
-                iconHtml: '<i class="fas fa-trash-alt fa-fw"></i>',
-                title: 'Você tem certeza?',
-                html: `
+    destroy(branch) {
+      this.$modal.fire({
+        icon: 'error',
+        iconHtml: '<i class="fas fa-trash-alt fa-fw"></i>',
+        title: 'Você tem certeza?',
+        html: `
             Você está deletando a filial 
             de <strong>${branch.city ? branch.city.name : '[cidade deletada]'}</strong>
           `
-            })
-                .then(response => {
-                    if (response.isConfirmed) {
-                        axios.delete(`/gerenciamento/filiais/${branch.id}`)
-                            .then(() => {
-                                this.$toast.success('Filial deletada!')
-                                this.refreshInfiniteHandler()
-                            })
-                    }
-                })
-        },
-        refreshInfiniteHandler() {
-            this.branches = []
-            this.page = 1
-            this.infiniteId += 1
-        },
-        infiniteHandler($state) {
-            axios.get('/gerenciamento/filiais/list', {
-                params: {
-                    page: this.page
-                }
-            })
-                .then(({data}) => {
-                    if (data.branches.data.length) {
-                        this.page += 1
-                        this.branches.push(...data.branches.data)
-              
-                        $state.loaded()
-                    } else {
-                        $state.complete()
-                    }
-                })
-                .catch(() => {})
+      })
+        .then(response => {
+          if (response.isConfirmed) {
+            axios.delete(`/gerenciamento/filiais/${branch.id}`)
+              .then(() => {
+                this.$toast.success('Filial deletada!')
+                this.refreshInfiniteHandler()
+              })
+          }
+        })
+    },
+    refreshInfiniteHandler() {
+      this.branches = []
+      this.page = 1
+      this.infiniteId += 1
+    },
+    infiniteHandler($state) {
+      axios.get('/gerenciamento/filiais/list', {
+        params: {
+          page: this.page
         }
+      })
+        .then(({data}) => {
+          if (data.branches.data.length) {
+            this.page += 1
+            this.branches.push(...data.branches.data)
+              
+            $state.loaded()
+          } else {
+            $state.complete()
+          }
+        })
+        .catch(() => {})
     }
+  }
 }
 </script>
