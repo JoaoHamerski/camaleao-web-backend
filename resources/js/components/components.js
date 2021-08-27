@@ -11,7 +11,7 @@ const requireComponent = require.context(
 
 for (const fileName of requireComponent.keys()) {
   const componentConfig = requireComponent(fileName)
-  
+
   const componentName = upperFirst(
     camelCase(
       fileName
@@ -20,7 +20,7 @@ for (const fileName of requireComponent.keys()) {
         .replace(/\.\w+$/, '')
     )
   )
-  
+
   Vue.component(
     componentName,
     componentConfig.default || componentConfig

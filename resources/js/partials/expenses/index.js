@@ -13,7 +13,6 @@ applyCleave($('[name=value]'), cleaveValueBRL)
 applyCleave($('[name*=date]'), cleaveDate)
 applyCleave($('[name*=dia]'), cleaveDate)
 
-
 /*
   Aplica as máscaras nos inputs caso haja alguma alteração no modal
   de formulário.
@@ -163,7 +162,6 @@ $(document).on('click', '.btn-update-expense-type', function(e) {
     })
 })
 
-
 /*
   Deleta uma despesa
 */
@@ -173,7 +171,6 @@ $('.btn-delete').on('click', function(e) {
 
   const id = $(this).parents('[data-id]').attr('data-id')
   const $btn = $(this)
-
 
   Swal.fire({
     icon: 'error',

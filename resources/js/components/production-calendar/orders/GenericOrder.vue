@@ -1,3 +1,23 @@
+<script>
+import VueViewer from 'v-viewer'
+import Vue from 'vue'
+Vue.use(VueViewer)
+
+export default {
+  props: {
+    imagePath: undefined,
+    order: {
+      type: Object,
+      required: true
+    },
+    viewerConfig: {
+      type: Object,
+      required: true
+    }
+  }
+}
+</script>
+
 <template>
   <div class="generic-order text-center mb-4">
     <div class="mb-2">
@@ -27,23 +47,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import VueViewer from 'v-viewer'
-import Vue from 'vue'
-Vue.use(VueViewer)
-
-export default {
-  props: {
-    imagePath: undefined,
-    order: {
-      type: Object,
-      required: true
-    },
-    viewerConfig: {
-      type: Object,
-      required: true
-    }
-  }
-}
-</script>

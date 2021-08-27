@@ -1,3 +1,39 @@
+<script>
+export default {
+  props: {
+    id: {
+      type: [String, Number],
+      default: ''
+    },
+    modalDialogClass: {
+      type: String,
+      default: ''
+    },
+    modalHeaderClass: {
+      type: String,
+      default: ''
+    },
+  },
+  mounted () {
+    $(this.$refs.modal).on('hide.bs.modal', () => {
+      this.$emit('closing')
+    })
+
+    $(this.$refs.modal).on('hidden.bs.modal', () => {
+      this.$emit('closed')
+    })
+  },
+  methods: {
+    open() {
+      $(this.$refs.modal).modal('show')
+    },
+    close () {
+      $(this.$refs.modal).modal('hide')
+    }
+  }
+}
+</script>
+
 <template>
   <div
     :id="id"
@@ -35,27 +71,3 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    id: {
-      type: [String, Number],
-      default: ''
-    },
-    modalDialogClass: {
-      type: String,
-      default: ''
-    },
-    modalHeaderClass: {
-      type: String,
-      default: ''
-    },
-  },
-  methods: {
-    open() {
-      $(this.$refs.modal).modal('show')
-    }
-  }
-}
-</script>

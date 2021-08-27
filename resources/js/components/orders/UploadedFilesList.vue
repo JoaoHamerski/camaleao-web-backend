@@ -1,3 +1,19 @@
+<script>
+export default {
+  props: {
+    field: {
+      type: String,
+      default: ''
+    },
+    files: {
+      type: Array,
+      default: () => []
+    },
+    deleteFile: undefined
+  }
+}
+</script>
+
 <template>
   <div class="row mb-2">
     <template v-for="file in files">
@@ -20,19 +36,3 @@
     </template>
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    field: {
-      type: String,
-      default: ''
-    },
-    files: {
-      type: Array,
-      default: () => []
-    },
-    deleteFile: undefined
-  }
-}
-</script>

@@ -1,3 +1,14 @@
+<script>
+export default {
+  props: {
+    images: {
+      type: Array,
+      default: () => []
+    }
+  }
+}
+</script>
+
 <template>
   <AppModal
     id="commissionImageModal"
@@ -19,14 +30,3 @@
     </template>
   </AppModal>
 </template>
-
-<script>
-export default {
-  props: {
-    images: {
-      type: Array,
-      default: () => []
-    }
-  }
-}
-</script>

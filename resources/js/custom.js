@@ -41,7 +41,7 @@ $('.clickable-link').on('mouseup', function(e) {
 })
 
 $('[data-mask="money"]').each(function() {
-  var formatter = new Intl.NumberFormat('pt-BR', {
+  const formatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   })

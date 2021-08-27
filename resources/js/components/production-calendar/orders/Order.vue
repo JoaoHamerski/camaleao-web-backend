@@ -1,16 +1,3 @@
-<template>
-  <div>
-    <GenericOrder
-      v-if="! isActive"
-      v-bind="{order, imagePath, viewerConfig}"
-    />
-    <CardOrder
-      v-else
-      v-bind="{order, imagePath, viewerConfig}"
-    />
-  </div>
-</template>
-
 <script>
 import 'viewerjs/dist/viewer.css'
 import { isEmpty } from 'lodash-es'
@@ -20,11 +7,13 @@ Vue.use(VueViewer)
 
 import GenericOrder from './GenericOrder'
 import CardOrder from './CardOrder'
+import CardOrderNotCreated from './CardOrderNotCreated'
 
 export default {
   components: {
     GenericOrder,
-    CardOrder
+    CardOrder,
+    CardOrderNotCreated
   },
   props: {
     isActive: {
@@ -57,8 +46,15 @@ export default {
   },
   computed: {
     imagePath () {
-      const artPaths = this.jsonParsePaths(this.order.art_paths),
-        sizePaths = this.jsonParsePaths(this.order.art_paths)
+      let artPaths = '',
+        sizePaths = ''
+
+      if (this.order.isNotCreated) {
+        return this.order.imagePath
+      }
+
+      artPaths = this.jsonParsePaths(this.order.art_paths),
+      sizePaths = this.jsonParsePaths(this.order.art_paths)
 
       if (artPaths.length) {
         return `/storage/imagens_da_arte/${artPaths}`
@@ -82,3 +78,22 @@ export default {
   }
 }
 </script>
+
+<template>
+  <div>
+    <GenericOrder
+      v-if="! isActive"
+      v-bind="{order, imagePath, viewerConfig}"
+    />
+    <template v-else>
+      <CardOrderNotCreated
+        v-if="order.isNotCreated"
+        v-bind="{order, imagePath, viewerConfig}"
+      />
+      <CardOrder
+        v-else
+        v-bind="{order, imagePath, viewerConfig}"
+      />
+    </template>
+  </div>
+</template>

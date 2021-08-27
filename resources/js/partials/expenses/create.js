@@ -116,7 +116,6 @@ $('#formExpenses button[type="submit"]').on('click', function(e) {
   const formData = new FormData(document.querySelector('#formExpenses'))
   const $btn = $(this)
 
-
   loadingBtn($btn, true)
 
   axios.post(getLocationURL(), formData)
@@ -139,7 +138,6 @@ $(document).on('change', '[name*=expense_type_id]', function() {
 			</div>
 		</div>
 	`
-
 
   const text = $(`[name="expense_type_id[${dataIndex}]"] option:selected`).text().trim()
 

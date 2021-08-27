@@ -1,3 +1,15 @@
+<script>
+import NewBranchModal from './NewBranchModal'
+import ShippingCompaniesModal from '../shipping-companies/ShippingCompaniesModal'
+
+export default {
+  components: {
+    ShippingCompaniesModal,
+    NewBranchModal
+  }
+}
+</script>
+
 <template>
   <div>
     <div class="d-flex justify-content-between">
@@ -22,15 +34,3 @@
     <ShippingCompaniesModal @refresh="$emit('refresh')" />
   </div>
 </template>
-
-<script>  
-import NewBranchModal from './NewBranchModal'
-import ShippingCompaniesModal from '../shipping-companies/ShippingCompaniesModal'
-
-export default {
-  components: {
-    ShippingCompaniesModal,
-    NewBranchModal
-  }
-}
-</script>

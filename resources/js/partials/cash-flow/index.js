@@ -31,11 +31,11 @@ $('.btn-today').on('click', function() {
 $('.btn-current-week').on('click', function(e) {
   e.preventDefault()
 
-  var current = new Date
-  var first = current.getDate() - current.getDay()
+  const current = new Date
+  const first = current.getDate() - current.getDay()
 
-  var firstDay = new Date(current.setDate(first))
-  var lastDay = new Date(current.setDate(firstDay.getDate() + 6))
+  const firstDay = new Date(current.setDate(first))
+  const lastDay = new Date(current.setDate(firstDay.getDate() + 6))
 
   $('[name=dia_inicial]').val(new Intl.DateTimeFormat('pt-BR').format(firstDay))
   $('[name=dia_final]').val(new Intl.DateTimeFormat('pt-BR').format(lastDay))
@@ -44,9 +44,9 @@ $('.btn-current-week').on('click', function(e) {
 $('.btn-current-month').on('click', function(e) {
   e.preventDefault()
 
-  var date = new Date()
-  var firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
-  var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+  const date = new Date()
+  const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
+  const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0)
 
   $('[name=dia_inicial]').val(new Intl.DateTimeFormat('pt-BR').format(firstDay))
   $('[name=dia_final]').val(new Intl.DateTimeFormat('pt-BR').format(lastDay))

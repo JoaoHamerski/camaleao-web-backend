@@ -1,0 +1,50 @@
+.card.card-date {
+    transition: all .15s;
+
+    .card-body {
+        max-height: 80vh;
+        overflow: auto;
+
+         &::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: lighten($primary, 17%);
+            border-radius: 5px;
+            border: 2px solid white;
+            background-clip: content-box;
+
+            &:hover {
+                background-color: lighten($primary, 7%);
+            }
+
+        }
+    }
+
+    &:not(.active) {
+        max-width: 25vw;
+    }
+
+
+    &.active {
+        position: absolute;
+        max-width: 90vw;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        z-index: 100;
+        box-shadow: 2px 3px 7px rgba(0, 0, 0, .1);
+
+        .orders {
+            .card-order {
+                box-shadow: 0px 5px 7px rgb(0, 0, 0, .1);
+            }
+        }
+    }
+}

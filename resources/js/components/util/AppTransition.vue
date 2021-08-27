@@ -1,13 +1,3 @@
-<template>
-  <transition
-    :mode="mode"
-    :enter-active-class="enterActiveClass"
-    :leave-active-class="leaveActiveClass"
-  >
-    <slot />
-  </transition>
-</template>
-
 <script>
 /*
     Based on animate.css
@@ -43,3 +33,13 @@ export default {
   }
 }
 </script>
+
+<template>
+  <transition
+    :mode="mode"
+    :enter-active-class="enterActiveClass"
+    :leave-active-class="leaveActiveClass"
+  >
+    <slot />
+  </transition>
+</template>

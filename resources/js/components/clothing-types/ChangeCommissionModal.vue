@@ -1,65 +1,3 @@
-<template>
-  <AppModal
-    id="changeCommissionModal"
-    ref="modal"
-    modal-header-class="bg-primary"
-    modal-dialog-class="modal-dialog-centered"
-  >
-    <template #header>
-      <h5 class="font-weight-bold text-white mb-0">
-        Alterar comissão
-      </h5>
-    </template>
-
-    <template #body>
-      <h5 class="text-secondary text-center mb-4 mt-3">
-        <span v-if="! isOrderComission">
-          Comissão para <strong>{{ clothingType.name }}</strong>
-        </span>
-        <span v-else>
-          Comissão de estampa de pedidos
-        </span>
-      </h5>
-
-      <form @submit.prevent="onSubmit">
-        <div class="form-group">
-          <AppInput
-            id="value"
-            ref="inputValue"
-            v-model="form.value"
-            name="value"
-            placeholder="R$ "
-            :error="form.errors.get('value')"
-            :mask="masks.valueBRL"
-          >
-            Valor da comissão
-          </AppInput>
-        </div>
-
-        <div class="d-flex justify-content-between">
-          <button
-            class="btn btn-success font-weight-bold"
-            type="submit"
-            :disabled="form.isLoading"
-          >
-            <span
-              v-if="form.isLoading"
-              class="spinner-border spinner-border-sm"
-            />
-            SALVAR
-          </button>
-          <button
-            class="btn btn-light"
-            data-dismiss="modal"
-          >
-            Fechar
-          </button>
-        </div>
-      </form>
-    </template>
-  </AppModal>
-</template>
-
 <script>
 import Form from '../../util/Form'
 import masks from '../../util/masks'
@@ -148,3 +86,65 @@ export default {
   }
 }
 </script>
+
+<template>
+  <AppModal
+    id="changeCommissionModal"
+    ref="modal"
+    modal-header-class="bg-primary"
+    modal-dialog-class="modal-dialog-centered"
+  >
+    <template #header>
+      <h5 class="font-weight-bold text-white mb-0">
+        Alterar comissão
+      </h5>
+    </template>
+
+    <template #body>
+      <h5 class="text-secondary text-center mb-4 mt-3">
+        <span v-if="! isOrderComission">
+          Comissão para <strong>{{ clothingType.name }}</strong>
+        </span>
+        <span v-else>
+          Comissão de estampa de pedidos
+        </span>
+      </h5>
+
+      <form @submit.prevent="onSubmit">
+        <div class="form-group">
+          <AppInput
+            id="value"
+            ref="inputValue"
+            v-model="form.value"
+            name="value"
+            placeholder="R$ "
+            :error="form.errors.get('value')"
+            :mask="masks.valueBRL"
+          >
+            Valor da comissão
+          </AppInput>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <button
+            class="btn btn-success font-weight-bold"
+            type="submit"
+            :disabled="form.isLoading"
+          >
+            <span
+              v-if="form.isLoading"
+              class="spinner-border spinner-border-sm"
+            />
+            SALVAR
+          </button>
+          <button
+            class="btn btn-light"
+            data-dismiss="modal"
+          >
+            Fechar
+          </button>
+        </div>
+      </form>
+    </template>
+  </AppModal>
+</template>

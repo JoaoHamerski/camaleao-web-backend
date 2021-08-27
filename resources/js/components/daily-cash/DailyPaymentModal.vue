@@ -1,3 +1,19 @@
+<script>
+import DailyPaymentForm from './DailyPaymentForm.vue'
+
+export default {
+  components: {
+    DailyPaymentForm
+  },
+  methods: {
+    onPaymentCreated() {
+      $(this.$refs.modal.$el).modal('hide')
+      this.$emit('created')
+    }
+  }
+}
+</script>
+
 <template>
   <AppModal
     id="dailyPaymentModal"
@@ -15,19 +31,3 @@
     </template>
   </AppModal>
 </template>
-
-<script>
-import DailyPaymentForm from './DailyPaymentForm.vue'
-  
-export default {
-  components: {
-    DailyPaymentForm
-  },
-  methods: {
-    onPaymentCreated() {
-      $(this.$refs.modal.$el).modal('hide')
-      this.$emit('created')
-    }
-  }
-}
-</script>

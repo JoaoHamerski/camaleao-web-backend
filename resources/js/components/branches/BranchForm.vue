@@ -1,3 +1,121 @@
+<script>
+import Form from '../../util/Form'
+import Multiselect from 'vue-multiselect'
+import _map from 'lodash/map'
+
+export default {
+  components: {
+    Multiselect
+  },
+  props: {
+    branch: undefined,
+    isEdit: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data: function() {
+    return {
+      originalCities: [],
+      cities: [],
+      shippingCompanies: [],
+      form: new Form({
+        branch_id: '',
+        shipping_company_id: '',
+        cities_id: []
+      })
+    }
+  },
+  watch: {
+    branch() {
+      if (this.branch) {
+        this.form.branch_id = this.cities.find(
+          city => city.id === this.branch.city.id
+        )
+
+        this.form.shipping_company_id = this.shippingCompanies.find(
+          company => company.id === this.branch.city.shipping_company.id
+        )
+
+        this.form.cities_id = this.branch.cities
+      }
+    }
+  },
+  mounted() {
+    this.$on('modal-open', () => {
+      if (this.originalCities.length) {
+        this.cities = []
+        this.cities.push(...this.originalCities)
+      }
+    })
+
+    this.$root.$on('REFRESH_CITIES_LIST', () => {
+      axios.get('/gerenciamento/cidades/list', {
+        params: {
+          only_names: true
+        }
+      })
+        .then(response => {
+          this.cities = response.data.cities
+          this.originalCities = response.data.cities
+        })
+    })
+
+    this.$root.$on('REFRESH_SHIPPING_COMPANIES_LIST', () => {
+      axios.get('/transportadoras/list')
+        .then(response => {
+          this.shippingCompanies = response.data.companies
+        })
+    })
+
+    this.$root.$emit('REFRESH_SHIPPING_COMPANIES_LIST')
+    this.$root.$emit('REFRESH_CITIES_LIST')
+
+  },
+  methods: {
+    onCityRemoved(city) {
+      const index = this.cities.findIndex(_city => _city.id === city.id)
+
+      this.cities.splice(index, 1, {...city, branch: null})
+    },
+    showAlreadyOnBranch(city) {
+      return city.branch_id && ! _map(this.form.cities_id, 'id').includes(city.id)
+    },
+    onSubmit() {
+      this.form.isLoading = true
+
+      if (this.isEdit) {
+        this.update()
+      } else {
+        this.create()
+      }
+    },
+    create() {
+      this.form.submit('POST', '/gerenciamento/filiais')
+        .then(() => {
+          this.$root.$emit('REFRESH_CITIES_LIST')
+          this.$emit('created')
+        })
+        .catch(() => {})
+        .then(() => {
+          this.form.isLoading = false
+        })
+    },
+    update() {
+      this.form.submit('PATCH', `/gerenciamento/filiais/${this.branch.id}`)
+        .then(() => {
+          this.$root.$emit('REFRESH_CITIES_LIST')
+          this.$emit('updated')
+        })
+        .catch(() => {})
+        .then(() => {
+          this.form.isLoading = false
+        })
+    }
+  }
+}
+</script>
+
 <template>
   <form @submit.prevent="onSubmit">
     <div class="form-group">
@@ -128,121 +246,3 @@
     </div>
   </form>
 </template>
-
-<script>
-import Form from '../../util/Form'
-import Multiselect from 'vue-multiselect'
-import _map from 'lodash/map'
-
-export default {
-  components: {
-    Multiselect
-  },
-  props: {
-    branch: undefined,
-    isEdit: {
-      type: Boolean,
-      default: false
-    }
-  },
-  data: function() {
-    return {
-      originalCities: [],
-      cities: [],
-      shippingCompanies: [],
-      form: new Form({
-        branch_id: '',
-        shipping_company_id: '',
-        cities_id: []
-      })
-    }
-  },
-  watch: {
-    branch() {
-      if (this.branch) {
-        this.form.branch_id = this.cities.find(
-          city => city.id === this.branch.city.id
-        )
-
-        this.form.shipping_company_id = this.shippingCompanies.find(
-          company => company.id === this.branch.city.shipping_company.id
-        )
-
-        this.form.cities_id = this.branch.cities
-      }
-    }
-  },
-  mounted() {
-    this.$on('modal-open', () => {
-      if (this.originalCities.length) {
-        this.cities = []
-        this.cities.push(...this.originalCities)
-      }
-    })
-
-    this.$root.$on('REFRESH_CITIES_LIST', () => {
-      axios.get('/gerenciamento/cidades/list', {
-        params: {
-          only_names: true
-        }
-      })
-        .then(response => {
-          this.cities = response.data.cities
-          this.originalCities = response.data.cities
-        })
-    })
-
-    this.$root.$on('REFRESH_SHIPPING_COMPANIES_LIST', () => {
-      axios.get('/transportadoras/list')
-        .then(response => {
-          this.shippingCompanies = response.data.companies
-        })
-    })
-
-    this.$root.$emit('REFRESH_SHIPPING_COMPANIES_LIST')
-    this.$root.$emit('REFRESH_CITIES_LIST')
-
-  },
-  methods: {
-    onCityRemoved(city) {
-      const index = this.cities.findIndex(_city => _city.id === city.id)
-
-      this.cities.splice(index, 1, {...city, branch: null})
-    },
-    showAlreadyOnBranch(city) {
-      return city.branch_id && ! _map(this.form.cities_id, 'id').includes(city.id)
-    },
-    onSubmit() {
-      this.form.isLoading = true
-
-      if (this.isEdit) {
-        this.update()
-      } else {
-        this.create()
-      }
-    },
-    create() {
-      this.form.submit('POST', '/gerenciamento/filiais')
-        .then(() => {
-          this.$root.$emit('REFRESH_CITIES_LIST')
-          this.$emit('created')
-        })
-        .catch(() => {})
-        .then(() => {
-          this.form.isLoading = false
-        })
-    },
-    update() {
-      this.form.submit('PATCH', `/gerenciamento/filiais/${this.branch.id}`)
-        .then(() => {
-          this.$root.$emit('REFRESH_CITIES_LIST')
-          this.$emit('updated')
-        })
-        .catch(() => {})
-        .then(() => {
-          this.form.isLoading = false
-        })
-    }
-  }
-}
-</script>

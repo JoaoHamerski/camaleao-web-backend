@@ -17,24 +17,17 @@ module.exports = {
     'vue'
   ],
   rules: {
-    indent: [
-      'error',
-      2
-    ],
-    'linebreak-style': [
-      'error',
-      'unix'
-    ],
-    quotes: [
-      'error',
-      'single'
-    ],
-    semi: [
-      'error',
-      'never'
-    ],
+    indent: ['error', 2],
+    quotes: ['error', 'single'],
+    semi: ['error', 'never'],
     'quote-props': ['error', 'as-needed'],
-    'prefer-const': ['error']
+    'prefer-const': ['error'],
+    'no-var': ['error'],
+    'no-trailing-spaces': ['error', {ignoreComments: true}],
+    'no-multiple-empty-lines': ['error', {max: 1, maxEOF: 0}],
+    'vue/component-tags-order': ['error', {
+      order: [ 'script', 'template', 'style' ]
+    }],
   },
   globals: {
     axios: true,

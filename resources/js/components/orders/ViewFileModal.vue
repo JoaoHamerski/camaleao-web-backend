@@ -1,3 +1,27 @@
+<script>
+export default {
+  props: {
+    file: undefined,
+  },
+  data: () => {
+    return {
+      fileObject: null
+    }
+  },
+  watch: {
+    file() {
+      this.fileObject = null
+
+      if (this.file) {
+        this.fileObject = this.$helpers.dataURLtoFile(
+          this.file.base64, 'file'
+        )
+      }
+    }
+  }
+}
+</script>
+
 <template>
   <AppModal
     id="viewFileModal"
@@ -35,27 +59,3 @@
     </template>
   </AppModal>
 </template>
-
-<script>
-export default {
-  props: {
-    file: undefined,
-  },
-  data: () => {
-    return {
-      fileObject: null
-    }
-  },
-  watch: {
-    file() {
-      this.fileObject = null
-
-      if (this.file) {
-        this.fileObject = this.$helpers.dataURLtoFile(
-          this.file.base64, 'file'
-        )
-      }
-    }
-  }
-}
-</script>

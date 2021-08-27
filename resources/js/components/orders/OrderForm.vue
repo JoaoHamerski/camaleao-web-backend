@@ -1,3 +1,230 @@
+<script>
+import masks from '../../util/masks'
+import Form from '../../util/Form'
+import accounting from 'accounting-js'
+
+import ViewFileModal from './ViewFileModal'
+import UploadedFilesList from './UploadedFilesList'
+import moment from 'moment'
+
+export default {
+  components: {
+    UploadedFilesList,
+    ViewFileModal
+  },
+  props: {
+    isEdit: {
+      type: Boolean,
+      default: false
+    },
+    orderCode: {
+      type: String,
+      default: ''
+    },
+    clientId: {
+      type: String,
+      default: ''
+    }
+  },
+  data: function() {
+    return {
+      masks,
+      isLoading: false,
+      selectedFile: null,
+      clothingTypes: [],
+      paymentVias: [],
+      form: new Form({
+        name: '',
+        code: '',
+        discount: '',
+        down_payment: '',
+        payment_via_id: '',
+        production_date: '',
+        delivery_date: '',
+        art_paths: [],
+        size_paths: [],
+        payment_voucher_paths: []
+      })
+    }
+  },
+  computed: {
+    totalQuantity() {
+      let total  = 0
+
+      for (const type of this.clothingTypes) {
+        if (this.form[`value_${type.key}`].length) {
+          total += +this.form[`quantity_${type.key}`]
+        }
+      }
+
+      return total
+    },
+    totalValue() {
+      return this.totalClothingsValue - accounting.unformat(this.form.discount, ',')
+    },
+    totalClothingsValue() {
+      let total = 0
+
+      for (const type of this.clothingTypes) {
+        total += accounting.unformat(this.evaluateTotal(
+          this.form[`quantity_${type.key}`],
+          this.form[`value_${type.key}`]
+        ), ',')
+      }
+
+      return total
+    },
+  },
+  mounted() {
+    this.populateClothingTypes()
+    this.populateVias()
+
+    if (this.isEdit) {
+      this.populateForm()
+    }
+  },
+  methods: {
+    deleteFile(file, field) {
+      const index = this.form[field].findIndex(_file => _file.key === file.key)
+
+      this.form[field].splice(index, 1)
+    },
+    async appendFileToForm(event, field) {
+      const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = error => reject(error)
+      })
+
+      for (const file of event.target.files) {
+        const base64 = await toBase64(file)
+
+        this.form[field].push({
+          key: (+ new Date()).toString(),
+          base64
+        })
+      }
+    },
+    create() {
+      this.form.isLoading = true
+
+      this.form.submit('POST', window.location.href)
+        .then(response => {
+          window.location.href = response.redirect
+        })
+        .catch(error => {
+          console.log(error)
+          this.$toast.error('Verifique os campos incorretos')
+
+        })
+        .then(() => {
+          this.form.isLoading = false
+        })
+    },
+    update() {
+      this.form.isLoading = true
+
+      this.form.submit('PATCH', window.location.href)
+        .then(response => {
+          window.location.href = response.redirect
+        })
+        .catch(() => {
+          this.$toast.error('Verifique os campos incorretos')
+        })
+        .then(() => {
+          this.form.isLoading = false
+        })
+    },
+    onSubmit() {
+      if (this.isEdit) {
+        this.update()
+      } else {
+        this.create()
+      }
+    },
+    clearAllClothingTypes() {
+      for (const type of this.clothingTypes) {
+        this.form[`quantity_${type.key}`] = ''
+        this.form[`value_${type.key}`] = ''
+        this.form.quantity = '1'
+      }
+    },
+    evaluateTotal(quantity, value) {
+      const sanitizedValue = accounting.unformat(value, ','),
+        result = (quantity * sanitizedValue)
+
+      return result
+    },
+    populateClothingTypes() {
+      axios.get('/tipos-de-roupas/list', {
+        params: {
+          hidden: false
+        }
+      })
+        .then(response => {
+          this.clothingTypes.push(...response.data.clothing_types)
+
+          for (const type of this.clothingTypes) {
+            this.$set(this.form.originalData, `quantity_${type.key}`, '')
+            this.$set(this.form.originalData, `value_${type.key}`, '')
+            this.$set(this.form, `quantity_${type.key}`, '')
+            this.$set(this.form, `value_${type.key}`, '')
+          }
+        })
+    },
+    populateVias() {
+      axios.get('/pagamentos/vias/list')
+        .then(response => {
+          this.paymentVias.push(...response.data.vias)
+        })
+    },
+    populateForm() {
+      this.isLoading = true
+
+      axios.get(`/cliente/${this.clientId}/pedido/${this.orderCode}/json`)
+        .then(response => {
+          const order = response.data.order,
+            paths = ['art_paths', 'size_paths', 'payment_voucher_paths']
+
+          this.form.name = order.name
+          this.form.code = order.code
+          this.form.production_date = moment(order.production_date).format('DD/MM/YYYY')
+          this.form.delivery_date = moment(order.delivery_date).format('DD/MM/YYYY')
+          this.form.discount = order.discount == 0
+            ? ''
+            : this.$helpers.valueToBRL(order.discount)
+
+          paths.forEach((path, index) => {
+            if (order[path] !== null && order[path].length) {
+              const files = order[path].map((_path, index2)=> {
+                return {key: `${index}${index2}`, base64: _path}
+              })
+
+              this.form[path].push(...files)
+            }
+          })
+
+          for (const type of this.clothingTypes) {
+            if (order[`value_${type.key}`]) {
+              this.form[`value_${type.key}`] = this.$helpers.valueToBRL(
+                order[`value_${type.key}`]
+              )
+            }
+
+            if (order[`quantity_${type.key}`]) {
+              this.form[`quantity_${type.key}`] = `${order[`quantity_${type.key}`]}`
+            }
+          }
+
+          this.isLoading = false
+        })
+    }
+  }
+}
+</script>
+
 <template>
   <form
     data-type="vue"
@@ -134,7 +361,6 @@
         <div class="small text-secondary mt-4">
           A quantidade total só é calculada se o valor também for informado.
         </div>
-
 
         <div
           v-if="form.errors.has('price')"
@@ -398,230 +624,3 @@
     </button>
   </form>
 </template>
-
-<script>
-import masks from '../../util/masks'
-import Form from '../../util/Form'
-import accounting from 'accounting-js'
-
-import ViewFileModal from './ViewFileModal'
-import UploadedFilesList from './UploadedFilesList'
-import moment from 'moment'
-
-export default {
-  components: {
-    UploadedFilesList,
-    ViewFileModal
-  },
-  props: {
-    isEdit: {
-      type: Boolean,
-      default: false
-    },
-    orderCode: {
-      type: String,
-      default: ''
-    },
-    clientId: {
-      type: String,
-      default: ''
-    }
-  },
-  data: function() {
-    return {
-      masks,
-      isLoading: false,
-      selectedFile: null,
-      clothingTypes: [],
-      paymentVias: [],
-      form: new Form({
-        name: '',
-        code: '',
-        discount: '',
-        down_payment: '',
-        payment_via_id: '',
-        production_date: '',
-        delivery_date: '',
-        art_paths: [],
-        size_paths: [],
-        payment_voucher_paths: []
-      })
-    }
-  },
-  computed: {
-    totalQuantity() {
-      let total  = 0
-
-      for (const type of this.clothingTypes) {
-        if (this.form[`value_${type.key}`].length) {
-          total += +this.form[`quantity_${type.key}`]
-        }
-      }
-
-      return total
-    },
-    totalValue() {
-      return this.totalClothingsValue - accounting.unformat(this.form.discount, ',')
-    },
-    totalClothingsValue() {
-      let total = 0
-
-      for (const type of this.clothingTypes) {
-        total += accounting.unformat(this.evaluateTotal(
-          this.form[`quantity_${type.key}`],
-          this.form[`value_${type.key}`]
-        ), ',')
-      }
-
-      return total
-    },
-  },
-  mounted() {
-    this.populateClothingTypes()
-    this.populateVias()
-
-    if (this.isEdit) {
-      this.populateForm()
-    }
-  },
-  methods: {
-    deleteFile(file, field) {
-      const index = this.form[field].findIndex(_file => _file.key === file.key)
-
-      this.form[field].splice(index, 1)
-    },
-    async appendFileToForm(event, field) {
-      const toBase64 = file => new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = error => reject(error)
-      })
-
-      for (const file of event.target.files) {
-        const base64 = await toBase64(file)
-
-        this.form[field].push({
-          key: (+ new Date()).toString(),
-          base64
-        })
-      }
-    },
-    create() {
-      this.form.isLoading = true
-
-      this.form.submit('POST', window.location.href)
-        .then(response => {
-          window.location.href = response.redirect
-        })
-        .catch(error => {
-          console.log(error)
-          this.$toast.error('Verifique os campos incorretos')
-
-        })
-        .then(() => {
-          this.form.isLoading = false
-        })
-    },
-    update() {
-      this.form.isLoading = true
-
-      this.form.submit('PATCH', window.location.href)
-        .then(response => {
-          window.location.href = response.redirect
-        })
-        .catch(() => {
-          this.$toast.error('Verifique os campos incorretos')
-        })
-        .then(() => {
-          this.form.isLoading = false
-        })
-    },
-    onSubmit() {
-      if (this.isEdit) {
-        this.update()
-      } else {
-        this.create()
-      }
-    },
-    clearAllClothingTypes() {
-      for (const type of this.clothingTypes) {
-        this.form[`quantity_${type.key}`] = ''
-        this.form[`value_${type.key}`] = ''
-        this.form.quantity = '1'
-      }
-    },
-    evaluateTotal(quantity, value) {
-      const sanitizedValue = accounting.unformat(value, ','),
-        result = (quantity * sanitizedValue)
-
-      return result
-    },
-    populateClothingTypes() {
-      axios.get('/tipos-de-roupas/list', {
-        params: {
-          hidden: false
-        }
-      })
-        .then(response => {
-          this.clothingTypes.push(...response.data.clothing_types)
-
-          for (const type of this.clothingTypes) {
-            this.$set(this.form.originalData, `quantity_${type.key}`, '')
-            this.$set(this.form.originalData, `value_${type.key}`, '')
-            this.$set(this.form, `quantity_${type.key}`, '')
-            this.$set(this.form, `value_${type.key}`, '')
-          }
-        })
-    },
-    populateVias() {
-      axios.get('/pagamentos/vias/list')
-        .then(response => {
-          this.paymentVias.push(...response.data.vias)
-        })
-    },
-    populateForm() {
-      this.isLoading = true
-
-      axios.get(`/cliente/${this.clientId}/pedido/${this.orderCode}/json`)
-        .then(response => {
-          const order = response.data.order,
-            paths = ['art_paths', 'size_paths', 'payment_voucher_paths']
-
-          this.form.name = order.name
-          this.form.code = order.code
-          this.form.production_date = moment(order.production_date).format('DD/MM/YYYY')
-          this.form.delivery_date = moment(order.delivery_date).format('DD/MM/YYYY')
-          this.form.discount = order.discount == 0
-            ? ''
-            : this.$helpers.valueToBRL(order.discount)
-
-          paths.forEach((path, index) => {
-            if (order[path] !== null && order[path].length) {
-              const files = order[path].map((_path, index2)=> {
-                return {key: `${index}${index2}`, base64: _path}
-              })
-
-              this.form[path].push(...files)
-            }
-          })
-
-          for (const type of this.clothingTypes) {
-            if (order[`value_${type.key}`]) {
-              this.form[`value_${type.key}`] = this.$helpers.valueToBRL(
-                order[`value_${type.key}`]
-              )
-            }
-
-            if (order[`quantity_${type.key}`]) {
-              this.form[`quantity_${type.key}`] = `${order[`quantity_${type.key}`]}`
-            }
-          }
-
-          this.isLoading = false
-        })
-    }
-  }
-}
-</script>

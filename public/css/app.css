@@ -20720,6 +20720,45 @@ input[disabled=disabled] {
   border-color: #afb5ba;
 }
 
+.card.card-date {
+  transition: all 0.15s;
+}
+.card.card-date .card-body {
+  max-height: 80vh;
+  overflow: auto;
+}
+.card.card-date .card-body::-webkit-scrollbar {
+  width: 8px;
+}
+.card.card-date .card-body::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.card.card-date .card-body::-webkit-scrollbar-thumb {
+  background-color: #7eb8e9;
+  border-radius: 5px;
+  border: 2px solid white;
+  background-clip: content-box;
+}
+.card.card-date .card-body::-webkit-scrollbar-thumb:hover {
+  background-color: #52a1e1;
+}
+.card.card-date:not(.active) {
+  max-width: 25vw;
+}
+.card.card-date.active {
+  position: absolute;
+  max-width: 90vw;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 100;
+  box-shadow: 2px 3px 7px rgba(0, 0, 0, 0.1);
+}
+.card.card-date.active .orders .card-order {
+  box-shadow: 0px 5px 7px rgba(0, 0, 0, 0.1);
+}
+
 .text-success-darker {
   color: #16944b;
 }

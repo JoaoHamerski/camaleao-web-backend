@@ -1,3 +1,19 @@
+<script>
+export default {
+  props: {
+    imagePath: undefined,
+    order: {
+      type: Object,
+      required: true
+    },
+    viewerConfig: {
+      type: Object,
+      required: true
+    }
+  }
+}
+</script>
+
 <template>
   <div class="card card-order">
     <div class="card-header py-1 font-weight-bold bg-camaleao text-white">
@@ -31,6 +47,7 @@
 
     <ul class="list-group list-group-sm list-group-flush">
       <li
+        v-if="order.client"
         v-tippy="{placement: 'right', arrow: true, duration: 150}"
         class="list-group-item"
         content="Cliente"
@@ -43,6 +60,7 @@
       </li>
 
       <li
+        v-if="order.price"
         v-tippy="{placement: 'right', arrow: true, duration: 150}"
         class="list-group-item"
         content="Valor total"
@@ -52,6 +70,7 @@
       </li>
 
       <li
+        v-if="order.total_owing"
         v-tippy="{placement: 'right', arrow: true, duration: 150}"
         content="Falta pagar"
         class="list-group-item"
@@ -62,6 +81,16 @@
       </li>
     </ul>
 
+    <div
+      v-if="order.isPreRegistered && order.reminder"
+      class="mx-2"
+    >
+      <div class="small font-weight-bold">
+        Lembrete:
+      </div>
+      <div>{{ order.reminder }}</div>
+    </div>
+
     <div class="card-footer text-center py-1 position-relative">
       <a
         target="_blank"
@@ -71,19 +100,3 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    imagePath: undefined,
-    order: {
-      type: Object,
-      required: true
-    },
-    viewerConfig: {
-      type: Object,
-      required: true
-    }
-  }
-}
-</script>

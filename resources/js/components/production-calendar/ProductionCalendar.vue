@@ -1,24 +1,5 @@
-<template>
-  <div>
-    <h4 class="text-center my-3 font-weight-bold text-primary">
-      <i class="fas fa-calendar-alt fa-fw mr-1" />CALENDÁRIO DE PRODUÇÃO
-    </h4>
-
-    <div class="row no-gutters mt-3 position-relative">
-      <template v-for="(date) in dates">
-        <Column
-          :key="date.date.format('DD')"
-          :date="date"
-          class="col-2 px-1 position-static"
-          @header-clicked="toggleColumn"
-        />
-      </template>
-    </div>
-  </div>
-</template>
-
 <script>
-import { map } from 'lodash-es'
+import { map, some } from 'lodash-es'
 import moment from 'moment'
 moment.locale('pt-BR')
 
@@ -26,18 +7,61 @@ import Column from './Column'
 
 export default {
   components: {
-    Column
+    Column,
   },
   data () {
     return {
       moment,
-      dates: []
+      dates: [],
+      image: ''
+    }
+  },
+  computed: {
+    getActiveDate () {
+      return this.dates.find(date => date.isActive)
+    },
+    hasActiveDay () {
+      return some(this.dates, 'isActive')
     }
   },
   mounted () {
     this.refresh()
+
+    document.onpaste = (pasteEvent) => {
+      const item = pasteEvent.clipboardData.items[0]
+
+      if (item.type.indexOf('image') !== 0) {
+        this.$toast.error('Não foi possível identificar uma imagem no item colado.')
+        return
+      }
+
+      if (! this.hasActiveDay) {
+        this.$toast.error('Por favor, abra o dia desejado primeiro.')
+        return
+      }
+
+      if (item.type.indexOf('image') === 0) {
+        const blob = item.getAsFile(),
+          reader = new FileReader()
+
+        reader.onload = (event) => {
+          this.createOrder(event.target.result)
+        }
+
+        reader.readAsDataURL(blob)
+      }
+    }
   },
   methods: {
+    createOrder(image) {
+      const activeDate = this.getActiveDate
+
+      activeDate.items.push({
+        id: +new Date(),
+        isNotCreated: true,
+        imagePath: image
+      })
+    },
     toggleColumn (date) {
       const _date = this.dates.find(_date => _date === date),
         activeDate = this.dates.find(date => date.isActive)
@@ -70,3 +94,22 @@ export default {
   }
 }
 </script>
+
+<template>
+  <div>
+    <h4 class="text-center my-3 font-weight-bold text-primary">
+      <i class="fas fa-calendar-alt fa-fw mr-1" />CALENDÁRIO DE PRODUÇÃO
+    </h4>
+
+    <div class="row no-gutters mt-3 position-relative">
+      <template v-for="(date) in dates">
+        <Column
+          :key="date.date.format('DD')"
+          :date="date"
+          class="col-2 px-1 position-static"
+          @header-clicked="toggleColumn"
+        />
+      </template>
+    </div>
+  </div>
+</template>

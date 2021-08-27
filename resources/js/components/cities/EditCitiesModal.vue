@@ -1,3 +1,19 @@
+<script>
+import CitiesForm from './CitiesForm'
+
+export default {
+  components: {
+    CitiesForm
+  },
+  methods: {
+    onUpdate() {
+      $(this.$refs.modal.$el).modal('hide')
+      this.$emit('updated')
+    }
+  }
+}
+</script>
+
 <template>
   <AppModal
     id="editCitiesModal"
@@ -19,19 +35,3 @@
     </template>
   </AppModal>
 </template>
-
-<script>
-import CitiesForm from './CitiesForm'
-
-export default {
-  components: {
-    CitiesForm
-  },
-  methods: {
-    onUpdate() {
-      $(this.$refs.modal.$el).modal('hide')
-      this.$emit('updated')
-    }
-  }
-}
-</script>

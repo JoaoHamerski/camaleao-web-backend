@@ -1,3 +1,65 @@
+<script>
+export default {
+  props: {
+    isAdmin: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      monthCommission: '',
+      monthResult: '',
+      hasCommission: null,
+      months: [
+        {number: 1, name: 'Janeiro'},
+        {number: 2, name: 'Feveiro'},
+        {number: 3, name: 'Março'},
+        {number: 4, name: 'Abril'},
+        {number: 5, name: 'Maio'},
+        {number: 6, name: 'Junho'},
+        {number: 7, name: 'Julho'},
+        {number: 8, name: 'Agosto'},
+        {number: 9, name: 'Setembro'},
+        {number: 10, name: 'Outubro'},
+        {number: 11, name: 'Novembro'},
+        {number: 12, name: 'Dezembro'},
+      ],
+      month: '',
+      user_role: ''
+    }
+  },
+  methods: {
+    calculate() {
+      const params = {
+        month: this.month
+      }
+
+      if (typeof this.month != 'number') {
+        this.$toast.error('Por favor, selecione o mês')
+        return
+      }
+
+      if (this.month < 1 || this.month > 12) {
+
+        return
+      }
+
+      if (this.isAdmin && this.user_role) {
+        params['user_role'] = this.user_role
+      }
+
+      axios.get('/producao/comissao-do-mes', { params })
+        .then(response => {
+          this.monthCommission = response.data.commission
+          this.monthResult = `${response.data.month}/${response.data.year}`
+          this.hasCommission = response.data.has_commission
+        })
+    }
+  }
+}
+</script>
+
 <template>
   <div>
     <div
@@ -73,65 +135,3 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    isAdmin: {
-      type: Boolean,
-      default: false
-    }
-  },
-  data() {
-    return {
-      monthCommission: '',
-      monthResult: '',
-      hasCommission: null,
-      months: [
-        {number: 1, name: 'Janeiro'},
-        {number: 2, name: 'Feveiro'},
-        {number: 3, name: 'Março'},
-        {number: 4, name: 'Abril'},
-        {number: 5, name: 'Maio'},
-        {number: 6, name: 'Junho'},
-        {number: 7, name: 'Julho'},
-        {number: 8, name: 'Agosto'},
-        {number: 9, name: 'Setembro'},
-        {number: 10, name: 'Outubro'},
-        {number: 11, name: 'Novembro'},
-        {number: 12, name: 'Dezembro'},
-      ],
-      month: '',
-      user_role: ''
-    }
-  },
-  methods: {
-    calculate() {
-      const params = {
-        month: this.month
-      }
-
-      if (typeof this.month != 'number') {
-        this.$toast.error('Por favor, selecione o mês')
-        return
-      }
-
-      if (this.month < 1 || this.month > 12) {
-
-        return
-      }
-
-      if (this.isAdmin && this.user_role) {
-        params['user_role'] = this.user_role
-      }
-
-      axios.get('/producao/comissao-do-mes', { params })
-        .then(response => {
-          this.monthCommission = response.data.commission
-          this.monthResult = `${response.data.month}/${response.data.year}`
-          this.hasCommission = response.data.has_commission
-        })
-    }
-  }
-}
-</script>

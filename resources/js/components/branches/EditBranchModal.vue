@@ -1,27 +1,3 @@
-<template>
-  <AppModal
-    id="editBranchModal" 
-    ref="modal"
-    modal-dialog-class="modal-dialog-centered"
-    modal-header-class="bg-primary text-white"
-  >
-    <template #header>
-      <h5 class="font-weight-bold mb-0">
-        <i class="fas fa-plus fa-fw m-r1" />  Alterar informações da filial
-      </h5>
-    </template>
-
-    <template #body>
-      <BranchForm
-        ref="branchForm"
-        :is-edit="true" 
-        :branch="branch" 
-        @updated="onUpdated" 
-      />
-    </template>
-  </AppModal>
-</template>
-
 <script>
 import BranchForm from './BranchForm'
 
@@ -58,3 +34,27 @@ export default {
   }
 }
 </script>
+
+<template>
+  <AppModal
+    id="editBranchModal"
+    ref="modal"
+    modal-dialog-class="modal-dialog-centered"
+    modal-header-class="bg-primary text-white"
+  >
+    <template #header>
+      <h5 class="font-weight-bold mb-0">
+        <i class="fas fa-plus fa-fw m-r1" />  Alterar informações da filial
+      </h5>
+    </template>
+
+    <template #body>
+      <BranchForm
+        ref="branchForm"
+        :is-edit="true"
+        :branch="branch"
+        @updated="onUpdated"
+      />
+    </template>
+  </AppModal>
+</template>

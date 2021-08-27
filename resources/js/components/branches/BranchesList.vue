@@ -1,3 +1,73 @@
+<script>
+import BranchesButtons from './BranchesButtons'
+import InfiniteLoading from 'vue-infinite-loading'
+import EditBranchModal from './EditBranchModal'
+
+export default {
+  components: {
+    BranchesButtons,
+    InfiniteLoading,
+    EditBranchModal
+  },
+  data: function() {
+    return {
+      selectedBranch: null,
+      branches: [],
+      page: 1,
+      infiniteId: +new Date()
+    }
+  },
+  methods: {
+    select(branch) {
+      this.$refs.editBranchModal.$emit('branch-selected', branch)
+    },
+    destroy(branch) {
+      this.$modal.fire({
+        icon: 'error',
+        iconHtml: '<i class="fas fa-trash-alt fa-fw"></i>',
+        title: 'Você tem certeza?',
+        html: `
+            Você está deletando a filial
+            de <strong>${branch.city ? branch.city.name : '[cidade deletada]'}</strong>
+          `
+      })
+        .then(response => {
+          if (response.isConfirmed) {
+            axios.delete(`/gerenciamento/filiais/${branch.id}`)
+              .then(() => {
+                this.$toast.success('Filial deletada!')
+                this.refreshInfiniteHandler()
+              })
+          }
+        })
+    },
+    refreshInfiniteHandler() {
+      this.branches = []
+      this.page = 1
+      this.infiniteId += 1
+    },
+    infiniteHandler($state) {
+      axios.get('/gerenciamento/filiais/list', {
+        params: {
+          page: this.page
+        }
+      })
+        .then(({data}) => {
+          if (data.branches.data.length) {
+            this.page += 1
+            this.branches.push(...data.branches.data)
+
+            $state.loaded()
+          } else {
+            $state.complete()
+          }
+        })
+        .catch(() => {})
+    }
+  }
+}
+</script>
+
 <template>
   <div>
     <BranchesButtons @refresh="refreshInfiniteHandler" />
@@ -61,7 +131,7 @@
                 </li>
               </ul>
             </td>
-            
+
             <td class="text-center align-middle">
               <button
                 v-tippy="{placement: 'bottom', duration: 150, arrow: true}"
@@ -77,7 +147,7 @@
               <br>
 
               <button
-                v-tippy="{placement: 'bottom', duration: 150, arrow: true}" 
+                v-tippy="{placement: 'bottom', duration: 150, arrow: true}"
                 class="btn btn-outline-danger btn-sm"
                 content="Excluir"
                 @click="destroy(branch)"
@@ -89,7 +159,7 @@
         </tbody>
       </table>
     </div>
- 
+
     <InfiniteLoading
       :identifier="infiniteId"
       @infinite="infiniteHandler"
@@ -108,78 +178,8 @@
     </InfiniteLoading>
 
     <EditBranchModal
-      ref="editBranchModal" 
-      @refresh="refreshInfiniteHandler" 
+      ref="editBranchModal"
+      @refresh="refreshInfiniteHandler"
     />
   </div>
 </template>
-
-<script>
-import BranchesButtons from './BranchesButtons'
-import InfiniteLoading from 'vue-infinite-loading'
-import EditBranchModal from './EditBranchModal'
-
-export default {
-  components: {
-    BranchesButtons,
-    InfiniteLoading,
-    EditBranchModal
-  },
-  data: function() {
-    return {
-      selectedBranch: null,
-      branches: [],
-      page: 1,
-      infiniteId: +new Date()
-    }
-  },
-  methods: {
-    select(branch) {
-      this.$refs.editBranchModal.$emit('branch-selected', branch)
-    },
-    destroy(branch) {
-      this.$modal.fire({
-        icon: 'error',
-        iconHtml: '<i class="fas fa-trash-alt fa-fw"></i>',
-        title: 'Você tem certeza?',
-        html: `
-            Você está deletando a filial 
-            de <strong>${branch.city ? branch.city.name : '[cidade deletada]'}</strong>
-          `
-      })
-        .then(response => {
-          if (response.isConfirmed) {
-            axios.delete(`/gerenciamento/filiais/${branch.id}`)
-              .then(() => {
-                this.$toast.success('Filial deletada!')
-                this.refreshInfiniteHandler()
-              })
-          }
-        })
-    },
-    refreshInfiniteHandler() {
-      this.branches = []
-      this.page = 1
-      this.infiniteId += 1
-    },
-    infiniteHandler($state) {
-      axios.get('/gerenciamento/filiais/list', {
-        params: {
-          page: this.page
-        }
-      })
-        .then(({data}) => {
-          if (data.branches.data.length) {
-            this.page += 1
-            this.branches.push(...data.branches.data)
-              
-            $state.loaded()
-          } else {
-            $state.complete()
-          }
-        })
-        .catch(() => {})
-    }
-  }
-}
-</script>

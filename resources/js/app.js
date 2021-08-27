@@ -33,6 +33,3 @@ new Vue({
     $(document).trigger('vue-loaded')
   }
 })
-
-
-

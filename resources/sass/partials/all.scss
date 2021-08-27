@@ -5,6 +5,7 @@
 @import "_swal";
 @import "_tables";
 @import "vue-multiselect";
+@import "production-calendar";
 
 .text-success-darker {
 	color: #16944b
@@ -30,16 +31,16 @@
 }
 
 .horizontal-line {
-   width: 100%; 
-   border-bottom: 1px solid rgba(0, 0, 0, .2); 
+   width: 100%;
+   border-bottom: 1px solid rgba(0, 0, 0, .2);
    line-height: 0.1em;
-   margin: 10px 0 20px; 
+   margin: 10px 0 20px;
 
    span {
-        background:#fff; 
-        padding: 0 10px; 
+        background:#fff;
+        padding: 0 10px;
    }
-} 
+}
 
 .dropdown-hover:hover +  .dropdown-menu {
     display: block;
@@ -53,7 +54,7 @@
 
 .table-prevent-style {
     &.table td, &.table th {
-        border-color: #dee2e6; 
+        border-color: #dee2e6;
         border-top: 1px solid #dee2e6 !important;
     }
 }

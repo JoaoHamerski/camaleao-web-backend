@@ -1,3 +1,17 @@
+<script>
+export default {
+  props: {
+    commission: {
+      type: String,
+      default: ''
+    },
+  },
+  computed: {
+
+  }
+}
+</script>
+
 <template>
   <div class="dropdown-menu dropdown-shadowed py-0">
     <h6 class="bg-success text-white font-weight-bold p-2 text-center">
@@ -56,17 +70,3 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    commission: {
-      type: String,
-      default: ''
-    },
-  },
-  computed: {
-
-  }
-}
-</script>

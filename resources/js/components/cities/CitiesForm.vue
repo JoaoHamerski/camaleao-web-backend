@@ -1,3 +1,47 @@
+<script>
+import Form from '../../util/Form'
+
+export default {
+  data: function() {
+    return {
+      cities: [],
+      states: [],
+      form: new Form({
+        state_id: '',
+        cities_ids: []
+      })
+    }
+  },
+  mounted() {
+    this.$on('cities-selected', cities => {
+      this.cities = cities
+    })
+
+    axios.get('/gerenciamento/cidades/estados/list')
+      .then(({data}) => {
+        this.states = data.states
+      })
+  },
+  methods: {
+    onSubmit() {
+      this.form.cities_ids = this.cities.map(city => city.id)
+
+      this.form.isLoading = true
+
+      this.form.submit('PATCH', '/gerenciamento/cidades')
+        .then(() => {
+          this.$toast.success('Cidades alteradas!')
+          this.$emit('updated')
+        })
+        .catch(() => {})
+        .then(() => {
+          this.form.isLoading = false
+        })
+    }
+  }
+}
+</script>
+
 <template>
   <div>
     <form
@@ -32,8 +76,8 @@
             Selecione um estado
           </option>
           <option
-            v-for="state in states" 
-            :key="state.id" 
+            v-for="state in states"
+            :key="state.id"
             :value="state.id"
           >
             {{ state.name }}
@@ -50,7 +94,7 @@
       <div class="d-flex flex-row">
         <button
           type="submit"
-          :disabled="form.isLoading" 
+          :disabled="form.isLoading"
           class="btn btn-block btn-success font-weight-bold mr-2"
         >
           <span
@@ -69,47 +113,3 @@
     </form>
   </div>
 </template>
-
-<script>
-import Form from '../../util/Form'
-
-export default {
-  data: function() {
-    return {
-      cities: [],
-      states: [],
-      form: new Form({
-        state_id: '',
-        cities_ids: []
-      })
-    }
-  },
-  mounted() {
-    this.$on('cities-selected', cities => {
-      this.cities = cities
-    })
-      
-    axios.get('/gerenciamento/cidades/estados/list')
-      .then(({data}) => {
-        this.states = data.states
-      })
-  },
-  methods: {
-    onSubmit() {
-      this.form.cities_ids = this.cities.map(city => city.id)
-
-      this.form.isLoading = true
-        
-      this.form.submit('PATCH', '/gerenciamento/cidades')
-        .then(() => {
-          this.$toast.success('Cidades alteradas!')
-          this.$emit('updated')
-        }) 
-        .catch(() => {})
-        .then(() => {
-          this.form.isLoading = false
-        })
-    }
-  }
-}
-</script>

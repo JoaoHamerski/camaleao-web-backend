@@ -1,3 +1,90 @@
+<script>
+import NewCityModal from './NewCityModal'
+import EditCityModal from './EditCityModal'
+import EditCitiesModal from './EditCitiesModal'
+import DeleteCityModal from './DeleteCityModal'
+import InfiniteLoading from 'vue-infinite-loading'
+
+export default {
+  components: {
+    NewCityModal,
+    EditCityModal,
+    EditCitiesModal,
+    InfiniteLoading,
+    DeleteCityModal,
+  },
+  data: function() {
+    return {
+      searchWasMade: false,
+      name: '',
+      selectedCity: null,
+      cities: [],
+      page: 1,
+      infiniteId: +new Date()
+    }
+  },
+  computed: {
+    selectedCities() {
+      return this.cities.filter(city => city.selected)
+    }
+  },
+  watch: {
+    name(value) {
+      if (value.length === 0 && this.searchWasMade) {
+        this.clearSearch()
+      }
+    }
+  },
+  methods: {
+    clearSearch() {
+      this.name = ''
+      this.searchWasMade = false
+      this.refreshInfiniteHandler()
+    },
+    searchByName() {
+      this.searchWasMade = true
+      this.refreshInfiniteHandler()
+    },
+    refreshInfiniteHandler() {
+      this.cities = []
+      this.page = 1
+      this.infiniteId += 1
+    },
+    infiniteHandler($state) {
+      axios.get('/gerenciamento/cidades/list', {
+        params: {
+          page: this.page,
+          name: this.name
+        }
+      })
+        .then(({data}) => {
+          if (data.cities.data.length) {
+            this.page += 1
+            const cities = data.cities.data.map(city => {
+              return {...city, selected: false}
+            })
+
+            this.cities.push(...cities)
+
+            $state.loaded()
+          } else {
+            $state.complete()
+          }
+        })
+    },
+    onUpdate() {
+      this.refreshInfiniteHandler()
+    },
+    onCitiesUpdate() {
+      this.onUpdate()
+      this.$refs.citiesEditModal.close()
+    },
+    onDeleted() {
+      this.refreshInfiniteHandler()
+    }
+  }
+}
+</script>
 <template>
   <div>
     <div class="mb-3">
@@ -187,91 +274,3 @@
     />
   </div>
 </template>
-
-<script>
-import NewCityModal from './NewCityModal'
-import EditCityModal from './EditCityModal'
-import EditCitiesModal from './EditCitiesModal'
-import DeleteCityModal from './DeleteCityModal'
-import InfiniteLoading from 'vue-infinite-loading'
-
-export default {
-  components: {
-    NewCityModal,
-    EditCityModal,
-    EditCitiesModal,
-    InfiniteLoading,
-    DeleteCityModal,
-  },
-  data: function() {
-    return {
-      searchWasMade: false,
-      name: '',
-      selectedCity: null,
-      cities: [],
-      page: 1,
-      infiniteId: +new Date()
-    }
-  },
-  computed: {
-    selectedCities() {
-      return this.cities.filter(city => city.selected)
-    }
-  },
-  watch: {
-    name(value) {
-      if (value.length === 0 && this.searchWasMade) {
-        this.clearSearch()
-      }
-    }
-  },
-  methods: {
-    clearSearch() {
-      this.name = ''
-      this.searchWasMade = false
-      this.refreshInfiniteHandler()
-    },
-    searchByName() {
-      this.searchWasMade = true
-      this.refreshInfiniteHandler()
-    },
-    refreshInfiniteHandler() {
-      this.cities = []
-      this.page = 1
-      this.infiniteId += 1
-    },
-    infiniteHandler($state) {
-      axios.get('/gerenciamento/cidades/list', {
-        params: {
-          page: this.page,
-          name: this.name
-        }
-      })
-        .then(({data}) => {
-          if (data.cities.data.length) {
-            this.page += 1
-            const cities = data.cities.data.map(city => {
-              return {...city, selected: false}
-            })
-
-            this.cities.push(...cities)
-
-            $state.loaded()
-          } else {
-            $state.complete()
-          }
-        })
-    },
-    onUpdate() {
-      this.refreshInfiniteHandler()
-    },
-    onCitiesUpdate() {
-      this.onUpdate()
-      this.$refs.citiesEditModal.close()
-    },
-    onDeleted() {
-      this.refreshInfiniteHandler()
-    }
-  }
-}
-</script>

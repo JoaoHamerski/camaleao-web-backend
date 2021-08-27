@@ -1,37 +1,3 @@
-<template>
-  <form
-    data-type="vue"
-    @submit.prevent="onSubmit"
-    @focus.capture="form.errors.clear($event.target.name)"
-  >
-    <div class="d-flex form-row">
-      <div class="col">
-        <AppInput
-          id="name"
-          v-model="form.name"
-          name="name"
-          placeholder="Novo tipo de camisa"
-          :error="form.errors.get('name')"
-        />
-      </div>
-
-      <div>
-        <button
-          class="btn btn-primary font-weight-bold"
-          type="submit"
-          :disabled="form.isLoading"
-        >
-          <span
-            v-if="form.isLoading"
-            class="spinner-border spinner-border-sm mr-1"
-          />
-          Adicionar
-        </button>
-      </div>
-    </div>
-  </form>
-</template>
-
 <script>
 import Form from '../../util/Form'
 
@@ -77,3 +43,37 @@ export default {
   }
 }
 </script>
+
+<template>
+  <form
+    data-type="vue"
+    @submit.prevent="onSubmit"
+    @focus.capture="form.errors.clear($event.target.name)"
+  >
+    <div class="d-flex form-row">
+      <div class="col">
+        <AppInput
+          id="name"
+          v-model="form.name"
+          name="name"
+          placeholder="Novo tipo de camisa"
+          :error="form.errors.get('name')"
+        />
+      </div>
+
+      <div>
+        <button
+          class="btn btn-primary font-weight-bold"
+          type="submit"
+          :disabled="form.isLoading"
+        >
+          <span
+            v-if="form.isLoading"
+            class="spinner-border spinner-border-sm mr-1"
+          />
+          Adicionar
+        </button>
+      </div>
+    </div>
+  </form>
+</template>

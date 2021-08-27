@@ -16,7 +16,7 @@ class Order extends Model
     protected static $logUnguarded = true;
     protected static $logOnlyDirty = true;
     protected static $logAttributes = ['client'];
-    protected $appends = ['total_owing', 'path'];
+    protected $appends = ['total_owing', 'path', 'is_pre_registered', 'reminder'];
 
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo
@@ -31,10 +31,10 @@ class Order extends Model
         if ($eventName == 'created') {
             return '
                 <div data-event="created">
-                    <strong>:causer.name</strong> 
-                    cadastrou o pedido 
-                    <strong>:subject.code</strong> 
-                    para o cliente 
+                    <strong>:causer.name</strong>
+                    cadastrou o pedido
+                    <strong>:subject.code</strong>
+                    para o cliente
                     <strong>:properties.attributes.client.name</strong>
                 </div>
             ';
@@ -43,10 +43,10 @@ class Order extends Model
         if ($eventName == 'updated') {
             return '
                 <div data-event="updated">
-                    <strong>:causer.name</strong> 
-                    alterou os dados do pedido 
-                    <strong>:subject.code</strong> 
-                    do cliente 
+                    <strong>:causer.name</strong>
+                    alterou os dados do pedido
+                    <strong>:subject.code</strong>
+                    do cliente
                     <strong>:properties.attributes.client.name</strong>
                 </div>
             ';
@@ -55,10 +55,10 @@ class Order extends Model
         if ($eventName == 'deleted') {
             return '
                 <div data-event="deleted">
-                    <strong>:causer.name</strong> 
-                    deletou o pedido 
-                    <strong>:subject.code</strong> 
-                    do cliente 
+                    <strong>:causer.name</strong>
+                    deletou o pedido
+                    <strong>:subject.code</strong>
+                    do cliente
                     <strong>:properties.attributes.client.name</strong>
                 </div>
             ';
@@ -164,7 +164,7 @@ class Order extends Model
         $hasDifference = $clothingTypes->pluck('key')
             ->diff($commissionClothingTypes->pluck('key'));
 
-        if (! $hasDifference->isEmpty()) {
+        if (!$hasDifference->isEmpty()) {
             return true;
         }
 
@@ -179,6 +179,11 @@ class Order extends Model
         }
 
         return false;
+    }
+
+    public function getIsPreRegisteredAttribute()
+    {
+        return $this->isPreRegistered();
     }
 
     public function isPreRegistered()
@@ -271,6 +276,10 @@ class Order extends Model
             ->sum('value');
     }
 
+    public function getReminderAttribute()
+    {
+        return $this->getReminder();
+    }
 
     public function getReminder()
     {
@@ -329,7 +338,7 @@ class Order extends Model
             'payment_voucher_paths' => 'comprovantes'
         ][$field];
 
-        if (! $this->{$field}) {
+        if (!$this->{$field}) {
             return [];
         }
 

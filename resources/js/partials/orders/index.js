@@ -60,4 +60,3 @@ $(document).on('click blur type focus', '[name=data_de_fechamento]', function() 
     $('[name="em_aberto"]').prop('disabled', true)
   }
 })
-
