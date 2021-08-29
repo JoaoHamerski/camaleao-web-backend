@@ -170,6 +170,12 @@ export default {
         .catch(() => {})
         .then(() => {
           this.isLoading = false
+
+          if ($(window).width() < 576) {
+            this.dates.forEach(item => {
+              item.isActive = true
+            })
+          }
         })
     }
   }
