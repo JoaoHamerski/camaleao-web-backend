@@ -252,4 +252,7 @@ export default {
 .mx-calendar-header .mx-icon-double-right {
   display: none;
 }
+.VueCarousel-slide.VueCarousel-slide-active {
+    min-height: 90vh;
+}
 </style>

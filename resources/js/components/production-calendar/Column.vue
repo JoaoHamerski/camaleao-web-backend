@@ -24,7 +24,6 @@ export default {
         }
 
         if (!this.$refs.column.contains(event.target)) {
-          console.log('clicou fora')
           this.$emit('toggle', this.date)
         }
       }
