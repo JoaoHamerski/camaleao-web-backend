@@ -238,6 +238,7 @@ export default {
               @toggle="toggleColumn"
               @order-cancel="onOrderCancel"
               @order-created="onOrderCreated"
+              @image-uploaded="createOrder($event)"
             />
           </Slide>
         </template>

@@ -19,7 +19,12 @@ export default {
     return {
       moment,
       listener: event => {
+        if (event.target === document.querySelector('#image-upload')) {
+          return
+        }
+
         if (!this.$refs.column.contains(event.target)) {
+          console.log('clicou fora')
           this.$emit('toggle', this.date)
         }
       }
@@ -57,6 +62,18 @@ export default {
       if ($(window).width() >= 576) {
         this.$emit('toggle', this.date)
       }
+    },
+    onImageUploaded(event) {
+      if (event.target.files && event.target.files[0]) {
+        const reader = new FileReader()
+
+        reader.onload = e => {
+          e.target.result
+          this.$emit('image-uploaded', e.target.result)
+        }
+
+        reader.readAsDataURL(event.target.files[0])
+      }
     }
   }
 }
@@ -85,6 +102,22 @@ export default {
         class="card-body"
         :class="[date.isActive ? '' : 'px-0']"
       >
+        <input
+          id="image-upload"
+          type="file"
+          accept="image/*"
+          class="d-none"
+          @change="onImageUploaded"
+        >
+
+        <label
+          v-show="date.isActive"
+          for="image-upload"
+          class="btn btn-outline-success btn-sm mb-2 ml-n2"
+        >
+          <i class="fas fa-upload fa-fw mr-1" />Enviar imagem
+        </label>
+
         <AppTransitionGroup
           v-if="!! date.items.length"
           class="orders"
