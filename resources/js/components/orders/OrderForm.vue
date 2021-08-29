@@ -6,18 +6,24 @@ import accounting from 'accounting-js'
 import ViewFileModal from './ViewFileModal'
 import UploadedFilesList from './UploadedFilesList'
 import moment from 'moment'
+import Multiselect from 'vue-multiselect'
 
 export default {
   components: {
     UploadedFilesList,
-    ViewFileModal
+    ViewFileModal,
+    Multiselect
   },
   props: {
+    hasClient: {
+      type: Boolean,
+      defauly: false
+    },
     isEdit: {
       type: Boolean,
       default: false
     },
-    orderCode: {
+    orderId: {
       type: String,
       default: ''
     },
@@ -33,7 +39,13 @@ export default {
       selectedFile: null,
       clothingTypes: [],
       paymentVias: [],
+      clients: {
+        isLoading: false,
+        items: []
+      },
       form: new Form({
+        client: '',
+        client_id: '',
         name: '',
         code: '',
         discount: '',
@@ -84,6 +96,24 @@ export default {
     }
   },
   methods: {
+    asyncFindClients(search) {
+      if (! search.length) {
+        this.clients.items = []
+        return
+      }
+
+      this.clients.isLoading = true
+
+      axios.get('/clientes/list', {
+        params: {
+          name: search
+        }
+      })
+        .then(response => {
+          this.clients.items = response.data.clients
+          this.clients.isLoading = false
+        })
+    },
     deleteFile(file, field) {
       const index = this.form[field].findIndex(_file => _file.key === file.key)
 
@@ -130,8 +160,9 @@ export default {
         .then(response => {
           window.location.href = response.redirect
         })
-        .catch(() => {
+        .catch((error) => {
           this.$toast.error('Verifique os campos incorretos')
+          console.log(error)
         })
         .then(() => {
           this.form.isLoading = false
@@ -183,11 +214,12 @@ export default {
     populateForm() {
       this.isLoading = true
 
-      axios.get(`/cliente/${this.clientId}/pedido/${this.orderCode}/json`)
+      axios.get(`/pedidos/${this.orderId}/json`)
         .then(response => {
           const order = response.data.order,
             paths = ['art_paths', 'size_paths', 'payment_voucher_paths']
 
+          this.form.client_id = order.client_id
           this.form.name = order.name
           this.form.code = order.code
           this.form.production_date = moment(order.production_date).format('DD/MM/YYYY')
@@ -220,6 +252,9 @@ export default {
 
           this.isLoading = false
         })
+        .catch(error => {
+          console.log(error.response)
+        })
     }
   }
 }
@@ -233,6 +268,46 @@ export default {
     @focus.capture="form.errors.clear($event.target.name)"
   >
     <AppLoading v-if="isLoading" />
+    <div>
+      <div v-if="!hasClient">
+        <h5 class="font-weight-bold text-secondary">
+          Cliente
+        </h5>
+
+        <div class="form-group">
+          <Multiselect
+            id="clients"
+            v-model="form.client"
+            :class="{'is-invalid': form.errors.get('client_id')}"
+            :custom-label="({name, phone}) => `${name} ${phone ? ' - ' + $helpers.maskPhone(phone) : ''}`"
+            placeholder="Procure por nome ou telefone"
+            :internal-search="false"
+            :options="clients.items"
+            :loading="clients.isLoading"
+            :clear-on-select="false"
+            select-label="Selecionar"
+            selected-label="Selecionado"
+            deselect-label="Remover"
+            @search-change="asyncFindClients"
+            @open="form.errors.clear('client_id')"
+          >
+            <template slot="noResult">
+              Nenhum cliente encontrado.
+            </template>
+            <template slot="noOptions">
+              Faça uma busca para exibir resultados
+            </template>
+          </Multiselect>
+          <div
+            v-if="form.errors.get('client_id')"
+            class="small text-danger"
+          >
+            {{ form.errors.get('client_id') }}
+          </div>
+        </div>
+      </div>
+    </div>
+
     <h5 class="font-weight-bold text-secondary">
       Informações básicas
     </h5>

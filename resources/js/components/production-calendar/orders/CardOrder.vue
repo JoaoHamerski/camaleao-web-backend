@@ -16,13 +16,23 @@ export default {
 
 <template>
   <div class="card card-order">
-    <div class="card-header py-1 font-weight-bold bg-camaleao text-white">
-      {{ order.code }}
+    <div
+      class="card-header py-1 font-weight-bold bg-success text-white"
+      :class="{
+        'bg-success': ! order.is_pre_registered,
+        'bg-warning': order.is_pre_registered
+      }"
+    >
+      {{ order.is_pre_registered ? 'PRE-REGISTRO' : order.code }}
     </div>
 
-    <div v-viewer="viewerConfig">
+    <div
+      v-viewer="viewerConfig"
+      class="text-center"
+    >
       <img
         v-if="imagePath"
+        :style="{maxHeight: '175px', maxWidth: '100%', width: 'auto'}"
         :src="imagePath"
         class="py-3 card-img-top clickable"
       >
@@ -70,7 +80,7 @@ export default {
       </li>
 
       <li
-        v-if="order.total_owing"
+        v-if="order.quantity"
         v-tippy="{placement: 'right', arrow: true, duration: 150}"
         content="Falta pagar"
         class="list-group-item"
@@ -82,21 +92,26 @@ export default {
     </ul>
 
     <div
-      v-if="order.isPreRegistered && order.reminder"
-      class="mx-2"
+      v-if="order.is_pre_registered && order.reminder"
+      class="m-2"
     >
       <div class="small font-weight-bold">
         Lembrete:
       </div>
-      <div>{{ order.reminder }}</div>
+
+      <div class="small text-secondary">
+        {{ order.reminder.text }}
+      </div>
     </div>
 
-    <div class="card-footer text-center py-1 position-relative">
+    <div
+      class="card-footer text-center py-1 position-relative"
+    >
       <a
         target="_blank"
         :href="order.path"
         class="card-link stretched-link small font-weight-bold"
-      >VER PEDIDO</a>
+      >{{ order.is_pre_registered ? 'COMPLETAR REGISTRO ' : 'VER PEDIDO' }}</a>
     </div>
   </div>
 </template>

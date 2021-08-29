@@ -15,4 +15,14 @@ Route::prefix('calendario-de-producao')
             ProductionCalendarController::class,
             'ordersByWeek'
         ]);
+
+        Route::post('/pedidos/novo', [
+            ProductionCalendarController::class,
+            'storeOrder'
+        ]);
+
+        Route::get('/pedidos/pendentes', [
+            ProductionCalendarController::class,
+            ''
+        ]);
     });

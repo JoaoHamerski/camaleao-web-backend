@@ -29,6 +29,12 @@ export default {
      */
     isToday(date) {
       return date.isSame(moment(), 'd')
+    },
+    onCancel(order) {
+      this.$emit('order-cancel', order)
+    },
+    onCreated(order) {
+      this.$emit('order-created', order)
     }
   }
 }
@@ -61,20 +67,23 @@ export default {
           v-if="!! date.items.length"
           class="orders"
           :class="{
-            'row row-cols-4': date.isActive,
+            'row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4': date.isActive,
             'd-flex flex-column': !date.isActive
           }"
           tag="div"
           enter="zoomIn"
           leave="zoomOut"
           speed="faster"
+          mode="out-in"
         >
           <Order
             v-for="order in date.items"
             :key="order.id"
-            class="col mb-3"
+            class="mb-3 px-1 has-divider"
             :is-active="date.isActive"
             :order="order"
+            @cancel="onCancel"
+            @created="onCreated"
           />
         </AppTransitionGroup>
 

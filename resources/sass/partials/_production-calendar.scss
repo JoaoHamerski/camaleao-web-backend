@@ -27,23 +27,25 @@
     }
 
     &:not(.active) {
-        max-width: 25vw;
+        max-width: 100vh;
     }
 
 
-    &.active {
-        position: absolute;
-        max-width: 90vw;
-        left: 0;
-        right: 0;
-        margin-left: auto;
-        margin-right: auto;
-        z-index: 100;
-        box-shadow: 2px 3px 7px rgba(0, 0, 0, .1);
+    @include media-breakpoint-up (sm) {
+        &.active {
+            position: absolute;
+            max-width: 90vw;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            z-index: 100;
+            box-shadow: 2px 3px 7px rgba(0, 0, 0, .1);
 
-        .orders {
-            .card-order {
-                box-shadow: 0px 5px 7px rgb(0, 0, 0, .1);
+            .orders {
+                .card-order {
+                    box-shadow: 0px 5px 7px rgb(0, 0, 0, .1);
+                }
             }
         }
     }

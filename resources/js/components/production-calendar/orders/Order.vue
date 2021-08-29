@@ -68,6 +68,12 @@ export default {
     }
   },
   methods: {
+    onCancel(order) {
+      this.$emit('cancel', order)
+    },
+    onCreated(order) {
+      this.$emit('created', {old: this.order, new: order})
+    },
     jsonParsePaths (paths) {
       if (isEmpty(paths)) {
         return paths
@@ -89,11 +95,18 @@ export default {
       <CardOrderNotCreated
         v-if="order.isNotCreated"
         v-bind="{order, imagePath, viewerConfig}"
+        @cancel="onCancel(order)"
+        @created="onCreated"
       />
       <CardOrder
         v-else
         v-bind="{order, imagePath, viewerConfig}"
       />
     </template>
+
+    <hr
+      v-if="! isActive"
+      class="divider"
+    >
   </div>
 </template>

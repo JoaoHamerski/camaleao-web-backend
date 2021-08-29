@@ -11,7 +11,30 @@ export default {
       required: true
     }
   },
+  data () {
+    return {
+      reminder: '',
+      isLoading: false
+    }
+  },
   methods: {
+    create () {
+      this.isLoading = true
+      axios.post('/calendario-de-producao/pedidos/novo', {
+        ...this.order,
+        reminder: this.reminder
+      })
+        .then(response => {
+          this.$toast.success('Pedido pre-registrado com sucesso!')
+          this.$emit('created', response.data.order)
+        })
+        .catch(error => {
+          console.log(error.response)
+        })
+        .then(() => {
+          this.isLoading = false
+        })
+    },
     handleCancel () {
       this.$emit('cancel')
     }
@@ -25,9 +48,13 @@ export default {
       PRÉ-REGISTRO
     </div>
 
-    <div v-viewer="viewerConfig">
+    <div
+      v-viewer="viewerConfig"
+      class="text-center"
+    >
       <img
         v-if="imagePath"
+        :style="{maxHeight: '175px', maxWidth: '100%', width: 'auto'}"
         :src="imagePath"
         class="py-3 card-img-top clickable"
       >
@@ -44,6 +71,7 @@ export default {
 
       <textarea
         id="reminder"
+        v-model="reminder"
         class="form-control form-control-sm"
         rows="4"
         placeholder="Digite um lembrete..."
@@ -53,10 +81,17 @@ export default {
     <div class="card-footer p-0">
       <div class="btn-group d-flex">
         <button
-          class="btn btn-success btn-block font-weight-bold radius-0"
+          :disabled="isLoading"
+          class="btn btn-success btn-block font-weight-bold radius-0 text-nowrap px-0"
+          @click="create"
         >
+          <span
+            v-show="isLoading"
+            class="spinner-border spinner-border-sm"
+          />
           Confirmar
         </button>
+
         <button
           class="btn btn-light btn-block"
           @click="handleCancel"

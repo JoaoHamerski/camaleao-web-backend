@@ -6,7 +6,8 @@ use App\Http\Controllers\OrdersController;
 Route::middleware('role:gerencia,atendimento')->group(function () {
     Route::prefix('cliente/{client}')->group(function () {
         Route::get('/pedido/{order}/json', [
-            OrdersController::class, 'json'
+            OrdersController::class,
+            'json'
         ]);
 
         Route::get('/pedidos/list', [
@@ -18,6 +19,7 @@ Route::middleware('role:gerencia,atendimento')->group(function () {
             OrdersController::class,
             'create'
         ])->name('create');
+
 
         Route::post('/novo-pedido', [
             OrdersController::class,
@@ -55,11 +57,13 @@ Route::middleware('role:gerencia,atendimento')->group(function () {
         ])->name('order-pdf');
 
         Route::get('/pedido/{order}', [
-            OrdersController::class, 'show'
+            OrdersController::class,
+            'show'
         ])->name('show');
 
         Route::post('/pedido/{order}/file-view', [
-            OrdersController::class, 'showFile'
+            OrdersController::class,
+            'showFile'
         ])->name('showFile');
     });
 
@@ -68,6 +72,7 @@ Route::middleware('role:gerencia,atendimento')->group(function () {
             OrdersController::class,
             'index'
         ])->name('index');
+
 
         Route::get('/order-commission', [
             OrdersController::class,
@@ -88,5 +93,29 @@ Route::middleware('role:gerencia,atendimento')->group(function () {
             OrdersController::class,
             'generateReport'
         ])->name('report');
+
+        Route::get('/{order}', [
+            OrdersController::class,
+            'show'
+        ])->name('showPreRegistered');
+
+        Route::get('/{order}/editar', [
+            OrdersController::class,
+            'edit'
+        ])->name('editPreRegistered');
+
+        Route::get('/{order}/json', [
+            OrdersController::class,
+            'json'
+        ]);
+
+        Route::patch('/{order}/editar', [
+            OrdersController::class,
+            'update'
+        ]);
+        Route::post('/{order}/file-view', [
+            OrdersController::class,
+            'showFile'
+        ]);
     });
 });

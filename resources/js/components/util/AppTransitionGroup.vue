@@ -8,8 +8,8 @@ export default {
       default: 'fast'
     },
     mode: {
-      type: Boolean,
-      default: false
+      type: String,
+      default: ''
     },
     name: {
       type: String,

@@ -20482,10 +20482,6 @@ input[disabled=disabled] {
   margin: auto;
 }
 
-.has-divider:last-child .divider {
-  display: none;
-}
-
 .viewer-transition {
   transition: all 0.2s !important;
 }
@@ -20670,6 +20666,10 @@ input[disabled=disabled] {
   background-color: inherit !important;
 }
 
+.has-divider:last-child .divider {
+  display: none;
+}
+
 .multiselect.is-invalid .multiselect__tags {
   border-color: #e3342f;
 }
@@ -20743,20 +20743,22 @@ input[disabled=disabled] {
   background-color: #52a1e1;
 }
 .card.card-date:not(.active) {
-  max-width: 25vw;
+  max-width: 100vh;
 }
-.card.card-date.active {
-  position: absolute;
-  max-width: 90vw;
-  left: 0;
-  right: 0;
-  margin-left: auto;
-  margin-right: auto;
-  z-index: 100;
-  box-shadow: 2px 3px 7px rgba(0, 0, 0, 0.1);
-}
-.card.card-date.active .orders .card-order {
-  box-shadow: 0px 5px 7px rgba(0, 0, 0, 0.1);
+@media (min-width: 576px) {
+  .card.card-date.active {
+    position: absolute;
+    max-width: 90vw;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 100;
+    box-shadow: 2px 3px 7px rgba(0, 0, 0, 0.1);
+  }
+  .card.card-date.active .orders .card-order {
+    box-shadow: 0px 5px 7px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .text-success-darker {

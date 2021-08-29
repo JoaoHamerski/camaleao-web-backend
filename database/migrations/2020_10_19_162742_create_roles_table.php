@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateRolesTable extends Migration
 {
@@ -17,9 +18,8 @@ class CreateRolesTable extends Migration
             $table->id();
             $table->string('name');
             $table->timestamps();
-
         });
-        
+
         DB::table('roles')->insert([
             ['id' => '1', 'name' => 'Design'],
             ['id' => '2', 'name' => 'Atendimento'],

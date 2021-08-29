@@ -22,6 +22,7 @@ use App\Models\ClothingType;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Barryvdh\DomPDF\Facade as PDF;
+use ErrorException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -38,9 +39,11 @@ class OrdersController extends Controller
             ->get();
     }
 
-    public function json(Client $client, Order $order)
+    public function json(Client $client = null, Order $order)
     {
-        $this->authorize('view', [$order, $client->id]);
+        if ($client) {
+            $this->authorize('view', [$order, $client->id]);
+        }
 
         $paths = [
             'art_paths',
@@ -49,7 +52,7 @@ class OrdersController extends Controller
         ];
 
         $orderClothingTypes = $order->clothingTypes;
-        $jsonOrder = $order->replicate();
+        $jsonOrder = $order;
 
         foreach ($orderClothingTypes as $type) {
             $jsonOrder['value_' . $type->key] = $type->pivot->value;
@@ -57,14 +60,14 @@ class OrdersController extends Controller
         }
 
         foreach ($paths as $path) {
-            if (! empty($order[$path])) {
+            if (!empty($order[$path])) {
                 $files = [];
 
                 foreach ($order->getPaths($path, true) as $index => $filepath) {
                     $files[] = 'data:'
-                    . Storage::mimeType($filepath)
-                    . ';base64,'
-                    . base64_encode(Storage::get($filepath));
+                        . Storage::mimeType($filepath)
+                        . ';base64,'
+                        . base64_encode(Storage::get($filepath));
                 }
 
                 $jsonOrder[$path] = $files;
@@ -75,7 +78,7 @@ class OrdersController extends Controller
             'order' => $jsonOrder
         ], 200);
     }
-    
+
     public function list(Request $request, Client $client)
     {
         $orders = Client::find($client->id)
@@ -83,7 +86,7 @@ class OrdersController extends Controller
             ->whereNull('closed_at')
             ->orderBy('created_at', 'asc')
             ->get();
-        
+
         $orders = $orders->filter(function ($order) {
             return $order->getTotalOwing() > 0;
         });
@@ -121,11 +124,11 @@ class OrdersController extends Controller
     {
         $commission = $user->commissions()->find($commissionId);
 
-        if (! $commission) {
+        if (!$commission) {
             return null;
         }
 
-        return !! $commission->pivot->confirmed_at;
+        return !!$commission->pivot->confirmed_at;
     }
 
     public function storeUserCommissions(Commission $commission, $wasQuantityChanged = false)
@@ -136,7 +139,7 @@ class OrdersController extends Controller
             $data = [];
             $commissionWithPivot = $user->commissions()->find($commission->id);
 
-            if (! $commissionWithPivot) {
+            if (!$commissionWithPivot) {
                 $data['commission_value'] = $commission->getUserCommission($user);
                 $data['role_id'] = $user->role_id;
             } else {
@@ -164,20 +167,24 @@ class OrdersController extends Controller
         ];
 
         $isQuantityChanged = false;
-        
-        if (! $isUpdate) {
+
+        if (!$isUpdate) {
             $commission = $order->commissions()->create($data);
         } else {
-            if (! $order->commission) {
+            if (!$order->commission) {
                 $commission = $order->commissions()->create($data);
             } else {
                 $commission = Commission::where('order_id', $order->id)->first();
                 $commission->update($data);
             }
 
-            $isQuantityChanged = $order->isQuantityChanged();
+            try {
+                $isQuantityChanged = $order->isQuantityChanged();
+            } catch (ErrorException $error) {
+                $isQuantityChanged = false;
+            }
         }
-        
+
 
         $this->storeUserCommissions(
             $commission->fresh(),
@@ -185,9 +192,11 @@ class OrdersController extends Controller
         );
     }
 
-    public function show(Client $client, Order $order)
+    public function show(Client $client = null, Order $order)
     {
-        $this->authorize('view', [$order, $client->id]);
+        if ($client) {
+            $this->authorize('view', [$order, $client->id]);
+        }
 
         return view('orders.show', [
             'client' => $client,
@@ -198,11 +207,16 @@ class OrdersController extends Controller
         ]);
     }
 
-    public function edit(Client $client, Order $order)
+    public function edit(Client $client = null, Order $order)
     {
-        $this->authorize('update', [$order, $client->id]);
+        if ($client) {
+            $this->authorize('update', [$order, $client->id]);
+        }
 
-        return view('orders.edit', compact('client', 'order'));
+        return view('orders.edit', [
+            'client' => $client,
+            'order' => $order
+        ]);
     }
 
     public function destroy(Client $client, Order $order)
@@ -224,7 +238,7 @@ class OrdersController extends Controller
         )->validate();
 
         $data = array_merge($data, $this->uploadAllBase64Files($data));
-        
+
         $order = $client->orders()->create(
             Arr::except($data, $this->exceptKeysToStore())
         );
@@ -233,11 +247,11 @@ class OrdersController extends Controller
             $this->getFilledClothingTypes($data)
         );
 
-        if (! $order->isPreRegistered()) {
+        if (!$order->isPreRegistered()) {
             $this->storeCommissions($order);
         }
 
-        if (! empty($data['down_payment']) && ! empty($data['payment_via_id'])) {
+        if (!empty($data['down_payment']) && !empty($data['payment_via_id'])) {
             $order->createDownPayment(
                 $data['down_payment'],
                 $data['payment_via_id']
@@ -250,15 +264,16 @@ class OrdersController extends Controller
         ], 200);
     }
 
-    public function update(Client $client, Order $order, Request $request)
+    public function update(Client $client = null, Order $order, Request $request)
     {
-        $this->authorize('update', [$order, $client->id]);
+        if ($client) {
+            $this->authorize('update', [$order, $client->id]);
+        }
 
         $this->validator(
             $data = $this->getFormattedData($request->all(), true),
             $order
         )->validate();
-
 
         $this->deleteField($order, ['art_paths', 'size_paths', 'payment_voucher_paths']);
 
@@ -270,7 +285,7 @@ class OrdersController extends Controller
             $this->getFilledClothingTypes($data)
         );
 
-        if (! $order->fresh()->isPreRegistered()) {
+        if (!$order->isPreRegistered()) {
             $this->storeCommissions($order, true);
         }
 
@@ -288,7 +303,7 @@ class OrdersController extends Controller
             $quantity = $data['quantity_' . $type->key];
             $value = $data['value_' . $type->key];
 
-            if (! empty($quantity) && ! empty($value)) {
+            if (!empty($quantity) && !empty($value)) {
                 $filled[$type->id] = [
                     'quantity' => $quantity,
                     'value' => $value
@@ -310,6 +325,7 @@ class OrdersController extends Controller
 
         $keys[] = 'down_payment';
         $keys[] = 'payment_via_id';
+        $keys[] = 'client';
 
         return $keys;
     }
@@ -335,13 +351,13 @@ class OrdersController extends Controller
 
         return response()->json([], 204);
     }
-    
+
     private function evaluateTotalQuantity(array $data)
     {
         $total = 0;
 
         foreach ($this->clothingTypes as $type) {
-            if (! empty($data['value_' . $type->key])) {
+            if (!empty($data['value_' . $type->key])) {
                 $total = bcadd($total, $data['quantity_' . $type->key]);
             }
         }
@@ -354,13 +370,13 @@ class OrdersController extends Controller
         $total = 0;
 
         foreach ($this->clothingTypes as $type) {
-            if (! empty($data['quantity_' . $type->key])) {
+            if (!empty($data['quantity_' . $type->key])) {
                 $mul = bcmul(
                     $data['quantity_' . $type->key],
                     $data['value_' . $type->key],
                     2
                 );
-    
+
                 $total = bcadd($total, $mul, 2);
             }
         }
@@ -400,12 +416,17 @@ class OrdersController extends Controller
             $fields['quantity_' . $type->key] = ['nullable', 'integer', 'max:9999'];
         }
 
+        if ($order && $order->client === null) {
+            $fields['client_id'] = ['required', 'exists:clients,id'];
+        }
+
         return Validator::make($data, $fields, $this->errorMessages());
     }
 
     private function errorMessages()
     {
         return [
+            'client_id.required' => 'Por favor, informe o cliente.',
             'discount.lte' => 'O desconto não pode ser maior que o preço total.',
             'code.not_regex' => 'O código deve conter apenas letras, numeros ou traços.',
             'art_paths.*.max' => 'A imagem armazenada deve ser menor que 1MB, por favor, redimensione-a para diminuir seu tamanho.',
@@ -414,7 +435,7 @@ class OrdersController extends Controller
         ];
     }
 
-    private function getFormattedData(array $data, $isUpdate = false)
+    private function getFormattedData(array $data)
     {
         $data['price'] = null;
         $data['quantity'] = null;
@@ -422,9 +443,9 @@ class OrdersController extends Controller
         if (empty($data['discount'])) {
             $data['discount'] = 0.00;
         }
-        
+
         foreach ($data as $key => $field) {
-            if (Str::contains($key, ['down_payment', 'value_', 'discount']) && ! empty($field)) {
+            if (Str::contains($key, ['down_payment', 'value_', 'discount']) && !empty($field)) {
                 $data[$key] = Sanitizer::money($data[$key]);
             }
 
@@ -436,16 +457,20 @@ class OrdersController extends Controller
                     )->toDateString();
                 }
             }
-            
+
             if (Str::contains($key, ['art_paths', 'size_paths', 'payment_voucher_paths'])) {
                 foreach ($field as $index => $file) {
                     $base64 = $file['base64'];
 
-                    if (! empty($base64)) {
+                    if (!empty($base64)) {
                         $data[$key][$index] = $this->base64ToUploadedFile($base64);
                     }
                 }
             }
+        }
+
+        if ($data['client']) {
+            $data['client_id'] = $data['client']['id'];
         }
 
         $data['price'] = $this->evaluateTotalValue($data);
@@ -497,7 +522,8 @@ class OrdersController extends Controller
 
     public function getRequestQuery($request)
     {
-        $orders = Order::query();
+        $orders = Order::whereNotNull('quantity');
+        $orders = Order::whereNotNull('client_id');
 
         if ($request->filled('cidade')) {
             $orders->whereHas('client.city', function ($query) use ($request) {
@@ -628,7 +654,7 @@ class OrdersController extends Controller
         ], 422);
     }
 
-    public function showFile(Client $client, Order $order, Request $request)
+    public function showFile(Client $client = null, Order $order, Request $request)
     {
         foreach (['art', 'size', 'payment_voucher'] as $option) {
             if ($request->option == $option) {

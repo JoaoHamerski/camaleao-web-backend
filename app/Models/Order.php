@@ -66,16 +66,6 @@ class Order extends Model
     }
 
     /**
-     * Get the route key for the model.
-     *
-     * @return string
-     */
-    public function getRouteKeyName()
-    {
-        return 'code';
-    }
-
-    /**
      * Método "booted" do model
      *
      * @return void
@@ -188,7 +178,7 @@ class Order extends Model
 
     public function isPreRegistered()
     {
-        return $this->quantity === null;
+        return $this->quantity === null || $this->client_id === null;
     }
 
     public function scopePreRegistered($query)
@@ -239,7 +229,11 @@ class Order extends Model
      */
     public function path()
     {
-        return route('orders.show', [$this->client, $this]);
+        if ($this->client) {
+            return route('orders.show', [$this->client, $this]);
+        }
+
+        return route('orders.showPreRegistered', $this);
     }
 
     public function getPathAttribute()

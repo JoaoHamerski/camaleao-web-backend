@@ -48,7 +48,7 @@ trait FileManager
 
         return json_encode($paths);
     }
-    
+
     public function storeFile($file, $path, $key = null)
     {
         return $file->storeAs(
@@ -72,6 +72,7 @@ trait FileManager
         $file = base64_decode($fileData);
 
         $tempFilepath = sys_get_temp_dir() . '/' . Str::uuid()->toString();
+
         file_put_contents($tempFilepath, $file);
 
         $file = new File($tempFilepath);
@@ -127,7 +128,7 @@ trait FileManager
         ];
 
         foreach ($fields as $field) {
-            if (! empty($data[$field])) {
+            if (!empty($data[$field])) {
                 $jsonFiles[$field] = $this->uploadFieldFiles(
                     $data[$field],
                     $this->getFilepath($field)

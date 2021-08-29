@@ -25,7 +25,8 @@ export default {
         target="_blank"
         :href="order.path"
         class="font-weight-bold"
-      >{{ order.code }}</a>
+        :class="[order.is_pre_registered && 'text-warning']"
+      >{{ order.is_pre_registered ? 'PRE-REGISTRO' : order.code }}</a>
     </div>
 
     <div v-if="imagePath !== undefined">
