@@ -28,9 +28,7 @@ export default {
           this.$toast.success('Pedido pre-registrado com sucesso!')
           this.$emit('created', response.data.order)
         })
-        .catch(error => {
-          console.log(error.response)
-        })
+        .catch(() => {})
         .then(() => {
           this.isLoading = false
         })

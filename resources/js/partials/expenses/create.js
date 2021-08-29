@@ -123,7 +123,6 @@ $('#formExpenses button[type="submit"]').on('click', function(e) {
       window.location = response.data.redirect
     })
     .catch(error => {
-      console.log(error.response)
       loadingBtn($btn, false)
       dispatchErrorMessages(error.response.data.errors)
     })

@@ -216,7 +216,6 @@ $('#btnCreateUniqueExpense').on('click', function(e) {
       window.location = response.data.redirect
     })
     .catch(error => {
-      console.log(error.response)
       dispatchErrorMessages(error.response.data.errors, '#createFormModal')
       loadingBtn($btn, false)
     })

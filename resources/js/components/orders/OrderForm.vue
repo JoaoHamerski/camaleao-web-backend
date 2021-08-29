@@ -144,10 +144,8 @@ export default {
         .then(response => {
           window.location.href = response.redirect
         })
-        .catch(error => {
-          console.log(error)
+        .catch(() => {
           this.$toast.error('Verifique os campos incorretos')
-
         })
         .then(() => {
           this.form.isLoading = false
@@ -160,9 +158,8 @@ export default {
         .then(response => {
           window.location.href = response.redirect
         })
-        .catch((error) => {
+        .catch(() => {
           this.$toast.error('Verifique os campos incorretos')
-          console.log(error)
         })
         .then(() => {
           this.form.isLoading = false
@@ -251,9 +248,6 @@ export default {
           }
 
           this.isLoading = false
-        })
-        .catch(error => {
-          console.log(error.response)
         })
     }
   }

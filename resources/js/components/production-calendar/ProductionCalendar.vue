@@ -1,5 +1,5 @@
 <script>
-import { map, some, isEmpty } from 'lodash-es'
+import { map, some, isEmpty, throttle } from 'lodash-es'
 import moment from 'moment'
 moment.locale('pt-BR')
 import { Carousel, Slide } from 'vue-carousel'
@@ -34,6 +34,9 @@ export default {
     }
   },
   computed: {
+    isAllDatesActive () {
+      return this.dates.every(date => date.isActive)
+    },
     activeDate () {
       return this.dates.find(date => date.isActive)
     },
@@ -65,6 +68,21 @@ export default {
   },
   mounted () {
     this.refresh()
+
+    window.addEventListener('resize', throttle(() => {
+      if ($(window).width() < 576) {
+        this.dates.forEach(item => {
+          item.isActive = true
+        })
+        return
+      }
+
+      if (this.isAllDatesActive) {
+        this.dates.forEach(item => {
+          item.isActive = false
+        })
+      }
+    }, 500))
 
     document.onpaste = (pasteEvent) => {
       const item = pasteEvent.clipboardData.items[0]
@@ -149,9 +167,7 @@ export default {
             isActive: false
           }))
         })
-        .catch(error  => {
-          console.log(error.response)
-        })
+        .catch(() => {})
         .then(() => {
           this.isLoading = false
         })

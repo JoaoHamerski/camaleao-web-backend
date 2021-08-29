@@ -19,7 +19,6 @@ export default {
     return {
       moment,
       listener: event => {
-        console.log('clicou')
         if (!this.$refs.column.contains(event.target)) {
           this.$emit('toggle', this.date)
         }
@@ -28,12 +27,14 @@ export default {
   },
   watch: {
     'date.isActive' (val) {
-      if (val) {
-        document.addEventListener('click', this.listener)
-        return
-      }
+      if ($(window).width() >= 576) {
+        if (val) {
+          document.addEventListener('click', this.listener)
+          return
+        }
 
-      document.removeEventListener('click', this.listener)
+        document.removeEventListener('click', this.listener)
+      }
     }
   },
   methods: {
@@ -53,7 +54,9 @@ export default {
       this.$emit('order-created', order)
     },
     onHeaderClick () {
-      this.$emit('toggle', this.date)
+      if ($(window).width() >= 576) {
+        this.$emit('toggle', this.date)
+      }
     }
   }
 }

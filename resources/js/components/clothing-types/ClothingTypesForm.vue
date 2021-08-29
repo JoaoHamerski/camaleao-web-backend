@@ -19,9 +19,7 @@ export default {
           this.form.reset()
           this.$toast.success('Novo tipo de roupa criado')
         })
-        .catch(error => {
-          console.log(error)
-        })
+        .catch(() => {})
         .then(() => {
           this.form.isLoading = false
         })

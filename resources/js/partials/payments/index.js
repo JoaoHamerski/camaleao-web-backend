@@ -13,9 +13,6 @@ $('[data-target="#changePaymentModal"]').on('click', function(e) {
     .then(response => {
       $('#changePaymentModal .modal-body').html(response.data.view)
     })
-    .catch(error => {
-      console.log(error.response)
-    })
 })
 
 $(document).on('click', '#btnChangePayment', function(e) {

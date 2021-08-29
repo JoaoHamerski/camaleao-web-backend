@@ -66,9 +66,6 @@ $('#btnDeleteClient').click(e => {
           .then(response => {
             window.location = response.data.redirect
           })
-          .catch(error => {
-            console.log(error.response)
-          })
       }
     })
 })
