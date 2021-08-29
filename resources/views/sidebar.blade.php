@@ -43,7 +43,7 @@
             <li class="{{ Request::is('calendario-de-producao') ? 'active' : '' }}">
                 <a href="{{ route('production-calendar.index') }}">
                     <i class="fas fa-calendar-alt fa-fw mr-1 text-primary"></i>
-                    Calendário de produção
+                    <span style="font-size: .8rem">Calendário de produção</span>
                 </a>
             </li>
             @endrole

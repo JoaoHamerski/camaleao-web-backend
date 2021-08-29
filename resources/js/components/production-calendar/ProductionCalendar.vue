@@ -97,6 +97,7 @@ export default {
     },
     createOrder(image) {
       const activeDate = this.activeDate
+
       activeDate.items.push({
         id: +new Date(),
         production_date: activeDate.date.format('YYYY-MM-DD'),
@@ -183,6 +184,7 @@ export default {
           </template>
           <template #input>
             <input
+              placeholder="Escolha a semana..."
               :value="datePickerInput"
               type="text"
               class="form-control"
@@ -211,7 +213,7 @@ export default {
             <Column
               :date="date"
               class="mx-1"
-              @header-clicked="toggleColumn"
+              @toggle="toggleColumn"
               @order-cancel="onOrderCancel"
               @order-created="onOrderCreated"
             />

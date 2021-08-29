@@ -17,7 +17,23 @@ export default {
   },
   data () {
     return {
-      moment
+      moment,
+      listener: event => {
+        console.log('clicou')
+        if (!this.$refs.column.contains(event.target)) {
+          this.$emit('toggle', this.date)
+        }
+      }
+    }
+  },
+  watch: {
+    'date.isActive' (val) {
+      if (val) {
+        document.addEventListener('click', this.listener)
+        return
+      }
+
+      document.removeEventListener('click', this.listener)
     }
   },
   methods: {
@@ -35,13 +51,16 @@ export default {
     },
     onCreated(order) {
       this.$emit('order-created', order)
+    },
+    onHeaderClick () {
+      this.$emit('toggle', this.date)
     }
   }
 }
 </script>
 
 <template>
-  <div>
+  <div ref="column">
     <div
       class="card card-date"
       :class="{'active': date.isActive}"
@@ -49,7 +68,7 @@ export default {
       <div
         class="card-header bg-primary text-white text-center py-1 clickable selection-none"
         :class="[isToday(date.date) ? 'bg-success' : 'bg-primary']"
-        @click="$emit('header-clicked', date)"
+        @click="onHeaderClick"
       >
         <div class="font-weight-bold">
           {{ date.date.format('DD/MM') }} -
@@ -72,9 +91,7 @@ export default {
           }"
           tag="div"
           enter="zoomIn"
-          leave="zoomOut"
           speed="faster"
-          mode="out-in"
         >
           <Order
             v-for="order in date.items"

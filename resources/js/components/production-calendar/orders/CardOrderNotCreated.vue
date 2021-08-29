@@ -75,6 +75,7 @@ export default {
         class="form-control form-control-sm"
         rows="4"
         placeholder="Digite um lembrete..."
+        @keydown.enter.prevent="create"
       />
     </div>
 
