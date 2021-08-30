@@ -13,6 +13,10 @@ export default {
     viewerConfig: {
       type: Object,
       required: true
+    },
+    isProduction: {
+      type: Boolean,
+      default: false
     }
   }
 }
@@ -22,11 +26,18 @@ export default {
   <div class="generic-order text-center mb-4">
     <div class="mb-2">
       <a
+        v-if="!isProduction"
         target="_blank"
         :href="order.path"
         class="font-weight-bold"
         :class="[order.is_pre_registered && 'text-warning']"
       >{{ order.is_pre_registered ? 'PRE-REGISTRO' : order.code }}</a>
+      <span
+        v-else
+        class="font-weight-bold"
+      >
+        {{ order.is_pre_registered ? 'PRE-REGISTRO' : order.code }}
+      </span>
     </div>
 
     <div v-if="imagePath !== undefined">

@@ -1,18 +1,20 @@
 <script>
-import masks from '../../util/masks'
-import Form from '../../util/Form'
 import accounting from 'accounting-js'
-
-import ViewFileModal from './ViewFileModal'
-import UploadedFilesList from './UploadedFilesList'
 import moment from 'moment'
 import Multiselect from 'vue-multiselect'
+
+import masks from '../../util/masks'
+import Form from '../../util/Form'
+import ViewFileModal from './ViewFileModal'
+import UploadedFilesList from './UploadedFilesList'
+import ClientModal from '../clients/ClientModal'
 
 export default {
   components: {
     UploadedFilesList,
     ViewFileModal,
-    Multiselect
+    Multiselect,
+    ClientModal
   },
   props: {
     hasClient: {
@@ -96,6 +98,10 @@ export default {
     }
   },
   methods: {
+    onClientCreated () {
+      this.$toast.success('Cliente criado com sucesso!')
+      this.$refs.modal.$refs.modal.close()
+    },
     asyncFindClients(search) {
       if (! search.length) {
         this.clients.items = []
@@ -282,6 +288,7 @@ export default {
             select-label="Selecionar"
             selected-label="Selecionado"
             deselect-label="Remover"
+            @change="console.log(form.client)"
             @search-change="asyncFindClients"
             @open="form.errors.clear('client_id')"
           >
@@ -298,6 +305,15 @@ export default {
           >
             {{ form.errors.get('client_id') }}
           </div>
+          <a
+            data-toggle="modal"
+            href="#clientModal"
+            class="small font-weight-bold"
+          >Novo cliente</a>
+          <ClientModal
+            ref="modal"
+            @created="onClientCreated"
+          />
         </div>
       </div>
     </div>

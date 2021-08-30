@@ -76,7 +76,7 @@ export default {
     create() {
       this.form.submit('POST', '/clientes')
         .then(() => {
-          location.reload()
+          this.$emit('created')
         })
         .catch(() => {})
         .then(() => {

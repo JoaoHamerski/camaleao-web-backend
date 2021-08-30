@@ -293,7 +293,7 @@ class OrdersController extends Controller
 
         return response()->json([
             'message' => 'success',
-            'redirect' => $order->path()
+            'redirect' => $order->fresh()->path()
         ], 200);
     }
 
@@ -470,6 +470,7 @@ class OrdersController extends Controller
                 }
             }
         }
+
 
         if ($data['client']) {
             $data['client_id'] = $data['client']['id'];

@@ -75,6 +75,7 @@ export default {
         :is-edit="isEdit"
         @open-city-modal="openCityModal"
         @loading="isLoading = $event"
+        @created="$emit('created')"
       />
     </template>
 

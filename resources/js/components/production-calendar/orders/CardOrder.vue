@@ -9,6 +9,10 @@ export default {
     viewerConfig: {
       type: Object,
       required: true
+    },
+    isProduction: {
+      type: Boolean,
+      default: true
     }
   }
 }
@@ -62,11 +66,17 @@ export default {
         class="list-group-item"
         content="Cliente"
       >
-        <i class="fas fa-user fa-fw mr-1" /> <a
+        <i class="fas fa-user fa-fw mr-1" />
+        <a
+          v-if="!isProduction"
           class="font-weight-bold"
           :href="order.client.path"
           target="_blank"
         >{{ order.client.name }}</a>
+        <span
+          v-else
+          class="font-weight-bold"
+        >{{ order.client.name }}</span>
       </li>
 
       <li
@@ -91,27 +101,27 @@ export default {
       </li>
     </ul>
 
-    <div
-      v-if="order.is_pre_registered && order.reminder"
-      class="m-2"
-    >
-      <div class="small font-weight-bold">
-        Lembrete:
+    <tempalte v-if="!isProduction">
+      <div
+        v-if="order.is_pre_registered && order.reminder"
+        class="m-2"
+      >
+        <div class="small font-weight-bold">
+          Lembrete:
+        </div>
+        <div class="small text-secondary">
+          {{ order.reminder.text }}
+        </div>
       </div>
-
-      <div class="small text-secondary">
-        {{ order.reminder.text }}
+      <div
+        class="card-footer text-center py-1 position-relative"
+      >
+        <a
+          target="_blank"
+          :href="order.path"
+          class="card-link stretched-link small font-weight-bold"
+        >{{ order.is_pre_registered ? 'COMPLETAR REGISTRO ' : 'VER PEDIDO' }}</a>
       </div>
-    </div>
-
-    <div
-      class="card-footer text-center py-1 position-relative"
-    >
-      <a
-        target="_blank"
-        :href="order.path"
-        class="card-link stretched-link small font-weight-bold"
-      >{{ order.is_pre_registered ? 'COMPLETAR REGISTRO ' : 'VER PEDIDO' }}</a>
-    </div>
+    </tempalte>
   </div>
 </template>

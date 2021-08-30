@@ -107,4 +107,9 @@ class User extends Authenticatable
             $query->orWhere('name', 'costura');
         });
     }
+
+    public function isProduction()
+    {
+        return $this->hasRole('costura') || $this->hasRole('estampa');
+    }
 }

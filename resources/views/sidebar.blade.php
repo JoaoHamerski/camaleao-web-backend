@@ -40,6 +40,8 @@
                 </a>
             </li>
 
+            @endrole
+            @role(['gerencia', 'atendimento', 'costura', 'estampa'])
             <li class="{{ Request::is('calendario-de-producao') ? 'active' : '' }}">
                 <a href="{{ route('production-calendar.index') }}">
                     <i class="fas fa-calendar-alt fa-fw mr-1 text-primary"></i>

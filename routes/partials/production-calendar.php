@@ -4,25 +4,28 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductionCalendarController;
 
 Route::prefix('calendario-de-producao')
-    ->middleware('role:gerencia,atendimento')
     ->group(function () {
-        Route::get('/', [
-            ProductionCalendarController::class,
-            'index'
-        ])->name('index');
+        Route::middleware('role:gerencia,atendimento,costura,estampa')->group(function () {
+            Route::get('/', [
+                ProductionCalendarController::class,
+                'index'
+            ])->name('index');
 
-        Route::get('/pedidos/semana', [
-            ProductionCalendarController::class,
-            'ordersByWeek'
-        ]);
+            Route::get('/pedidos/semana', [
+                ProductionCalendarController::class,
+                'ordersByWeek'
+            ]);
+        });
 
-        Route::post('/pedidos/novo', [
-            ProductionCalendarController::class,
-            'storeOrder'
-        ]);
+        Route::middleware('role:gerencia,atendimento')->group(function () {
+            Route::post('/pedidos/novo', [
+                ProductionCalendarController::class,
+                'storeOrder'
+            ]);
 
-        Route::get('/pedidos/pendentes', [
-            ProductionCalendarController::class,
-            ''
-        ]);
+            Route::get('/pedidos/pendentes', [
+                ProductionCalendarController::class,
+                ''
+            ]);
+        });
     });

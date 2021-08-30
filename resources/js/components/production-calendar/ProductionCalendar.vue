@@ -7,8 +7,9 @@ import { Carousel, Slide } from 'vue-carousel'
 import DatePicker from 'vue2-datepicker'
 import 'vue2-datepicker/index.css'
 import 'vue2-datepicker/locale/pt-br'
-
 import Column from './Column'
+
+import { setIsProduction } from './lib/isProductionContext'
 
 export default {
   components: {
@@ -16,6 +17,12 @@ export default {
     DatePicker,
     Carousel,
     Slide
+  },
+  props: {
+    isProduction: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -69,6 +76,8 @@ export default {
   mounted () {
     this.refresh()
 
+    setIsProduction(this.isProduction)
+
     window.addEventListener('resize', throttle(() => {
       if ($(window).width() < 576) {
         this.dates.forEach(item => {
@@ -85,6 +94,10 @@ export default {
     }, 500))
 
     document.onpaste = (pasteEvent) => {
+      if (this.isProduction) {
+        return
+      }
+
       const item = pasteEvent.clipboardData.items[0]
 
       if (item.type.indexOf('image') !== 0) {
@@ -233,6 +246,7 @@ export default {
         <template v-for="(date) in dates">
           <Slide :key="date.date.format('DD')">
             <Column
+              :is-production="isProduction"
               :date="date"
               class="mx-1"
               @toggle="toggleColumn"

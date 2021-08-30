@@ -23,6 +23,10 @@ export default {
     order: {
       type: Object,
       default: null
+    },
+    isProduction: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -89,7 +93,7 @@ export default {
   <div>
     <GenericOrder
       v-if="! isActive"
-      v-bind="{order, imagePath, viewerConfig}"
+      v-bind="{order, imagePath, viewerConfig, isProduction}"
     />
     <template v-else>
       <CardOrderNotCreated
@@ -100,7 +104,7 @@ export default {
       />
       <CardOrder
         v-else
-        v-bind="{order, imagePath, viewerConfig}"
+        v-bind="{order, imagePath, viewerConfig, isProduction}"
       />
     </template>
 

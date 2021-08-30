@@ -10,6 +10,10 @@ export default {
     AppTransitionGroup
   },
   props: {
+    isProduction: {
+      type: Boolean,
+      default: false
+    },
     date: {
       type: Object,
       default: null
@@ -20,6 +24,12 @@ export default {
       moment,
       listener: event => {
         if (event.target === document.querySelector('#image-upload')) {
+          return
+        }
+
+        console.log(event.target)
+        if (event.target.contains(document.querySelector('.viewer-move'))
+            || event.target.contains(document.querySelector('.viewer-close'))) {
           return
         }
 
@@ -110,6 +120,7 @@ export default {
         >
 
         <label
+          v-if="!isProduction"
           v-show="date.isActive"
           for="image-upload"
           class="btn btn-outline-success btn-sm mb-2 ml-n2"
@@ -133,6 +144,7 @@ export default {
             :key="order.id"
             class="mb-3 px-1 has-divider"
             :is-active="date.isActive"
+            :is-production="isProduction"
             :order="order"
             @cancel="onCancel"
             @created="onCreated"
