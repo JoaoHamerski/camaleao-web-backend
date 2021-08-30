@@ -219,15 +219,17 @@ class OrdersController extends Controller
         ]);
     }
 
-    public function destroy(Client $client, Order $order)
+    public function destroy(Client $client = null, Order $order)
     {
-        $this->authorize('view', [$order, $client->id]);
+        if ($client) {
+            $this->authorize('view', [$order, $client->id]);
+        }
 
         $order->delete();
 
         return response()->json([
             'message' => 'success',
-            'redirect' => $client->path()
+            'redirect' => $client ? $client->path() : route('orders.index')
         ], 200);
     }
 
@@ -509,7 +511,7 @@ class OrdersController extends Controller
             ], 200);
         }
 
-        $orders = $this->getRequestQuery($request);
+        $orders = $this->getRequestQuery($request, true);
 
         $pdf = PDF::loadView('orders.pdf.report', [
             'orders' => $orders->with('client')->get(),
@@ -520,10 +522,14 @@ class OrdersController extends Controller
         return $pdf->stream('pedido.pdf');
     }
 
-    public function getRequestQuery($request)
+    public function getRequestQuery($request, $isPDF = false)
     {
-        $orders = Order::whereNotNull('quantity');
-        $orders = Order::whereNotNull('client_id');
+        $orders = Order::query();
+
+        if ($isPDF) {
+            $orders = Order::whereNotNull('quantity');
+            $orders = Order::whereNotNull('client_id');
+        }
 
         if ($request->filled('cidade')) {
             $orders->whereHas('client.city', function ($query) use ($request) {
@@ -598,7 +604,7 @@ class OrdersController extends Controller
             ], 200);
         }
 
-        $orders = Order::where('production_date', $date->toDateString());
+        $orders = Order::preRegistered()->where('production_date', $date->toDateString());
 
         if ($request->has('em_aberto') && $request->em_aberto == 'em_aberto') {
             $orders->whereNull('closed_at');

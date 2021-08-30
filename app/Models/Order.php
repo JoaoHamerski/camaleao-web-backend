@@ -183,7 +183,7 @@ class Order extends Model
 
     public function scopePreRegistered($query)
     {
-        return $query->whereNull('quantity');
+        return $query->whereNull('quantity')->whereNotNull('client_id');
     }
 
     public function getCommissions()

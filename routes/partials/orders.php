@@ -117,5 +117,10 @@ Route::middleware('role:gerencia,atendimento')->group(function () {
             OrdersController::class,
             'showFile'
         ]);
+
+        Route::delete('/{order}/deletar', [
+            OrdersController::class,
+            'destroy'
+        ]);
     });
 });
