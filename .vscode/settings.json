@@ -2,5 +2,16 @@
     "search.exclude": {
         "public/css": true,
         "public/js": true
-    }
+    },
+    "phpcs.ignorePatterns": [
+        "/resources",
+        "/public",
+        "/database/migrations"
+    ],
+    "[blade]": {
+        "editor.defaultFormatter": "shufo.vscode-blade-formatter",
+        "editor.formatOnSave": true
+    },
+    "bladeFormatter.format.indentSize": 2,
+    "bladeFormatter.format.wrapAttributes": "force-expand-multiline"
 }

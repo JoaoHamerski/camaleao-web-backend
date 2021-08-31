@@ -18,7 +18,7 @@
             </li>
             @endrole
 
-            @role(['gerencia', 'atendimento', 'design'])
+            @role(['gerencia', 'atendimento'])
             <li class="{{ Request::is(['/', 'cliente/*']) ? 'active' : '' }}">
                 <a href="{{ route('clients.index') }}">
                     <i class="fas fa-list fa-fw mr-1 text-primary"></i>
@@ -41,7 +41,7 @@
             </li>
 
             @endrole
-            @role(['gerencia', 'atendimento', 'costura', 'estampa'])
+            @role(['gerencia', 'atendimento', 'costura', 'estampa', 'design'])
             <li class="{{ Request::is('calendario-de-producao') ? 'active' : '' }}">
                 <a href="{{ route('production-calendar.index') }}">
                     <i class="fas fa-calendar-alt fa-fw mr-1 text-primary"></i>

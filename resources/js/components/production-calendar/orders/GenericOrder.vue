@@ -14,9 +14,9 @@ export default {
       type: Object,
       required: true
     },
-    isProduction: {
-      type: Boolean,
-      default: false
+    roleId: {
+      type: Number,
+      required: true
     }
   }
 }
@@ -26,7 +26,7 @@ export default {
   <div class="generic-order text-center mb-4">
     <div class="mb-2">
       <a
-        v-if="!isProduction"
+        v-if="[2, 3].includes(roleId)"
         target="_blank"
         :href="order.path"
         class="font-weight-bold"
@@ -35,6 +35,7 @@ export default {
       <span
         v-else
         class="font-weight-bold"
+        :class="{'text-warning': order.is_pre_registered}"
       >
         {{ order.is_pre_registered ? 'PRE-REGISTRO' : order.code }}
       </span>

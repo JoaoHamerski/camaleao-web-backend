@@ -9,8 +9,6 @@ import 'vue2-datepicker/index.css'
 import 'vue2-datepicker/locale/pt-br'
 import Column from './Column'
 
-import { setIsProduction } from './lib/isProductionContext'
-
 export default {
   components: {
     Column,
@@ -19,9 +17,9 @@ export default {
     Slide
   },
   props: {
-    isProduction: {
-      type: Boolean,
-      default: false
+    roleId: {
+      type: Number,
+      required: true
     }
   },
   data () {
@@ -76,8 +74,6 @@ export default {
   mounted () {
     this.refresh()
 
-    setIsProduction(this.isProduction)
-
     window.addEventListener('resize', throttle(() => {
       if ($(window).width() < 576) {
         this.dates.forEach(item => {
@@ -94,7 +90,7 @@ export default {
     }, 500))
 
     document.onpaste = (pasteEvent) => {
-      if (this.isProduction) {
+      if (![1, 2, 3].includes(this.roleId)) {
         return
       }
 
@@ -236,10 +232,10 @@ export default {
       </div>
     </div>
 
-    <AppLoading v-if="isLoading" />
     <div
       class="mt-3 position-relative"
     >
+      <AppLoading v-if="isLoading" />
       <Carousel
         :min-swipe-distance="80"
         :per-page="1"
@@ -248,7 +244,7 @@ export default {
         <template v-for="(date) in dates">
           <Slide :key="date.date.format('DD')">
             <Column
-              :is-production="isProduction"
+              :role-id="roleId"
               :date="date"
               class="mx-1"
               @toggle="toggleColumn"

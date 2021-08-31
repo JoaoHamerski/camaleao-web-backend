@@ -10,9 +10,9 @@ export default {
       type: Object,
       required: true
     },
-    isProduction: {
-      type: Boolean,
-      default: true
+    roleId: {
+      type: Number,
+      required: true
     }
   }
 }
@@ -68,7 +68,7 @@ export default {
       >
         <i class="fas fa-user fa-fw mr-1" />
         <a
-          v-if="!isProduction"
+          v-if="[2, 3].includes(roleId)"
           class="font-weight-bold"
           :href="order.client.path"
           target="_blank"
@@ -101,27 +101,26 @@ export default {
       </li>
     </ul>
 
-    <tempalate v-if="!isProduction">
-      <div
-        v-if="order.is_pre_registered && order.reminder"
-        class="m-2"
-      >
-        <div class="small font-weight-bold">
-          Lembrete:
-        </div>
-        <div class="small text-secondary">
-          {{ order.reminder.text }}
-        </div>
+    <div
+      v-if="order.is_pre_registered && order.reminder"
+      class="m-2"
+    >
+      <div class="small font-weight-bold">
+        Lembrete:
       </div>
-      <div
-        class="card-footer text-center py-1 position-relative"
-      >
-        <a
-          target="_blank"
-          :href="order.path"
-          class="card-link stretched-link small font-weight-bold"
-        >{{ order.is_pre_registered ? 'COMPLETAR REGISTRO ' : 'VER PEDIDO' }}</a>
+      <div class="small text-secondary">
+        {{ order.reminder.text }}
       </div>
-    </tempalate>
+    </div>
+    <div
+      v-if="[2,3].includes(roleId)"
+      class="card-footer text-center py-1 position-relative"
+    >
+      <a
+        target="_blank"
+        :href="order.path"
+        class="card-link stretched-link small font-weight-bold"
+      >{{ order.is_pre_registered ? 'COMPLETAR REGISTRO ' : 'VER PEDIDO' }}</a>
+    </div>
   </div>
 </template>

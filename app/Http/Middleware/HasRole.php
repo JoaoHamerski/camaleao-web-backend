@@ -17,9 +17,18 @@ class HasRole
     public function handle(Request $request, Closure $next, ...$roles)
     {
         foreach ($roles as $role) {
-            if ($request->user()->hasRole(['costura', 'estampa'])
-                && $request->getRequestUri() === '/') {
+            if (
+                $request->user()->hasRole(['costura', 'estampa'])
+                && $request->getRequestUri() === '/'
+            ) {
                 return redirect()->route('production.home');
+            }
+
+            if (
+                $request->user()->hasRole('design')
+                && $request->getrequestUri() === '/'
+            ) {
+                return redirect()->route('production-calendar.index');
             }
 
             if ($request->user()->hasRole($role)) {

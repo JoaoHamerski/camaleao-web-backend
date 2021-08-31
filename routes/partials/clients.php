@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientsController;
 
-Route::middleware('role:gerencia,atendimento,design')->group(function () {
+Route::middleware('role:gerencia,atendimento')->group(function () {
     Route::get('/', [
         ClientsController::class,
         'index'
@@ -11,7 +11,7 @@ Route::middleware('role:gerencia,atendimento,design')->group(function () {
 });
 
 Route::prefix('clientes')->group(function () {
-    Route::middleware('role:gerencia,atendimento,design')->group(function () {
+    Route::middleware('role:gerencia,atendimento')->group(function () {
         Route::get('/list', [
             ClientsController::class,
             'list'

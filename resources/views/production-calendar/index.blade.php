@@ -3,5 +3,7 @@
 @section('title', 'Calendário de Produção')
 
 @section('content')
-<production-calendar :is-production="{{ Auth::user()->isProduction() ? 'true' : 'false' }}"></production-calendar>
+  <production-calendar
+    :role-id="{{ Auth::user()->role_id }}"
+  ></production-calendar>
 @endsection

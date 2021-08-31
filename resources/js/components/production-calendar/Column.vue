@@ -10,9 +10,9 @@ export default {
     AppTransitionGroup
   },
   props: {
-    isProduction: {
-      type: Boolean,
-      default: false
+    roleId: {
+      type: Number,
+      required: true
     },
     date: {
       type: Object,
@@ -120,7 +120,7 @@ export default {
         >
 
         <label
-          v-if="!isProduction"
+          v-if="[1, 2, 3].includes(roleId)"
           v-show="date.isActive"
           for="image-upload"
           class="btn btn-outline-success btn-sm mb-2 ml-n2"
@@ -144,7 +144,7 @@ export default {
             :key="order.id"
             class="mb-3 px-1 has-divider"
             :is-active="date.isActive"
-            :is-production="isProduction"
+            :role-id="roleId"
             :order="order"
             @cancel="onCancel"
             @created="onCreated"
