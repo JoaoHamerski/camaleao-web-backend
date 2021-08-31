@@ -236,10 +236,12 @@ export default {
       </div>
     </div>
 
-    <div class="mt-3 position-relative">
-      <AppLoading v-if="isLoading" />
-
+    <AppLoading v-if="isLoading" />
+    <div
+      class="mt-3 position-relative"
+    >
       <Carousel
+        :min-swipe-distance="80"
         :per-page="1"
         :per-page-custom="[[576, 2], [768, 3], [992, 4], [1200, 6]]"
       >
