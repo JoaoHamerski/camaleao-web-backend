@@ -101,7 +101,7 @@ export default {
       </li>
     </ul>
 
-    <tempalte v-if="!isProduction">
+    <tempalate v-if="!isProduction">
       <div
         v-if="order.is_pre_registered && order.reminder"
         class="m-2"
@@ -122,6 +122,6 @@ export default {
           class="card-link stretched-link small font-weight-bold"
         >{{ order.is_pre_registered ? 'COMPLETAR REGISTRO ' : 'VER PEDIDO' }}</a>
       </div>
-    </tempalte>
+    </tempalate>
   </div>
 </template>
