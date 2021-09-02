@@ -5,7 +5,7 @@ require('./components/components')
 require('./pwa')
 
 // Hacky solution to handle vue DOM render with jQuery code
-$(document).on('vue-loaded', function() {
+$(document).on('vue-loaded', function () {
   require('./helpers')
   require('./custom')
   require('./sidebar')
@@ -16,7 +16,7 @@ import {swalToast, swalModal} from './swal'
 import VueObserveVisibility from 'vue-observe-visibility'
 
 const plugin = {
-  install(Vue) {
+  install (Vue) {
     Vue.prototype.$helpers = helpers
     Vue.prototype.$toast = swalToast
     Vue.prototype.$modal = swalModal
@@ -29,7 +29,7 @@ Vue.use(VueObserveVisibility)
 
 new Vue({
   el: '#app',
-  mounted() {
+  mounted () {
     $(document).trigger('vue-loaded')
   }
 })

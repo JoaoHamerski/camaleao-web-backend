@@ -2,7 +2,7 @@
 import Form from '../../util/Form'
 
 export default {
-  data: function() {
+  data: function () {
     return {
       cities: [],
       states: [],
@@ -12,7 +12,7 @@ export default {
       })
     }
   },
-  mounted() {
+  mounted () {
     this.$on('cities-selected', cities => {
       this.cities = cities
     })
@@ -23,7 +23,7 @@ export default {
       })
   },
   methods: {
-    onSubmit() {
+    onSubmit () {
       this.form.cities_ids = this.cities.map(city => city.id)
 
       this.form.isLoading = true

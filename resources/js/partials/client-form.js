@@ -3,7 +3,7 @@ import { loadingBtn, dispatchErrorMessages, getLocationURL } from '@/helpers'
 
 applyCleave($('[name=phone]'), cleavePhone)
 
-$('#btnCreateClient').click(function(e) {
+$('#btnCreateClient').click(function (e) {
   e.preventDefault()
   const $btn = $(this)
 
@@ -24,7 +24,7 @@ $('#btnCreateClient').click(function(e) {
     })
 })
 
-$('#btnEditClient').click(function(e) {
+$('#btnEditClient').click(function (e) {
   e.preventDefault()
 
   const $btn = $(this)

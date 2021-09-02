@@ -3,7 +3,7 @@ import { getLocationURL, loadingBtn, dispatchErrorMessages } from '@/helpers'
 
 applyCleave($('[name*=dia]'), cleaveDate)
 
-$('.btn-view-detail').on('click', function(e) {
+$('.btn-view-detail').on('click', function (e) {
   e.preventDefault()
 
   const id = $(this).parents('tr').attr('data-expense-id')
@@ -24,11 +24,11 @@ $('.btn-view-detail').on('click', function(e) {
     })
 })
 
-$('.btn-today').on('click', function() {
+$('.btn-today').on('click', function () {
   $('[name=dia_final]').val('')
 })
 
-$('.btn-current-week').on('click', function(e) {
+$('.btn-current-week').on('click', function (e) {
   e.preventDefault()
 
   const current = new Date
@@ -41,7 +41,7 @@ $('.btn-current-week').on('click', function(e) {
   $('[name=dia_final]').val(new Intl.DateTimeFormat('pt-BR').format(lastDay))
 })
 
-$('.btn-current-month').on('click', function(e) {
+$('.btn-current-month').on('click', function (e) {
   e.preventDefault()
 
   const date = new Date()
@@ -52,7 +52,7 @@ $('.btn-current-month').on('click', function(e) {
   $('[name=dia_final]').val(new Intl.DateTimeFormat('pt-BR').format(lastDay))
 })
 
-$('#btnFilter').on('click', function(e) {
+$('#btnFilter').on('click', function (e) {
   e.preventDefault()
 
   const $btn = $(this)

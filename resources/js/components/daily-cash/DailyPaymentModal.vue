@@ -6,7 +6,7 @@ export default {
     DailyPaymentForm
   },
   methods: {
-    onPaymentCreated() {
+    onPaymentCreated () {
       $(this.$refs.modal.$el).modal('hide')
       this.$emit('created')
     }

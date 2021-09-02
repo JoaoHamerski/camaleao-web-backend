@@ -5,13 +5,13 @@ export default {
   components: {
     PendenciesList
   },
-  mounted() {
+  mounted () {
     this.$on('refresh-pendencies', () => {
       this.$refs.pendenciesList.$emit('refresh-pendencies')
     })
   },
   methods: {
-    onLoadPendencies(date) {
+    onLoadPendencies (date) {
       $(this.$refs.modal.$el).modal('hide')
       this.$emit('load-pendencies', date)
     }

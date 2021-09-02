@@ -4,7 +4,7 @@ require('cleave.js/dist/addons/cleave-phone.br.js')
 
 // Função que aplica a mascara de cleave.js
 export const applyCleave = function (elements, options) {
-  elements.each(function() {
+  elements.each(function () {
     new Cleave(this, options)
   })
 }
@@ -20,7 +20,7 @@ export const cleavePhone = {
   phoneRegionCode: 'BR'
 }
 
-export const cleaveNumericInt = function(length) {
+export const cleaveNumericInt = function (length) {
   return {
     blocks: [length],
     numericOnly: true,

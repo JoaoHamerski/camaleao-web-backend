@@ -25,7 +25,7 @@
     </x-slot>
 
     <x-slot name="body">
-      <commissions-list user-role="{{Auth::user()->role->name}}"></commissions-list>
+      <the-commissions user-role="{{Auth::user()->role->name}}"></the-commissions>
     </x-slot>
   </x-card>
 @endsection

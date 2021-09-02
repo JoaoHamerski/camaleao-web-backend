@@ -16,14 +16,14 @@ export default {
     }
   },
   computed: {
-    enterActiveClass() {
+    enterActiveClass () {
       if (this.enter === undefined) {
         return ''
       }
 
       return `animate__animated animate__${this.enter} animate__${this.speed}`
     },
-    leaveActiveClass() {
+    leaveActiveClass () {
       if (this.leave === undefined) {
         return ''
       }

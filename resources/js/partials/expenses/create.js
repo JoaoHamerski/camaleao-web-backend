@@ -10,10 +10,10 @@ applyCleave($('[name=all_date]'), cleaveDate)
 /*
 	Pega a soma do valor total dos inputs de valor
 */
-function getTotalValue() {
+function getTotalValue () {
   let total = 0
 
-  $('[name*=value]').each(function() {
+  $('[name*=value]').each(function () {
     total += +sanitizeMoney($(this).val())
   })
 
@@ -41,7 +41,7 @@ observer.observe(target, {attributes: true, childList: true, characterData: true
 /*
 	Adiciona um novo formulário em linha quando clicado no botão de mais
 */
-$('#btnNewExpense').on('click', function(e) {
+$('#btnNewExpense').on('click', function (e) {
   e.preventDefault()
 
   const $btn = $(this)
@@ -61,17 +61,17 @@ $('#btnNewExpense').on('click', function(e) {
       $('#btnNewExpense').parent().before(response.data.view)
     })
     .catch(() => {})
-    .then(function() {
+    .then(function () {
       loadingBtn($btn, false)
     })
 })
 
-$(document).on('input', 'input[type=file]', function() {
+$(document).on('input', 'input[type=file]', function () {
   const files = $(this)[0].files || null
   const names = []
 
   if (files.length > 0) {
-    Object.entries(files).forEach(function(el) {
+    Object.entries(files).forEach(function (el) {
       names.push(el[1].name)
     })
 
@@ -84,7 +84,7 @@ $(document).on('input', 'input[type=file]', function() {
 /*
 	Atualiza o valor total de despesas ao alterar qualquer input value
 */
-$('#formExpenses').on('input', '[name*=value]', function() {
+$('#formExpenses').on('input', '[name*=value]', function () {
   const formatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL'
@@ -93,14 +93,14 @@ $('#formExpenses').on('input', '[name*=value]', function() {
   $('#totalValue').text(formatter.format(getTotalValue()))
 })
 
-$('[name=all_date]').on('input focus', function() {
+$('[name=all_date]').on('input focus', function () {
   $('[name*=date]').val($(this).val())
 })
 
 /*
 	Deleta o elemento responsável pelo formulário em linha
 */
-$('#formExpenses').on('click', '.btn-delete', function(e) {
+$('#formExpenses').on('click', '.btn-delete', function (e) {
   e.preventDefault()
 
   $(this).closest('.form-inline-wrapper').remove()
@@ -110,7 +110,7 @@ $('#formExpenses').on('click', '.btn-delete', function(e) {
 	Envia os dados para o servidor para verificar se há erros,
 	se não houver, redireciona para a página retornada pelo servidor.
 */
-$('#formExpenses button[type="submit"]').on('click', function(e) {
+$('#formExpenses button[type="submit"]').on('click', function (e) {
   e.preventDefault()
 
   const formData = new FormData(document.querySelector('#formExpenses'))
@@ -128,7 +128,7 @@ $('#formExpenses button[type="submit"]').on('click', function(e) {
     })
 })
 
-$(document).on('change', '[name*=expense_type_id]', function() {
+$(document).on('change', '[name*=expense_type_id]', function () {
   const dataIndex = $(this).parents('.form-inline-wrapper').attr('data-index')
   const formGroup = `
 		<div class="form-row">

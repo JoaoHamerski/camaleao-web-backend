@@ -58,13 +58,13 @@ export default {
      * @param date Moment instance
      * @return Boolean
      */
-    isToday(date) {
+    isToday (date) {
       return date.isSame(moment(), 'd')
     },
-    onCancel(order) {
+    onCancel (order) {
       this.$emit('order-cancel', order)
     },
-    onCreated(order) {
+    onCreated (order) {
       this.$emit('order-created', order)
     },
     onHeaderClick () {
@@ -72,7 +72,7 @@ export default {
         this.$emit('toggle', this.date)
       }
     },
-    onImageUploaded(event) {
+    onImageUploaded (event) {
       if (event.target.files && event.target.files[0]) {
         const reader = new FileReader()
 

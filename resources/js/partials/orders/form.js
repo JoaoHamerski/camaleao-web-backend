@@ -18,12 +18,12 @@ applyCleave($('[name=down_payment]'), cleaveValueBRL)
 applyCleave($('[name=delivery_date]'), cleaveDate)
 applyCleave($('[name=production_date]'), cleaveDate)
 
-$(document).on('input', 'input[type=file]', function() {
+$(document).on('input', 'input[type=file]', function () {
   const files = $(this)[0].files || null
   const names = []
 
   if (files.length > 0) {
-    Object.entries(files).forEach(function(el) {
+    Object.entries(files).forEach(function (el) {
       names.push(el[1].name)
     })
 
@@ -33,7 +33,7 @@ $(document).on('input', 'input[type=file]', function() {
   }
 })
 
-$('#btnCreateOrder').on('click', function(e) {
+$('#btnCreateOrder').on('click', function (e) {
   e.preventDefault()
 
   const formData = new FormData(document.querySelector('#formCreateOrder'))
@@ -51,7 +51,7 @@ $('#btnCreateOrder').on('click', function(e) {
     })
 })
 
-$('#btnUpdateOrder').on('click', function(e) {
+$('#btnUpdateOrder').on('click', function (e) {
   e.preventDefault()
 
   const $btn = $(this)
@@ -70,7 +70,7 @@ $('#btnUpdateOrder').on('click', function(e) {
     })
 })
 
-$('.btn-delete-image, .btn-delete-payment-voucher').on('click', function(e) {
+$('.btn-delete-image, .btn-delete-payment-voucher').on('click', function (e) {
   e.preventDefault()
 
   const filepath = $(this).prev().attr('src') || $(this).prev().attr('href')
@@ -90,7 +90,7 @@ $('.btn-delete-image, .btn-delete-payment-voucher').on('click', function(e) {
     })
 })
 
-$('[name=down_payment]').on('input', function() {
+$('[name=down_payment]').on('input', function () {
   if ($(this).val().replace('R$ ', '') == '') {
     $('[name=payment_via_id]').attr('disabled', 'disabled')
   } else {

@@ -8,7 +8,7 @@ export default {
       default: false
     },
   },
-  data: function() {
+  data: function () {
     return {
       city: null,
       states: [],
@@ -18,7 +18,7 @@ export default {
       })
     }
   },
-  mounted() {
+  mounted () {
     this.$on('city-selected', city => {
       this.city = city
       this.form.name = city.name
@@ -35,7 +35,7 @@ export default {
       })
   },
   methods: {
-    onSubmit() {
+    onSubmit () {
       this.form.isLoading = true
 
       if (this.isEdit) {
@@ -44,7 +44,7 @@ export default {
         this.create()
       }
     },
-    create() {
+    create () {
       this.form.isLoading = true
 
       this.form.submit('POST', '/gerenciamento/cidades/')
@@ -58,7 +58,7 @@ export default {
           this.form.isLoading = false
         })
     },
-    update() {
+    update () {
       this.form.submit('PATCH', '/gerenciamento/cidades/' + this.city.id)
         .then(() => {
           this.$toast.success('Cidade atualizada')

@@ -11,7 +11,10 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: 12,
-    sourceType: 'module'
+    sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true
+    }
   },
   plugins: [
     'vue'
@@ -28,6 +31,7 @@ module.exports = {
     'vue/component-tags-order': ['error', {
       order: [ 'script', 'template', 'style' ]
     }],
+    'space-before-function-paren': ['error']
   },
   globals: {
     axios: true,

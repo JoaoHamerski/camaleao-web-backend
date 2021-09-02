@@ -12,9 +12,9 @@
     </div>
 
     <div class="card-body">
-      <daily-cash-list
+      <the-daily-cash
         :user-role="{{ Auth::user()->role_id }}"
-      ></daily-cash-list>
+      ></the-daily-cash>
     </div>
   </div>
 

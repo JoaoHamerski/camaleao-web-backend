@@ -4,7 +4,7 @@ import {
   dispatchErrorMessages
 } from '@/helpers'
 
-$('#btnRegisterUser').on('click', function(e) {
+$('#btnRegisterUser').on('click', function (e) {
   e.preventDefault()
 
   const $btn = $(this)
@@ -27,7 +27,7 @@ $('#btnRegisterUser').on('click', function(e) {
     })
 })
 
-$('.btn-delete-user').on('click', function(e) {
+$('.btn-delete-user').on('click', function (e) {
   e.preventDefault()
 
   const id = $(this).parents('[data-id]').attr('data-id')
@@ -51,7 +51,7 @@ $('.btn-delete-user').on('click', function(e) {
     })
 })
 
-$('.btn-change-role').on('click', function(e) {
+$('.btn-change-role').on('click', function (e) {
   e.preventDefault()
 
   const id = $(this).parents('[data-id]').attr('data-id')
@@ -62,7 +62,7 @@ $('.btn-change-role').on('click', function(e) {
     })
 })
 
-$(document).on('click', '#btnSaveChangedRole', function(e) {
+$(document).on('click', '#btnSaveChangedRole', function (e) {
   e.preventDefault()
 
   const id = $(this).attr('data-id')

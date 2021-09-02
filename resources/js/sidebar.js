@@ -1,6 +1,6 @@
 import { setCookie } from '@/helpers'
 
-$('#btnSidebar').click(function() {
+$('#btnSidebar').click(function () {
   $(this).toggleClass('is-active')
   $('.sidebar').toggleClass('is-active')
 
@@ -17,12 +17,12 @@ $('#btnSidebar').click(function() {
   }
 })
 
-$(document).on('touchstart', function(e) {
+$(document).on('touchstart', function (e) {
   const touchStartX = e.touches[0].clientX
 
   if (touchStartX < 40 && ! $('.sidebar').hasClass('is-active') ||
     ($('.sidebar').hasClass('is-active') && touchStartX  > $(document).width() - 200)) {
-    $(document).on('touchmove', function(e) {
+    $(document).on('touchmove', function (e) {
       let touchMoveX = (e.touches[0].clientX * 100) / $(document).width()
       touchMoveX = -100 +touchMoveX
 
@@ -33,7 +33,7 @@ $(document).on('touchstart', function(e) {
   }
 })
 
-$(document).on('touchend', function() {
+$(document).on('touchend', function () {
   $('.sidebar').removeAttr('style')
 
   if (typeof window.touchMoveX !== 'undefined' && window.touchMoveX != null) {
@@ -52,7 +52,7 @@ $(document).on('touchend', function() {
   window.touchMoveX = null
 })
 
-$('.sidebar').on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function() {
+$('.sidebar').on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function () {
   if ($(window).width() < 576) {
     $(this).css({transition : 'none'})
   }

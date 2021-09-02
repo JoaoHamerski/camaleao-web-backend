@@ -6,7 +6,7 @@ export default {
   components:{
     Multiselect
   },
-  data: function() {
+  data: function () {
     return {
       isLoading: true,
       city: {},
@@ -16,7 +16,7 @@ export default {
       })
     }
   },
-  mounted() {
+  mounted () {
     this.$on('city-selected', city => {
       this.isLoading = true
       const index = this.cities.findIndex(_city => _city.id === city.id)
@@ -46,7 +46,7 @@ export default {
     })
   },
   methods: {
-    onSubmit() {
+    onSubmit () {
       this.form.isLoading = true
       this.form.submit('POST', `/gerenciamento/cidades/${this.city.id}/replace`)
         .then(() => {

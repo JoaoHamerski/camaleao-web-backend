@@ -3,7 +3,7 @@ import { getLocationURL, loadingBtn, dispatchErrorMessages } from '@/helpers'
 
 applyCleave($('[name*=data]'), cleaveDate)
 
-$('#formGenerateReport button[type=submit]').on('click', function(e) {
+$('#formGenerateReport button[type=submit]').on('click', function (e) {
   e.preventDefault()
 
   const $btn = $(this)
@@ -23,12 +23,12 @@ $('#formGenerateReport button[type=submit]').on('click', function(e) {
     .catch(error => {
       dispatchErrorMessages(error.response.data.errors)
     })
-    .then(function() {
+    .then(function () {
       loadingBtn($btn, false)
     })
 })
 
-$('#formGenerateReportProduction button[type=submit]').on('click', function(e) {
+$('#formGenerateReportProduction button[type=submit]').on('click', function (e) {
   e.preventDefault()
 
   const $btn = $(this)
@@ -46,12 +46,12 @@ $('#formGenerateReportProduction button[type=submit]').on('click', function(e) {
     .catch(error => {
       dispatchErrorMessages(error.response.data.errors)
     })
-    .then(function() {
+    .then(function () {
       loadingBtn($btn, false)
     })
 })
 
-$(document).on('click blur type focus', '[name=data_de_fechamento]', function() {
+$(document).on('click blur type focus', '[name=data_de_fechamento]', function () {
   if ($(this).val() == '') {
     $('[name="em_aberto"]').removeAttr('disabled')
     $('[name="em_aberto"]')[0].checked = true

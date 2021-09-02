@@ -5,7 +5,7 @@ export default {
   components: {
     CityForm
   },
-  mounted() {
+  mounted () {
     this.$on('pre-form', search => {
       this.$refs.cityForm.$emit('pre-form', search)
       $(this.$refs.modal.$el).modal('show')
@@ -13,7 +13,7 @@ export default {
     })
   },
   methods: {
-    onCreate(city) {
+    onCreate (city) {
       $(this.$refs.modal.$el).modal('hide')
       this.$emit('created', city)
     }

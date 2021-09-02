@@ -34,7 +34,7 @@ export default {
       default: ''
     }
   },
-  data: function() {
+  data: function () {
     return {
       masks,
       isLoading: false,
@@ -62,7 +62,7 @@ export default {
     }
   },
   computed: {
-    totalQuantity() {
+    totalQuantity () {
       let total  = 0
 
       for (const type of this.clothingTypes) {
@@ -73,10 +73,10 @@ export default {
 
       return total
     },
-    totalValue() {
+    totalValue () {
       return this.totalClothingsValue - accounting.unformat(this.form.discount, ',')
     },
-    totalClothingsValue() {
+    totalClothingsValue () {
       let total = 0
 
       for (const type of this.clothingTypes) {
@@ -89,7 +89,7 @@ export default {
       return total
     },
   },
-  mounted() {
+  mounted () {
     this.populateClothingTypes()
     this.populateVias()
 
@@ -102,7 +102,7 @@ export default {
       this.$toast.success('Cliente criado com sucesso!')
       this.$refs.modal.$refs.modal.close()
     },
-    asyncFindClients(search) {
+    asyncFindClients (search) {
       if (! search.length) {
         this.clients.items = []
         return
@@ -120,12 +120,12 @@ export default {
           this.clients.isLoading = false
         })
     },
-    deleteFile(file, field) {
+    deleteFile (file, field) {
       const index = this.form[field].findIndex(_file => _file.key === file.key)
 
       this.form[field].splice(index, 1)
     },
-    async appendFileToForm(event, field) {
+    async appendFileToForm (event, field) {
       const toBase64 = file => new Promise((resolve, reject) => {
         const reader = new FileReader()
         reader.readAsDataURL(file)
@@ -143,7 +143,7 @@ export default {
         })
       }
     },
-    create() {
+    create () {
       this.form.isLoading = true
 
       this.form.submit('POST', window.location.href)
@@ -157,7 +157,7 @@ export default {
           this.form.isLoading = false
         })
     },
-    update() {
+    update () {
       this.form.isLoading = true
 
       this.form.submit('PATCH', window.location.href)
@@ -171,27 +171,27 @@ export default {
           this.form.isLoading = false
         })
     },
-    onSubmit() {
+    onSubmit () {
       if (this.isEdit) {
         this.update()
       } else {
         this.create()
       }
     },
-    clearAllClothingTypes() {
+    clearAllClothingTypes () {
       for (const type of this.clothingTypes) {
         this.form[`quantity_${type.key}`] = ''
         this.form[`value_${type.key}`] = ''
         this.form.quantity = '1'
       }
     },
-    evaluateTotal(quantity, value) {
+    evaluateTotal (quantity, value) {
       const sanitizedValue = accounting.unformat(value, ','),
         result = (quantity * sanitizedValue)
 
       return result
     },
-    populateClothingTypes() {
+    populateClothingTypes () {
       axios.get('/tipos-de-roupas/list', {
         params: {
           hidden: false
@@ -208,13 +208,13 @@ export default {
           }
         })
     },
-    populateVias() {
+    populateVias () {
       axios.get('/pagamentos/vias/list')
         .then(response => {
           this.paymentVias.push(...response.data.vias)
         })
     },
-    populateForm() {
+    populateForm () {
       this.isLoading = true
 
       axios.get(`/pedidos/${this.orderId}/json`)

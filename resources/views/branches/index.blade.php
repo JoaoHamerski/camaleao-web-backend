@@ -9,9 +9,10 @@
         <i class="fas fa-building fa-fw mr-1 text-white"></i>
         Gerenciamento de filiais
       </div>
-  
+
       <div class="card-body">
-        <branches-list />
+
+        <the-branches></the-branches>
       </div>
     </div>
   </div>

@@ -4,7 +4,7 @@ import { getLocationURL, loadingBtn, dispatchErrorMessages } from '@/helpers'
 applyCleave($('[name=value]'), cleaveValueBRL)
 applyCleave($('[name=date]'), cleaveDate)
 
-$('a[data-attach]').on('click', function(e) {
+$('a[data-attach]').on('click', function (e) {
   e.preventDefault()
 
   const option = $(this).attr('data-attach')
@@ -18,7 +18,7 @@ $('a[data-attach]').on('click', function(e) {
     })
 })
 
-$('#btnDeleteOrder').on('click', function(e) {
+$('#btnDeleteOrder').on('click', function (e) {
   e.preventDefault()
 
   Swal.fire({
@@ -47,7 +47,7 @@ $('#btnDeleteOrder').on('click', function(e) {
     })
 })
 
-$('#btnAddNote').on('click', function(e) {
+$('#btnAddNote').on('click', function (e) {
   e.preventDefault()
   const $btn = $(this)
 
@@ -65,12 +65,12 @@ $('#btnAddNote').on('click', function(e) {
     .catch(error => {
       dispatchErrorMessages(error.response.data.errors)
     })
-    .then(function() {
+    .then(function () {
       loadingBtn($btn, false)
     })
 })
 
-$(document).on('click', '.btn-delete-item', function(e) {
+$(document).on('click', '.btn-delete-item', function (e) {
   e.preventDefault()
   const $itemWrapper = $(this).parents('[data-id]')
   const id = $itemWrapper.attr('data-id')
@@ -82,7 +82,7 @@ $(document).on('click', '.btn-delete-item', function(e) {
     })
 })
 
-$('#btnAddPayment').on('click', function(e) {
+$('#btnAddPayment').on('click', function (e) {
   e.preventDefault()
 
   const $btn = $(this),
@@ -97,7 +97,7 @@ $('#btnAddPayment').on('click', function(e) {
     .catch(error => {
       dispatchErrorMessages(error.response.data.errors)
     })
-    .then(function() {
+    .then(function () {
       loadingBtn($btn, false)
     })
 })

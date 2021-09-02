@@ -1,29 +1,29 @@
 import Vue from 'vue'
 
 class Errors {
-  constructor() {
+  constructor () {
     this.errors = { }
   }
 
-  get(field) {
+  get (field) {
     if (this.errors[field]) {
       return this.errors[field][0]
     }
   }
 
-  has(field) {
+  has (field) {
     return this.errors.hasOwnProperty.call(field)
   }
 
-  any() {
+  any () {
     return this.count() > 0
   }
 
-  count() {
+  count () {
     return Object.keys(this.errors).length
   }
 
-  clear(field = null) {
+  clear (field = null) {
     if (field == '*') {
       this.errors = {}
 
@@ -45,7 +45,7 @@ class Errors {
     }
   }
 
-  record(errors) {
+  record (errors) {
     this.errors = errors
   }
 }

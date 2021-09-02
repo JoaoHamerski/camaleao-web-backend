@@ -5,12 +5,12 @@ export default {
   components: {
     BranchForm
   },
-  data: function() {
+  data: function () {
     return {
       branch: null
     }
   },
-  mounted() {
+  mounted () {
     this.$on('branch-selected', branch => {
       this.branch = branch
     })
@@ -24,7 +24,7 @@ export default {
     })
   },
   methods: {
-    onUpdated() {
+    onUpdated () {
       this.$emit('refresh')
 
       $(this.$refs.modal.$el).modal('hide')

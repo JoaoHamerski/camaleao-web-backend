@@ -11,7 +11,7 @@
     </div>
 
     <div class="card-body">
-      <clothing-types-list></clothing-types-list>
+      <the-clothing-types></the-clothing-types>
     </div>
   </div>
 @endsection

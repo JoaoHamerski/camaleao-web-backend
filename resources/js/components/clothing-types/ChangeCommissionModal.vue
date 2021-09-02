@@ -10,7 +10,7 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       masks,
       orderComission: 0,
@@ -19,7 +19,7 @@ export default {
       })
     }
   },
-  mounted() {
+  mounted () {
     $(this.$refs.modal.$el).on('show.bs.modal', async () => {
       if (this.clothingType) {
         this.populateIfClothingTypes()
@@ -33,12 +33,12 @@ export default {
     })
   },
   methods: {
-    populateIfClothingTypes() {
+    populateIfClothingTypes () {
       this.form.value = this.$helpers.valueToBRL(
         this.clothingType.commission
       )
     },
-    populateIfOrderCommission() {
+    populateIfOrderCommission () {
       return new Promise((resolve) => {
         axios.get('/pedidos/order-commission')
           .then(response => {
@@ -49,7 +49,7 @@ export default {
           })
       })
     },
-    changeClothingTypesComission() {
+    changeClothingTypesComission () {
       this.form.isLoading = true
       this.form.submit('POST', `/tipos-de-roupas/${this.clothingType.id}/change-commission`)
         .then(() => {
@@ -62,7 +62,7 @@ export default {
           this.form.isLoading = false
         })
     },
-    changeOrderComission() {
+    changeOrderComission () {
       this.form.isLoading = true
       this.form.submit('POST', '/pedidos/change-order-commission')
         .then(() => {
@@ -74,7 +74,7 @@ export default {
           $(this.$refs.modal.$el).modal('hide')
         })
     },
-    onSubmit() {
+    onSubmit () {
       if (this.isOrderComission) {
         this.changeOrderComission()
 

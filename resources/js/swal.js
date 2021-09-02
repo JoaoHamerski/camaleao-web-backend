@@ -35,7 +35,7 @@ const swalToastInit = Swal.mixin({
 })
 
 export const swalToast = {
-  success(message) {
+  success (message) {
     return swalToastInit.fire({
       icon: 'success',
       title: message,
@@ -43,7 +43,7 @@ export const swalToast = {
     })
   },
 
-  warning(message) {
+  warning (message) {
     return swalToastInit.fire({
       icon: 'warning',
       iconHtml: '<i class="fas fa-exclamation-triangle"></i>',
@@ -52,7 +52,7 @@ export const swalToast = {
     })
   },
 
-  info(message) {
+  info (message) {
     return swalToastInit.fire({
       icon: 'info',
       iconHtml: '<i class="fas fa-info-circle"></i>',
@@ -61,7 +61,7 @@ export const swalToast = {
     })
   },
 
-  error(message) {
+  error (message) {
     return swalToastInit.fire({
       icon: 'error',
       iconHtml: '<i class="fas fa-times"></i>',

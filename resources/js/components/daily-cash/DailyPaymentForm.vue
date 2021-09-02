@@ -9,7 +9,7 @@ export default {
     Tippy: TippyComponent,
     Multiselect
   },
-  data() {
+  data () {
     return {
       masks,
       vias: [],
@@ -34,11 +34,11 @@ export default {
       })
     }
   },
-  mounted() {
+  mounted () {
     this.populateVias()
   },
   methods: {
-    clearClientAndOrderErrors() {
+    clearClientAndOrderErrors () {
       this.form.errors.clear([
         'client.id',
         'client',
@@ -46,7 +46,7 @@ export default {
         'order.id'
       ])
     },
-    setIsNewClient(isNewClient) {
+    setIsNewClient (isNewClient) {
       this.clearClientAndOrderErrors()
 
       this.form.client = ''
@@ -62,13 +62,13 @@ export default {
 
       this.form.isNewOrder = false
     },
-    setIsNewOrder(isNewOrder) {
+    setIsNewOrder (isNewOrder) {
       this.clearClientAndOrderErrors()
 
       this.form.order = ''
       this.form.isNewOrder = isNewOrder
     },
-    onSubmit() {
+    onSubmit () {
       this.form.isLoading = true
 
       this.form.submit('POST', '/caixa-diario/clientes/daily-payment')
@@ -82,7 +82,7 @@ export default {
           this.form.isLoading = false
         })
     },
-    onClientSelect(client) {
+    onClientSelect (client) {
       this.orders.isLoading = true
 
       axios.get(`/cliente/${client.id}/pedidos/list`)
@@ -100,7 +100,7 @@ export default {
           this.orders.isLoading = false
         })
     },
-    asyncFindClients(search) {
+    asyncFindClients (search) {
       if (! search.length) {
         this.clients.items = []
         return
@@ -118,7 +118,7 @@ export default {
           this.clients.isLoading = false
         })
     },
-    populateVias() {
+    populateVias () {
       axios.get('/pagamentos/vias/list')
         .then(response => {
           this.vias = response.data.vias

@@ -1,6 +1,5 @@
 {
     "recommendations": [
-        "shevaua.phpcs",
         "bmewburn.vscode-intelephense-client",
         "mehedidracula.php-namespace-resolver",
         "syler.sass-indented",

@@ -10,7 +10,7 @@ export default {
     }
   },
   methods: {
-    create() {
+    create () {
       this.form.isLoading = true
 
       this.form.submit('POST', '/tipos-de-roupas')
@@ -24,7 +24,7 @@ export default {
           this.form.isLoading = false
         })
     },
-    onSubmit() {
+    onSubmit () {
       this.$modal.fire({
         icon: 'info',
         iconHtml: '<i class="fas fa-exclamation-circle"></i>',

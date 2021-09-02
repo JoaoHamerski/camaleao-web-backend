@@ -4,7 +4,7 @@ import {
   dispatchErrorMessages
 } from '@/helpers'
 
-$('[data-target="#changePaymentModal"]').on('click', function(e) {
+$('[data-target="#changePaymentModal"]').on('click', function (e) {
   e.preventDefault()
 
   const id = $(this).parents('[data-id]').attr('data-id')
@@ -15,7 +15,7 @@ $('[data-target="#changePaymentModal"]').on('click', function(e) {
     })
 })
 
-$(document).on('click', '#btnChangePayment', function(e) {
+$(document).on('click', '#btnChangePayment', function (e) {
   e.preventDefault()
 
   const id = $(this).attr('data-id'),

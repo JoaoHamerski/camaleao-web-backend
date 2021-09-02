@@ -24,7 +24,7 @@ export default {
     })
   },
   methods: {
-    open() {
+    open () {
       $(this.$refs.modal).modal('show')
     },
     close () {

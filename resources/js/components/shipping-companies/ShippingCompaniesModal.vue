@@ -2,7 +2,7 @@
 import Form from '../../util/Form'
 
 export default {
-  data: function() {
+  data: function () {
     return {
       companyName: '',
       isLoading: false,
@@ -13,7 +13,7 @@ export default {
       })
     }
   },
-  mounted() {
+  mounted () {
     this.$root.$on('REFRESH_SHIPPING_COMPANIES_LIST', () => {
       axios.get('/transportadoras/list')
         .then(response => {
@@ -24,14 +24,14 @@ export default {
     })
   },
   methods: {
-    enableEdit(shippingCompany) {
+    enableEdit (shippingCompany) {
       for (const company of this.companies) {
         company.edit = false
       }
 
       shippingCompany.edit = true
     },
-    update(shippingCompany, name) {
+    update (shippingCompany, name) {
       this.isLoading = true
 
       axios.patch(`/transportadoras/${shippingCompany.id}`, { name })
@@ -46,7 +46,7 @@ export default {
           this.isLoading = false
         })
     },
-    destroy(shippingCompany) {
+    destroy (shippingCompany) {
 
       this.$modal.fire({
         icon: 'error',
@@ -74,7 +74,7 @@ export default {
           }
         })
     },
-    onSubmit() {
+    onSubmit () {
       this.form.isLoading = true
 
       this.form.submit('POST', '/transportadoras')

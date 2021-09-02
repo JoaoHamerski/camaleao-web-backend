@@ -6,7 +6,7 @@ export default {
     CityForm
   },
   methods: {
-    onUpdate() {
+    onUpdate () {
       $(this.$refs.modal.$el).modal('hide')
       this.$emit('updated')
     }

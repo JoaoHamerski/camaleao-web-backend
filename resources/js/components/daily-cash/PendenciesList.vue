@@ -3,13 +3,13 @@ import moment from 'moment'
 moment.locale('pt-br')
 
 export default {
-  data() {
+  data () {
     return {
       pendencies: [],
       moment
     }
   },
-  mounted() {
+  mounted () {
     this.refresh()
 
     this.$on('refresh-pendencies', () => {
@@ -17,16 +17,16 @@ export default {
     })
   },
   methods: {
-    onItemClick(pendency) {
+    onItemClick (pendency) {
       this.$emit('load-pendencies', pendency.date_registered)
     },
-    refreshPendencies() {
+    refreshPendencies () {
       axios.get('/caixa-diario/get-pendencies')
         .then(response => {
           this.pendencies = response.data.pendencies
         })
     },
-    refresh() {
+    refresh () {
       this.refreshPendencies()
     }
   }

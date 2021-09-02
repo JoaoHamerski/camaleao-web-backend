@@ -4,7 +4,7 @@
 
 @section('content')
 
-  <div class="col-md-12 mx-auto mt-5"> 
+  <div class="col-md-12 mx-auto mt-5">
     <div class="card">
       <div class="card-header bg-primary text-white font-weight-bold">
         <i class="fas fa-city fa-fw mr-1 text-white"></i>
@@ -12,7 +12,7 @@
       </div>
 
       <div class="card-body">
-        <cities-list />
+        <the-cities></the-cities>
       </div>
     </div>
   </div>

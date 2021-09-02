@@ -9,7 +9,7 @@ export default {
   cnpj: [/\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/],
 
   // Formatação de telefone
-  phone: function(value) {
+  phone: function (value) {
     value = value.replaceAll(' ', '')
 
     if (value.length <= 8) {
@@ -39,7 +39,7 @@ export default {
     decimalSymbol: ','
   }),
 
-  numericInt: function(options) {
+  numericInt: function (options) {
     return createNumberMask({
       prefix: options.prefix ?? '',
       includeThousandsSeparator: options.includeThousandsSeparator ?? false,

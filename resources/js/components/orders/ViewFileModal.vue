@@ -9,7 +9,7 @@ export default {
     }
   },
   watch: {
-    file() {
+    file () {
       this.fileObject = null
 
       if (this.file) {

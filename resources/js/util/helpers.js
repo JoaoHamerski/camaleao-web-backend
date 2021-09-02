@@ -2,17 +2,17 @@ import _isEmpty from 'lodash/isEmpty'
 import _isEqual from 'lodash/isEqual'
 
 export default {
-  isEmpty(str) {
+  isEmpty (str) {
     return str === ''
             || str === null
             || str === undefined
             || str === false
   },
-  abbr(str) {
+  abbr (str) {
     let newStr = ''
     const splittedStr = str.split(' ')
 
-    splittedStr.forEach(function(word, index) {
+    splittedStr.forEach(function (word, index) {
       if (index != 0 && index != splittedStr.length - 1)
         newStr += word.charAt(0) + '. '
       else
@@ -21,7 +21,7 @@ export default {
 
     return newStr.trim()
   },
-  getObjectDiff(obj1, obj2) {
+  getObjectDiff (obj1, obj2) {
     const diff = Object.keys(obj1).reduce((result, key) => {
       if (! Object.prototype.hasOwnProperty.call(obj2, key)) {
         result.push(key)
@@ -34,7 +34,7 @@ export default {
 
     return diff
   },
-  getChangedItem(arr1, arr2) {
+  getChangedItem (arr1, arr2) {
     return arr1.filter((el, index) => {
       return Object.keys(el).some((prop) => {
         if (_isEmpty(arr2)) return
@@ -43,7 +43,7 @@ export default {
       })
     })[0]
   },
-  strLimit(str, limit, lastChars = null) {
+  strLimit (str, limit, lastChars = null) {
     let newStr = str
 
     if (str.length > limit) {
@@ -57,23 +57,23 @@ export default {
 
     return newStr
   },
-  removeChildren(element) {
+  removeChildren (element) {
     while(element.firstChild) {
       element.firstChild.remove()
     }
 
     return element
   },
-  valueToBRL(value) {
+  valueToBRL (value) {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
     }).format(value)
   },
-  getExtension(string) {
+  getExtension (string) {
     return string.substr(string.lastIndexOf('.') + 1)
   },
-  dataURLtoFile(dataurl, filename) {
+  dataURLtoFile (dataurl, filename) {
     const arr = dataurl.split(','),
       mime = arr[0].match(/:(.*?);/)[1],
       bstr = atob(arr[1]),
@@ -86,8 +86,8 @@ export default {
 
     return new File([u8arr], filename, {type: mime})
   },
-  mask(mask, str) {
-    const replaceAt = function(str, index, replacement) {
+  mask (mask, str) {
+    const replaceAt = function (str, index, replacement) {
       return str.substr(0, index) + replacement + str.substr(index + replacement.length)
     }
 
@@ -101,7 +101,7 @@ export default {
 
     return mask
   },
-  maskPhone(str)  {
+  maskPhone (str)  {
     if (! str) {
       return ''
     }

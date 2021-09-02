@@ -11,7 +11,7 @@ class Form {
     }
   }
 
-  reset() {
+  reset () {
     for (const field in this.originalData) {
       this[field] = ''
     }
@@ -19,7 +19,7 @@ class Form {
     this.errors.clear('*')
   }
 
-  data() {
+  data () {
     const data = {}
 
     for(const property in this.originalData) {
@@ -29,7 +29,7 @@ class Form {
     return data
   }
 
-  submit(method, url, headers = null) {
+  submit (method, url, headers = null) {
     let axiosConfig = {
       method, url, data: this.data()
     }
@@ -53,11 +53,11 @@ class Form {
     })
   }
 
-  onSuccess() {
+  onSuccess () {
 
   }
 
-  onFail(error) {
+  onFail (error) {
     this.errors.record(error)
   }
 }

@@ -17,7 +17,7 @@ export default {
       default: false
     }
   },
-  data: function() {
+  data: function () {
     return {
       masks,
       isLoading: false,
@@ -33,7 +33,7 @@ export default {
       })
     }
   },
-  mounted() {
+  mounted () {
     this.populateData()
 
     this.$on('city-created', async (city) => {
@@ -47,7 +47,7 @@ export default {
     })
   },
   methods: {
-    onCitySelected(city) {
+    onCitySelected (city) {
       this.form.branch_id = ''
       this.form.shipping_company_id = ''
 
@@ -63,7 +63,7 @@ export default {
         )
       }
     },
-    onSubmit() {
+    onSubmit () {
       this.$emit('loading', true)
       this.form.isLoading = true
 
@@ -73,7 +73,7 @@ export default {
         this.create()
       }
     },
-    create() {
+    create () {
       this.form.submit('POST', '/clientes')
         .then(() => {
           this.$emit('created')
@@ -84,7 +84,7 @@ export default {
           this.form.isLoading = false
         })
     },
-    update() {
+    update () {
       this.form.submit('PATCH', `/clientes/${this.id}/`)
         .then(() => {
           location.reload()
@@ -95,7 +95,7 @@ export default {
           this.form.isLoading = false
         })
     },
-    populateBranches() {
+    populateBranches () {
       return new Promise((resolve) => {
         axios.get('/gerenciamento/filiais/list', {
           params: {
@@ -108,7 +108,7 @@ export default {
           })
       })
     },
-    populateShippingCompanies() {
+    populateShippingCompanies () {
       return new Promise((resolve) => {
         axios.get('/transportadoras/list')
           .then(response => {
@@ -117,7 +117,7 @@ export default {
           })
       })
     },
-    populateCities() {
+    populateCities () {
       return new Promise((resolve) => {
         axios.get('/gerenciamento/cidades/list')
           .then(response => {
@@ -126,7 +126,7 @@ export default {
           })
       })
     },
-    populateForm() {
+    populateForm () {
       return new Promise((resolve) => {
         axios.get(`/clientes/${this.id}/json`)
           .then(response => {
@@ -157,7 +157,7 @@ export default {
           })
       })
     },
-    async populateData() {
+    async populateData () {
       this.isLoading = true
 
       await this.populateBranches()

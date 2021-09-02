@@ -1,6 +1,6 @@
 import { openInNewTab, loadingBtn } from '@/helpers'
 
-$(document).on('focus', 'input, select', function() {
+$(document).on('focus', 'input, select', function () {
   if ($(this).closest('form').is('[data-type="vue"]')) {
     return
   }
@@ -12,7 +12,7 @@ $(document).on('focus', 'input, select', function() {
   $(this).parent().next('.text-danger').remove()
 })
 
-$(document).on('click', '.btn-today', function(e) {
+$(document).on('click', '.btn-today', function (e) {
   e.preventDefault()
 
   const date = new Date()
@@ -28,7 +28,7 @@ $(document).on('click', '.btn-today', function(e) {
 
 $('[data-toggle="tooltip"]').tooltip()
 
-$('.clickable-link').on('mouseup', function(e) {
+$('.clickable-link').on('mouseup', function (e) {
   const url = $(this).attr('data-url')
 
   if (e.which == 1) {
@@ -40,7 +40,7 @@ $('.clickable-link').on('mouseup', function(e) {
   }
 })
 
-$('[data-mask="money"]').each(function() {
+$('[data-mask="money"]').each(function () {
   const formatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -49,7 +49,7 @@ $('[data-mask="money"]').each(function() {
   $(this).text(formatter.format(($(this).text())))
 })
 
-$('[data-mask="date"]').each(function() {
+$('[data-mask="date"]').each(function () {
   let date = $(this).text().split('-')
   const formatter = new Intl.DateTimeFormat('pt-BR')
 
@@ -58,7 +58,7 @@ $('[data-mask="date"]').each(function() {
   $(this).text(formatter.format(date))
 })
 
-$('#btnLogin').on('click', function() {
+$('#btnLogin').on('click', function () {
   const $btn = $(this)
 
   loadingBtn($btn, true)

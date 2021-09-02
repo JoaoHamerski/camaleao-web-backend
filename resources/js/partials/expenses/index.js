@@ -24,12 +24,12 @@ const observer = new MutationObserver(() => {
   applyCleave($('[name=date]'), cleaveDate)
 })
 
-$(document).on('input', 'input[type=file]', function() {
+$(document).on('input', 'input[type=file]', function () {
   const files = $(this)[0].files || null
   const names = []
 
   if (files.length > 0) {
-    Object.entries(files).forEach(function(el) {
+    Object.entries(files).forEach(function (el) {
       names.push(el[1].name)
     })
 
@@ -44,7 +44,7 @@ observer.observe(target, {attributes: true, childList: true, characterData: true
 /*
   Adiciona um novo tipo de despesa ao clicar no botão de adicionar tipo de despesa
 */
-$('#btnAddExpenseType').on('click', function(e) {
+$('#btnAddExpenseType').on('click', function (e) {
   e.preventDefault()
 
   const $btn = $(this)
@@ -61,7 +61,7 @@ $('#btnAddExpenseType').on('click', function(e) {
     .catch(error => {
       dispatchErrorMessages(error.response.data.errors)
     })
-    .then(function() {
+    .then(function () {
       loadingBtn($btn, false)
     })
 })
@@ -69,7 +69,7 @@ $('#btnAddExpenseType').on('click', function(e) {
 /*
   Deleta o tipo de despesa
 */
-$(document).on('click', '.btn-delete-expense-type', function(e) {
+$(document).on('click', '.btn-delete-expense-type', function (e) {
   e.preventDefault()
 
   Swal.fire({
@@ -114,7 +114,7 @@ $(document).on('click', '.btn-delete-expense-type', function(e) {
   Edita o tipo de despesa
 */
 
-$(document).on('click' ,'.btn-edit-expense-type', function(e) {
+$(document).on('click' ,'.btn-edit-expense-type', function (e) {
   e.preventDefault()
 
   const id = $(this).parents('[data-id]').attr('data-id')
@@ -140,7 +140,7 @@ $(document).on('click' ,'.btn-edit-expense-type', function(e) {
 /*
   Atualiza a despesa que foi editada ao clicar no botão "concluído"
 */
-$(document).on('click', '.btn-update-expense-type', function(e) {
+$(document).on('click', '.btn-update-expense-type', function (e) {
   e.preventDefault()
 
   const $btn = $(this)
@@ -157,7 +157,7 @@ $(document).on('click', '.btn-update-expense-type', function(e) {
     .catch(error => {
       dispatchErrorMessages(error.response.data.errors)
     })
-    .then(function() {
+    .then(function () {
       loadingBtn($btn, false)
     })
 })
@@ -166,7 +166,7 @@ $(document).on('click', '.btn-update-expense-type', function(e) {
   Deleta uma despesa
 */
 
-$('.btn-delete').on('click', function(e) {
+$('.btn-delete').on('click', function (e) {
   e.preventDefault()
 
   const id = $(this).parents('[data-id]').attr('data-id')
@@ -202,7 +202,7 @@ $('.btn-delete').on('click', function(e) {
   Cria uma única despesa
 */
 
-$('#btnCreateUniqueExpense').on('click', function(e) {
+$('#btnCreateUniqueExpense').on('click', function (e) {
   e.preventDefault()
 
   const $btn = $(this)
@@ -224,7 +224,7 @@ $('#btnCreateUniqueExpense').on('click', function(e) {
 /*
   Atualiza a despesa caso clique no botão de atualizar despesa
 */
-$(document).on('click', '#btnUpdateExpense', function(e) {
+$(document).on('click', '#btnUpdateExpense', function (e) {
 
   e.preventDefault()
 
@@ -248,7 +248,7 @@ $(document).on('click', '#btnUpdateExpense', function(e) {
 /*
   Abre o modal de atualizar despesas ao clicar no botão de editar despesa
 */
-$('.btn-edit').on('click', function() {
+$('.btn-edit').on('click', function () {
   const id = $(this).parents('[data-id]').attr('data-id')
 
   axios.get(getLocationURL() + '/' + id + '/get-edit-form')
@@ -260,7 +260,7 @@ $('.btn-edit').on('click', function() {
 /*
   Valida e dá submit no relatório das despesas caso validado.
 */
-$('#btnGenerateReport').on('click', function(e) {
+$('#btnGenerateReport').on('click', function (e) {
   e.preventDefault()
 
   const $btn = $(this)
@@ -279,12 +279,12 @@ $('#btnGenerateReport').on('click', function(e) {
     .catch(error => {
       dispatchErrorMessages(error.response.data.errors)
     })
-    .then(function() {
+    .then(function () {
       loadingBtn($btn, false)
     })
 })
 
-$(document).on('click', '#deleteReceipt', function(e) {
+$(document).on('click', '#deleteReceipt', function (e) {
   e.preventDefault()
 
   const id = $(this).parents('[data-id]').attr('data-id')
@@ -296,7 +296,7 @@ $(document).on('click', '#deleteReceipt', function(e) {
     })
 })
 
-$('.btn-view-receipt').on('click', function(e) {
+$('.btn-view-receipt').on('click', function (e) {
   e.preventDefault()
 
   const id = $(this).parents('[data-id]').attr('data-id')
@@ -307,7 +307,7 @@ $('.btn-view-receipt').on('click', function(e) {
     })
 })
 
-$(document).on('change', '[name=expense_type_id]', function() {
+$(document).on('change', '[name=expense_type_id]', function () {
   const formGroup = `
     <div class="form-group">
       <label for="employee_name" id="employee_name" class="font-weight-bold">Nome do funcionário</label>

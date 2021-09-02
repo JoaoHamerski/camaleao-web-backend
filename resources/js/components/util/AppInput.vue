@@ -69,13 +69,13 @@ export default {
       default: ''
     }
   },
-  data: function() {
+  data: function () {
     return {
       inputType: this.type
     }
   },
   computed: {
-    isTypePassword() {
+    isTypePassword () {
       return this.inputType === 'password'
     },
     hasError () {
@@ -86,7 +86,7 @@ export default {
     // Atualiza a máscara do input após ele receber
     // alguma mudança programaticamente.
     // A biblioteca não atualiza a mascara sozinha.
-    value(val, oldVal) {
+    value (val, oldVal) {
       if (val === null || oldVal === null) {
         return
       }
@@ -99,14 +99,14 @@ export default {
     }
   },
   methods: {
-    togglePasswordType() {
+    togglePasswordType () {
       this.inputType = this.inputType === 'password'
         ? 'text'
         : 'password'
 
       this.focusInput()
     },
-    focusInput() {
+    focusInput () {
       const input = this.$refs.input.$el,
         length = input.value.length
 

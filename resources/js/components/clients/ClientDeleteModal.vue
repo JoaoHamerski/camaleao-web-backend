@@ -8,7 +8,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       client: '',
       form: new Form({
@@ -16,11 +16,11 @@ export default {
       })
     }
   },
-  mounted() {
+  mounted () {
     this.getClient()
   },
   methods: {
-    onSubmit() {
+    onSubmit () {
       this.form.isLoading = true
       this.form.submit('delete', `/clientes/${this.id}`)
         .then(response => {
@@ -32,7 +32,7 @@ export default {
           this.form.isLoading = false
         })
     },
-    getClient() {
+    getClient () {
       axios.get(`/clientes/${this.id}/json`)
         .then(response => {
           this.client = response.data.client

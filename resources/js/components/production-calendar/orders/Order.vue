@@ -72,10 +72,10 @@ export default {
     }
   },
   methods: {
-    onCancel(order) {
+    onCancel (order) {
       this.$emit('cancel', order)
     },
-    onCreated(order) {
+    onCreated (order) {
       this.$emit('created', {old: this.order, new: order})
     },
     jsonParsePaths (paths) {

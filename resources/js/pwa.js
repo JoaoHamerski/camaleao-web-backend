@@ -8,7 +8,7 @@ window.addEventListener('beforeinstallprompt', (event) => {
   window.deferredPrompt = event
 })
 
-$('#btnInstallPWA').on('click', function() {
+$('#btnInstallPWA').on('click', function () {
   const promptEvent = window.deferredPrompt
 
   if (! promptEvent) {

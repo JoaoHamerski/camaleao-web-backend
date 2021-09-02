@@ -3,14 +3,14 @@
 	Seta um cookie, em que "data"
 	é informado o "name" e "value" do cookie.
 */
-export const setCookie = function(data) {
+export const setCookie = function (data) {
   axios.post('/set-cookie', data)
 }
 
 /*
 	Deleta um cookie com o nome especificado.
 */
-export const destroyCookie = function(name) {
+export const destroyCookie = function (name) {
   axios.delete('/destroy-cookie', {name: name})
 }
 
@@ -18,7 +18,7 @@ export const destroyCookie = function(name) {
 	Sanitiza o valor em dinheiro
 	Ex.: R$ 123,45 => 123.45
 */
-export const sanitizeMoney = function(str) {
+export const sanitizeMoney = function (str) {
   str = str.replace(/\./g, '')
   str = str.replace(',', '.')
   str = str.replace('R$', '')
@@ -30,10 +30,10 @@ export const sanitizeMoney = function(str) {
 	Exibe todas as mensagens de erro nos inputs automaticamente,
 	que foram recebidas do servidor.
 */
-export const dispatchErrorMessages = function(errors, wrapper = '') {
+export const dispatchErrorMessages = function (errors, wrapper = '') {
   scrollToElement($('[name*=' + Object.entries(errors)[0][0].split('.')[0] + ']'))
 
-  Object.entries(errors).forEach(function(el) {
+  Object.entries(errors).forEach(function (el) {
     const $errorMessage = $('<div class="text-danger small">' + el[1][0] + '</div>')
     let name = el[0],
       child,
@@ -83,7 +83,7 @@ export const dispatchErrorMessages = function(errors, wrapper = '') {
 	Altera o estado de um botão passado,
 	adicionando ou removendo o ícone de loading
 */
-export const loadingBtn = function(btn, add) {
+export const loadingBtn = function (btn, add) {
 
   if (add) {
     btn.attr('disabled', 'disabled')
@@ -99,14 +99,14 @@ export const loadingBtn = function(btn, add) {
 /*
 	Retorna a URL atual sem parâmetros.
 */
-export const getLocationURL = function() {
+export const getLocationURL = function () {
   return window.location.protocol + '//' + window.location.host + window.location.pathname
 }
 
 /*
 	Scrolla para o elemento informado.
 */
-export const scrollToElement = function(element, duration = 400) {
+export const scrollToElement = function (element, duration = 400) {
   $('html, body').animate({
     scrollTop: element.offset().top - 100
   }, duration)
@@ -115,7 +115,7 @@ export const scrollToElement = function(element, duration = 400) {
 /*
 	Abre a URL passada em uma nova guia.
 */
-export const openInNewTab = function(href) {
+export const openInNewTab = function (href) {
   Object.assign(document.createElement('a'), {
     target: '_blank',
     href: href,

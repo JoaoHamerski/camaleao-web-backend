@@ -6,7 +6,7 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       monthCommission: '',
       monthResult: '',
@@ -30,7 +30,7 @@ export default {
     }
   },
   methods: {
-    calculate() {
+    calculate () {
       const params = {
         month: this.month
       }

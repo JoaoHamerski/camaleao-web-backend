@@ -1,6 +1,6 @@
 import { loadingBtn, getLocationURL, dispatchErrorMessages } from '@/helpers'
 
-$('#btnUpdateUser').on('click', function(e) {
+$('#btnUpdateUser').on('click', function (e) {
   e.preventDefault()
 
   const $btn = $(this)
@@ -22,7 +22,7 @@ $('#btnUpdateUser').on('click', function(e) {
     })
 })
 
-$('#btnDeleteAccount').on('click', function(e) {
+$('#btnDeleteAccount').on('click', function (e) {
   e.preventDefault()
 
   Swal.fire({

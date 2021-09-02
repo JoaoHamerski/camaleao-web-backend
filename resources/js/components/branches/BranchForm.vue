@@ -14,7 +14,7 @@ export default {
       default: false
     }
   },
-  data: function() {
+  data: function () {
     return {
       originalCities: [],
       cities: [],
@@ -27,7 +27,7 @@ export default {
     }
   },
   watch: {
-    branch() {
+    branch () {
       if (this.branch) {
         this.form.branch_id = this.cities.find(
           city => city.id === this.branch.city.id
@@ -41,7 +41,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.$on('modal-open', () => {
       if (this.originalCities.length) {
         this.cities = []
@@ -73,15 +73,15 @@ export default {
 
   },
   methods: {
-    onCityRemoved(city) {
+    onCityRemoved (city) {
       const index = this.cities.findIndex(_city => _city.id === city.id)
 
       this.cities.splice(index, 1, {...city, branch: null})
     },
-    showAlreadyOnBranch(city) {
+    showAlreadyOnBranch (city) {
       return city.branch_id && ! _map(this.form.cities_id, 'id').includes(city.id)
     },
-    onSubmit() {
+    onSubmit () {
       this.form.isLoading = true
 
       if (this.isEdit) {
@@ -90,7 +90,7 @@ export default {
         this.create()
       }
     },
-    create() {
+    create () {
       this.form.submit('POST', '/gerenciamento/filiais')
         .then(() => {
           this.$root.$emit('REFRESH_CITIES_LIST')
@@ -101,7 +101,7 @@ export default {
           this.form.isLoading = false
         })
     },
-    update() {
+    update () {
       this.form.submit('PATCH', `/gerenciamento/filiais/${this.branch.id}`)
         .then(() => {
           this.$root.$emit('REFRESH_CITIES_LIST')

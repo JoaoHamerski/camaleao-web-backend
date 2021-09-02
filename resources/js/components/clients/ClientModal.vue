@@ -21,7 +21,7 @@ export default {
       isLoading: false
     }
   },
-  mounted() {
+  mounted () {
     this.$on('city-created', city => {
       $(this.$refs.modal.$el).modal('show')
       this.$refs.clientForm.$emit('city-created', city)
@@ -34,10 +34,10 @@ export default {
     })
   },
   methods: {
-    submitForm() {
+    submitForm () {
       this.$refs.clientForm.onSubmit()
     },
-    openCityModal(search) {
+    openCityModal (search) {
       $(this.$refs.modal.$el).modal('hide')
       this.$parent.$refs.newCityModal.$emit('pre-form', search)
       $(this.$parent.$refs.newCityModal.$el).modal('show')

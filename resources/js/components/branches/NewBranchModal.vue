@@ -6,7 +6,7 @@ export default {
     BranchForm
   },
   methods: {
-    onCreated() {
+    onCreated () {
       this.$emit('refresh')
 
       $(this.$refs.modal.$el).modal('hide')
