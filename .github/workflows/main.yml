@@ -22,5 +22,8 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.PORT }}
         use_insecure_cipher: true
-        script: cd web.camaleaocamisas.com.br/ && git pull
+        script: |
+          cd web.camaleaocamisas.com.br/ 
+          git pull
+          php artisan optimize
         
