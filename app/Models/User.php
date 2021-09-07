@@ -100,6 +100,11 @@ class User extends Authenticatable
             ]);
     }
 
+    public function secrets()
+    {
+        return $this->hasMany(Secret::class);
+    }
+
     public function scopeProduction()
     {
         return $this->whereHas('role', function ($query) {

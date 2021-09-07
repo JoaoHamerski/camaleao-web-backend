@@ -1,3 +1,11 @@
 .has-divider:last-child .divider {
     display:none
 }
+
+.cursor-disabled {
+    cursor: not-allowed;
+}
+
+.d-inherit {
+    display: inherit !important;
+}

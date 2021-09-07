@@ -2,36 +2,20 @@
 $body-bg: #f8fafc;
 
 // Typography
-$font-family-sans-serif: 'Nunito', sans-serif;
-$font-size-base: 0.9rem;
 $line-height-base: 1.6;
 
 // Colors
-$blue: #3490dc;
-$indigo: #6574cd;
-$purple: #9561e2;
-$pink: #f66d9b;
-$red: #e3342f;
-$orange: #f6993f;
-$yellow: #e0cc1b;
-$green: #38c172;
-$teal: #4dc0b5;
-$cyan: #6cb2eb;
-$dark: #343a40;
-
 $sidebar-width: 250px;
-
+$small-font-size: .8rem;
 $modal-fade-transform: scale(.8);
 
 $custom-file-text: (
   en: "Browse",
-  pt-BR: "Procurar" 
-);
-
-$theme-colors: (
-	"camaleao": #ff4e00	
+  pt-BR: "Procurar"
 );
 
 $border-radius:               calc(.25rem / 2);
 $border-radius-lg:            calc(.3rem / 2);
 $border-radius-sm:            calc(.2rem / 2);
+
+$card-cap-padding-y:  .85rem;

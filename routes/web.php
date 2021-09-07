@@ -3,6 +3,7 @@
 use App\Util\Helper;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\SecretsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,8 @@ Helper::mapRoutes([
     'cookies',
     ['name' => 'auth', 'filename' => '_auth']
 ]);
+
+Route::get('/api/secrets', [SecretsController::class, 'index']);
 
 Route::middleware('auth')->group(function () {
     Helper::mapRoutes([

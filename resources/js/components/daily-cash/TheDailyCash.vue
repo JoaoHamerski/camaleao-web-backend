@@ -6,14 +6,11 @@ import { TippyComponent } from 'vue-tippy'
 import moment from 'moment'
 moment.locale('pt-BR')
 
-import BaseInput from '@/components/util/BaseInput.vue'
-
 export default {
   components: {
     DailyPaymentModal,
     PendenciesModal,
-    Tippy: TippyComponent,
-    BaseInput
+    Tippy: TippyComponent
   },
   props: {
     userRole: {
@@ -124,8 +121,6 @@ export default {
 <template>
   <div>
     <AppLoading v-if="isLoading" />
-
-    <BaseInput placeholder="Olá mundo" />
 
     <div class="d-flex justify-content-between">
       <div>

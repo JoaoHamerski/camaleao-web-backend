@@ -2,12 +2,10 @@
 import Order from './orders/Order'
 import moment from 'moment'
 import 'viewerjs/dist/viewer.css'
-import AppTransitionGroup from '@/components/util/AppTransitionGroup'
 
 export default {
   components: {
-    Order,
-    AppTransitionGroup
+    Order
   },
   props: {
     roleId: {

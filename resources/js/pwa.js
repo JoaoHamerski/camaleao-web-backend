@@ -8,20 +8,20 @@ window.addEventListener('beforeinstallprompt', (event) => {
   window.deferredPrompt = event
 })
 
-$('#btnInstallPWA').on('click', function () {
-  const promptEvent = window.deferredPrompt
+// document.querySelector('#btnInstallPWA').on('click', function () {
+//   const promptEvent = window.deferredPrompt
 
-  if (! promptEvent) {
-    return
-  }
+//   if (! promptEvent) {
+//     return
+//   }
 
-  promptEvent.prompt()
+//   promptEvent.prompt()
 
-  promptEvent.userChoice.then(() => {
-    window.deferredPrompt = null
-  })
-})
+//   promptEvent.userChoice.then(() => {
+//     window.deferredPrompt = null
+//   })
+// })
 
-if (matchMedia('(display-mode: standalone)').matches) {
-  $('#btnInstallPWA').remove()
-}
+// if (matchMedia('(display-mode: standalone)').matches) {
+//   document.querySelector('#btnInstallPWA').remove()
+// }
