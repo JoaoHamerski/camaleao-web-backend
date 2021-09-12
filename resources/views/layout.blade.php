@@ -34,8 +34,6 @@
             </div>
         </div>
     </div>
-    <script src="{{ mix('js/app.js') }}"></script>
-    @stack('script')
 </body>
 
 </html>

@@ -1,5 +1,5 @@
 {
-    "/js/app.js": "/js/app.js?id=b92e7242afd1298b13ae",
+    "/js/app.js": "/js/app.js?id=3e8cbcecd7bb7ccce540",
     "/js/date-picker.js": "/js/date-picker.js?id=4e115ac6c69b317f62fe",
     "/js/partials/client-form.js": "/js/partials/client-form.js?id=d3babfea083f5c15c730",
     "/js/partials/orders/show.js": "/js/partials/orders/show.js?id=1afd5e23a788ec286698",
@@ -12,6 +12,6 @@
     "/js/partials/payments/index.js": "/js/partials/payments/index.js?id=75daf39b5318d821f4d0",
     "/js/partials/cash-flow/index.js": "/js/partials/cash-flow/index.js?id=cbefd42329c1978b5fb6",
     "/service-worker.js": "/service-worker.js?id=5cc192d54d1d13b25bb8",
-    "/css/app.css": "/css/app.css?id=e9681d03386c35326b93",
+    "/css/app.css": "/css/app.css?id=231cf2c31caa61ab2d50",
     "/css/_date-picker.css": "/css/_date-picker.css?id=3e579adc634624d2435a"
 }

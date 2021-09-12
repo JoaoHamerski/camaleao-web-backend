@@ -32,6 +32,7 @@
         "@fortawesome/fontawesome-free": "^5.15.3",
         "@vue/babel-helper-vue-jsx-merge-props": "^1.2.1",
         "@vue/babel-preset-jsx": "^1.2.4",
+        "@vue/eslint-config-standard": "^6.1.0",
         "accounting-js": "^1.1.1",
         "animate.css": "^4.1.1",
         "axios": "^0.21.1",
@@ -52,9 +53,11 @@
         "vue-infinite-loading": "^2.4.5",
         "vue-multiselect": "^2.1.6",
         "vue-observe-visibility": "^1.0.0",
+        "vue-router": "^3.5.2",
         "vue-text-mask": "^6.1.2",
         "vue-tippy": "^4.10.1",
         "vue2-datepicker": "^3.9.2",
-        "vuedraggable": "^2.24.3"
+        "vuedraggable": "^2.24.3",
+        "vuex": "^3.6.2"
     }
 }

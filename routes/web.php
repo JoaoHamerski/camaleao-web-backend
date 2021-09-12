@@ -2,8 +2,8 @@
 
 use App\Util\Helper;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\OrdersController;
-use App\Http\Controllers\SecretsController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TokenController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,12 +16,15 @@ use App\Http\Controllers\SecretsController;
 |
 */
 
-Helper::mapRoutes([
-    'cookies',
-    ['name' => 'auth', 'filename' => '_auth']
-]);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/api/users/auth', AuthController::class);
+});
 
-Route::get('/api/secrets', [SecretsController::class, 'index']);
+Route::post('/api/sanctum/token', TokenController::class);
+
+Route::get('/', function () {
+    return view('index');
+});
 
 Route::middleware('auth')->group(function () {
     Helper::mapRoutes([
