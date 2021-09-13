@@ -26,6 +26,11 @@ Route::get('/', function () {
     return view('index');
 });
 
+Helper::mapRoutes([[
+    'name' => 'auth',
+    'filename' => '_auth'
+]]);
+
 Route::middleware('auth')->group(function () {
     Helper::mapRoutes([
         'production',

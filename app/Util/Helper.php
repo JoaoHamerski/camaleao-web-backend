@@ -184,13 +184,42 @@ class Helper
         return $attr;
     }
 
-    public static function mapRoutes(array $map, string $path = '/routes/partials/')
+    private static function getRoutePrefixName($route)
+    {
+        $routeName = $route['name'] ?? $route;
+
+        return "$routeName.";
+    }
+
+    private static function getRouteFilename($route)
+    {
+        $filename = $route['filename'] ?? $route;
+
+        return "$filename.php";
+    }
+
+    private static function getRouteFilepath($route, $routesPath)
+    {
+        $basePath = base_path();
+
+        return $basePath . $routesPath . self::getRouteFilename($route);
+    }
+
+    /**
+     * Mapeia os arquivos de rotas
+     *
+     * @param array $map
+     * @param string $routesPath
+     *
+     * @return void
+     */
+    public static function mapRoutes(array $map, string $routesPath = '/routes/partials/')
     {
         foreach ($map as $route) {
-            $routeName = ($route['name'] ?? $route) . '.';
-            $routeFilepath = base_path() . $path . ($route['filename'] ?? $route) . '.php';
+            $prefixName = self::getRoutePrefixName($route);
+            $filepath = self::getRouteFilepath($route, $routesPath);
 
-            Route::name($routeName)->group($routeFilepath);
+            Route::name($prefixName)->group($filepath);
         }
     }
 }

@@ -18,11 +18,11 @@ class ClientSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-        
+
         Client::factory()
-            ->count(1)
+            ->count(10)
             ->has(
-                Order::factory()->count(1)
+                Order::factory()->count(5)
             )->create();
     }
 }

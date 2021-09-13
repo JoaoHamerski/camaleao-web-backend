@@ -1,4 +1,7 @@
 {
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#4f5b9342",
+    },
     "search.exclude": {
         "public/css": true,
         "public/js": true
