@@ -7,5 +7,5 @@ Route::get('/entrar', [LoginController::class, 'showLoginForm'])->name('showLogi
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/sair', [LoginController::class, 'logout'])->name('logout');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
