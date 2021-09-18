@@ -4,6 +4,8 @@ use App\Util\Helper;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TokenController;
+use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\Auth\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,42 +18,27 @@ use App\Http\Controllers\TokenController;
 |
 */
 
+Route::get('/', function () {
+    return response('', 200);
+});
+
+Route::get('/resource', function () {
+    return \App\Http\Resources\ClientResource::collection(App\Models\Client::all());
+});
+
+Route::post('/login', [LoginController::class, 'login'])->name('login');
+
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/api/users/auth', AuthController::class);
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+});
+
+Route::middleware('auth:sanctum')->prefix('api')->group(function () {
+    Route::get('/users/auth', AuthController::class);
+});
+Route::prefix('api')->group(function () {
+    Route::prefix('clients')->group(function () {
+        Route::get('/', [ClientsController::class, 'index']);
+    });
 });
 
 Route::post('/api/sanctum/token', TokenController::class);
-
-Route::get('/', function () {
-    return view('index');
-});
-
-Helper::mapRoutes([[
-    'name' => 'auth',
-    'filename' => '_auth'
-]]);
-
-Route::middleware('auth')->group(function () {
-    Helper::mapRoutes([
-        'production',
-        'users',
-        'clients',
-        'orders',
-        'expenses',
-        'cash-flow',
-        'via',
-        'expenses-types',
-        'payments',
-        'daily-cash',
-        'order-notes',
-        'cities',
-        'branches',
-        'shipping-companies',
-        'clothing-types',
-        'backup',
-        'status',
-        'financial',
-        'activities',
-        'production-calendar'
-    ]);
-});
