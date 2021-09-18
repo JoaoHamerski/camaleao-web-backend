@@ -8,7 +8,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Branch extends Model
 {
-    use HasFactory,LogsActivity;
+    use HasFactory, LogsActivity;
 
     protected $guarded = [];
     protected $with = ['city'];
@@ -46,7 +46,7 @@ class Branch extends Model
                     <strong>:causer.name</strong>
                     deletou a filial
                     <strong>:properties.attributes.city.name</strong>
-                </div>  
+                </div>
             ';
         }
     }
@@ -59,5 +59,10 @@ class Branch extends Model
     public function cities()
     {
         return $this->hasMany(City::class);
+    }
+
+    public function shippingCompany()
+    {
+        return $this->belongsTo(ShippingCompany::class);
     }
 }
