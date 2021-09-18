@@ -19,7 +19,7 @@ class Client extends Model
 
     protected $cascadeDeletes = ['orders', 'payments'];
 
-    protected $appends = ['path'];
+    // protected $appends = ['path'];
 
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo
@@ -34,8 +34,8 @@ class Client extends Model
         if ($eventName == 'created') {
             return '
                 <div data-event="created">
-                    <strong>:causer.name</strong> 
-                    cadastrou o cliente 
+                    <strong>:causer.name</strong>
+                    cadastrou o cliente
                     <strong>:subject.name</strong>
                 </div>
             ';
@@ -44,8 +44,8 @@ class Client extends Model
         if ($eventName == 'updated') {
             return '
                 <div data-event="updated">
-                    <strong>:causer.name</strong> 
-                    alterou os dados do cliente 
+                    <strong>:causer.name</strong>
+                    alterou os dados do cliente
                     <strong>:subject.name</strong>
                 </div>
             ';
@@ -54,8 +54,8 @@ class Client extends Model
         if ($eventName == 'deleted') {
             return '
                 <div data-event="deleted">
-                    <strong>:causer.name</strong> 
-                    deletou o cliente 
+                    <strong>:causer.name</strong>
+                    deletou o cliente
                     <strong>:subject.name</strong>
                 </div>
             ';
@@ -101,15 +101,15 @@ class Client extends Model
      *
      * @return string
      */
-    public function path()
-    {
-        return route('clients.show', $this);
-    }
+    // public function path()
+    // {
+    //     return route('clients.show', $this);
+    // }
 
-    public function getPathAttribute()
-    {
-        return $this->path();
-    }
+    // public function getPathAttribute()
+    // {
+    //     return $this->path();
+    // }
 
     /**
      * Retorna o total que o cliente está devendo
@@ -166,7 +166,7 @@ class Client extends Model
             ? ($this->branch->city->state ? $this->branch->city->state->abbreviation : null)
             : null;
     }
-    
+
     public function getStateAbbrAttribute()
     {
         return $this->city
