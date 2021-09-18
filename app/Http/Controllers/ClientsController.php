@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ClientResource;
 use App\Models\Client;
 use App\Util\Sanitizer;
 use Illuminate\Support\Str;
@@ -15,11 +16,11 @@ class ClientsController extends Controller
     {
         $clients = Client::query();
 
-        if ($request->has('opcao') && ! empty($request->opcao)) {
+        if ($request->has('opcao') && !empty($request->opcao)) {
             if ($request->opcao === 'nome') {
                 $clients->where('name', 'like', '%' . $request->busca . '%');
             }
-            
+
             if ($request->opcao === 'telefone') {
                 $phone = Sanitizer::removeNonDigits($request->busca);
 
@@ -37,10 +38,7 @@ class ClientsController extends Controller
             }
         }
 
-        return view('clients.index', [
-            'clients' => $clients->latest()->paginate(10)->appends($request->query()),
-            'cities' => Client::all()->pluck('city')->unique()->sort()
-        ]);
+        return ClientResource::collection($clients->paginate(10));
     }
 
     public function list(Request $request)
@@ -60,7 +58,7 @@ class ClientsController extends Controller
             'clients' => $clients->limit(50)->get()
         ], 200);
     }
-    
+
     public function show(Client $client, Request $request)
     {
         $orders = $client->orders();
@@ -81,7 +79,7 @@ class ClientsController extends Controller
         $client = Client::with(['city', 'branch', 'shippingCompany'])
             ->find($client->id);
 
-        return response()-> json(['client' => $client], 200);
+        return response()->json(['client' => $client], 200);
     }
 
     public function store(Request $request)
@@ -128,7 +126,7 @@ class ClientsController extends Controller
 
     public function destroy(Request $request, Client $client)
     {
-        if (! Hash::check($request->password, $request->user()->password)) {
+        if (!Hash::check($request->password, $request->user()->password)) {
             return response()->json([
                 'errors' => [
                     'password' => ['A senha informada não confere.']
@@ -150,7 +148,7 @@ class ClientsController extends Controller
             'name' => ['required', 'max:255'],
             'phone' => ['nullable', 'min:8', 'max:11'],
             'branch_id' => ['nullable', 'exists:branches,id'],
-            'city_id' => ['nullable','exists:cities,id'],
+            'city_id' => ['nullable', 'exists:cities,id'],
             'shipping_company_id' => ['nullable', 'exists:shipping_companies,id']
         ]);
     }
@@ -158,7 +156,7 @@ class ClientsController extends Controller
     private function getFormattedData(array $data)
     {
         $keys = ['branch_id', 'city_id', 'shipping_company_id'];
-        
+
         foreach ($keys as $key) {
             if (isset($data[$key])) {
                 $data[$key] = $data[$key]['id'];
@@ -166,11 +164,11 @@ class ClientsController extends Controller
         }
 
         foreach ($data as $key => $field) {
-            if (Str::contains($key, ['name']) && ! empty($field)) {
+            if (Str::contains($key, ['name']) && !empty($field)) {
                 $data[$key] = Sanitizer::name($field);
             }
 
-            if (Str::contains($key, ['phone']) && ! empty($field)) {
+            if (Str::contains($key, ['phone']) && !empty($field)) {
                 $data[$key] = Sanitizer::removeNonDigits($field);
             }
         }
