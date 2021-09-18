@@ -16,7 +16,7 @@ class Order extends Model
     protected static $logUnguarded = true;
     protected static $logOnlyDirty = true;
     protected static $logAttributes = ['client'];
-    protected $appends = ['total_owing', 'path', 'is_pre_registered', 'reminder'];
+    protected $appends = ['total_owing', 'is_pre_registered', 'reminder'];
 
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo
@@ -222,24 +222,24 @@ class Order extends Model
         return $total;
     }
 
-    /**
-     * Retorna a URL para a página do pedido
-     *
-     * @return string
-     */
-    public function path()
-    {
-        if ($this->client) {
-            return route('orders.show', [$this->client, $this]);
-        }
+    // /**
+    //  * Retorna a URL para a página do pedido
+    //  *
+    //  * @return string
+    //  */
+    // public function path()
+    // {
+    //     if ($this->client) {
+    //         return route('orders.show', [$this->client, $this]);
+    //     }
 
-        return route('orders.showPreRegistered', $this);
-    }
+    //     return route('orders.showPreRegistered', $this);
+    // }
 
-    public function getPathAttribute()
-    {
-        return $this->path();
-    }
+    // public function getPathAttribute()
+    // {
+    //     return $this->path();
+    // }
 
     /**
      * Cria um pagamento de entrada
