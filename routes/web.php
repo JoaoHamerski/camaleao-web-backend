@@ -28,13 +28,14 @@ Route::get('/resource', function () {
 
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
-Route::middleware('auth:sanctum')->prefix('api')->group(function () {
+Route::middleware('auth')->prefix('api')->group(function () {
     Route::get('/users/auth', AuthController::class);
 });
+
 Route::prefix('api')->group(function () {
     Route::prefix('clients')->group(function () {
         Route::get('/', [ClientsController::class, 'index']);
