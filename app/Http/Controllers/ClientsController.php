@@ -16,24 +16,24 @@ class ClientsController extends Controller
     {
         $clients = Client::query();
 
-        if ($request->has('opcao') && !empty($request->opcao)) {
-            if ($request->opcao === 'nome') {
-                $clients->where('name', 'like', '%' . $request->busca . '%');
+        if ($request->has('option') && !empty($request->option)) {
+            if ($request->option === 'name') {
+                $clients->where('name', 'like', '%' . $request->search . '%');
             }
 
-            if ($request->opcao === 'telefone') {
-                $phone = Sanitizer::removeNonDigits($request->busca);
+            if ($request->option === 'phone') {
+                $phone = Sanitizer::removeNonDigits($request->search);
 
-                if (Str::containsAll($request->busca, ['(', ')'])) {
+                if (Str::containsAll($request->search, ['(', ')'])) {
                     $clients->where('phone', 'like', $phone . '%');
                 } else {
                     $clients->where('phone', 'like', '%' . $phone . '%');
                 }
             }
 
-            if ($request->opcao === 'cidade') {
+            if ($request->option === 'city') {
                 $clients->whereHas('city', function ($query) use ($request) {
-                    $query->where('name', 'like', '%' . $request->busca . '%');
+                    $query->where('name', 'like', '%' . $request->search . '%');
                 });
             }
         }
