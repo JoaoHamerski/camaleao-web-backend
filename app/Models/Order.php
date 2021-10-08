@@ -16,7 +16,7 @@ class Order extends Model
     protected static $logUnguarded = true;
     protected static $logOnlyDirty = true;
     protected static $logAttributes = ['client'];
-    protected $appends = ['total_owing', 'is_pre_registered', 'reminder'];
+    protected $appends = ['total_owing', 'is_pre_registered', 'reminder', 'total_paid'];
 
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo
@@ -173,11 +173,6 @@ class Order extends Model
 
     public function getIsPreRegisteredAttribute()
     {
-        return $this->isPreRegistered();
-    }
-
-    public function isPreRegistered()
-    {
         return $this->quantity === null || $this->client_id === null;
     }
 
@@ -263,7 +258,7 @@ class Order extends Model
      *
      * @return double
      */
-    public function getTotalPayments()
+    public function getTotalPaidAttribute()
     {
         return $this->payments()
             ->where('is_confirmed', true)
@@ -271,11 +266,6 @@ class Order extends Model
     }
 
     public function getReminderAttribute()
-    {
-        return $this->getReminder();
-    }
-
-    public function getReminder()
     {
         return $this->notes()->whereNotNull('is_reminder')->first();
     }
@@ -285,14 +275,9 @@ class Order extends Model
      *
      * @return double
      */
-    public function getTotalOwing()
-    {
-        return bcsub($this->price, $this->getTotalPayments(), 2);
-    }
-
     public function getTotalOwingAttribute()
     {
-        return $this->getTotalOwing();
+        return bcsub($this->price, $this->total_paid, 2);
     }
 
     public function getTotalPossibleOwing()
