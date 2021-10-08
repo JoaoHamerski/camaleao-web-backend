@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Order;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ClientResource extends JsonResource
@@ -21,6 +22,7 @@ class ClientResource extends JsonResource
             'city' => new CityResource($this->city),
             'branch' => new BranchResource($this->branch),
             'shipping_company' => new ShippingCompanyResource($this->shippingCompany),
+            'total_owing' => $this->getTotalOwing(),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
