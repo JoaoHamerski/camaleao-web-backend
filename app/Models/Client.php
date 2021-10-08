@@ -19,8 +19,6 @@ class Client extends Model
 
     protected $cascadeDeletes = ['orders', 'payments'];
 
-    // protected $appends = ['path'];
-
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo
      * de evento ocorre no model
@@ -97,28 +95,13 @@ class Client extends Model
     }
 
     /**
-     * Retorna a URL para a página do cliente
-     *
-     * @return string
-     */
-    // public function path()
-    // {
-    //     return route('clients.show', $this);
-    // }
-
-    // public function getPathAttribute()
-    // {
-    //     return $this->path();
-    // }
-
-    /**
      * Retorna o total que o cliente está devendo
      *
      * @return double
      */
     public function getTotalOwing()
     {
-        return bcsub($this->getTotalBuyied(), $this->getTotalPaid(), 2);
+        return bcsub($this->getTotalBought(), $this->getTotalPaid(), 2);
     }
 
     /**
@@ -138,7 +121,7 @@ class Client extends Model
      *
      * @return double
      */
-    public function getTotalBuyied()
+    public function getTotalBought()
     {
         return $this->orders()->sum('price');
     }
@@ -151,27 +134,6 @@ class Client extends Model
     public function city()
     {
         return $this->belongsTo(City::class);
-    }
-
-    public function getBranchCityNameAttribute()
-    {
-        return $this->branch
-            ? ($this->branch->city ? $this->branch->city->name : null)
-            : null;
-    }
-
-    public function getBranchStateAbbr()
-    {
-        return $this->branchCityName
-            ? ($this->branch->city->state ? $this->branch->city->state->abbreviation : null)
-            : null;
-    }
-
-    public function getStateAbbrAttribute()
-    {
-        return $this->city
-            ? ($this->city->state ? $this->city->state->abbreviation : null)
-            : null;
     }
 
     public function shippingCompany()
