@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ClientResource;
 use App\Models\Client;
 use App\Util\Sanitizer;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\OrderResource;
+use App\Http\Resources\ClientResource;
 use Illuminate\Support\Facades\Validator;
 
 class ClientsController extends Controller
@@ -61,17 +62,18 @@ class ClientsController extends Controller
 
     public function show(Client $client, Request $request)
     {
+        return new ClientResource($client);
+    }
+
+    public function orders(Client $client, Request $request)
+    {
         $orders = $client->orders();
 
-        if ($request->has('codigo')) {
-            $orders->where('code', 'like', '%' . $request->codigo . '%');
+        if ($request->filled('code')) {
+            $orders->where('code', 'like', '%' . $request->code . '%');
         }
 
-        return view('clients.show', [
-            'client' => $client,
-            'orders' => $orders->latest()->paginate(10)->appends($request->query()),
-            'cities' => Client::all()->pluck('city')->unique()->sort()
-        ]);
+        return OrderResource::collection($orders->paginate(10));
     }
 
     public function client(Client $client)
