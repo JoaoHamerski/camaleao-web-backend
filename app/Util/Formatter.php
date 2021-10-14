@@ -2,7 +2,7 @@
 
 namespace App\Util;
 
-class Sanitizer
+class Formatter
 {
 
     /**
@@ -11,7 +11,7 @@ class Sanitizer
      * @param string $str
      * @return string or null
      */
-    public static function removeNonDigits($str)
+    public static function stripNonDigits($str)
     {
         return $str != null ? preg_replace('/\D/', '', $str) : null;
     }

@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ShippingCompanyResource;
 use Illuminate\Http\Request;
 use App\Models\ShippingCompany;
 use Illuminate\Support\Facades\Validator;
 
 class ShippingCompaniesController extends Controller
 {
+    public function index()
+    {
+        $companies = ShippingCompany::orderBy('name');
+
+        return ShippingCompanyResource::collection($companies->get());
+    }
+
     public function store(Request $request)
     {
         $this->validator(

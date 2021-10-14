@@ -16,9 +16,9 @@ class BranchResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'created_at' => $this->created_at,
             'city' => new CityResource($this->city),
             'cities' => CityResource::collection($this->cities),
+            'created_at' => $this->created_at,
             'shipping_company' => new ShippingCompanyResource($this->shippingCompany)
         ];
     }

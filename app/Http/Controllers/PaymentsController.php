@@ -8,7 +8,7 @@ use App\Models\Order;
 use App\Models\Client;
 use App\Util\Validate;
 use App\Models\Payment;
-use App\Util\Sanitizer;
+use App\Util\Formatter;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,10 +19,10 @@ class PaymentsController extends Controller
 {
     public function index()
     {
-        
+
         return view('payments.index');
     }
-    
+
     public function getPaymentsOfDay(Request $request)
     {
         $payments = Payment::with(['order', 'order.client', 'via']);
@@ -40,7 +40,7 @@ class PaymentsController extends Controller
         if ($request->filled('only_pendency') && $request->only_pendency === 'true') {
             $payments = $payments->whereNull('is_confirmed');
         }
-        
+
         return response()->json([
             'payments' => $payments->get()
         ], 200);
@@ -66,7 +66,7 @@ class PaymentsController extends Controller
         Validator::make($request->all(), [
             'confirmation' => ['required', 'boolean']
         ])->validate();
-        
+
         if ($request->confirmation === true) {
             $validator = Validator::make($payment->toArray(), [
                 'value' => ['required', 'max_double:' . $payment->order->getTotalOwing()]
@@ -151,7 +151,7 @@ class PaymentsController extends Controller
                     'name' => $data['client']
                 ]);
             }
-                
+
             return Client::find($data['client']['id']);
         }
 
@@ -163,7 +163,7 @@ class PaymentsController extends Controller
                     'price' => $data['order_value']
                 ]);
 
-                if (! empty($data['reminder'])) {
+                if (!empty($data['reminder'])) {
                     $order->notes()->create([
                         'text' => $data['reminder'],
                         'is_reminder' => true
@@ -177,7 +177,7 @@ class PaymentsController extends Controller
         }
 
         $data = $this->getFormattedData($request->all());
-        
+
         $rules = [];
         $rules[] = $this->clientValidatorRules($data['isNewClient']);
         $rules[] = $this->orderValidatorRules($data['isNewOrder']);
@@ -185,10 +185,11 @@ class PaymentsController extends Controller
             'value' => [
                 'required',
                 'numeric',
-                $data['isNewOrder'] ? 'lte:order_value' : 'lte:order.total_owing'],
+                $data['isNewOrder'] ? 'lte:order_value' : 'lte:order.total_owing'
+            ],
             'via_id' => ['required', 'exists:vias,id']
         ];
-        
+
         $rules = Arr::collapse($rules);
 
         Validator::make(
@@ -214,7 +215,7 @@ class PaymentsController extends Controller
         if ($order->is_closed) {
             abort(403);
         }
-        
+
         Validator::make($data = $this->getFormattedData($request->all()), [
             'payment_via_id' => 'required|exists:vias,id',
             'value' => 'required|max_double:' . $order->getTotalOwing(),
@@ -225,7 +226,7 @@ class PaymentsController extends Controller
             $data['confirmed_at'] = Carbon::now();
             $data['is_confirmed'] = true;
         }
- 
+
         $order->payments()->create($data);
 
         return response()->json([
@@ -270,11 +271,11 @@ class PaymentsController extends Controller
     public function getFormattedData(array $data)
     {
         if (isset($data['value'])) {
-            $data['value'] = Sanitizer::money($data['value']);
+            $data['value'] = Formatter::money($data['value']);
         }
-        
+
         if (isset($data['order_value'])) {
-            $data['order_value'] = Sanitizer::money($data['order_value']);
+            $data['order_value'] = Formatter::money($data['order_value']);
         }
 
         if (isset($data['date']) && Validate::isDate($data['date'])) {

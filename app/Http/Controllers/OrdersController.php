@@ -13,7 +13,7 @@ use App\Models\Client;
 use App\Models\Config;
 use App\Models\Status;
 use App\Util\Validate;
-use App\Util\Sanitizer;
+use App\Util\Formatter;
 use App\Models\Commission;
 use App\Traits\FileManager;
 use Illuminate\Support\Arr;
@@ -342,7 +342,7 @@ class OrdersController extends Controller
     public function changeOrderCommission(Request $request)
     {
         if ($request->filled('value')) {
-            $data['value'] = Sanitizer::money($request->value);
+            $data['value'] = Formatter::money($request->value);
         }
 
         Validator::make($data, [
@@ -448,7 +448,7 @@ class OrdersController extends Controller
 
         foreach ($data as $key => $field) {
             if (Str::contains($key, ['down_payment', 'value_', 'discount']) && !empty($field)) {
-                $data[$key] = Sanitizer::money($data[$key]);
+                $data[$key] = Formatter::money($data[$key]);
             }
 
             if (Str::contains($key, ['delivery_date', 'production_date'])) {

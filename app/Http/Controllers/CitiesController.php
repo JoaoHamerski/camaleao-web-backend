@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CityResource;
 use App\Models\City;
 use App\Models\State;
 use App\Models\Client;
@@ -13,7 +14,9 @@ class CitiesController extends Controller
 {
     public function index()
     {
-        return view('cities.index');
+        $cities = City::orderBy('name', 'asc');
+
+        return CityResource::collection($cities->get());
     }
 
     public function show(City $city)
@@ -38,12 +41,12 @@ class CitiesController extends Controller
 
         return response()->json(['city' => $city], 201);
     }
-    
+
     public function list(Request $request)
     {
         $cities = City::orderBy('name');
 
-        if ($request->filled('name') && ! empty($request->name)) {
+        if ($request->filled('name') && !empty($request->name)) {
             $cities = $cities->where('name', 'like', '%' . $request->name . '%');
         }
 
@@ -53,7 +56,7 @@ class CitiesController extends Controller
             $cities = $cities->get();
         }
 
-        if ($request->filled('only_names') && $request->only_names && ! $request->has('page')) {
+        if ($request->filled('only_names') && $request->only_names && !$request->has('page')) {
             $cities = $cities->makeHidden([
                 'state_id',
                 'state',
@@ -61,7 +64,7 @@ class CitiesController extends Controller
                 'updated_at'
             ]);
         }
-        
+
         return response()->json(['cities' => $cities], 200);
     }
 
@@ -110,7 +113,7 @@ class CitiesController extends Controller
 
         Client::where('city_id', $city->id)
             ->update(['city_id' => $data['city_id']]);
-        
+
         $city->delete();
 
         return response()->json([], 200);

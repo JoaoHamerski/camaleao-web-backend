@@ -7,7 +7,7 @@ use App\Models\Via;
 use App\Util\Helper;
 use App\Util\Validate;
 use App\Models\Expense;
-use App\Util\Sanitizer;
+use App\Util\Formatter;
 use Barryvdh\DomPDF\PDF;
 use App\Models\ExpenseType;
 use App\Traits\FileManager;
@@ -235,10 +235,10 @@ class ExpensesController extends Controller
     {
         if (is_array($data['value'])) {
             foreach ($data['value'] as $key => $value) {
-                $data['value'][$key] = Sanitizer::money($value);
+                $data['value'][$key] = Formatter::money($value);
             }
         } else {
-            $data['value'] = Sanitizer::money($data['value']);
+            $data['value'] = Formatter::money($data['value']);
         }
 
         if (is_array($data['date'])) {
@@ -256,12 +256,12 @@ class ExpensesController extends Controller
         if (isset($data['employee_name']) && is_array($data['employee_name'])) {
             foreach ($data['employee_name'] as $key => $value) {
                 if (isset($value)) {
-                    $data['employee_name'][$key] = Sanitizer::name($value);
+                    $data['employee_name'][$key] = Formatter::name($value);
                 }
             }
         } else {
             if (isset($data['employee_name'])) {
-                $data['employee_name'] = Sanitizer::name($data['employee_name']);
+                $data['employee_name'] = Formatter::name($data['employee_name']);
             }
         }
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
-use App\Util\Sanitizer;
+use App\Util\Formatter;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -23,7 +23,7 @@ class ClientsController extends Controller
             }
 
             if ($request->option === 'phone') {
-                $phone = Sanitizer::removeNonDigits($request->search);
+                $phone = Formatter::stripNonDigits($request->search);
 
                 if (Str::containsAll($request->search, ['(', ')'])) {
                     $clients->where('phone', 'like', $phone . '%');
@@ -38,6 +38,8 @@ class ClientsController extends Controller
                 });
             }
         }
+
+        $clients->latest();
 
         return ClientResource::collection($clients->paginate(10));
     }
@@ -86,17 +88,10 @@ class ClientsController extends Controller
 
     public function store(Request $request)
     {
-        $validator = $this->validator(
-            $data = $this->getFormattedData($request->all())
-        );
+        $data = $this->getFormattedData($request->all());
+        $this->validator($data)->validate();
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
+        var_dump($data);
         Client::create($data);
 
         return response()->json([
@@ -167,11 +162,11 @@ class ClientsController extends Controller
 
         foreach ($data as $key => $field) {
             if (Str::contains($key, ['name']) && !empty($field)) {
-                $data[$key] = Sanitizer::name($field);
+                $data[$key] = Formatter::name($field);
             }
 
             if (Str::contains($key, ['phone']) && !empty($field)) {
-                $data[$key] = Sanitizer::removeNonDigits($field);
+                $data[$key] = Formatter::stripNonDigits($field);
             }
         }
 

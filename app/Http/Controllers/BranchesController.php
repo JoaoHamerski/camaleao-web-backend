@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\BranchResource;
 use App\Models\City;
 use App\Models\Branch;
 use Illuminate\Http\Request;
@@ -11,7 +12,14 @@ class BranchesController extends Controller
 {
     public function index()
     {
-        return view('branches.index');
+        $branches = Branch::with([
+            'city' => function ($query) {
+                $query->orderBy('name');
+            },
+            'cities'
+        ]);
+
+        return BranchResource::collection($branches->get());
     }
 
     public function store(Request $request)
@@ -37,7 +45,7 @@ class BranchesController extends Controller
         $this->validator(
             $data = $this->getFormattedData($request->all())
         )->validate();
-        
+
         $branch->update([
             'city_id' => $data['branch_id'],
             'shipping_company_id' => $data['shipping_company_id']
@@ -47,7 +55,7 @@ class BranchesController extends Controller
             ->update([
                 'branch_id' => null
             ]);
-        
+
         City::whereIn('id', $data['cities_id'])->update([
             'branch_id' => $branch->id
         ]);
@@ -66,7 +74,7 @@ class BranchesController extends Controller
     {
         $branches = Branch::with([
             'city' => function ($query) {
-                 $query->orderBy('name');
+                $query->orderBy('name');
             },
             'cities'
         ]);
@@ -89,7 +97,7 @@ class BranchesController extends Controller
                 $data[$field] = $data[$field]['id'];
             }
         }
-        
+
         if (isset($data['cities_id'])) {
             $data['cities_id'] = array_column($data['cities_id'], 'id');
         }

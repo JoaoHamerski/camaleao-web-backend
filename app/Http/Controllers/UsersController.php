@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Role;
-use App\Util\Sanitizer;
+use App\Util\Formatter;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
@@ -62,10 +62,10 @@ class UsersController extends Controller
         $user->update([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => empty(trim($data['password'])) 
+            'password' => empty(trim($data['password']))
                 ? $user->password
-                : bcrypt($data['password'])        
-            ]);
+                : bcrypt($data['password'])
+        ]);
 
         return response()->json([
             'message' => 'success',
@@ -73,7 +73,7 @@ class UsersController extends Controller
         ], 200);
     }
 
-    public function destroy(User $user) 
+    public function destroy(User $user)
     {
         $user->delete();
 
@@ -93,7 +93,7 @@ class UsersController extends Controller
         ], 200);
     }
 
-    public function myAccount() 
+    public function myAccount()
     {
         return view('users.my-account', [
             'user' => auth()->user(),
@@ -101,7 +101,7 @@ class UsersController extends Controller
         ]);
     }
 
-    public function changeRole(Request $request, User $user) 
+    public function changeRole(Request $request, User $user)
     {
         $validator = Validator::make($request->all(), [
             'role_id' => 'required|exists:roles,id'
@@ -109,7 +109,7 @@ class UsersController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'message' => 'error', 
+                'message' => 'error',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -141,10 +141,10 @@ class UsersController extends Controller
         ], 200);
     }
 
-    public function getFormattedData($data) 
+    public function getFormattedData($data)
     {
-        if (isset($data['name']) && ! empty($data['name'])) {
-            $data['name'] = Sanitizer::name($data['name']);
+        if (isset($data['name']) && !empty($data['name'])) {
+            $data['name'] = Formatter::name($data['name']);
         }
 
         return $data;
@@ -156,8 +156,8 @@ class UsersController extends Controller
             'name' => 'required|max:191',
             'email' => [
                 'required', 'email', $isUpdate
-                ? Rule::unique('users')->ignore($user->email, 'email')
-                : Rule::unique('users') 
+                    ? Rule::unique('users')->ignore($user->email, 'email')
+                    : Rule::unique('users')
             ],
             'password' => $isUpdate ? 'nullable|confirmed|min:6' : 'required|confirmed|min:6',
             'role_id' => 'sometimes|required|exists:roles,id'

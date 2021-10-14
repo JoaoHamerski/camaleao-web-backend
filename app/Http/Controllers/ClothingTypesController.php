@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Util\Sanitizer;
+use App\Util\Formatter;
 use Illuminate\Support\Str;
 use App\Models\ClothingType;
 use Illuminate\Http\Request;
@@ -52,9 +52,9 @@ class ClothingTypesController extends Controller
     {
         $data = [];
         if ($request->filled('value')) {
-            $data['value'] = Sanitizer::money($request->value);
+            $data['value'] = Formatter::money($request->value);
         }
-        
+
         Validator::make($data, [
             'value' => ['required', 'numeric']
         ])->validate();
@@ -69,15 +69,15 @@ class ClothingTypesController extends Controller
 
     public function toggleHide(ClothingType $clothingType)
     {
-        $clothingType->is_hidden = ! $clothingType->is_hidden;
+        $clothingType->is_hidden = !$clothingType->is_hidden;
         $clothingType->save();
 
         return response()->json([], 204);
     }
-    
+
     private function getFormattedData(array $data)
     {
-        if (isset($data['name']) && ! empty($data['name'])) {
+        if (isset($data['name']) && !empty($data['name'])) {
             $data['key'] = Str::slug($data['name']);
             $data['key'] = str_replace('-', '_', $data['key']);
         }
@@ -97,7 +97,7 @@ class ClothingTypesController extends Controller
             'key' => 'unique:clothing_types,key'
         ], $this->errorMessages());
     }
-    
+
     private function errorMessages()
     {
         return [
@@ -117,10 +117,10 @@ class ClothingTypesController extends Controller
 
         $clothingOld = ClothingType::where('order', $request->oldIndex)
             ->first();
-        
+
         $clothingNew = ClothingType::where('order', $request->newIndex)
             ->first();
-        
+
         $clothingOld->order = $request->newIndex;
         $clothingNew->order = $request->oldIndex;
 

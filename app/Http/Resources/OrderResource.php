@@ -34,8 +34,8 @@ class OrderResource extends JsonResource
             'discount' => $this->closed_at,
             'total_owing' => $this->total_owing,
             'total_paid' => $this->total_paid,
-            'is_pre_registered' => $this->is_pre_registered,
             'reminder' => $this->reminder,
+            'state' => $this->state
         ];
     }
 }

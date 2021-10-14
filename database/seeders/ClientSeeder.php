@@ -5,8 +5,8 @@ namespace Database\Seeders;
 use App\Models\Order;
 use App\Models\Client;
 use App\Models\Payment;
-use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
 
 class ClientSeeder extends Seeder
 {
@@ -20,9 +20,7 @@ class ClientSeeder extends Seeder
         $faker = Faker::create();
 
         Client::factory()
-            ->count(10)
-            ->has(
-                Order::factory()->count(5)
-            )->create();
+            ->count(50)
+            ->create();
     }
 }

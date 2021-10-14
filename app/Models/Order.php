@@ -16,7 +16,12 @@ class Order extends Model
     protected static $logUnguarded = true;
     protected static $logOnlyDirty = true;
     protected static $logAttributes = ['client'];
-    protected $appends = ['total_owing', 'is_pre_registered', 'reminder', 'total_paid'];
+    protected $appends = [
+        'total_owing',
+        'reminder',
+        'total_paid',
+        'state'
+    ];
 
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo
@@ -171,11 +176,6 @@ class Order extends Model
         return false;
     }
 
-    public function getIsPreRegisteredAttribute()
-    {
-        return $this->quantity === null || $this->client_id === null;
-    }
-
     public function scopePreRegistered($query)
     {
         return $query->whereNull('quantity')->orWhereNull('client_id');
@@ -216,25 +216,6 @@ class Order extends Model
 
         return $total;
     }
-
-    // /**
-    //  * Retorna a URL para a página do pedido
-    //  *
-    //  * @return string
-    //  */
-    // public function path()
-    // {
-    //     if ($this->client) {
-    //         return route('orders.show', [$this->client, $this]);
-    //     }
-
-    //     return route('orders.showPreRegistered', $this);
-    // }
-
-    // public function getPathAttribute()
-    // {
-    //     return $this->path();
-    // }
 
     /**
      * Cria um pagamento de entrada
@@ -298,7 +279,34 @@ class Order extends Model
      */
     public function isPaid()
     {
-        return $this->getTotalOwing() <= 0;
+        return $this->total_owing <= 0;
+    }
+
+    public function isClosed()
+    {
+        return $this->closed_at != null;
+    }
+
+    public function isPreRegistered()
+    {
+        return $this->quantity === null || $this->client_id === null;
+    }
+
+    public function getStateAttribute()
+    {
+        if ($this->isPaid()) {
+            return 'PAID';
+        }
+
+        if ($this->isClosed()) {
+            return 'CLOSED';
+        }
+
+        if ($this->isPreRegistered()) {
+            return 'PRE-REGISTERED';
+        }
+
+        return null;
     }
 
     /**
@@ -326,10 +334,5 @@ class Order extends Model
                 ? "public/$folderName/$filename"
                 : "/storage/$folderName/$filename";
         }, json_decode($this->{$field}));
-    }
-
-    public function isClosed()
-    {
-        return $this->closed_at != null;
     }
 }
