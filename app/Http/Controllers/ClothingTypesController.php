@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ClothingTypeResource;
 use App\Util\Formatter;
 use Illuminate\Support\Str;
 use App\Models\ClothingType;
@@ -11,9 +12,19 @@ use Illuminate\Support\Facades\Validator;
 
 class ClothingTypesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('clothing-types.index');
+        $clothingTypes = ClothingType::query();
+
+        if ($request->filled('hidden')) {
+            $isHidden = $request->hidden === 'true' ? 1 : 0;
+
+            $clothingTypes = ClothingType::where('is_hidden', $isHidden);
+        }
+
+        return ClothingTypeResource::collection(
+            $clothingTypes->orderBy('order')->get()
+        );
     }
 
     public function store(Request $request)
@@ -52,7 +63,7 @@ class ClothingTypesController extends Controller
     {
         $data = [];
         if ($request->filled('value')) {
-            $data['value'] = Formatter::money($request->value);
+            $data['value'] = Formatter::parseCurrencyBRL($request->value);
         }
 
         Validator::make($data, [
@@ -132,15 +143,5 @@ class ClothingTypesController extends Controller
 
     public function list(Request $request)
     {
-        $clothingTypes = ClothingType::query();
-
-        if ($request->filled('hidden') && $request->hidden == "false") {
-            $clothingTypes = ClothingType::where('is_hidden', 0);
-        }
-
-        return response()->json(
-            ['clothing_types' => $clothingTypes->orderBy('order')->get()],
-            200
-        );
     }
 }
