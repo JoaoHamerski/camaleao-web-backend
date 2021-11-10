@@ -19,8 +19,84 @@ class PaymentsController extends Controller
 {
     public function index()
     {
-
         return view('payments.index');
+    }
+
+    public function store(Request $request, Client $client, Order $order)
+    {
+        if ($order->is_closed) {
+            abort(403);
+        }
+
+        $data = $this->getFormattedData($request->all());
+
+        Validator::make(
+            $data,
+            [
+                'payment_via_id' => ['required', 'exists:vias,id'],
+                'value' => ['required', 'max_currency:' . $order->getTotalOwing()],
+                'date' => ['required', 'date_format:Y-m-d'],
+                'note' => ['max:255']
+            ],
+            $this->errorMessages(false)
+        )->validate();
+
+        $payment = $order->payments()->create($data);
+
+        if (Auth::user()->hasRole('gerencia')) {
+            $payment->confirm();
+        }
+
+        return response('', 200);
+    }
+
+    public function update(Client $client, Order $order, Payment $payment, Request $request)
+    {
+        if ($payment->is_confirmed !== null) {
+            abort(403);
+        }
+
+        Validator::make($request->all(), [
+            'note' => ['nullable', 'max:191'],
+            'payment_via_id' => ['required', 'exists:vias,id']
+        ])->validate();
+
+        $payment->update($request->only([
+            'payment_via_id',
+            'note'
+        ]));
+
+        return response('', 200);
+    }
+
+    public function getFormattedData(array $data)
+    {
+        return Formatter::parse($data, [
+            'parseCurrencyBRL' => [
+                'value',
+                'order_value'
+            ],
+            'parseDate' => [
+                'date'
+            ]
+        ]);
+    }
+
+    private function errorMessages($isNewOrder)
+    {
+        return [
+            'client.required' => 'Por favor, digite o nome do cliente.',
+            'client.id.required' => 'Por favor, selecione um cliente.',
+            'order.required' => 'Por favor, informe o código do pedido.',
+            'order.unique' => 'Este código já está sendo utilizado por outro pedido.',
+            'order.id.required' => 'Por favor, selecione um pedido.',
+            'order.id.required_with' => 'Por favor, selecione um pedido.',
+            'order_value.required' => 'Por favor, informe o valor.',
+            'value.max_currency' => $isNewOrder
+                ? 'O pagamento não pode ser maior que o valor do pedido (:max).'
+                : 'O pagamento não pode ser maior que o total restante (:max).',
+            'payment_via_id.required' => 'Por favor, informe a via.',
+        ];
     }
 
     public function getPaymentsOfDay(Request $request)
@@ -93,24 +169,6 @@ class PaymentsController extends Controller
         return response()->json([
             'totalPendencies' => Payment::pendencies()->count()
         ], 200);
-    }
-
-    private function errorMessages($isNewOrder)
-    {
-        return [
-            'client.required' => 'Por favor, digite o nome do cliente.',
-            'client.id.required' => 'Por favor, selecione um cliente.',
-            'order.required' => 'Por favor, informe o código do pedido.',
-            'order.unique' => 'Este código já está sendo utilizado por outro pedido.',
-            'order.id.required' => 'Por favor, selecione um pedido.',
-            'order.id.required_with' => 'Por favor, selecione um pedido.',
-            'order_value.required' => 'Por favor, informe o valor.',
-            'order.not_regex' => 'O código deve conter apenas letras, numeros ou traços.',
-            'value.lte' => $isNewOrder
-                ? 'O pagamento não pode ser maior que o valor do pedido.'
-                : 'O pagamento não pode ser maior que o total restante.',
-            'via_id.required' => 'Por favor, informe a via.',
-        ];
     }
 
     private function clientValidatorRules($isNewClient)
@@ -210,52 +268,6 @@ class PaymentsController extends Controller
         return response()->json([], 204);
     }
 
-    public function store(Request $request, Client $client, Order $order)
-    {
-        if ($order->is_closed) {
-            abort(403);
-        }
-
-        Validator::make($data = $this->getFormattedData($request->all()), [
-            'payment_via_id' => 'required|exists:vias,id',
-            'value' => 'required|max_double:' . $order->getTotalOwing(),
-            'date' => 'required|date_format:Y-m-d'
-        ])->validate();
-
-        if (Auth::user()->hasRole('gerencia')) {
-            $data['confirmed_at'] = Carbon::now();
-            $data['is_confirmed'] = true;
-        }
-
-        $order->payments()->create($data);
-
-        return response()->json([
-            'message' => 'success',
-            'redirect' => $order->path()
-        ], 200);
-    }
-
-    public function patch(Client $client, Order $order, Payment $payment, Request $request)
-    {
-        if ($payment->is_confirmed !== null) {
-            abort(403);
-        }
-
-        Validator::make($request->all(), [
-            'note' => 'nullable|max:191',
-            'payment_via_id' => 'required|exists:vias,id'
-        ])->validate();
-
-        $payment->update($request->only([
-            'payment_via_id', 'note'
-        ]));
-
-        return response()->json([
-            'message' => 'success',
-            'redirect' => $order->path()
-        ], 200);
-    }
-
     public function getChangePaymentView(Client $client, Order $order, Payment $payment)
     {
         return response()->json([
@@ -266,25 +278,5 @@ class PaymentsController extends Controller
                 'method' => 'PATCH'
             ])->render()
         ], 200);
-    }
-
-    public function getFormattedData(array $data)
-    {
-        if (isset($data['value'])) {
-            $data['value'] = Formatter::money($data['value']);
-        }
-
-        if (isset($data['order_value'])) {
-            $data['order_value'] = Formatter::money($data['order_value']);
-        }
-
-        if (isset($data['date']) && Validate::isDate($data['date'])) {
-            $data['date'] = Carbon::createFromFormat(
-                'd/m/Y',
-                $data['date']
-            )->toDateString();
-        }
-
-        return $data;
     }
 }
