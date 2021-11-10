@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ViaResource;
 use App\Models\Via;
 use Illuminate\Http\Request;
 
 class ViasController extends Controller
 {
-    public function list()
+    public function index()
     {
-        return response()->json([
-            'vias' => Via::all()
-        ], 200);
+        return ViaResource::collection(Via::all());
     }
 }
