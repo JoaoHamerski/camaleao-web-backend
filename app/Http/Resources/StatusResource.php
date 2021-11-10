@@ -17,6 +17,7 @@ class StatusResource extends JsonResource
         return [
             'id' => $this->id,
             'text' => $this->text,
+            'avaliable' => $this->isAvaliable()
         ];
     }
 }
