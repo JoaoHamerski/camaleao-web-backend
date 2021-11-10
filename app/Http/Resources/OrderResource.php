@@ -2,10 +2,40 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\PaymentResource;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderResource extends JsonResource
 {
+    private function getPayments(Request $request)
+    {
+        return $this->when(
+            $request->payments === 'true',
+            PaymentResource::collection(
+                $this->payments()
+                    ->orderBy('date', 'desc')
+                    ->get()
+            )
+        );
+    }
+
+    private function getClient(Request $request)
+    {
+        return $this->when(
+            $request->client === 'true',
+            new ClientResource($this->client)
+        );
+    }
+
+    private function getClothingTypes(Request $request)
+    {
+        return $this->when(
+            $request->clothing_types === 'true',
+            ClothingTypeResource::collection($this->clothingTypes)
+        );
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -17,7 +47,7 @@ class OrderResource extends JsonResource
         return [
             'id' => $this->id,
             'code' => $this->code,
-            'client' => new ClientResource($this->client),
+            'client' => $this->getClient($request),
             'status' => new StatusResource($this->status),
             'name' => $this->name,
             'quantity' => $this->quantity,
@@ -27,15 +57,17 @@ class OrderResource extends JsonResource
             'art_paths' => $this->art_paths,
             'size_paths' => $this->size_paths,
             'payment_voucher_paths' => $this->payment_voucher_paths,
-            'costureira_valor' => $this->costureira_valor,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'closed_at' => $this->closed_at,
-            'discount' => $this->closed_at,
-            'total_owing' => $this->total_owing,
-            'total_paid' => $this->total_paid,
-            'reminder' => $this->reminder,
-            'state' => $this->state
+            'discount' => $this->discount,
+            'total_owing' => $this->getTotalOwing(),
+            'total_paid' => $this->getTotalPaid(),
+            'reminder' => $this->getReminder(),
+            'state' => $this->getState(),
+            'payments' => $this->getPayments($request),
+            'clothing_types' => $this->getClothingTypes($request),
+            'total_clothings_value' => $this->totalClothingsValue()
         ];
     }
 }
