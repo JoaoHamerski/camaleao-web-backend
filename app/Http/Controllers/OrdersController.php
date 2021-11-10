@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Util\Mask;
 use \Carbon\Carbon;
 use App\Models\Via;
+use ErrorException;
 use App\Models\City;
 use App\Models\Role;
 use App\Models\User;
@@ -22,7 +24,8 @@ use App\Models\ClothingType;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Barryvdh\DomPDF\Facade as PDF;
-use ErrorException;
+use App\Http\Resources\OrderResource;
+use App\Http\Resources\PaymentResource;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -194,17 +197,7 @@ class OrdersController extends Controller
 
     public function show(Client $client = null, Order $order)
     {
-        if ($client) {
-            $this->authorize('view', [$order, $client->id]);
-        }
-
-        return view('orders.show', [
-            'client' => $client,
-            'order' => $order,
-            'payments' => $order->payments()->orderBy('created_at', 'desc')->get(),
-            'status' => Status::all(),
-            'vias' => Via::all()
-        ]);
+        return new OrderResource($order);
     }
 
     public function edit(Client $client = null, Order $order)
@@ -235,9 +228,8 @@ class OrdersController extends Controller
 
     public function store(Client $client, Request $request)
     {
-        $this->validator(
-            $data = $this->getFormattedData($request->all())
-        )->validate();
+        $data = $this->getFormattedData($request->all());
+        $this->validator($data)->validate();
 
         $data = array_merge($data, $this->uploadAllBase64Files($data));
 
@@ -260,10 +252,7 @@ class OrdersController extends Controller
             );
         }
 
-        return response()->json([
-            'message' => 'success',
-            'redirect' => $order->path()
-        ], 200);
+        return response('', 200);
     }
 
     public function update(Client $client = null, Order $order, Request $request)
@@ -342,7 +331,7 @@ class OrdersController extends Controller
     public function changeOrderCommission(Request $request)
     {
         if ($request->filled('value')) {
-            $data['value'] = Formatter::money($request->value);
+            $data['value'] = Formatter::parseCurrencyBRL($request->value);
         }
 
         Validator::make($data, [
@@ -356,58 +345,77 @@ class OrdersController extends Controller
 
     private function evaluateTotalQuantity(array $data)
     {
-        $total = 0;
+        $INITIAL_VALUE = 0;
 
-        foreach ($this->clothingTypes as $type) {
-            if (!empty($data['value_' . $type->key])) {
-                $total = bcadd($total, $data['quantity_' . $type->key]);
-            }
-        }
+        $total = $this->clothingTypes->reduce(
+            function ($total, $type) use ($data) {
+                $value = $data["value_$type->key"];
+                $quantity = $data["quantity_$type->key"];
+
+                if (!empty($value)) {
+                    return bcadd($total, $quantity);
+                }
+
+                return $total;
+            },
+            $INITIAL_VALUE
+        );
+
 
         return $total;
     }
 
     private function evaluateTotalValue(array $data)
     {
-        $total = 0;
+        $INITIAL_VALUE = 0;
 
-        foreach ($this->clothingTypes as $type) {
-            if (!empty($data['quantity_' . $type->key])) {
-                $mul = bcmul(
-                    $data['quantity_' . $type->key],
-                    $data['value_' . $type->key],
-                    2
-                );
+        $total = $this->clothingTypes->reduce(
+            function ($total, $type) use ($data) {
+                $quantity = $data["quantity_$type->key"];
+                $value = $data["value_$type->key"];
 
-                $total = bcadd($total, $mul, 2);
-            }
-        }
+                if (!empty($quantity)) {
+                    $typeTotal = bcmul($quantity, $value, 2);
+
+                    return bcadd($total, $typeTotal, 2);
+                }
+
+                return $total;
+            },
+            $INITIAL_VALUE
+        );
 
         return bcsub($total, $data['discount'] ?? 0, 2);
     }
 
     private function validator(array $data, $order = null)
     {
+        $totalPrice = bcadd($data['price'], $data['discount'] ?? 0, 2);
+
         $fields = [
             'name' => ['nullable', 'max:50'],
             'code' => [
                 'required', $order
                     ? Rule::unique('orders')->ignore($data['code'], 'code')
-                    : Rule::unique('orders'),
-                'not_regex:/[^a-z\-0-9]/i'
+                    : Rule::unique('orders')
             ],
-            'discount' => ['nullable', 'numeric', 'lte:price'],
-            'price' => [
-                'required',
+            'discount' => [
+                'sometimes',
+                'nullable',
                 'numeric',
-                'min_double:' . ($order
-                    ? $order->getTotalPayments()
-                    : '0.01')
+                'gt:0.00',
+                "lt:$totalPrice",
             ],
+            'price' => ['required', 'numeric'],
             'delivery_date' => ['nullable', 'date_format:Y-m-d'],
             'production_date' => ['nullable', 'date_format:Y-m-d'],
-            'down_payment' => ['sometimes', 'max_double:price'],
-            'payment_via_id' => ['sometimes', 'nullable', 'required_with:down_payment', 'exists:vias,id'],
+            'down_payment' => ['sometimes', 'max_currency:' . $data['price']],
+            'payment_via_id' => [
+                'sometimes',
+                'nullable',
+                'required_with:down_payment',
+                'exists:vias,id'
+            ],
             'art_paths.*' => ['file', 'max:1024'],
             'size_paths.*' => ['file', 'max:1024'],
             'payment_voucher_paths.*' => ['file', 'max:1024'],
@@ -422,18 +430,37 @@ class OrdersController extends Controller
             $fields['client_id'] = ['required', 'exists:clients,id'];
         }
 
-        return Validator::make($data, $fields, $this->errorMessages());
+        if (!$order && $data['price'] == 0) {
+            $data['price'] = '';
+        }
+
+        if ($order) {
+            $fields['price'][] = 'min_currency:' . $order->getTotalPayments();
+        }
+
+        return Validator::make($data, $fields, $this->errorMessages($data));
     }
 
-    private function errorMessages()
+    private function errorMessages($data)
     {
+        $totalPrice = bcadd($data['price'], $data['discount'] ?? 0, 2);
+
         return [
-            'client_id.required' => 'Por favor, informe o cliente.',
-            'discount.lte' => 'O desconto não pode ser maior que o preço total.',
-            'code.not_regex' => 'O código deve conter apenas letras, numeros ou traços.',
-            'art_paths.*.max' => 'A imagem armazenada deve ser menor que 1MB, por favor, redimensione-a para diminuir seu tamanho.',
-            'size_paths.*.max' => 'A imagem armazenada deve ser menor que 1MB, por favor, redimensione-a para diminuir seu tamanho.',
-            'payment_voucher_paths.*.max' => 'O arquivo armazenada deve ser menor que 1MB.',
+            'art_paths.*.max.file' => __('general.validation.file_min', ['max' => '1MB']),
+            'discount.lt' => __(
+                'general.validation.orders.discount_lt',
+                ['total_price' => Mask::money($totalPrice)]
+            ),
+            'discount.gt' => __('general.validation.orders.discount_gt'),
+            'down_payment.max_currency' => __(
+                'general.validation.orders.down_payment_max_currency',
+                ['final_value' => Mask::money($data['price'])]
+            ),
+            'size_paths.*.max' => __('general.validation.file_min', ['max' => '1MB']),
+            'payment_via_id.required_with' => __('general.validation.orders.payment_via_id_required_with'),
+            'payment_voucher_paths.*.max' => __('general.validation.file_min', ['max' => '1MB']),
+            'price.min_currency' => __('general.validation.orders.price_min_currency'),
+            'price.required' => __('general.validation.orders.price_required'),
         ];
     }
 
@@ -442,37 +469,28 @@ class OrdersController extends Controller
         $data['price'] = null;
         $data['quantity'] = null;
 
-        if (empty($data['discount'])) {
-            $data['discount'] = 0.00;
+        $data = Formatter::parse($data, [
+            'parseCurrencyBRL' => [
+                'down_payment',
+                'value_',
+                'discount'
+            ],
+            'parseDate' => [
+                'delivery_date',
+                'production_date'
+            ],
+            'base64toUploadedFile' => [
+                'art_paths',
+                'size_paths',
+                'payment_voucher_paths'
+            ]
+        ]);
+
+        if (strlen($data['discount']) === 0) {
+            unset($data['discount']);
         }
 
-        foreach ($data as $key => $field) {
-            if (Str::contains($key, ['down_payment', 'value_', 'discount']) && !empty($field)) {
-                $data[$key] = Formatter::money($data[$key]);
-            }
-
-            if (Str::contains($key, ['delivery_date', 'production_date'])) {
-                if (Validate::isDate($field)) {
-                    $data[$key] = Carbon::createFromFormat(
-                        'd/m/Y',
-                        $data[$key]
-                    )->toDateString();
-                }
-            }
-
-            if (Str::contains($key, ['art_paths', 'size_paths', 'payment_voucher_paths'])) {
-                foreach ($field as $index => $file) {
-                    $base64 = $file['base64'];
-
-                    if (!empty($base64)) {
-                        $data[$key][$index] = $this->base64ToUploadedFile($base64);
-                    }
-                }
-            }
-        }
-
-
-        if ($data['client']) {
+        if (isset($data['client'])) {
             $data['client_id'] = $data['client']['id'];
         }
 
