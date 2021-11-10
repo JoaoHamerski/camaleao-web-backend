@@ -13,14 +13,20 @@ class Status extends Model
      * Tabela para ser usada no model
      */
     protected $table = 'status';
+    protected $AVALIABLE_ID = 8;
 
     /**
      * Um status tem varios pedidos
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function orders()
     {
-    	return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class);
+    }
+
+    public function isAvaliable()
+    {
+        return $this->id === $this->AVALIABLE_ID;
     }
 }
