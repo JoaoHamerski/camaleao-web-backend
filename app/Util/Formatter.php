@@ -2,36 +2,112 @@
 
 namespace App\Util;
 
+use Exception;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\File\File;
+use Illuminate\Http\UploadedFile;
+
 class Formatter
 {
+
+    /**
+     * Parser para formatar dados de um formulário chamando métodos
+     * da classe \App\Util\Formatter.
+     *
+     * @param array $data Dados do formulário
+     * @param array $options Array associativo com as opções.
+     * Ex: [$methodToUse => [$fieldsToFormat], ...]
+     * $fieldsToFormat são comparados como wildcard, ou seja,
+     * dão match se qualquer parte da string é encontrada em $fieldsToFormat.
+     *
+     * @return array $data Dados formatados.
+     */
+    public static function parse(array $data, array $options)
+    {
+        foreach ($data as $key => $item) {
+            foreach ($options as $method => $fields) {
+                if (!method_exists(self::class, $method)) {
+                    throw new Exception("Method $method doesn't exist.");
+                    break;
+                }
+
+                if (Str::contains($key, $fields) && !empty($item)) {
+                    $data[$key] = self::$method($item);
+                }
+            }
+        }
+
+        return $data;
+    }
 
     /**
      * Remove qualquer caractere que não é um digito da string
      *
      * @param string $str
+     *
      * @return string or null
      */
     public static function stripNonDigits($str)
     {
-        return $str != null ? preg_replace('/\D/', '', $str) : null;
+        return $str !== null
+            ? preg_replace('/\D/', '', $str)
+            : null;
     }
 
     /**
-     * Sanitiza o valor em dinheiro BRL para o formato padrão.
+     * Cria uma instancia de Illuminate\Http\UploadedFile
+     * a partir de um arquivo em base64
      *
-     * Ex.: R$ 123,45 => 123.45
-     *
-     * @param string $str
-     * @return string or null
+     * @param $base64
+     * @return Illuminate\Http\UploadedFile
      */
-    public static function money($str)
+    public function base64ToUploadedFile($base64)
     {
-        $str = str_replace(' ', '', $str);
+        @list(, $fileData) = explode(';', $base64);
+        @list(, $fileData) = explode(',', $base64);
+
+        $file = base64_decode($fileData);
+
+        $tempFilepath = sys_get_temp_dir() . '/' . Str::uuid()->toString();
+
+        file_put_contents($tempFilepath, $file);
+
+        $file = new File($tempFilepath);
+
+        return new UploadedFile(
+            $file->getPathname(),
+            $file->getFilename(),
+            $file->getMimeType(),
+            0,
+            true
+        );
+    }
+
+    public static function parseDate($str)
+    {
+        if (Validate::isDate($str)) {
+            return Carbon::createFromFormat('d/m/Y', $str)->toDateString();
+        }
+
+        return $str;
+    }
+    /**
+     * Transforma o valor em dinheiro BRL para o formato padrão.
+     *
+     * Ex.: R$ 12.345,67 => 12345.67
+     *
+     * @param string|double  $str
+     *
+     * @return string|null
+     */
+    public static function parseCurrencyBRL($str)
+    {
+        $str = str_replace('R$', '', $str);
         $str = str_replace('.', '', $str);
         $str = str_replace(',', '.', $str);
-        $str = str_replace('R$', '', $str);
 
-        return (!empty($str) ? $str : null);
+        return $str ? trim($str) : null;
     }
 
     /**
@@ -40,6 +116,7 @@ class Formatter
      * - Capitalizando as palavras com algumas exceções (da, do, das, dos, de).
      *
      * @param string $str
+     *
      * @return string
      */
     public static function name(string $str)
