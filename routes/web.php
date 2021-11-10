@@ -8,8 +8,11 @@ use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BranchesController;
 use App\Http\Controllers\CitiesController;
+use App\Http\Controllers\ClothingTypesController;
 use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\ShippingCompaniesController;
+use App\Http\Controllers\ViasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,18 +47,66 @@ Route::middleware('auth')->prefix('api')->group(function () {
 Route::post('/api/sanctum/token', TokenController::class);
 
 Route::prefix('api/clients')->name('clients.')->group(function () {
-    Route::get('/', [ClientsController::class, 'index'])->name('index');
-    Route::get('/{client}', [ClientsController::class, 'show'])->name('show');
-    Route::get('/{client}/orders', [ClientsController::class, 'orders'])->name('orders');
-    Route::post('/', [ClientsController::class, 'store'])->name('store');
+    Route::get('/', [
+        ClientsController::class,
+        'index'
+    ])->name('index');
+
+    Route::get('/{client}', [
+        ClientsController::class,
+        'show'
+    ])->name('show');
+
+    Route::get('/{client}/orders', [
+        ClientsController::class,
+        'orders'
+    ])->name('orders');
+
+    Route::post('/', [
+        ClientsController::class,
+        'store'
+    ])->name('store');
 });
 
-Route::prefix('api/orders')->name('orders')->group(function () {
-    Route::get('/orders', [OrdersController::class, 'index'])->name('index');
-    Route::get('/orders/{client}', [OrdersController::class, 'show'])->name('show');
+Route::name('orders.')->group(function () {
+    Route::prefix('api/clients')->group(function () {
+        Route::get('/{client}/orders/{order}', [
+            OrdersController::class,
+            'show'
+        ])->name('show');
+
+        Route::post('/{client}/new-order', [
+            OrdersController::class,
+            'store'
+        ])->name('store');
+
+        Route::post('/{client}/orders/{order}/payments', [
+            PaymentsController::class,
+            'store'
+        ])->name('store-payment');
+
+        Route::patch('/{client}/orders/{order}/payments/{payment}', [
+            PaymentsController::class,
+            'update'
+        ])->name('update-payment');
+    });
+
+    Route::prefix('api/orders')->group(function () {
+        Route::get('/', [
+            OrdersController::class,
+            'index'
+        ])->name('index');
+    });
 });
 
-Route::prefix('api/cities')->name('cities')->group(function () {
+Route::prefix('api/clothing-types')->name('clothing-types.')->group(function () {
+    Route::get('/', [
+        ClothingTypesController::class,
+        'index'
+    ])->name('index');
+});
+
+Route::prefix('api/cities')->name('cities.')->group(function () {
     Route::get('/', [CitiesController::class, 'index'])->name('index');
 });
 
@@ -65,4 +116,8 @@ Route::prefix('api/branches')->name('branches')->group(function () {
 
 Route::prefix('api/shipping-companies')->name('shipping-companies')->group(function () {
     Route::get('/', [ShippingCompaniesController::class, 'index'])->name('index');
+});
+
+Route::prefix('api/vias')->name('vias.')->group(function () {
+    Route::get('/', [ViasController::class, 'index'])->name('index');
 });
