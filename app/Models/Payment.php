@@ -30,10 +30,10 @@ class Payment extends Model
         if ($eventName == 'created') {
             return '
                 <div data-event="created">
-                    <strong>:causer.name</strong> 
-                    registrou um pagamento de 
-                    <span class="font-weight-bold" data-mask="money">:subject.value</span> 
-                    para o pedido 
+                    <strong>:causer.name</strong>
+                    registrou um pagamento de
+                    <span class="font-weight-bold" data-mask="money">:subject.value</span>
+                    para o pedido
                     <strong>:properties.attributes.order.code</strong>
                 </div>
             ';
@@ -42,8 +42,8 @@ class Payment extends Model
         if ($eventName == 'updated') {
             return '
                 <div data-event="updated">
-                    <strong>:causer.name</strong> 
-                    alterou os dados de pagamento do pedido 
+                    <strong>:causer.name</strong>
+                    alterou os dados de pagamento do pedido
                     <strong>:properties.attributes.order.code</strong>
                 </div>
             ';
@@ -52,8 +52,8 @@ class Payment extends Model
         if ($eventName == 'deleted') {
             return '
                 <div data-event="deleted">
-                    <strong>:causer.name</strong> 
-                    deletou o pedido :subject.code do cliente 
+                    <strong>:causer.name</strong>
+                    deletou o pedido :subject.code do cliente
                     <strong>:properties.attributes.client.name</strong>
                 </div>
             ';
@@ -68,6 +68,14 @@ class Payment extends Model
     public function order()
     {
         return $this->belongsTo(Order::class);
+    }
+
+    public function confirm()
+    {
+        $this->update([
+            'confirmed_at' => Carbon::now(),
+            'is_confirmed' => true
+        ]);
     }
 
     public function scopePendencies()
