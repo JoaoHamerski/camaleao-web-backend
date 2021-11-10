@@ -88,14 +88,15 @@ class AppServiceProvider extends ServiceProvider
      */
     private function bootBladeValidation()
     {
-        Validator::extend('max_double', 'App\Rules\MaxDouble@passes');
-        Validator::extend('min_double', 'App\Rules\MinDouble@passes');
+        Validator::extend('max_currency', 'App\Rules\MaxCurrency@passes');
+        Validator::extend('min_currency', 'App\Rules\MinCurrency@passes');
+        Validator::extend('equal', 'App\Rules\Equal@passes');
 
-        Validator::replacer('max_double', function ($message, $attribute, $rule, $parameters) {
+        Validator::replacer('max_currency', function ($message, $attribute, $rule, $parameters) {
             return str_replace(':max', Mask::money($parameters[0]), $message);
         });
 
-        Validator::replacer('min_double', function ($message, $attribute, $rule, $parameters) {
+        Validator::replacer('min_currency', function ($message, $attribute, $rule, $parameters) {
             return str_replace(':min', Mask::money($parameters[0]), $message);
         });
     }

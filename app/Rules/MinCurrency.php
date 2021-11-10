@@ -4,7 +4,7 @@ namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 
-class MaxDouble implements Rule
+class MinCurrency implements Rule
 {
     /**
      * Create a new rule instance.
@@ -21,11 +21,12 @@ class MaxDouble implements Rule
      *
      * @param  string  $attribute
      * @param  mixed  $value
+     * @param  array  $parameters
      * @return bool
      */
     public function passes($attribute, $value, $parameters = [])
     {
-        return $value <= $parameters[0];
+        return $value >= $parameters[0];
     }
 
     /**
