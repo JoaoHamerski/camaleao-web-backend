@@ -75,7 +75,7 @@ class ClientsController extends Controller
             $orders->where('code', 'like', '%' . $request->code . '%');
         }
 
-        return OrderResource::collection($orders->paginate(10));
+        return OrderResource::collection($orders->latest()->paginate(10));
     }
 
     public function client(Client $client)
