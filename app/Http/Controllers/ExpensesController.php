@@ -235,10 +235,10 @@ class ExpensesController extends Controller
     {
         if (is_array($data['value'])) {
             foreach ($data['value'] as $key => $value) {
-                $data['value'][$key] = Formatter::money($value);
+                $data['value'][$key] = Formatter::parseCurrencyBRL($value);
             }
         } else {
-            $data['value'] = Formatter::money($data['value']);
+            $data['value'] = Formatter::parseCurrencyBRL($data['value']);
         }
 
         if (is_array($data['date'])) {
