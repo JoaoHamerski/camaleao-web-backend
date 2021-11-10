@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Traits\FileManager;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
+use App\Http\Resources\ClothingTypeResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
@@ -16,21 +18,7 @@ class Order extends Model
     protected static $logUnguarded = true;
     protected static $logOnlyDirty = true;
     protected static $logAttributes = ['client'];
-    protected $appends = [
-        'total_owing',
-        'reminder',
-        'total_paid',
-        'state'
-    ];
 
-    /**
-     * Descrição que é cadastrada no log de atividades toda vez que um tipo
-     * de evento ocorre no model
-     *
-     * @param string $eventname
-     *
-     * @return string
-     */
     public function getDescriptionForEvent(string $eventName): string
     {
         if ($eventName == 'created') {
@@ -70,11 +58,6 @@ class Order extends Model
         }
     }
 
-    /**
-     * Método "booted" do model
-     *
-     * @return void
-     **/
     public static function booted()
     {
         static::creating(function (Order $order) {
@@ -88,31 +71,21 @@ class Order extends Model
         });
     }
 
-    /**
-     * Um pedido pertence a um cliente
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    public function getRouteKeyName()
+    {
+        return 'code';
+    }
+
     public function client()
     {
         return $this->belongsTo(Client::class);
     }
 
-    /**
-     * Um pedido tem muitos pagamentos
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function payments()
     {
         return $this->hasMany(Payment::class);
     }
 
-    /**
-     * Um pedido tem muitas anotações
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function notes()
     {
         return $this->hasMany(Note::class);
@@ -123,11 +96,6 @@ class Order extends Model
         return $this->hasMany(Commission::class);
     }
 
-    /**
-     * Um pedido pertence a um status
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function status()
     {
         return $this->belongsTo(Status::class);
@@ -183,16 +151,7 @@ class Order extends Model
 
     public function getCommissions()
     {
-        return $this->clothingTypes
-            ->map(function ($type) {
-                return [
-                    'key' => $type->key,
-                    'name' => $type->name,
-                    'quantity' => $type->pivot->quantity,
-                    'total' => $type->totalValue(),
-                    'commission' => $type->commission
-                ];
-            });
+        return ClothingTypeResource::collection($this->clothingTypes);
     }
 
     public function getOriginalPrice()
@@ -217,48 +176,31 @@ class Order extends Model
         return $total;
     }
 
-    /**
-     * Cria um pagamento de entrada
-     *
-     * @param double $value
-     *
-     * @return App\Models\Payment
-     */
     public function createDownPayment($value, $viaId)
     {
         return $this->payments()->create([
             'value' => $value,
-            'date' => \Carbon\Carbon::now(),
+            'date' => Carbon::now(),
             'payment_via_id' => $viaId,
             'note' => 'Pagamento de entrada'
         ]);
     }
 
-    /**
-     * Retorna a soma total dos pagamentos feitos para o pedido
-     *
-     * @return double
-     */
-    public function getTotalPaidAttribute()
+    public function getTotalPaid()
     {
         return $this->payments()
             ->where('is_confirmed', true)
             ->sum('value');
     }
 
-    public function getReminderAttribute()
+    public function getReminder()
     {
         return $this->notes()->whereNotNull('is_reminder')->first();
     }
 
-    /**
-     * Retorna o total que falta pagar no pedido
-     *
-     * @return double
-     */
-    public function getTotalOwingAttribute()
+    public function getTotalOwing()
     {
-        return bcsub($this->price, $this->total_paid, 2);
+        return bcsub($this->price, $this->getTotalPaid(), 2);
     }
 
     public function getTotalPossibleOwing()
@@ -272,14 +214,9 @@ class Order extends Model
         return bcsub($this->price, $totalPayments, 2);
     }
 
-    /**
-     * Verifica se o pedido está pago
-     *
-     * @return bool
-     */
     public function isPaid()
     {
-        return $this->total_owing <= 0;
+        return $this->getTotalOwing() <= 0;
     }
 
     public function isClosed()
@@ -292,7 +229,7 @@ class Order extends Model
         return $this->quantity === null || $this->client_id === null;
     }
 
-    public function getStateAttribute()
+    public function getState()
     {
         if ($this->isPaid()) {
             return 'PAID';
@@ -309,14 +246,6 @@ class Order extends Model
         return null;
     }
 
-    /**
-     * Retorna o caminho para os arquivos do campo especificado
-     *
-     * @param $field
-     * @param $publicRelative Determina se o caminho deve ser relativo a pasta public
-     *
-     * @return array
-     */
     public function getPaths($field, $publicRelative = false)
     {
         $folderName = [
