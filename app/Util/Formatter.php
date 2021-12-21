@@ -33,7 +33,13 @@ class Formatter
                 }
 
                 if (Str::contains($key, $fields) && !empty($item)) {
-                    $data[$key] = self::$method($item);
+                    if (gettype($data[$key]) === 'array') {
+                        foreach ($data[$key] as $key2 => $item2) {
+                            $data[$key][$key2] = self::$method($item2);
+                        }
+                    } else {
+                        $data[$key] = self::$method($item);
+                    }
                 }
             }
         }
@@ -59,11 +65,19 @@ class Formatter
      * Cria uma instancia de Illuminate\Http\UploadedFile
      * a partir de um arquivo em base64
      *
-     * @param $base64
+     * @param string $base64
      * @return Illuminate\Http\UploadedFile
      */
-    public function base64ToUploadedFile($base64)
+    public static function base64ToUploadedFile($base64)
     {
+        if (Helper::isValidURL($base64)) {
+            return Helper::getFilenameFromURL($base64);
+        }
+
+        if (!FileHelper::isBase64($base64)) {
+            throw new Exception("The uploaded file isn't a valid file.");
+        }
+
         @list(, $fileData) = explode(';', $base64);
         @list(, $fileData) = explode(',', $base64);
 
