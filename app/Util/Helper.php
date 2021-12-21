@@ -222,4 +222,64 @@ class Helper
             Route::name($prefixName)->group($filepath);
         }
     }
+
+    public static function getLastArrayEl(array $arr)
+    {
+        return array_values(array_slice($arr, -1))[0];
+    }
+
+    public static function isValidUrl(string $url)
+    {
+        $exceptions = [':', '/', '.'];
+
+        $url = array_map(function ($char) use ($exceptions) {
+            if (Str::contains($char, $exceptions)) {
+                return $char;
+            }
+
+            return rawurlencode($char);
+        }, str_split($url));
+
+        $url = join('', $url);
+
+        return filter_var($url, FILTER_VALIDATE_URL) !== false;
+    }
+
+    public static function getFilenameFromURL(string $url)
+    {
+        return self::getLastArrayEl(explode('/', $url));
+    }
+
+    /**
+     * Verifica se todos os itens do array
+     * pertence ou não à instância.
+     *
+     * @param array $array
+     * @param mix $instance
+     * @param boolean $checkForTrue
+     *
+     * @return array $array
+     */
+    public static function filterInstanceOf($array, $instance, bool $checkForTrue = true)
+    {
+        if (!is_array($array)) {
+            return $array;
+        }
+
+        return array_filter(
+            $array,
+            function ($item) use ($instance, $checkForTrue) {
+                if ($checkForTrue) {
+                    return $item instanceof $instance;
+                }
+
+                return !($item instanceof $instance);
+            }
+        );
+    }
+
+    public static function lastElement(array $array)
+    {
+        return array_values(array_slice($array, -1))[0];
+    }
 }
