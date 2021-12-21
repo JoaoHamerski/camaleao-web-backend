@@ -2,20 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\StatusResource;
 use App\Models\Client;
 use App\Models\Order;
 use App\Models\Status;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class StatusController extends Controller
 {
+    public function index()
+    {
+        return StatusResource::collection(Status::all());
+    }
+
     public function patch(Client $client, Order $order, Request $request)
     {
-        if (Status::where('id', $request->status)->exists()) {
-            $order->status_id = $request->status;
-            $order->save();
-        }
+        Validator::make($request->all(), [
+            'status' => 'required|exists:status,id'
+        ])->validate();
 
-        return redirect($order->path());
+        $order->update([
+            'status_id' => $request->status
+        ]);
+
+        return response('', 200);
     }
 }
