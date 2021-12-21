@@ -10,15 +10,12 @@ use App\Models\Expense;
 use App\Util\Formatter;
 use Barryvdh\DomPDF\PDF;
 use App\Models\ExpenseType;
-use App\Traits\FileManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ExpensesController extends Controller
 {
-    use FileManager;
-
     public function index(Request $request)
     {
         $expenses = Expense::query();

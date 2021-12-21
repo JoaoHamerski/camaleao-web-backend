@@ -3,15 +3,13 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Util\Helper;
 use App\Models\Order;
-use App\Traits\FileManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ProductionCalendarController extends Controller
 {
-    use FileManager;
-
     public function index()
     {
         return view('production-calendar.index');
@@ -57,7 +55,7 @@ class ProductionCalendarController extends Controller
         )->validate();
 
         $path = $this->storeFile(
-            $this->base64ToUploadedFile($data['imagePath']),
+            Helper::base64ToUploadedFile($data['imagePath']),
             'public/imagens_da_arte'
         );
 
