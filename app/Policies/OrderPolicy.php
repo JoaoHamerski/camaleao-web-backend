@@ -34,7 +34,7 @@ class OrderPolicy
     }
 
     public function toggleOrder(?User $user, Order $order, int $clientId)
-    {  
+    {
         return ($order->getTotalOwing() == 0 || $order->isClosed())
             && $order->client->id == $clientId;
     }
@@ -59,7 +59,7 @@ class OrderPolicy
      */
     public function update(?User $user, Order $order, $clientId)
     {
-        return ! $order->is_closed && $order->client->id == $clientId;
+        return !$order->is_closed && $order->client->id == $clientId;
     }
 
     /**
