@@ -91,7 +91,6 @@ class ClientsController extends Controller
         $data = $this->getFormattedData($request->all());
         $this->validator($data)->validate();
 
-        var_dump($data);
         Client::create($data);
 
         return response()->json([
