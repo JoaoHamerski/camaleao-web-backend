@@ -64,7 +64,7 @@
 		@endif
 
 		<li>
-			<strong>Cidade:</strong> 
+			<strong>Cidade:</strong>
 			{{ $order->client->city ? $order->client->city->name : 'N/A' }}
 			{{ $order->client->stateAbbr ? ' - ' . $order->client->stateAbbr : '' }}
 
@@ -72,14 +72,14 @@
 
 		<li>
 			<strong>Frete:</strong>
-			{{ 
-				$order->client->shippingCompany 
-					? $order->client->shippingCompany->name 
-					: 'N/A' 
+			{{
+				$order->client->shippingCompany
+					? $order->client->shippingCompany->name
+					: 'N/A'
 				}}
 		</li>
 
-		<li>	
+		<li>
 			<strong>Valor total: </strong> {!! Mask::money($order->price, true) !!}
 		</li>
 
@@ -88,7 +88,7 @@
 		</li>
 
 		<li>
-			<strong>Total pago:</strong> {!! Mask::money($order->getTotalPayments(), true) !!}
+			<strong>Total pago:</strong> {!! Mask::money($order->getTotalPaid(), true) !!}
 		</li>
 
 		<li class="{{ $order->isPaid() ? 'text-success' : 'text-danger' }}">
@@ -104,11 +104,11 @@
 	<div class="page-break"></div>
 
 	@if (isset($order->getPaths('art_paths')[1]))
-		<img src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[1])) }} ">	
+		<img src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[1])) }} ">
 	@else
 		[sem imagem cadastrada]
 	@endif
-	
+
 	<div>
 		<ul>
 			<li>

@@ -4,11 +4,11 @@
 	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>
-		Relatório de pedidos 
-		@if ($request->filled('cidade')) - {{ $request->cidade }} @endif 
+		Relatório de pedidos
+		@if ($request->filled('cidade')) - {{ $request->cidade }} @endif
 		@if ($request->filled('status')) - {{ \App\Models\Status::find($request->status)->text }} @endif
 		@if ($request->filled('data_de_fechamento'))
-		 - fechados em {{ $request->data_de_fechamento }} 
+		 - fechados em {{ $request->data_de_fechamento }}
 		@endif
 		@if ($request->filled('data_de_entrega'))
 		- entrega para {{ $request->data_de_entrega }}
@@ -56,25 +56,25 @@
 			width: 250px !important;
 		}
 
-		footer { 
-			position: fixed; 
-			right: 0px; 
-			bottom: 10px; 
+		footer {
+			position: fixed;
+			right: 0px;
+			bottom: 10px;
 			text-align: center;
 			border-top: 1px solid black;
 		}
 
-        footer .page:after { 
-        	content: counter(page, decimal); 
-        }
+    footer .page:after {
+      content: counter(page, decimal);
+    }
 
-        .page-break {
-        	page-break-before: always;
-        }
+    .page-break {
+      page-break-before: always;
+    }
 
-        .note {
-        	font-size: .9rem;
-        }
+    .note {
+      font-size: .9rem;
+    }
 
  		@page { margin: 20px 30px 40px 50px; }
 	</style>
@@ -82,16 +82,16 @@
 <body>
 	<footer>
     	<p class="page">Página </p>
-  	</footer> 
+  	</footer>
 
 	<header>
-		Relatório de pedidos 
+		Relatório de pedidos
 		@if ($request->filled('cidade'))
 			<br>
 			<br>
 			<strong style="text-transform: uppercase;">{{ $request->cidade }}</strong>
 		@endif
-		
+
 		@if ($request->filled('status'))
 			<br>
 			<div style="font-size: 1.2rem; margin-top: .25rem;">
@@ -116,16 +116,16 @@
 	</header>
 
 	@forelse($orders as $order)
-		<table>	
+		<table>
 			<tbody>
 				<tr>
-					<td class="image text-center" 
-						rowspan="{{ $order->notes->count() 
+					<td class="image text-center"
+						rowspan="{{ $order->notes->count()
 								? $order->notes->count() + 4
 								: 3 }}">
 						@isset($order->getPaths('art_paths')[0])
 							<div>
-								<img width="100px" 
+								<img width="100px"
 									src="{{ Helper::imageTo64(public_path($order->getPaths('art_paths')[0])) }}"
 								>
 							</div>
@@ -141,9 +141,9 @@
 				<tr>
 					<td>
 						<strong>Quantidade: </strong>
-						{{ $order->quantity ?? 'N/A' }} 
+						{{ $order->quantity ?? 'N/A' }}
 						@if ($order->quantity)
-							{{ $order->quantity == 1 ? 'CAMISA' : 'CAMISAS' }} 
+							{{ $order->quantity == 1 ? 'CAMISA' : 'CAMISAS' }}
 						@endif
 					</td>
 				</tr>
