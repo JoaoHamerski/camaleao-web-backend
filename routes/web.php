@@ -12,6 +12,7 @@ use App\Http\Controllers\ClothingTypesController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\ShippingCompaniesController;
+use App\Http\Controllers\StatusController;
 use App\Http\Controllers\ViasController;
 
 /*
@@ -80,6 +81,26 @@ Route::name('orders.')->group(function () {
             'store'
         ])->name('store');
 
+        Route::patch('/{client}/orders/{order}', [
+            OrdersController::class,
+            'update'
+        ])->name('update');
+
+        Route::delete('/{client}/orders/{order}', [
+            OrdersController::class,
+            'destroy'
+        ])->name('destroy');
+
+        Route::get('/{client}/orders/{order}/generate-report', [
+            OrdersController::class,
+            'generateOrderReport'
+        ])->name('generate-order-report');
+
+        Route::post('/{client}/orders/{order}/toggle-order', [
+            OrdersController::class,
+            'toggleOrder'
+        ])->name('toggle');
+
         Route::post('/{client}/orders/{order}/payments', [
             PaymentsController::class,
             'store'
@@ -89,6 +110,11 @@ Route::name('orders.')->group(function () {
             PaymentsController::class,
             'update'
         ])->name('update-payment');
+
+        Route::patch('/{client}/orders/{order}/update-status', [
+            StatusController::class,
+            'patch'
+        ])->name('update-status');
     });
 
     Route::prefix('api/orders')->group(function () {
@@ -102,6 +128,13 @@ Route::name('orders.')->group(function () {
 Route::prefix('api/clothing-types')->name('clothing-types.')->group(function () {
     Route::get('/', [
         ClothingTypesController::class,
+        'index'
+    ])->name('index');
+});
+
+Route::prefix('api/status')->name('status.')->group(function () {
+    Route::get('/', [
+        StatusController::class,
         'index'
     ])->name('index');
 });
