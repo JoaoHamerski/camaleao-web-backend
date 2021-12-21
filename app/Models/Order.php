@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use App\Traits\FileManager;
+use App\Util\FileHelper;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use App\Http\Resources\ClothingTypeResource;
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
-    use HasFactory, FileManager, LogsActivity;
+    use HasFactory, LogsActivity;
 
     protected $guarded = [];
     protected static $logName = 'orders';
@@ -60,14 +60,22 @@ class Order extends Model
 
     public static function booted()
     {
+        $FILE_FIELDS = [
+            'art_paths',
+            'size_paths',
+            'payment_voucher_paths'
+        ];
+
         static::creating(function (Order $order) {
             $order->status_id = Status::first()->id;
         });
 
-        static::deleting(function (Order $order) {
-            static::deleteFiles($order, [
-                'art_paths', 'size_paths', 'payment_voucher_paths'
-            ]);
+        static::deleting(function (Order $order) use ($FILE_FIELDS) {
+            foreach ($FILE_FIELDS as $field) {
+                $files = json_decode($order->{$field}) ?? [];
+
+                FileHelper::deleteFiles($files, $field);
+            }
         });
     }
 
@@ -221,7 +229,7 @@ class Order extends Model
 
     public function isClosed()
     {
-        return $this->closed_at != null;
+        return $this->closed_at !== null;
     }
 
     public function isPreRegistered()
@@ -229,21 +237,23 @@ class Order extends Model
         return $this->quantity === null || $this->client_id === null;
     }
 
-    public function getState()
+    public function getStates()
     {
+        $states = [];
+
         if ($this->isPaid()) {
-            return 'PAID';
+            $states[] = 'PAID';
         }
 
         if ($this->isClosed()) {
-            return 'CLOSED';
+            $states[] = 'CLOSED';
         }
 
         if ($this->isPreRegistered()) {
-            return 'PRE-REGISTERED';
+            $states[] = 'PRE-REGISTERED';
         }
 
-        return null;
+        return $states;
     }
 
     public function getPaths($field, $publicRelative = false)
