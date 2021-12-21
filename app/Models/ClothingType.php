@@ -11,12 +11,16 @@ class ClothingType extends Model
 
     protected $guarded = [];
 
+    /*
+    Ordenação dos tipos de roupas
+    REVISAR ISSO
     protected static function booted()
     {
         static::creating(function ($clothingType) {
             $clothingType->order = ClothingType::count();
         });
     }
+    */
 
     public function orders()
     {
