@@ -2,8 +2,9 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\PaymentResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
+use App\Http\Resources\PaymentResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderResource extends JsonResource
@@ -36,6 +37,24 @@ class OrderResource extends JsonResource
         );
     }
 
+    private function getFilesURL($files, string $field)
+    {
+        $baseFileURL = URL::to('/storage/' . __($field));
+        $files = json_decode($files);
+
+        if ($files === null) {
+            return [];
+        }
+
+        if (is_array($files)) {
+            return array_map(function ($file) use ($baseFileURL) {
+                return $baseFileURL . '/' . $file;
+            }, $files);
+        }
+
+        return $baseFileURL . '/' . $files;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -54,9 +73,12 @@ class OrderResource extends JsonResource
             'price' => $this->price,
             'delivery_date' => $this->delivery_date,
             'production_date' => $this->production_date,
-            'art_paths' => $this->art_paths,
-            'size_paths' => $this->size_paths,
-            'payment_voucher_paths' => $this->payment_voucher_paths,
+            'art_paths' => $this->getFilesURL($this->art_paths, 'art_paths'),
+            'size_paths' => $this->getFilesURL($this->size_paths, 'size_paths'),
+            'payment_voucher_paths' => $this->getFilesURL(
+                $this->payment_voucher_paths,
+                'payment_voucher_paths'
+            ),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'closed_at' => $this->closed_at,
@@ -64,7 +86,7 @@ class OrderResource extends JsonResource
             'total_owing' => $this->getTotalOwing(),
             'total_paid' => $this->getTotalPaid(),
             'reminder' => $this->getReminder(),
-            'state' => $this->getState(),
+            'states' => $this->getStates(),
             'payments' => $this->getPayments($request),
             'clothing_types' => $this->getClothingTypes($request),
             'total_clothings_value' => $this->totalClothingsValue()
