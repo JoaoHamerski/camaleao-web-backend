@@ -17,86 +17,34 @@ use App\Models\Status;
 use App\Util\Validate;
 use App\Util\Formatter;
 use App\Models\Commission;
-use App\Traits\FileManager;
+use App\Util\FileHelper;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use App\Models\ClothingType;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Http\Resources\OrderResource;
-use App\Http\Resources\PaymentResource;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class OrdersController extends Controller
 {
-    use FileManager;
-
     protected $clothingTypes = [];
+
+    /**
+     * Campos da tabela de pedidos que armazenam o nome dos arquivos.
+     */
+    protected $FILE_FIELDS = [
+        'art_paths',
+        'size_paths',
+        'payment_voucher_paths'
+    ];
 
     public function __construct()
     {
         $this->clothingTypes = ClothingType::where('is_hidden', 0)
             ->orderBy('order', 'asc')
             ->get();
-    }
-
-    public function json(Client $client = null, Order $order)
-    {
-        if ($client) {
-            $this->authorize('view', [$order, $client->id]);
-        }
-
-        $paths = [
-            'art_paths',
-            'size_paths',
-            'payment_voucher_paths'
-        ];
-
-        $orderClothingTypes = $order->clothingTypes;
-        $jsonOrder = $order;
-
-        foreach ($orderClothingTypes as $type) {
-            $jsonOrder['value_' . $type->key] = $type->pivot->value;
-            $jsonOrder['quantity_' . $type->key] = $type->pivot->quantity;
-        }
-
-        foreach ($paths as $path) {
-            if (!empty($order[$path])) {
-                $files = [];
-
-                foreach ($order->getPaths($path, true) as $index => $filepath) {
-                    $files[] = 'data:'
-                        . Storage::mimeType($filepath)
-                        . ';base64,'
-                        . base64_encode(Storage::get($filepath));
-                }
-
-                $jsonOrder[$path] = $files;
-            }
-        }
-
-        return response()->json([
-            'order' => $jsonOrder
-        ], 200);
-    }
-
-    public function list(Request $request, Client $client)
-    {
-        $orders = Client::find($client->id)
-            ->orders()
-            ->whereNull('closed_at')
-            ->orderBy('created_at', 'asc')
-            ->get();
-
-        $orders = $orders->filter(function ($order) {
-            return $order->getTotalOwing() > 0;
-        });
-
-        return response()->json([
-            'orders' => $orders
-        ], 200);
     }
 
     public function index(Request $request)
@@ -115,12 +63,13 @@ class OrdersController extends Controller
         ]);
     }
 
-    public function create(Client $client)
+    public function show(Client $client = null, Order $order)
     {
-        return view('orders.create', [
-            'client' => $client,
-            'vias' => Via::all()
-        ]);
+        if ($client) {
+            $this->authorize('view', [$order, $client->id]);
+        }
+
+        return new OrderResource($order);
     }
 
     public function isCommissionConfirmed(User $user, $commissionId)
@@ -195,23 +144,6 @@ class OrdersController extends Controller
         );
     }
 
-    public function show(Client $client = null, Order $order)
-    {
-        return new OrderResource($order);
-    }
-
-    public function edit(Client $client = null, Order $order)
-    {
-        if ($client) {
-            $this->authorize('update', [$order, $client->id]);
-        }
-
-        return view('orders.edit', [
-            'client' => $client,
-            'order' => $order
-        ]);
-    }
-
     public function destroy(Client $client = null, Order $order)
     {
         if ($client) {
@@ -220,18 +152,16 @@ class OrdersController extends Controller
 
         $order->delete();
 
-        return response()->json([
-            'message' => 'success',
-            'redirect' => $client ? $client->path() : route('orders.index')
-        ], 200);
+        return response('', 200);
     }
 
     public function store(Client $client, Request $request)
     {
         $data = $this->getFormattedData($request->all());
+
         $this->validator($data)->validate();
 
-        $data = array_merge($data, $this->uploadAllBase64Files($data));
+        $data = $this->uploadFiles($data);
 
         $order = $client->orders()->create(
             Arr::except($data, $this->exceptKeysToStore())
@@ -257,18 +187,11 @@ class OrdersController extends Controller
 
     public function update(Client $client = null, Order $order, Request $request)
     {
-        if ($client) {
-            $this->authorize('update', [$order, $client->id]);
-        }
+        $data = $this->getFormattedData($request->all());
 
-        $this->validator(
-            $data = $this->getFormattedData($request->all(), true),
-            $order
-        )->validate();
+        $this->validator($data, $order)->validate();
 
-        $this->deleteField($order, ['art_paths', 'size_paths', 'payment_voucher_paths']);
-
-        $data = array_merge($data, $this->uploadAllBase64Files($data));
+        $data = $this->uploadFiles($data, $order);
 
         $order->update(Arr::except($data, $this->exceptKeysToStore()));
 
@@ -280,10 +203,107 @@ class OrdersController extends Controller
             $this->storeCommissions($order, true);
         }
 
-        return response()->json([
-            'message' => 'success',
-            'redirect' => $order->fresh()->path()
-        ], 200);
+        return response('', 200);
+    }
+
+    public function deleteRemovedFiles(array $storedFiles, array $uploadedFiles, $field)
+    {
+        $uploadedFiles = array_map(
+            fn ($file) => FileHelper::isBase64($file)
+                ? $file
+                : FileHelper::getFilename($file),
+            $uploadedFiles
+        );
+
+        $removedFiles = array_diff($storedFiles, $uploadedFiles);
+
+        FileHelper::deleteFiles($removedFiles, $field);
+    }
+
+    /**
+     * Faz o upload dos arquivos e retorna o nome
+     * em um array associativo com o nome dos arquivos
+     * upados em json
+     *
+     * @param array $data Dados enviados do formulários
+     * @param App\Models\Order $order
+     *
+     * @return array
+     */
+    public function uploadFiles(array $data, Order $order = null)
+    {
+        foreach ($this->FILE_FIELDS as $field) {
+            if ($order) {
+                $storedFiles = json_decode($order[$field]) ?? [];
+
+                $this->deleteRemovedFiles(
+                    $storedFiles,
+                    $data[$field],
+                    $field
+                );
+            }
+
+            $files = FileHelper::uploadFilesToField($data[$field], $field);
+
+            $data[$field] = json_encode($files);
+        }
+
+        return $data;
+    }
+
+    private function validator(array $data, $order = null)
+    {
+        $data = FileHelper::getOnlyUploadedFileInstances($data, $this->FILE_FIELDS);
+
+        $totalPrice = bcadd($data['price'], $data['discount'] ?? 0, 2);
+
+        $fields = [
+            'name' => ['nullable', 'max:50'],
+            'code' => [
+                'required', $order
+                    ? Rule::unique('orders')->ignore($data['code'], 'code')
+                    : Rule::unique('orders')
+            ],
+            'discount' => [
+                'sometimes',
+                'nullable',
+                'numeric',
+                'gt:-0.01',
+                "lt:$totalPrice",
+            ],
+            'price' => ['required', 'numeric'],
+            'delivery_date' => ['nullable', 'date_format:Y-m-d'],
+            'production_date' => ['nullable', 'date_format:Y-m-d'],
+            'down_payment' => ['sometimes', 'max_currency:' . $data['price']],
+            'payment_via_id' => [
+                'sometimes',
+                'nullable',
+                'required_with:down_payment',
+                'exists:vias,id'
+            ],
+            'art_paths.*' => ['file', 'max:1024'],
+            'size_paths.*' => ['file', 'max:1024'],
+            'payment_voucher_paths.*' => ['file', 'max:1024'],
+        ];
+
+        foreach ($this->clothingTypes as $type) {
+            $fields['value_' . $type->key] = ['nullable', 'numeric', 'max:999999'];
+            $fields['quantity_' . $type->key] = ['nullable', 'integer', 'max:9999'];
+        }
+
+        if ($order && $order->client === null) {
+            $fields['client_id'] = ['required', 'exists:clients,id'];
+        }
+
+        if (!$order && $data['price'] == 0) {
+            $data['price'] = '';
+        }
+
+        if ($order) {
+            $fields['price'][] = 'min_currency:' . $order->getTotalPaid();
+        }
+
+        return Validator::make($data, $fields, $this->errorMessages($data));
     }
 
     private function getFilledClothingTypes(array $data)
@@ -314,18 +334,13 @@ class OrdersController extends Controller
             $keys[] = 'value_' . $type->key;
         }
 
-        $keys[] = 'down_payment';
-        $keys[] = 'payment_via_id';
-        $keys[] = 'client';
+        $keys = array_merge($keys, [
+            'down_payment',
+            'payment_via_id',
+            'client'
+        ]);
 
         return $keys;
-    }
-
-    public function getOrderCommission()
-    {
-        return response()->json([
-            'commission' => Config::get('app', 'order_commission')
-        ], 200);
     }
 
     public function changeOrderCommission(Request $request)
@@ -388,59 +403,6 @@ class OrdersController extends Controller
         return bcsub($total, $data['discount'] ?? 0, 2);
     }
 
-    private function validator(array $data, $order = null)
-    {
-        $totalPrice = bcadd($data['price'], $data['discount'] ?? 0, 2);
-
-        $fields = [
-            'name' => ['nullable', 'max:50'],
-            'code' => [
-                'required', $order
-                    ? Rule::unique('orders')->ignore($data['code'], 'code')
-                    : Rule::unique('orders')
-            ],
-            'discount' => [
-                'sometimes',
-                'nullable',
-                'numeric',
-                'gt:0.00',
-                "lt:$totalPrice",
-            ],
-            'price' => ['required', 'numeric'],
-            'delivery_date' => ['nullable', 'date_format:Y-m-d'],
-            'production_date' => ['nullable', 'date_format:Y-m-d'],
-            'down_payment' => ['sometimes', 'max_currency:' . $data['price']],
-            'payment_via_id' => [
-                'sometimes',
-                'nullable',
-                'required_with:down_payment',
-                'exists:vias,id'
-            ],
-            'art_paths.*' => ['file', 'max:1024'],
-            'size_paths.*' => ['file', 'max:1024'],
-            'payment_voucher_paths.*' => ['file', 'max:1024'],
-        ];
-
-        foreach ($this->clothingTypes as $type) {
-            $fields['value_' . $type->key] = ['nullable', 'numeric', 'max:999999'];
-            $fields['quantity_' . $type->key] = ['nullable', 'integer', 'max:9999'];
-        }
-
-        if ($order && $order->client === null) {
-            $fields['client_id'] = ['required', 'exists:clients,id'];
-        }
-
-        if (!$order && $data['price'] == 0) {
-            $data['price'] = '';
-        }
-
-        if ($order) {
-            $fields['price'][] = 'min_currency:' . $order->getTotalPayments();
-        }
-
-        return Validator::make($data, $fields, $this->errorMessages($data));
-    }
-
     private function errorMessages($data)
     {
         $totalPrice = bcadd($data['price'], $data['discount'] ?? 0, 2);
@@ -486,7 +448,7 @@ class OrdersController extends Controller
             ]
         ]);
 
-        if (strlen($data['discount']) === 0) {
+        if (!strlen($data['discount'])) {
             unset($data['discount']);
         }
 
@@ -500,35 +462,22 @@ class OrdersController extends Controller
         return $data;
     }
 
-    public function generateOrderPDF(Client $client, Order $order)
+    public function generateOrderReport(Client $client, Order $order)
     {
         $this->authorize('view', [$order, $client->id]);
 
-        $pdf = PDF::loadView('orders.pdf.order', compact('client', 'order'));
+        $pdf = PDF::loadView('pdf.order', compact('client', 'order'));
 
         return $pdf->stream('pedido-' . $order->code . '.pdf');
     }
 
-    public function generateReport(Request $request)
+    public function generateOrdersReport(Request $request)
     {
-        if ($request->wantsJson()) {
-            $validator = Validator::make($request->all(), [
-                'cidade' => ['nullable', 'exists:cities,name'],
-                'status' => 'nullable|exists:status,id',
-                'data_de_fechamento' => 'nullable|date_format:d/m/Y'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'error',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            return response()->json([
-                'message' => 'success'
-            ], 200);
-        }
+        Validator::make($request->all(), [
+            'cidade' => ['nullable', 'exists:cities,name'],
+            'status' => 'nullable|exists:status,id',
+            'data_de_fechamento' => 'nullable|date_format:d/m/Y'
+        ])->validate();
 
         $orders = $this->getRequestQuery($request, true);
 
@@ -642,41 +591,13 @@ class OrdersController extends Controller
     {
         $this->authorize('toggleOrder', [$order, $client->id]);
 
-        if ($order->closed_at) {
-            $order->closed_at = null;
-        } else {
-            $order->closed_at = Carbon::now()->toDateString();
-        }
+        $order->update([
+            'closed_at' => !$order->closed_at
+                ? Carbon::now()->toDateString()
+                : null
+        ]);
 
-        $order->save();
-
-        return redirect($order->path());
-    }
-
-    public function deleteFile(Client $client, Order $order, Request $request)
-    {
-        $this->authorize('view', [$order, $client->id]);
-
-        if (Storage::delete($filepath = $this->getPathToDelete($request->filepath))) {
-            $paths = json_decode($order->{$this->getField($filepath)});
-
-            foreach ($paths as $key => $path) {
-                if (Str::contains($filepath, $path)) {
-                    unset($paths[$key]);
-                }
-            }
-
-            $order->{$this->getField($filepath)} = !empty($paths) ? array_values($paths) : null;
-            $order->save();
-
-            return response()->json([
-                'message' => 'success'
-            ], 200);
-        }
-
-        return response()->json([
-            'message' => 'error'
-        ], 422);
+        return response('', 200);
     }
 
     public function showFile(Client $client = null, Order $order, Request $request)
