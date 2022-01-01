@@ -3,10 +3,27 @@
 namespace App\Http\Resources;
 
 use App\Models\Order;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ClientResource extends JsonResource
 {
+    private function getOrders(Request $request)
+    {
+        $orders = $this->orders();
+
+        if ($request->filled('code')) {
+            $orders->where('code', 'like', '%' . $request->code . '%');
+        }
+
+        return $this->when(
+            $request->orders === 'true',
+            OrderResource::collection(
+                $orders->latest()->get()
+            )
+        );
+    }
+
     /**
      * Transform the resource collection into an array.
      *
@@ -25,6 +42,7 @@ class ClientResource extends JsonResource
             'total_owing' => $this->getTotalOwing(),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'orders' => $this->getOrders($request)
         ];
     }
 }
