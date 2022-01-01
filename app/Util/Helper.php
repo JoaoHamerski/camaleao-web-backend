@@ -282,4 +282,16 @@ class Helper
     {
         return array_values(array_slice($array, -1))[0];
     }
+
+    /**
+     * Retorna true para: "1", "true", "on", e "yes",
+     * e false para: "0", "false", "off", "no" e ""
+     *
+     * @param  $value
+     * @return boolean
+     */
+    public static function parseBool($value)
+    {
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+    }
 }
