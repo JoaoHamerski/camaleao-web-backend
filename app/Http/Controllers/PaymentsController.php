@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PaymentResource;
 use Carbon\Carbon;
 use App\Models\Via;
 use App\Models\Order;
 use App\Models\Client;
 use App\Util\Validate;
 use App\Models\Payment;
+use App\Queries\PaymentsRequest;
 use App\Util\Formatter;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
@@ -74,7 +76,7 @@ class PaymentsController extends Controller
         return Formatter::parse($data, [
             'parseCurrencyBRL' => [
                 'value',
-                'order_value'
+                'price'
             ],
             'parseDate' => [
                 'date'
@@ -85,75 +87,70 @@ class PaymentsController extends Controller
     private function errorMessages($isNewOrder)
     {
         return [
-            'client.required' => 'Por favor, digite o nome do cliente.',
+            'client.required' => 'Por favor, informe o nome do cliente.',
             'client.id.required' => 'Por favor, selecione um cliente.',
             'order.required' => 'Por favor, informe o código do pedido.',
             'order.unique' => 'Este código já está sendo utilizado por outro pedido.',
             'order.id.required' => 'Por favor, selecione um pedido.',
             'order.id.required_with' => 'Por favor, selecione um pedido.',
             'order_value.required' => 'Por favor, informe o valor.',
+            'via_id.required' => 'Por favor, selecione uma via.',
             'value.max_currency' => $isNewOrder
                 ? 'O pagamento não pode ser maior que o valor do pedido (:max).'
                 : 'O pagamento não pode ser maior que o total restante (:max).',
-            'payment_via_id.required' => 'Por favor, informe a via.',
         ];
     }
 
-    public function getPaymentsOfDay(Request $request)
+    public function paymentsOfDay(Request $request)
     {
-        $payments = Payment::with(['order', 'order.client', 'via']);
-        $date = Carbon::now()->toDateString();
+        Validator::make($request->all(), [
+            'date' => ['nullable', 'date_format:d/m/Y']
+        ])->validate();
 
-        if ($request->filled('date')) {
-            $date = $request->date;
+        if (!$request->filled('date')) {
+            $request->merge(['date' => Carbon::now()->toDateString()]);
+        } else {
+            $request->merge([
+                'date' => Carbon::createFromFormat(
+                    'd/m/Y',
+                    $request->date
+                )->toDateString()
+            ]);
         }
 
-        $payments = $payments->whereDate(
-            'created_at',
-            $date
-        )->orderBy('created_at', 'desc');
+        $payments = PaymentsRequest::query($request);
 
-        if ($request->filled('only_pendency') && $request->only_pendency === 'true') {
-            $payments = $payments->whereNull('is_confirmed');
-        }
-
-        return response()->json([
-            'payments' => $payments->get()
-        ], 200);
+        return PaymentResource::collection($payments->get());
     }
 
-    public function getPendencies()
+    public function pendencies()
     {
         $pendencies = Payment::pendencies()
-            ->groupBy('date_registered')
+            ->groupBy('payment_date')
             ->orderBy(DB::raw('DATE(created_at)'), 'desc')
             ->get([
-                DB::raw('DATE(created_at) as date_registered'),
+                DB::raw('DATE(created_at) as payment_date'),
                 DB::raw('COUNT(*) as total'),
             ]);
 
         return response()->json([
-            'pendencies' => $pendencies
+            'data' => $pendencies
         ], 200);
     }
 
-    public function assignConfirmation(Request $request, Payment $payment)
+    public function confirmPayment(Request $request, Payment $payment)
     {
         Validator::make($request->all(), [
             'confirmation' => ['required', 'boolean']
         ])->validate();
 
         if ($request->confirmation === true) {
-            $validator = Validator::make($payment->toArray(), [
-                'value' => ['required', 'max_double:' . $payment->order->getTotalOwing()]
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'totalOwing' => $payment->order->getTotalOwing(),
-                    'payment' => $payment->value
-                ], 422);
-            }
+            Validator::make($payment->toArray(), [
+                'value' => [
+                    'required',
+                    'max_currency:' . $payment->order->getTotalOwing()
+                ]
+            ])->validate();
         }
 
         $payment->update([
@@ -162,13 +159,6 @@ class PaymentsController extends Controller
         ]);
 
         return response()->json([], 204);
-    }
-
-    public function getTotalPendencies()
-    {
-        return response()->json([
-            'totalPendencies' => Payment::pendencies()->count()
-        ], 200);
     }
 
     private function clientValidatorRules($isNewClient)
@@ -180,7 +170,7 @@ class PaymentsController extends Controller
         }
 
         return [
-            'client' => ['array'],
+            'client' => ['required', 'array'],
             'client.id' => ['required', 'exists:clients,id']
         ];
     }
@@ -189,64 +179,78 @@ class PaymentsController extends Controller
     {
         if ($isNewOrder) {
             return [
-                'order' => ['required', 'unique:orders,code', 'not_regex:/[^a-z\-0-9]/i'],
-                'order_value' => ['required', 'numeric', 'min:0.01'],
+                'order' => ['required', 'unique:orders,code'],
+                'price' => ['required', 'numeric', 'min:0.01'],
             ];
         }
 
         return [
-            'order' => ['array'],
+            'order' => ['required', 'array'],
             'order.id' => ['required_with:client.id', 'exists:orders,id']
         ];
     }
 
-    public function dailyPayment(Request $request)
+    public function paymentValidationRules($isNewOrder, $data)
     {
-        function getClient(array $data)
-        {
-            if ($data['isNewClient']) {
-                return Client::create([
-                    'name' => $data['client']
+        $rules = [
+            'via_id' => ['required', 'exists:vias,id'],
+            'value' => [
+                'required',
+                'numeric'
+            ]
+        ];
+
+        if ($isNewOrder && isset($data['price'])) {
+            $rules['value'][] = 'max_currency:' . $data['price'];
+        }
+
+        if (!$isNewOrder && isset($data['order']['total_owing'])) {
+            $rules['value'][] = 'max_currency:' . $data['order']['total_owing'];
+        }
+
+        return $rules;
+    }
+
+    public function getClient(array $data)
+    {
+        if ($data['isNewClient']) {
+            return Client::create([
+                'name' => $data['client']
+            ]);
+        }
+
+        return Client::find($data['client']['id']);
+    }
+
+    public function getOrder(array $data, Client $client)
+    {
+        if ($data['isNewOrder']) {
+            $order = $client->orders()->create([
+                'code' => $data['order'],
+                'price' => $data['price']
+            ]);
+
+            if (!empty($data['reminder'])) {
+                $order->notes()->create([
+                    'text' => $data['reminder'],
+                    'is_reminder' => true
                 ]);
             }
 
-            return Client::find($data['client']['id']);
+            return $order;
         }
 
-        function getOrder(array $data, Client $client)
-        {
-            if ($data['isNewOrder']) {
-                $order = $client->orders()->create([
-                    'code' => $data['order'],
-                    'price' => $data['order_value']
-                ]);
+        return $client->orders()->find($data['order']['id']);
+    }
 
-                if (!empty($data['reminder'])) {
-                    $order->notes()->create([
-                        'text' => $data['reminder'],
-                        'is_reminder' => true
-                    ]);
-                }
-
-                return $order;
-            }
-
-            return $client->orders()->find($data['order']['id']);
-        }
-
+    public function dailyCashStore(Request $request)
+    {
         $data = $this->getFormattedData($request->all());
 
         $rules = [];
         $rules[] = $this->clientValidatorRules($data['isNewClient']);
         $rules[] = $this->orderValidatorRules($data['isNewOrder']);
-        $rules[] =  [
-            'value' => [
-                'required',
-                'numeric',
-                $data['isNewOrder'] ? 'lte:order_value' : 'lte:order.total_owing'
-            ],
-            'via_id' => ['required', 'exists:vias,id']
-        ];
+        $rules[] =  $this->paymentValidationRules($data['isNewOrder'], $data);
 
         $rules = Arr::collapse($rules);
 
@@ -256,7 +260,7 @@ class PaymentsController extends Controller
             $this->errorMessages($data['isNewOrder'])
         )->validate();
 
-        $order = getOrder($data, getClient($data));
+        $order = $this->getOrder($data, $this->getClient($data));
 
         $order->payments()->create([
             'value' => $data['value'],
@@ -266,17 +270,5 @@ class PaymentsController extends Controller
         ]);
 
         return response()->json([], 204);
-    }
-
-    public function getChangePaymentView(Client $client, Order $order, Payment $payment)
-    {
-        return response()->json([
-            'message' => 'success',
-            'view' => view('orders.partials.payment-form', [
-                'payment' => $payment,
-                'vias' => Via::all(),
-                'method' => 'PATCH'
-            ])->render()
-        ], 200);
     }
 }
