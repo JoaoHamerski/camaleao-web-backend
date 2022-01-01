@@ -4,6 +4,7 @@ namespace App\Util;
 
 use Exception;
 use Carbon\Carbon;
+use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\File\File;
 use Illuminate\Http\UploadedFile;
@@ -98,13 +99,22 @@ class Formatter
         );
     }
 
-    public static function parseDate($str)
+    /**
+     * Formata uma data em d/m/Y para o formato ISO/SQL
+     *
+     * @param string $unparsedDate
+     * @return string $date
+     */
+    public static function parseDate(string $unparsedDate)
     {
-        if (Validate::isDate($str)) {
-            return Carbon::createFromFormat('d/m/Y', $str)->toDateString();
+        try {
+            $date = Carbon::createFromFormat('d/m/Y', $unparsedDate);
+            $date = $date->toDateString();
+        } catch (InvalidFormatException $exception) {
+            return response('Data informada inválida.', 500);
         }
 
-        return $str;
+        return $date;
     }
     /**
      * Transforma o valor em dinheiro BRL para o formato padrão.
