@@ -2,10 +2,20 @@
 
 namespace App\Http\Resources;
 
+use App\Util\Helper;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PaymentResource extends JsonResource
 {
+    private function getOrder(Request $request)
+    {
+        return $this->when(
+            Helper::parseBool($request->order),
+            new OrderResource($this->order)
+        );
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -16,7 +26,7 @@ class PaymentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'order' => new OrderResource($this->whenLoaded('order')),
+            'order' => $this->getOrder($request),
             'payment_via' => new ViaResource($this->via),
             'value' => $this->value,
             'date' => $this->date,
