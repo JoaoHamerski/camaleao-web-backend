@@ -9,57 +9,62 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\ClientResource;
+use App\Queries\OrdersRequest;
 use Illuminate\Support\Facades\Validator;
 
 class ClientsController extends Controller
 {
+    public function getRequestOptions(Request $request, $clients)
+    {
+        if ($request->option === 'name') {
+            $clients->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->option === 'phone') {
+            $phone = Formatter::stripNonDigits($request->search);
+
+            if (Str::containsAll($request->search, ['(', ')'])) {
+                $clients->where('phone', 'like', $phone . '%');
+            } else {
+                $clients->where('phone', 'like', '%' . $phone . '%');
+            }
+        }
+
+        if ($request->option === 'city') {
+            $clients->whereHas('city', function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        return $clients;
+    }
+
+    public function getRequestQuery(Request $request)
+    {
+        $clients = Client::query();
+
+        if ($request->isNotFilled('option')) {
+            $request->merge(['option' => 'name']);
+        }
+
+        if (is_numeric($request->search)) {
+            $request->merge(['option' => 'phone']);
+        }
+
+        $clients = $this->getRequestOptions($request, $clients);
+
+        return $clients;
+    }
+
     public function index(Request $request)
     {
         $clients = Client::query();
 
-        if ($request->has('option') && !empty($request->option)) {
-            if ($request->option === 'name') {
-                $clients->where('name', 'like', '%' . $request->search . '%');
-            }
-
-            if ($request->option === 'phone') {
-                $phone = Formatter::stripNonDigits($request->search);
-
-                if (Str::containsAll($request->search, ['(', ')'])) {
-                    $clients->where('phone', 'like', $phone . '%');
-                } else {
-                    $clients->where('phone', 'like', '%' . $phone . '%');
-                }
-            }
-
-            if ($request->option === 'city') {
-                $clients->whereHas('city', function ($query) use ($request) {
-                    $query->where('name', 'like', '%' . $request->search . '%');
-                });
-            }
-        }
+        $clients = $this->getRequestQuery($request);
 
         $clients->latest();
 
         return ClientResource::collection($clients->paginate(10));
-    }
-
-    public function list(Request $request)
-    {
-        $clients = Client::query();
-
-        if ($request->filled('name')) {
-            if (is_numeric($request->name)) {
-                $clients = Client::where('phone', 'like', "%$request->name%");
-            } else {
-                $clients = Client::where('name', 'like', "%$request->name%");
-            }
-        }
-
-
-        return response()->json([
-            'clients' => $clients->limit(50)->get()
-        ], 200);
     }
 
     public function show(Client $client, Request $request)
@@ -70,20 +75,11 @@ class ClientsController extends Controller
     public function orders(Client $client, Request $request)
     {
         $orders = $client->orders();
+        $orders = OrdersRequest::query($request, $orders);
 
-        if ($request->filled('code')) {
-            $orders->where('code', 'like', '%' . $request->code . '%');
-        }
-
-        return OrderResource::collection($orders->latest()->paginate(10));
-    }
-
-    public function client(Client $client)
-    {
-        $client = Client::with(['city', 'branch', 'shippingCompany'])
-            ->find($client->id);
-
-        return response()->json(['client' => $client], 200);
+        return OrderResource::collection(
+            $orders->latest()->paginate(10)
+        );
     }
 
     public function store(Request $request)
