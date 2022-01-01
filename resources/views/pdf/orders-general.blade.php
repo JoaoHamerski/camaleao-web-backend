@@ -5,13 +5,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>
 		Relatório de pedidos
-		@if ($request->filled('cidade')) - {{ $request->cidade }} @endif
-		@if ($request->filled('status')) - {{ \App\Models\Status::find($request->status)->text }} @endif
-		@if ($request->filled('data_de_fechamento'))
-		 - fechados em {{ $request->data_de_fechamento }}
+		@if ($data['city']) - {{ $data['city'] }} @endif
+		@if ($data['status']) - {{$data['status']->text }} @endif
+		@if ($data['closing_date'])
+		 - fechados em {{ $data['closing_date'] }}
 		@endif
-		@if ($request->filled('data_de_entrega'))
-		- entrega para {{ $request->data_de_entrega }}
+		@if ($data['delivery_date'])
+		- entrega para {{ $data['delivery_date'] }}
 		@endif
 	</title>
 	<style>
@@ -86,29 +86,29 @@
 
 	<header>
 		Relatório de pedidos
-		@if ($request->filled('cidade'))
+		@if ($data['city'])
 			<br>
 			<br>
-			<strong style="text-transform: uppercase;">{{ $request->cidade }}</strong>
+			<strong style="text-transform: uppercase;">{{ $data['city']->name }}</strong>
 		@endif
 
-		@if ($request->filled('status'))
+		@if ($data['status'])
 			<br>
 			<div style="font-size: 1.2rem; margin-top: .25rem;">
-				{{ \App\Models\Status::find($request->status)->text }}
+				{{ $data['status']->text }}
 			</div>
 		@endif
 
-		@if ($request->filled('data_de_fechamento'))
+		@if ($data['closing_date'])
 			<br>
 			<div style="font-size: 1rem">
-				<strong>Fechados em {{ $request->data_de_fechamento }}</strong>
+				<strong>Fechados em {{ $data['closing_date'] }}</strong>
 			</div>
 		@endif
 
-		@if ($request->filled('data_de_entrega'))
+		@if ($data['delivery_date'])
 			<div style="font-size: 1rem">
-				<strong>Entrega para {{ $request->data_de_entrega }}</strong>
+				<strong>Entrega para {{ $data['delivery_date'] }}</strong>
 			</div>
 		@endif
 

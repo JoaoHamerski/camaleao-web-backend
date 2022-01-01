@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Relatório produção do dia {{ Helper::date($date, '%d/%m/%Y') }}</title>
+	<title>Relatório produção do dia {{ $data['date'] }}</title>
 	<style>
 		* {
 			font-family: sans-serif;
@@ -29,15 +29,15 @@
 		}
 
 		@page { margin: 20px 30px 40px 50px; }
-		
-		footer .page:after { 
-        	content: counter(page, decimal); 
+
+		footer .page:after {
+        	content: counter(page, decimal);
         }
 
-        footer { 
-			position: fixed; 
-			right: 0px; 
-			bottom: 10px; 
+        footer {
+			position: fixed;
+			right: 0px;
+			bottom: 10px;
 			text-align: center;
 			border-top: 1px solid black;
 		}
@@ -48,12 +48,12 @@
 		Relatório de pedidos por produção do dia
 		<br>
 		<br>
-		<strong>{{ Helper::date($date, '%d/%m/%Y') }}  |  TOTAL {{ $totalQuantity }} PEÇAS</strong>
+		<strong>{{ $data['date'] }}  |  TOTAL {{ $data['total_quantity'] }} PEÇAS</strong>
 	</div>
 
 	<footer>
     	<p class="page">Página </p>
-  	</footer> 
+  	</footer>
 
 	@foreach($orders as $order)
 		<div class="text-center" style="font-size: 1.2rem">
