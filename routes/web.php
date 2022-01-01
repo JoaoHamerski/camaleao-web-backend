@@ -70,6 +70,23 @@ Route::prefix('api/clients')->name('clients.')->group(function () {
 });
 
 Route::name('orders.')->group(function () {
+    Route::prefix('api/orders')->group(function () {
+        Route::get('/', [
+            OrdersController::class,
+            'index'
+        ])->name('index');
+
+        Route::get('/reports/general', [
+            OrdersController::class,
+            'generateGeneralOrderReport'
+        ])->name('general-report');
+
+        Route::get('/reports/production-date', [
+            OrdersController::class,
+            'generateReportProductionDate'
+        ])->name('production-date-report');
+    });
+
     Route::prefix('api/clients')->group(function () {
         Route::get('/{client}/orders/{order}', [
             OrdersController::class,
@@ -116,13 +133,6 @@ Route::name('orders.')->group(function () {
             'patch'
         ])->name('update-status');
     });
-
-    Route::prefix('api/orders')->group(function () {
-        Route::get('/', [
-            OrdersController::class,
-            'index'
-        ])->name('index');
-    });
 });
 
 Route::prefix('api/clothing-types')->name('clothing-types.')->group(function () {
@@ -130,6 +140,30 @@ Route::prefix('api/clothing-types')->name('clothing-types.')->group(function () 
         ClothingTypesController::class,
         'index'
     ])->name('index');
+});
+
+Route::prefix('api/payments')->name('payments.')->group(function () {
+    Route::post('/{payment}/confirm', [
+        PaymentsController::class,
+        'confirmPayment'
+    ])->name('confirm');
+});
+
+Route::prefix('api/daily-cash')->name('daily-cash.')->group(function () {
+    Route::post('/create', [
+        PaymentsController::class,
+        'dailyCashStore'
+    ])->name('store');
+
+    Route::get('/payments-of-day', [
+        PaymentsController::class,
+        'paymentsOfDay'
+    ])->name('payments-of-day');
+
+    Route::get('/pendencies', [
+        PaymentsController::class,
+        'pendencies'
+    ])->name('pendencies');
 });
 
 Route::prefix('api/status')->name('status.')->group(function () {
