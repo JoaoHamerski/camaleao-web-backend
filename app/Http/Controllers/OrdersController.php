@@ -26,13 +26,14 @@ use Barryvdh\DomPDF\Facade as PDF;
 use App\Http\Resources\OrderResource;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Queries\OrdersRequest;
 
 class OrdersController extends Controller
 {
     protected $clothingTypes = [];
 
     /**
-     * Campos da tabela de pedidos que armazenam o nome dos arquivos.
+     * Campos da tabela 'orders' que armazenam o nome dos arquivos.
      */
     protected $FILE_FIELDS = [
         'art_paths',
@@ -49,18 +50,9 @@ class OrdersController extends Controller
 
     public function index(Request $request)
     {
-        $orders = $this->getRequestQuery($request);
+        $orders = OrdersRequest::query($request);
 
-        if (!$request->filled('ordem') && !$request->filled('codigo')) {
-            $orders->whereNull('closed_at');
-        }
-
-        return view('orders.index', [
-            'preRegisteredCount' => Order::preRegistered()->count(),
-            'orders' => $orders->paginate(10)->appends($request->query()),
-            'cities' => City::orderBy('name')->get(),
-            'status' => Status::all()
-        ]);
+        return OrderResource::collection($orders->paginate(10));
     }
 
     public function show(Client $client = null, Order $order)
@@ -471,120 +463,61 @@ class OrdersController extends Controller
         return $pdf->stream('pedido-' . $order->code . '.pdf');
     }
 
-    public function generateOrdersReport(Request $request)
+    public function generateGeneralOrderReport(Request $request)
     {
-        Validator::make($request->all(), [
-            'cidade' => ['nullable', 'exists:cities,name'],
-            'status' => 'nullable|exists:status,id',
-            'data_de_fechamento' => 'nullable|date_format:d/m/Y'
-        ])->validate();
-
-        $orders = $this->getRequestQuery($request, true);
-
-        $pdf = PDF::loadView('orders.pdf.report', [
-            'orders' => $orders->with('client')->get(),
-            'request' => $request
+        $validator = Validator::make($request->all(), [
+            'city' => ['nullable', 'exists:cities,id'],
+            'status' => ['nullable', 'exists:status,id'],
+            'closing_date' => ['nullable', 'date_format:d/m/Y'],
+            'delivery_date' => ['nullable', 'date_format:d/m/Y']
         ]);
 
-
-        return $pdf->stream('pedido.pdf');
-    }
-
-    public function getRequestQuery($request, $isPDF = false)
-    {
-        $orders = Order::query();
-
-        if ($isPDF) {
-            $orders = Order::whereNotNull('quantity');
-            $orders = Order::whereNotNull('client_id');
+        if ($validator->fails()) {
+            abort(422);
         }
 
-        if ($request->filled('cidade')) {
-            $orders->whereHas('client.city', function ($query) use ($request) {
-                $query->where('name', $request->cidade);
-            });
-        }
+        $orders = OrdersRequest::query($request, true);
 
-        if ($request->em_aberto == 'em_aberto') {
-            $orders->whereNull('closed_at');
-        }
+        $data = [
+            'city' => $request->filled('city') ? City::find($request->city) : null,
+            'status' => $request->filled('status') ? Status::find($request->status) : null,
+            'delivery_date' => $request->delivery_date,
+            'closing_date' => $request->closing_date,
+        ];
 
-        if ($request->filled('status') && Status::where('id', $request->status)->exists()) {
-            $orders->where('status_id', $request->status);
-        }
+        $pdf = PDF::loadView('pdf.orders-general', [
+            'orders' => OrderResource::collection($orders->get()),
+            'data' => $data
+        ]);
 
-        if ($request->filled('codigo')) {
-            $orders->where('code', 'like', '%' . $request->codigo . '%');
-        }
-
-        if ($request->filled('ordem')) {
-            if ($request->ordem == 'mais_recente') {
-                $orders->latest();
-            }
-        }
-
-        if ($request->filled('ordem') && $request->ordem == 'data_de_entrega') {
-            $orders->whereNull('closed_at');
-            $orders->orderByRaw('CASE WHEN delivery_date IS NULL THEN 1 ELSE 0 END, delivery_date');
-        }
-
-        if ($request->filled('data_de_fechamento')) {
-            $orders->whereDate(
-                'closed_at',
-                Carbon::createFromFormat('d/m/Y', $request->data_de_fechamento)->toDateString()
-            );
-        }
-
-        if ($request->filled('data_de_entrega')) {
-            $orders->whereDate(
-                'delivery_date',
-                Carbon::createFromFormat('d/m/Y', $request->data_de_entrega)->toDateString()
-            );
-        }
-
-        if ($request->filled('filtro') && $request->filtro == 'pre-registro') {
-            $orders->preRegistered();
-        }
-
-        return $orders;
+        return $pdf->stream('relatorio-de-pedidos.pdf');
     }
 
     public function generateReportProductionDate(Request $request)
     {
-        if (Validate::isDate($date = $request->data_de_producao)) {
-            $date = Carbon::createFromFormat('d/m/Y', $date);
-        }
-
-        if ($request->wantsJson()) {
-            $validator = Validator::make(['data_de_producao' => $date], [
-                'data_de_producao' => 'required|date'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'error',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            return response()->json([
-                'message' => 'success'
-            ], 200);
-        }
-
-        $orders = Order::preRegistered()->where('production_date', $date->toDateString());
-
-        if ($request->has('em_aberto') && $request->em_aberto == 'em_aberto') {
-            $orders->whereNull('closed_at');
-        }
-
-        $pdf = PDF::loadView('orders.pdf.report-production-date', [
-            'orders' => $orders->get(),
-            'date' => $date,
-            'totalQuantity' => $orders->sum('quantity')
+        $validator = Validator::make($request->all(), [
+            'production_date' => ['required', 'date_format:d/m/Y']
         ]);
 
-        return $pdf->stream('pedido-por-data (' . Helper::date($date, '%d-%m-%Y') . ').pdf');
+        if ($validator->fails()) {
+            abort(422);
+        }
+
+        $orders = OrdersRequest::query($request, true);
+
+        $data = [
+            'total_quantity' => $orders->sum('quantity'),
+            'date' => $request->production_date
+        ];
+
+        $pdf = PDF::loadView('pdf.orders-production-date', [
+            'orders' => OrderResource::collection($orders->get()),
+            'data' => $data
+        ]);
+
+        return $pdf->stream(
+            'pedido-por-data (' . Helper::date($data['date'], '%d-%m-%Y') . ').pdf'
+        );
     }
 
     public function toggleOrder(Client $client, Order $order, Request $request)
