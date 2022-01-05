@@ -50,46 +50,8 @@ class ExpensesController extends Controller
 
     public function store(Request $request)
     {
-        $validator = $this->validator(
-            $data = $this->getFormattedData($request->all())
-        );
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        if (is_array($data[array_key_first($data)])) {
-            $expenses = collect($data);
-
-            $expenses->transpose()->map(function ($expense, $key) {
-                if (isset($expense['receipt_path'])) {
-                    $filename = $this->storeFile(
-                        $expense['receipt_path'],
-                        $this->getFilepath('receipt_path'),
-                        $key
-                    );
-                }
-
-                Expense::create(array_merge($expense, [
-                    'user_id' => Auth::user()->id,
-                    'receipt_path' => $filename ?? null
-                ]));
-            });
-        } else {
-            if ($request->hasFile('receipt_path')) {
-                $filename = $this->storeFile(
-                    $request->receipt_path,
-                    $this->getFilepath('receipt_path')
-                );
-
-                $data = array_replace($data, ['receipt_path' => $filename]);
-            }
-
-            Expense::create(array_merge($data, ['user_id' => Auth::user()->id]));
-        }
+        $data = $this->getFormattedData($request->all());
+        $this->validator($data)->validate();
 
         return response()->json([
             'message' => 'success',
@@ -270,12 +232,12 @@ class ExpensesController extends Controller
         $isArray = is_array($data[array_key_first($data)]);
 
         return Validator::make($data, [
-            $isArray ? 'description.*' : 'description'  => 'required',
-            $isArray ? 'expense_type_id.*' : 'expense_type_id' => 'required|exists:expense_types,id',
-            $isArray ? 'expense_via_id.*' : 'expense_via_id' => 'required|exists:vias,id',
-            $isArray ? 'value.*' : 'value' => 'required',
-            $isArray ? 'date.*' : 'date' => 'required|date',
-            $isArray ? 'receipt_path.*' : 'receipt_path' => 'nullable|file|mimes:jpg,jpeg,bmp,png,gif,svg,pdf'
+            'description'  => 'required',
+            'expense_type_id' => 'required|exists:expense_types,id',
+            'value' => 'required',
+            'expense_via_id' => 'required|exists:vias,id',
+            'date' => 'required|date',
+            'receipt_path' => 'nullable|file|mimes:jpg,jpeg,bmp,png,gif,svg,pdf'
         ]);
     }
 

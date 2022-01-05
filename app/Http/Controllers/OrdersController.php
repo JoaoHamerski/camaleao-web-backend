@@ -476,7 +476,7 @@ class OrdersController extends Controller
             abort(422);
         }
 
-        $orders = OrdersRequest::query($request, true);
+        $orders = OrdersRequest::query($request, null, true);
 
         $data = [
             'city' => $request->filled('city') ? City::find($request->city) : null,
@@ -503,7 +503,7 @@ class OrdersController extends Controller
             abort(422);
         }
 
-        $orders = OrdersRequest::query($request, true);
+        $orders = OrdersRequest::query($request, null, true);
 
         $data = [
             'total_quantity' => $orders->sum('quantity'),

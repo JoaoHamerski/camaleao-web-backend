@@ -21,6 +21,7 @@ class ClientSeeder extends Seeder
 
         Client::factory()
             ->count(50)
+            ->hasOrders(5)
             ->create();
     }
 }

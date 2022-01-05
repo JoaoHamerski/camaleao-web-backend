@@ -2,59 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ExpenseTypeResource;
 use App\Models\ExpenseType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ExpenseTypesController extends Controller
 {
+    public function index()
+    {
+        return ExpenseTypeResource::collection(
+            ExpenseType::latest()->get()
+        );
+    }
+
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'expense_type' => 'required'
+        Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:191']
+        ])->validate();
+
+        ExpenseType::create([
+            'name' => $request->name
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $expenseType = ExpenseType::create([
-            'name' => $request->expense_type
-        ]);
-
-        return response()->json([
-            'message' => 'success',
-            'view' => view('expenses.partials.expense-type-item', [
-                'expenseType' => $expenseType
-            ])->render()
-        ], 200);
+        return response('', 201);
     }
 
     public function patch(ExpenseType $expenseType, Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'expense_type_updated' => 'required'
+        Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:191']
+        ])->validate();
+
+        $expenseType->update([
+            'name' => $request->name
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $expenseType->name = $request->expense_type_updated;
-        $expenseType->save();
-
-        return response()->json([
-            'message' => 'success',
-            'view' => view('expenses.partials.expense-type-item', [
-                'expenseType' => $expenseType
-            ])->render()
-        ], 200);
+        return response('', 201);
     }
 
     public function destroy(ExpenseType $expenseType)

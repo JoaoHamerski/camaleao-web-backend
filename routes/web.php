@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BranchesController;
 use App\Http\Controllers\CitiesController;
 use App\Http\Controllers\ClothingTypesController;
+use App\Http\Controllers\ExpenseTypesController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\ShippingCompaniesController;
@@ -164,6 +165,23 @@ Route::prefix('api/daily-cash')->name('daily-cash.')->group(function () {
         PaymentsController::class,
         'pendencies'
     ])->name('pendencies');
+});
+
+Route::prefix('api/expense-types')->name('expense-types')->group(function () {
+    Route::get('/', [
+        ExpenseTypesController::class,
+        'index'
+    ])->name('index');
+
+    Route::post('/', [
+        ExpenseTypesController::class,
+        'store'
+    ])->name('store');
+
+    Route::patch('/{expenseType}/edit', [
+        ExpenseTypesController::class,
+        'patch'
+    ])->name('update');
 });
 
 Route::prefix('api/status')->name('status.')->group(function () {
