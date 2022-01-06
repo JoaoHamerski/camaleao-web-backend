@@ -11,6 +11,5 @@
         "/public",
         "/database/migrations"
     ],
-    "bladeFormatter.format.indentSize": 2,
-    "bladeFormatter.format.wrapAttributes": "force-expand-multiline"
+    "phpcs.executablePath": "./vendor/squizlabs/php_codesniffer/bin/phpcs"
 }
