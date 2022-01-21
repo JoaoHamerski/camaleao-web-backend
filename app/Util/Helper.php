@@ -294,4 +294,27 @@ class Helper
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
+
+    public static function isValidJson($string)
+    {
+        json_decode($string);
+        return json_last_error() === JSON_ERROR_NONE;
+    }
+
+    public static function formatBytes($size, $precision = 2)
+    {
+        $base = log($size, 1024);
+        $suffixes = array('', 'KB', 'MB', 'GB', 'TB');
+
+        $result = round(pow(1024, $base - floor($base)), $precision) . ' ' . $suffixes[floor($base)];
+
+        return str_replace('.', ',', $result);
+    }
+
+    public static function formatKBytes($size, $precision = 2)
+    {
+        $size *= 1024;
+
+        return self::formatBytes($size, $precision);
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Resources\PaymentResource;
+use App\Util\FileHelper;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderResource extends JsonResource
@@ -37,24 +38,6 @@ class OrderResource extends JsonResource
         );
     }
 
-    private function getFilesURL($files, string $field)
-    {
-        $baseFileURL = URL::to('/storage/' . __($field));
-        $files = json_decode($files);
-
-        if ($files === null) {
-            return [];
-        }
-
-        if (is_array($files)) {
-            return array_map(function ($file) use ($baseFileURL) {
-                return $baseFileURL . '/' . $file;
-            }, $files);
-        }
-
-        return $baseFileURL . '/' . $files;
-    }
-
     /**
      * Transform the resource into an array.
      *
@@ -73,9 +56,9 @@ class OrderResource extends JsonResource
             'price' => $this->price,
             'delivery_date' => $this->delivery_date,
             'production_date' => $this->production_date,
-            'art_paths' => $this->getFilesURL($this->art_paths, 'art_paths'),
-            'size_paths' => $this->getFilesURL($this->size_paths, 'size_paths'),
-            'payment_voucher_paths' => $this->getFilesURL(
+            'art_paths' => FileHelper::getFilesURL($this->art_paths, 'art_paths'),
+            'size_paths' => FileHelper::getFilesURL($this->size_paths, 'size_paths'),
+            'payment_voucher_paths' => FileHelper::getFilesURL(
                 $this->payment_voucher_paths,
                 'payment_voucher_paths'
             ),

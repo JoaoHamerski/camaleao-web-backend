@@ -10,36 +10,20 @@ use Illuminate\Http\Request;
 
 class OrdersRequest
 {
-    public static function sortByOptions(Request $request, $orders)
+    /**
+     * Faz algo
+     */
+    public static function query(Request $request, $options = [])
     {
-        if ($request->sort === 'priority') {
-            $orders->whereNull('closed_at');
-        }
+        $request = $request->duplicate();
 
-        if ($request->sort === 'older') {
-            $orders->orderBy('created_at');
-        }
+        $data = $options['data'] ?? [];
+        $merge = $options['merge'] ?? [];
+        $orders = $options['query'] ?? Order::query();
+        $isPDF = $options['isPDF'] ?? false;
 
-        if ($request->sort === 'newer') {
-            $orders->latest();
-        }
-
-        if ($request->sort === 'production_date') {
-            $orders->whereNull('closed_at');
-            $orders->orderByRaw('CASE WHEN production_date IS NULL THEN 1 ELSE 0 END, production_date');
-        }
-
-        if ($request->sort === 'pre_register') {
-            $orders->preRegistered();
-        }
-
-        return $orders;
-    }
-
-    public static function query($request, $orders = null, $isPDF = false)
-    {
-        if (!$orders) {
-            $orders = Order::query();
+        if (!empty($merge)) {
+            $request->merge($merge);
         }
 
         $orders = static::sortByOptions($request, $orders);
@@ -63,6 +47,16 @@ class OrdersRequest
             $orders->whereNull('closed_at');
         }
 
+        if ($request->order === 'is_closed') {
+            $orders->whereNotNull('closed_at');
+        }
+
+        if ($request->order === 'unique') {
+            $orders->whereBetween('created_at', [
+                $data['start_date'], $data['end_date']
+            ])->whereHas('payments');
+        }
+
         if ($request->filled('status') && Status::where('id', $request->status)->exists()) {
             $orders->where('status_id', $request->status);
         }
@@ -83,6 +77,47 @@ class OrdersRequest
                 'delivery_date',
                 Formatter::parseDate($request->delivery_date)
             );
+        }
+
+        if ($request->filled('start_date') || $request->filled(['start_date', 'end_date'])) {
+            $orders->whereBetween('created_at', [
+                $data['start_date'] ?? $request->start_date,
+                $data['end_date'] ?? $request->end_date
+            ]);
+        }
+
+        return $orders;
+    }
+
+    public static function sortByOptions(Request $request, $orders)
+    {
+        if (isset($options['data'])) {
+            $data = $options['data'];
+        }
+
+        if (isset($options['merge'])) {
+            $request->merge($options['merge']);
+        }
+
+        if ($request->sort === 'priority') {
+            $orders->whereNull('closed_at');
+        }
+
+        if ($request->sort === 'older') {
+            $orders->orderBy('created_at');
+        }
+
+        if ($request->sort === 'newer') {
+            $orders->latest();
+        }
+
+        if ($request->sort === 'production_date') {
+            $orders->whereNull('closed_at');
+            $orders->orderByRaw('CASE WHEN production_date IS NULL THEN 1 ELSE 0 END, production_date');
+        }
+
+        if ($request->sort === 'pre_register') {
+            $orders->preRegistered();
         }
 
         return $orders;

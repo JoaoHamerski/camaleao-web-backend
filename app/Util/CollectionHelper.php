@@ -11,11 +11,12 @@ class CollectionHelper
 {
     public static function paginate(Collection $results, $pageSize, $pageName = 'page')
     {
-        $page = Paginator::resolveCurrentPage('page');
+        $page = Paginator::resolveCurrentPage($pageName);
 
         $total = $results->count();
+        $items = $results->forPage($page, $pageSize)->values();
 
-        return self::paginator($results->forPage($page, $pageSize), $total, $pageSize, $page, [
+        return self::paginator($items, $total, $pageSize, $page, [
             'path' => Paginator::resolveCurrentPath(),
             'pageName' => $pageName,
         ]);
@@ -33,12 +34,15 @@ class CollectionHelper
      */
     protected static function paginator($items, $total, $perPage, $currentPage, $options)
     {
-        return Container::getInstance()->makeWith(LengthAwarePaginator::class, compact(
-            'items',
-            'total',
-            'perPage',
-            'currentPage',
-            'options'
-        ));
+        return Container::getInstance()->makeWith(
+            LengthAwarePaginator::class,
+            compact(
+                'items',
+                'total',
+                'perPage',
+                'currentPage',
+                'options'
+            )
+        );
     }
 }

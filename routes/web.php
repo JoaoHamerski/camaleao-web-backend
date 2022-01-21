@@ -7,8 +7,10 @@ use App\Http\Controllers\TokenController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BranchesController;
+use App\Http\Controllers\CashFlowController;
 use App\Http\Controllers\CitiesController;
 use App\Http\Controllers\ClothingTypesController;
+use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\ExpenseTypesController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PaymentsController;
@@ -167,7 +169,46 @@ Route::prefix('api/daily-cash')->name('daily-cash.')->group(function () {
     ])->name('pendencies');
 });
 
-Route::prefix('api/expense-types')->name('expense-types')->group(function () {
+Route::prefix('api/cash-flow')->name('cash-flow.')->group(function () {
+    Route::get('/', [
+        CashFlowController::class,
+        'index'
+    ])->name('index');
+});
+
+Route::prefix('api/expenses')->name('expenses.')->group(function () {
+    Route::get('/', [
+        ExpensesController::class,
+        'index'
+    ])->name('index');
+
+    Route::get('/report', [
+        ExpensesController::class,
+        'report'
+    ])->name('report');
+
+    Route::post('/report-validate', [
+        ExpensesController::class,
+        'validateReport'
+    ])->name('validate-report');
+
+    Route::post('/', [
+        ExpensesController::class,
+        'store'
+    ])->name('store');
+
+    Route::patch('/{expense}', [
+        ExpensesController::class,
+        'update'
+    ])->name('update');
+
+    Route::delete('/{expense}', [
+        ExpensesController::class,
+        'destroy'
+    ])->name('destroy');
+});
+
+Route::prefix('api/expense-types')->name('expense-types.')->group(function () {
     Route::get('/', [
         ExpenseTypesController::class,
         'index'

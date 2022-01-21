@@ -274,7 +274,8 @@ return [
         'year'      => 'ano',
         'description' => 'descrição',
         'password_confirmation' => 'confirmação da senha',
-        'discount' => 'desconto'
+        'discount' => 'desconto',
+        'start_date' => 'data inicial'
     ],
 
 ];
