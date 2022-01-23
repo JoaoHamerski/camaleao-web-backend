@@ -1,0 +1,15 @@
+type AccessToken {
+  token: String!
+}
+
+extend type Mutation {
+  login(
+    email: String! @rules(apply: ["required", "email"])
+    password: String! @rules(apply: ["required"])
+  ): AccessToken!
+  logout: User @guard
+}
+
+extend type Query {
+  authUser: User @auth
+}

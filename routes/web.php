@@ -40,11 +40,11 @@ Route::get('/resource', function () {
 
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
-Route::middleware('auth')->prefix('api')->group(function () {
+Route::middleware('auth:sanctum')->prefix('api')->group(function () {
     Route::get('/users/auth', AuthController::class);
 });
 

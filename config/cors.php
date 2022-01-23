@@ -20,6 +20,7 @@ return [
         'api/*',
         'login',
         'logout',
+        'graphql'
     ],
 
     'allowed_methods' => ['*'],
