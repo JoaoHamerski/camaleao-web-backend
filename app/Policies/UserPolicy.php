@@ -2,11 +2,10 @@
 
 namespace App\Policies;
 
-use App\Models\Order;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class OrderPolicy
+class UserPolicy
 {
     use HandlesAuthorization;
 
@@ -14,7 +13,7 @@ class OrderPolicy
      * Determine whether the user can view any models.
      *
      * @param  \App\Models\User  $user
-     * @return mixed
+     * @return \Illuminate\Auth\Access\Response|bool
      */
     public function viewAny(User $user)
     {
@@ -25,63 +24,62 @@ class OrderPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Order  $order
-     * @return mixed
+     * @param  \App\Models\User  $model
+     * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(?User $user, Order $order, array $injected)
+    public function view(User $user, User $model)
     {
-
-        return strval($order->client->id) === strval($injected['clientId']);
-    }
-
-    public function toggle(?User $user, Order $order)
-    {
-        return +$order->total_owing === 0.0 || $order->isClosed();
+        //
     }
 
     /**
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
-     * @return mixed
+     * @return \Illuminate\Auth\Access\Response|bool
      */
     public function create(User $user)
     {
-        //
+        return $user->hasRole('gerencia');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Order  $order
-     * @return mixed
+     * @param  \App\Models\User  $model
+     * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(?User $user, Order $order)
+    public function update(User $user, User $model)
     {
-        return !$order->isClosed();
+        //
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Order  $order
-     * @return mixed
+     * @param  \App\Models\User  $model
+     * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Order $order)
+    public function delete(User $user, User $model)
     {
-        //
+        return $user->hasRole('gerencia') && ($model->id !== $user->id);
+    }
+
+    public function changeRole(User $user, User $model)
+    {
+        return $user->hasRole('gerencia') && ($model->id !== $user->id);
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Order  $order
-     * @return mixed
+     * @param  \App\Models\User  $model
+     * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Order $order)
+    public function restore(User $user, User $model)
     {
         //
     }
@@ -90,10 +88,10 @@ class OrderPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Order  $order
-     * @return mixed
+     * @param  \App\Models\User  $model
+     * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Order $order)
+    public function forceDelete(User $user, User $model)
     {
         //
     }
