@@ -16,50 +16,7 @@ class Expense extends Model
     protected static $logName = 'expenses';
     protected static $logUnguarded = true;
     protected static $logOnlyDirty = true;
-
-    /**
-     * Descrição que é cadastrada no log de atividades toda vez que um tipo
-     * de evento ocorre no model
-     *
-     * @param string $eventname
-     *
-     * @return string
-     */
-    public function getDescriptionForEvent(string $eventName): string
-    {
-        if ($eventName == 'created') {
-            return '
-                <div data-event="created">
-                    <strong>:causer.name</strong>
-                    cadastrou uma despesa
-                    <strong>":subject.description"</strong>
-                    com data de
-                    <strong data-mask="date">:subject.date</strong>
-                    no valor de
-                    <strong data-mask="money">:subject.value</strong>
-                </div>
-            ';
-        }
-
-        if ($eventName == 'updated') {
-            return '
-                <div data-event="updated">
-                    <strong>:causer.name</strong>
-                    alterou os dados da despesa
-                    <strong>":subject.description"</strong>
-                </div>
-            ';
-        }
-
-        if ($eventName == 'deleted') {
-            return '
-                <div data-event="deleted">
-                    <strong>:causer.name</strong> deletou a despesa
-                    <strong>":subject.description"</strong>
-                </div>
-            ';
-        }
-    }
+    protected $appends = ['receipt_path'];
 
     /**
      * Método booted do model
@@ -108,5 +65,10 @@ class Expense extends Model
     public function via()
     {
         return $this->belongsTo(Via::class, 'expense_via_id');
+    }
+
+    public function getReceiptPathAttribute($value)
+    {
+        return FileHelper::getFilesURL($value, 'receipt_path');
     }
 }
