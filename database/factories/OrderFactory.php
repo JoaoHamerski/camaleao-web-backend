@@ -39,7 +39,7 @@ class OrderFactory extends Factory
             $clothingTypes = ClothingType::all();
             $totalValue = 0;
             $totalQuantity = 0;
-            
+
             foreach ($clothingTypes as $type) {
                 if ($this->faker->randomElement([true, false])) {
                     $value = $this->faker->randomFloat(2, 10, 350);
@@ -57,9 +57,11 @@ class OrderFactory extends Factory
                 }
             }
 
+            $order->refresh();
+
             $order->update([
                 'quantity' => $totalQuantity,
-                'price' => $order->totalClothingsValue() - $order->discount
+                'price' => bcsub($order->total_clothings_value, $order->discount, 2)
             ]);
 
             Payment::factory()->count(rand(0, 10))->state(new Sequence(
