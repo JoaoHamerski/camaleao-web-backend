@@ -11,6 +11,7 @@
     */
 return [
     'validation' => [
+        'email' => 'O e-mail informado é inválido',
         'date_required' => 'Por favor, informe uma data.',
         'date_valid' => 'Por favor, informe uma data válida.',
         'value_required' => 'Por favor, informe um valor.',
@@ -18,7 +19,10 @@ return [
         'type_required' => 'Por favor, selecione um tipo',
         'via_required' => 'Por favor, selecione a via',
         'start_date_required' => 'Por favor, informe a data inicial.',
-        'end_date_after' => 'A data informada deve ser posterior a :date',
+        'date_after' => 'A data informada deve ser posterior a :date',
+        'password_required' => 'Por favor, digite sua senha',
+        'current_password' => 'A senha digitada não confere.',
+        'state_id_required' => 'Por favor, selecione um estado.',
         'orders' => [
             'discount_lt' => 'O desconto deve ser menor que o preço total (:total_price).',
             'discount_gt' => 'O desconto deve ser maior que R$ 0,00.',
