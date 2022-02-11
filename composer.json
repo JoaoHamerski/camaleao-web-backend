@@ -20,10 +20,12 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.0",
         "lucascudo/laravel-pt-br-localization": "^1.1",
+        "mll-lab/graphql-php-scalars": "^5.3",
         "mll-lab/laravel-graphql-playground": "^2.5",
-        "nuwave/lighthouse": "^5.37",
+        "nuwave/lighthouse": "^5.39",
         "spatie/laravel-activitylog": "^3.16",
-        "spatie/laravel-backup": "^6.16"
+        "spatie/laravel-backup": "^6.16",
+        "symfony/property-access": "^5.4"
     },
     "require-dev": {
         "facade/ignition": "^2.3.6",
