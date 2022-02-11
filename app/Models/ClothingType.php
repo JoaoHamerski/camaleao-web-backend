@@ -10,6 +10,11 @@ class ClothingType extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $appends = [
+        'quantity',
+        'value',
+        'total_value'
+    ];
 
     /*
     Ordenação dos tipos de roupas
@@ -27,12 +32,34 @@ class ClothingType extends Model
         return $this->belongsToMany(Order::class);
     }
 
-    public function totalValue()
+    public function getQuantityAttribute()
     {
-        return bcmul(
-            $this->pivot->quantity,
-            $this->pivot->value,
-            2
-        );
+        if ($this->pivot) {
+            return $this->pivot->quantity;
+        }
+
+        return null;
+    }
+
+    public function getValueAttribute()
+    {
+        if ($this->pivot) {
+            return $this->pivot->value;
+        }
+
+        return null;
+    }
+
+    public function getTotalValueAttribute()
+    {
+        if ($this->pivot) {
+            return bcmul(
+                $this->pivot->quantity,
+                $this->pivot->value,
+                2
+            );
+        }
+
+        return null;
     }
 }
