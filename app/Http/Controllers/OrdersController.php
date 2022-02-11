@@ -303,13 +303,13 @@ class OrdersController extends Controller
         $filled = [];
 
         foreach ($this->clothingTypes as $type) {
-            $quantity = $data['quantity_' . $type->key];
             $value = $data['value_' . $type->key];
+            $quantity = $data['quantity_' . $type->key];
 
             if (!empty($quantity) && !empty($value)) {
                 $filled[$type->id] = [
+                    'value' => $value,
                     'quantity' => $quantity,
-                    'value' => $value
                 ];
             }
         }

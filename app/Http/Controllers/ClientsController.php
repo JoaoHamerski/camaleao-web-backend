@@ -144,29 +144,4 @@ class ClientsController extends Controller
             'shipping_company_id' => ['nullable', 'exists:shipping_companies,id']
         ]);
     }
-
-    private function getFormattedData(array $data)
-    {
-        $keys = ['branch_id', 'city_id', 'shipping_company_id'];
-
-        foreach ($keys as $key) {
-            if (isset($data[$key])) {
-                $data[$key] = $data[$key]['id'];
-            }
-        }
-
-        foreach ($data as $key => $field) {
-            if (Str::contains($key, ['name']) && !empty($field)) {
-                $data[$key] = Formatter::name($field);
-            }
-
-            if (Str::contains($key, ['phone']) && !empty($field)) {
-                $data[$key] = Formatter::stripNonDigits($field);
-            }
-        }
-
-
-
-        return $data;
-    }
 }
