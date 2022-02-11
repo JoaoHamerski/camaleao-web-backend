@@ -1,0 +1,8 @@
+type Status @guard {
+  id: ID!
+  text: String!
+}
+
+extend type Query {
+  status: [Status!]! @all
+}

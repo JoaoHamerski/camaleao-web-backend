@@ -1,0 +1,50 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+enum QueryClientOrderByColumn {
+  NAME @enum(value: "name")
+  CREATED_AT @enum(value: "created_at")
+}
+
+type Client @guard {
+  id: ID!
+  name: String!
+  phone: String
+  orders (
+    orderBy: _ @orderBy(columns: ["created_at", "delivery_date", "production_date"])
+    where: String @whereConditions(columns: ["code", "closed_at", "delivery_date"])
+    hasCity: String @whereConditions(columns: ["name"])
+    hasStatus: Int @whereConditions(columns: ["id"])
+  ): [Order]  @hasMany(type: "paginator")
+  city: City @belongsTo
+  branch: Branch @belongsTo
+  shipping_company: ShippingCompany @rename(attribute: "shippingCompany")
+  total_owing: String
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+extend type Query {
+  client (
+    id: ID! @eq
+  ): Client @find
+
+  clients (
+    orderBy: _ @orderBy(columnsEnum: "QueryClientOrderByColumn")
+    where: String @whereConditions(columns: ["name", "phone"])
+    hasCity: String @whereHasConditions(columns: ["name"])
+  ): [Client!] @paginate
+}
+
+input ClientInput {
+    name: String!
+    phone: String
+    city_id: ID
+    branch_id: ID
+    shipping_company_id: ID
+}
+
+extend type Mutation {
+  clientCreate (
+    input: ClientInput @spread
+  ): Client
+}

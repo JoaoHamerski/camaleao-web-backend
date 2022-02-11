@@ -1,0 +1,16 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type ClothingType {
+  id: ID!
+  key: String!
+  name: String!
+  is_hidden: Boolean!
+  commission: String
+  quantity: String
+  value: String
+  total_value: String
+}
+
+extend type Query {
+  clothingTypes: [ClothingType!]! @all
+}

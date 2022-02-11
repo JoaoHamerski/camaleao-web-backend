@@ -1,0 +1,10 @@
+type State @guard {
+  id: ID!
+  name: String!
+  abbreviation: String!
+}
+
+
+extend type Query {
+  states (orderBy: _ @orderBy): [State] @all
+}

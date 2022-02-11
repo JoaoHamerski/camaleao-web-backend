@@ -1,0 +1,58 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+type CashFlowEntry @guard {
+  id: ID
+  value: Float
+  date: Date
+  description: String
+  note: String
+  confirmed_at: Date
+  created_at: DateTime
+  employee_name: String
+  receipt_path: String @field(
+    resolver: "App\\GraphQL\\Resolvers\\CashFlowFieldResolver@receiptPath"
+  )
+  order: Order @field(
+    resolver: "App\\GraphQL\\Resolvers\\CashFlowFieldResolver@order"
+  )
+  user: User @field(
+    resolver: "App\\GraphQL\\Resolvers\\CashFlowFieldResolver@user"
+  )
+  via: Via! @field(
+    resolver: "App\\GraphQL\\Resolvers\\CashFlowFieldResolver@via"
+  )
+  type: ExpenseType @field(
+    resolver: "App\\GraphQL\\Resolvers\\CashFlowFieldResolver@type"
+  )
+  is_expense: Boolean @field(
+    resolver: "App\\GraphQL\\Resolvers\\CashFlowFieldResolver@isExpense"
+  )
+}
+
+input CashFlowFilterDatesInput {
+  start_date: String!
+  final_date: String
+}
+
+type CashFlowStatistics {
+  created_orders: Int
+  created_shirts: Int
+  closed_orders: Int
+  closed_shirts: Int
+  no_payments_orders: Int
+  no_payments_shirts: Int
+  balance: Float
+}
+
+extend type Query {
+  cashFlowStatistics (
+    input: CashFlowFilterDatesInput! @spread
+  ): CashFlowStatistics
+
+  cashFlowEntries (
+    where: _ @whereConditions(handler: "App\\GraphQL\\Handlers\\WhereCashFlowHandler")
+    orderBy: _ @orderBy
+  ): [CashFlowEntry]
+    @paginate(builder: "App\\GraphQL\\Builders\\CashFlowEntriesBuilder")
+}

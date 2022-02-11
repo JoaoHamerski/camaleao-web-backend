@@ -1,5 +1,3 @@
-#import role.graphql
-
 scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
 type User @guard {
@@ -9,7 +7,15 @@ type User @guard {
     email_verified_at: DateTime
     created_at: DateTime!
     updated_at: DateTime!
-    role: Role! @belongsTo
+    role: Role!
+}
+
+input UserInput {
+  name: String!
+  email: String!
+  password: String!
+  password_confirmation: String!
+  role_id: ID!
 }
 
 extend type Query {
@@ -18,7 +24,11 @@ extend type Query {
       email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
     ): User @find
 
-    users(
-      name: String @where(operator: "like")
-    ): [User!]! @paginate(defaultCount: 10)
+    users: [User]! @all
+}
+
+extend type Mutation {
+  userCreate (input: UserInput! @spread): User @can(ability: "create")
+  userChangeRole (id: ID! @eq new_role_id: Int): User @can(ability: "changeRole" query: true)
+  userDelete(id: ID! @eq auth_password: String!): User @can(ability: "delete" query: true)
 }

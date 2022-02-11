@@ -1,0 +1,13 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type Branch @guard {
+  id: ID!
+  city: City @belongsTo
+  shipping_company: ShippingCompany @rename(attribute: "shippingCompany")
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+extend type Query {
+  branches: [Branch] @all
+}

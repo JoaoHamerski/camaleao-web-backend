@@ -1,0 +1,13 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type ShippingCompany @guard {
+  id: ID!
+  name: String!
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+
+extend type Query {
+  shippingCompanies: [ShippingCompany] @all
+}

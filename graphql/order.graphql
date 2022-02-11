@@ -1,0 +1,73 @@
+
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+type Order @guard {
+  id: ID!
+  code: String!
+  client: Client @belongsTo
+  status: Status @belongsTo
+  name: String
+  quantity: Int
+  price: Float
+  delivery_date: Date
+  production_date: Date
+  discount: Float
+  payments (orderBy: _ @orderBy): [Payment] @hasMany
+  clothing_types: [ClothingType] @rename(attribute: "clothingTypes")
+  art_paths: [String]
+  size_paths: [String]
+  payment_voucher_paths: [String]
+  total_clothings_value: Float
+  total_paid: Float
+  total_owing: Float
+  notes: [Note]
+  reminder: String
+  original_price: Float
+  states: [String]
+  created_at: DateTime
+  updated_at: DateTime
+  closed_at: Date
+}
+
+extend type Query {
+  order (
+    clientId: ID!
+    code: ID! @eq
+  ): Order @find @can(ability: "view" injectArgs: true query: true)
+
+  orders(
+    orderBy: _ @orderBy(columns: ["created_at", "delivery_date", "production_date"])
+    where: String @whereConditions(columns: ["code", "closed_at", "delivery_date", "quantity", "client_id"])
+    hasCity: String @whereConditions(columns: ["name"])
+    hasStatus: Int @whereConditions(columns: ["id"])
+  ): [Order!] @paginate
+}
+
+input ClothingTypesInput {
+  key: String!
+  value: String!
+  quantity: String!
+}
+
+input OrderInput {
+  name: String
+  code: ID
+  discount: String
+  down_payment: String
+  payment_via_id: ID
+  production_date: String
+  delivery_date: String
+  clothing_types: [ClothingTypesInput]
+  status_id: ID
+  art_paths: [String!]
+  size_paths: [String!]
+  payment_voucher_paths: [String!]
+}
+
+extend type Mutation {
+  orderUpdate (id: ID! @eq input: OrderInput! @spread): Order @can(ability: "update" query: true)
+  orderToggle (id: ID! @eq): Order @can(ability: "toggle" query: true)
+  orderDelete (id: ID! @eq): Order
+  orderCreate (client_id: ID! input: OrderInput! @spread): Order
+}

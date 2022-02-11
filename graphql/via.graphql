@@ -1,8 +1,8 @@
-type Role {
+type Via {
   id: ID!
   name: String!
 }
 
 extend type Query {
-  roles: [Role] @all
+  vias: [Via!]! @all
 }

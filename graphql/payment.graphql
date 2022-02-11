@@ -1,0 +1,73 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+type Payment @guard {
+  id: ID!
+  value: Float!
+  date: Date
+  note: String
+  order: Order @belongsTo
+  via: Via @belongsTo
+  confirmed_at: Date
+  is_confirmed: Boolean
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+type PaymentPendency @guard {
+  created_at_payment: Date!
+  total: Int!
+}
+
+input PaymentInput {
+  order_id: ID!
+  payment_via_id: ID
+  value: String
+  date: String
+  note: String
+}
+
+extend type Query {
+  payments (
+    created_at: Date @where(clause: "whereDate")
+    where: _ @whereConditions
+    orderBy: _ @orderBy
+    pendencies: Boolean @scope
+  ): [Payment] @all
+
+  paymentsPendencies: [PaymentPendency]
+}
+
+input DailyCashClientInput {
+  id: ID
+  name: String
+}
+
+input DailyCashOrderInput {
+  id: ID
+  code: String
+  price: String
+  reminder: String
+}
+
+extend type Mutation {
+  paymentCreate (input: PaymentInput! @spread): Payment
+
+  paymentUpdate (
+    id: ID! @eq
+    input: PaymentInput! @spread
+  ): Payment @can(ability: "update" query: true injectArgs: true)
+
+  paymentConfirm (
+    id: ID! @eq
+    confirmation: Boolean!
+  ): Payment @can(ability: "confirm")
+
+  dailyCashEntry (
+    client: DailyCashClientInput!
+    order: DailyCashOrderInput!
+    value: String!
+    via_id: ID!
+  ): Payment
+}

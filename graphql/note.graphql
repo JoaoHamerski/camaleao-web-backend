@@ -1,0 +1,6 @@
+type Note @guard {
+  id: ID!
+  order: Order @belongsTo
+  text: String
+  is_reminder: Boolean
+}

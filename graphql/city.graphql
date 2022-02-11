@@ -1,0 +1,22 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type City @guard {
+  id: ID!
+  name: String!
+  branch: Branch @belongsTo
+  state: State @belongsTo
+  clients: [Client] @hasMany
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+extend type Query {
+  cities (
+    where: _ @whereConditions
+    orderBy: _ @orderBy
+  ): [City] @all
+}
+
+extend type Mutation {
+  cityMassUpdateState(state_id: ID! cities_id: [ID!]!): [City]
+}

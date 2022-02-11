@@ -1,0 +1,35 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+type Expense @guard {
+  id: ID!
+  description: String!
+  date: Date
+  value: Float
+  employee_name: String
+  receipt_path: String
+  user: User
+  type: ExpenseType
+  via: Via
+}
+
+input ExpenseInput {
+  description: String
+  expense_type_id: ID
+  value: String
+  expense_via_id: ID
+  receipt_path: String
+  date: String
+}
+
+extend type Query {
+  expenses (
+    orderBy: _ @orderBy
+    descriptionLike: String @where(operator: "like" key: "description")
+  ): [Expense] @paginate @builder(method: "App\\GraphQL\\Builders\\ExpensesBuilder")
+}
+
+extend type Mutation {
+  expenseCreate (input: ExpenseInput @spread): Expense
+  expenseUpdate(id: ID! input: ExpenseInput @spread): Expense
+}
