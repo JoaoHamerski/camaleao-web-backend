@@ -17,6 +17,7 @@ class Client extends Model
     protected static $logOnlyDirty = true;
 
     protected $cascadeDeletes = ['orders', 'payments'];
+    protected $appends = ['total_owing'];
 
     /**
      * Descrição que é cadastrada no log de atividades toda vez que um tipo
@@ -98,7 +99,7 @@ class Client extends Model
      *
      * @return double
      */
-    public function getTotalOwing()
+    public function getTotalOwingAttribute()
     {
         return bcsub($this->getTotalBought(), $this->getTotalPaid(), 2);
     }
