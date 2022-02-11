@@ -5,6 +5,8 @@ namespace App\Util;
 use Exception;
 use Carbon\Carbon;
 use App\Util\Helper;
+use Error;
+use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Storage;
@@ -21,6 +23,53 @@ class FileHelper
         'payment_voucher_paths' => 'comprovantes',
         'receipt_path' => 'comprovantes_vias'
     ];
+
+    /**
+     * Retorna o nome do arquivo caso seja uma URL.
+     *
+     * @param string $value
+     * @return string
+     */
+    public static function getFilenameFromUrl(string $value): string
+    {
+        return Helper::getLastArrayEl(explode('/', $value));
+    }
+
+    /**
+     * Retorna apenas o nome do(s) arquivo(s) do valor passado
+     *
+     * @param array|string $value Valor do campo
+     * @return mixed
+     */
+    public static function getFilesFromField($value)
+    {
+        if (empty($value)) {
+            return [];
+        }
+
+        if (is_string($value)) {
+            $decodedValue = json_decode($value);
+
+            $value = $decodedValue ?? $value;
+        }
+
+
+        if (is_array($value)) {
+            return array_map(function ($item) {
+                if (Str::contains($item, '/')) {
+                    return self::getFilenameFromUrl($item);
+                }
+
+                return $item;
+            }, $value);
+        }
+
+        if (Str::contains($value, '/')) {
+            return self::getFilenameFromUrl($value);
+        }
+
+        return $value;
+    }
 
     public static function getFilesURL($files, string $field)
     {
@@ -59,7 +108,7 @@ class FileHelper
 
     public static function getOnlyUploadedFileInstances($data, $keys)
     {
-        if (!is_array($keys)) {
+        if (!is_array($keys) && isset($data[$keys])) {
             $data[$keys] = Helper::filterInstanceOf(
                 $data[$keys],
                 UploadedFile::class
@@ -69,10 +118,12 @@ class FileHelper
         }
 
         foreach ($keys as $key) {
-            $data[$key] = Helper::filterInstanceOf(
-                $data[$key],
-                UploadedFile::class
-            );
+            if (isset($data[$key])) {
+                $data[$key] = Helper::filterInstanceOf(
+                    $data[$key],
+                    UploadedFile::class
+                );
+            }
         }
 
         return $data;
@@ -150,9 +201,11 @@ class FileHelper
         $uploadedFile = $file;
         $path = self::getFilepath($field);
 
-        if ($file instanceof UploadedFile) {
-            $uploadedFile = self::storeFile($file, $path, $key);
+        if (!($file instanceof UploadedFile)) {
+            throw new Error('O arquivo precisa ser uma instância de UploadedFile', 500);
         }
+
+        $uploadedFile = self::storeFile($file, $path, $key);
 
         return self::getFilename($uploadedFile);
     }
