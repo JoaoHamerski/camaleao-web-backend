@@ -1,6 +1,5 @@
 <?php
 
-use App\Util\Helper;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TokenController;
@@ -16,6 +15,7 @@ use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\ShippingCompaniesController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\ViasController;
 
 /*
@@ -32,6 +32,8 @@ use App\Http\Controllers\ViasController;
 Route::get('/', function () {
     return response('', 200);
 });
+
+Route::get('/test', [TestController::class, 'test']);
 
 // Route for testing
 Route::get('/resource', function () {
