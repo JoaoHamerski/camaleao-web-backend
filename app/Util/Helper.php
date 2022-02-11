@@ -2,6 +2,8 @@
 
 namespace App\Util;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Route;
 
@@ -316,5 +318,41 @@ class Helper
         $size *= 1024;
 
         return self::formatBytes($size, $precision);
+    }
+
+    public static function arrayMapRecursive($callback, $array)
+    {
+        $func = function ($item) use (&$func, &$callback) {
+            return is_array($item) ? array_map($func, $item) : call_user_func($callback, $item);
+        };
+
+        return array_map($func, $array);
+    }
+
+    public static function filled($data, $field)
+    {
+        return isset($data[$field]) && !empty($data[$field]);
+    }
+
+    public static function filledAll($data, $fields)
+    {
+        foreach ($fields as $field) {
+            if (!static::filled($data, $field)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static function filledAny($data, $fields)
+    {
+        foreach ($fields as $field) {
+            if (static::filled($data, $field)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
