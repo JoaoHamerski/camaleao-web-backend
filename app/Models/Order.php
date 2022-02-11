@@ -13,50 +13,33 @@ class Order extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $guarded = [];
-    protected static $logName = 'orders';
-    protected static $logUnguarded = true;
-    protected static $logOnlyDirty = true;
-    protected static $logAttributes = ['client'];
+    protected $fillable = [
+        'name',
+        'code',
+        'client_id',
+        'status_id',
+        'quantity',
+        'discount',
+        'price',
+        'delivery_date',
+        'production_date',
+        'art_paths',
+        'size_paths',
+        'payment_voucher_paths',
+        'closed_at'
+    ];
 
-    public function getDescriptionForEvent(string $eventName): string
-    {
-        if ($eventName == 'created') {
-            return '
-                <div data-event="created">
-                    <strong>:causer.name</strong>
-                    cadastrou o pedido
-                    <strong>:subject.code</strong>
-                    para o cliente
-                    <strong>:properties.attributes.client.name</strong>
-                </div>
-            ';
-        }
-
-        if ($eventName == 'updated') {
-            return '
-                <div data-event="updated">
-                    <strong>:causer.name</strong>
-                    alterou os dados do pedido
-                    <strong>:subject.code</strong>
-                    do cliente
-                    <strong>:properties.attributes.client.name</strong>
-                </div>
-            ';
-        }
-
-        if ($eventName == 'deleted') {
-            return '
-                <div data-event="deleted">
-                    <strong>:causer.name</strong>
-                    deletou o pedido
-                    <strong>:subject.code</strong>
-                    do cliente
-                    <strong>:properties.attributes.client.name</strong>
-                </div>
-            ';
-        }
-    }
+    protected $appends = [
+        'original_price',
+        'reminder',
+        'total_paid',
+        'total_owing',
+        'states',
+        'art_paths',
+        'size_paths',
+        'payment_voucher_paths',
+        'total_clothings_value'
+    ];
 
     public static function booted()
     {
@@ -72,7 +55,7 @@ class Order extends Model
 
         static::deleting(function (Order $order) use ($FILE_FIELDS) {
             foreach ($FILE_FIELDS as $field) {
-                $files = json_decode($order->{$field}) ?? [];
+                $files = FileHelper::getFilesFromField($order->{$field});
 
                 FileHelper::deleteFiles($files, $field);
             }
@@ -159,12 +142,7 @@ class Order extends Model
 
     public function getCommissions()
     {
-        return ClothingTypeResource::collection($this->clothingTypes);
-    }
-
-    public function getOriginalPrice()
-    {
-        return bcadd($this->price, $this->discount, 2);
+        return $this->clothingTypes;
     }
 
     public function clothingTypes()
@@ -173,18 +151,25 @@ class Order extends Model
             ->withPivot('quantity', 'value');
     }
 
-    public function totalClothingsValue()
+    public function getTotalClothingsValueAttribute()
     {
         $total = 0;
 
         foreach ($this->clothingTypes as $type) {
-            $total = bcadd($type->totalValue(), $total, 2);
+            $total = bcadd($type->total_value, $total, 2);
         }
 
         return $total;
     }
 
-    public function createDownPayment($value, $viaId)
+    /**
+     * Cria uma pagamento de entrada.
+     *
+     * @param string|float $value Valor do pagamento
+     * @param string|int $viaId Via do pagamento
+     * @return \App\Models\Payment
+     */
+    public function createDownPayment($value, $viaId): Payment
     {
         return $this->payments()->create([
             'value' => $value,
@@ -194,21 +179,31 @@ class Order extends Model
         ]);
     }
 
-    public function getTotalPaid()
+    public function getTotalPaidAttribute()
     {
         return $this->payments()
             ->where('is_confirmed', true)
             ->sum('value');
     }
 
-    public function getReminder()
+    public function getReminderAttribute()
     {
-        return $this->notes()->whereNotNull('is_reminder')->first();
+        $reminder = $this
+            ->notes()
+            ->whereNotNull('is_reminder')
+            ->first();
+
+        return $reminder ? $reminder->text : null;
     }
 
-    public function getTotalOwing()
+    public function getOriginalPriceAttribute()
     {
-        return bcsub($this->price, $this->getTotalPaid(), 2);
+        return bcadd($this->price, $this->discount, 2);
+    }
+
+    public function getTotalOwingAttribute()
+    {
+        return bcsub($this->price, $this->total_paid, 2);
     }
 
     public function getTotalPossibleOwing()
@@ -224,7 +219,7 @@ class Order extends Model
 
     public function isPaid()
     {
-        return $this->getTotalOwing() <= 0;
+        return $this->getTotalOwingAttribute() <= 0;
     }
 
     public function isClosed()
@@ -237,7 +232,7 @@ class Order extends Model
         return $this->quantity === null || $this->client_id === null;
     }
 
-    public function getStates()
+    public function getStatesAttribute()
     {
         $states = [];
 
@@ -256,22 +251,18 @@ class Order extends Model
         return $states;
     }
 
-    public function getPaths($field, $publicRelative = false)
+    public function getArtPathsAttribute($value)
     {
-        $folderName = [
-            'art_paths' => 'imagens_da_arte',
-            'size_paths' => 'imagens_do_tamanho',
-            'payment_voucher_paths' => 'comprovantes'
-        ][$field];
+        return FileHelper::getFilesURL($value, 'art_paths');
+    }
 
-        if (!$this->{$field}) {
-            return [];
-        }
+    public function getSizePathsAttribute($value)
+    {
+        return FileHelper::getFilesURL($value, 'size_paths');
+    }
 
-        return array_map(function ($filename) use ($publicRelative, $folderName) {
-            return $publicRelative
-                ? "public/$folderName/$filename"
-                : "/storage/$folderName/$filename";
-        }, json_decode($this->{$field}));
+    public function getPaymentVoucherPathsAttribute($value)
+    {
+        return FileHelper::getFilesURL($value, 'payment_voucher_paths');
     }
 }
