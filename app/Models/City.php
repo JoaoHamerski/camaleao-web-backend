@@ -12,8 +12,7 @@ class City extends Model
 
     protected $guarded = [];
     protected $with = ['state'];
-    protected $appends = ['shipping_company'];
-    
+
     protected static $logName = 'cities';
     protected static $logUnguarded = true;
     protected static $logOnlyDirty = true;
@@ -46,7 +45,7 @@ class City extends Model
                     <strong>:causer.name</strong>
                     deletou a cidade
                     <strong>:subject.name</strong>
-                </div>  
+                </div>
             ';
         }
     }
@@ -66,7 +65,7 @@ class City extends Model
         return $this->hasMany(Client::class);
     }
 
-    public function getShippingCompanyAttribute()
+    public function shippingCompany()
     {
         $branch =  Branch::find($this->branch_id) ?? null;
 
