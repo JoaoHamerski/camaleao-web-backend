@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use App\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -78,9 +79,15 @@ class Payment extends Model
         ]);
     }
 
-    public function scopePendencies()
+    public function scopePendencies(Builder $builder = null, bool $pendencies = true)
     {
-        return $this->where(function ($query) {
+        $builder = $builder ?? $this;
+
+        if (!$pendencies) {
+            return $builder;
+        }
+
+        return $builder->where(function ($query) {
             $query->whereNull('is_confirmed');
             $query->whereDate('created_at', '<', Carbon::now()->toDateString());
         });
