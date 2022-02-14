@@ -10,8 +10,11 @@ class City extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $guarded = [];
-    protected $with = ['state'];
+    protected $fillable = [
+        'name',
+        'state_id',
+        'branch_id'
+    ];
 
     protected static $logName = 'cities';
     protected static $logUnguarded = true;
