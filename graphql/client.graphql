@@ -30,7 +30,7 @@ extend type Query {
 
   clients (
     orderBy: _ @orderBy(columnsEnum: "QueryClientOrderByColumn")
-    where: String @whereConditions(columns: ["name", "phone"])
+    where: String @whereConditions(columns: ["name", "phone", "city_id"])
     hasCity: String @whereHasConditions(columns: ["name"])
   ): [Client!] @paginate
 }
