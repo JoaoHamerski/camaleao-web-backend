@@ -23,6 +23,9 @@ return [
         'password_required' => 'Por favor, digite sua senha',
         'current_password' => 'A senha digitada não confere.',
         'state_id_required' => 'Por favor, selecione um estado.',
+        'cities' => [
+            'city_id_required_if' =>  'Por favor, informe uma cidade caso deseje substituir a cidade deletada, ou desmarque a opção "substituir".'
+        ],
         'orders' => [
             'discount_lt' => 'O desconto deve ser menor que o preço total (:total_price).',
             'discount_gt' => 'O desconto deve ser maior que R$ 0,00.',
