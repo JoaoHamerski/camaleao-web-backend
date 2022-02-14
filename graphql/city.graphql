@@ -10,6 +10,16 @@ type City @guard {
   updated_at: DateTime
 }
 
+input CityInput {
+  name: String
+  state_id: ID
+}
+
+input CityReplaceOptionsInput {
+  clients: Boolean
+  branches: Boolean
+}
+
 extend type Query {
   cities (
     where: _ @whereConditions
@@ -18,5 +28,8 @@ extend type Query {
 }
 
 extend type Mutation {
-  cityMassUpdateState(state_id: ID! cities_id: [ID!]!): [City]
+  cityCreate(input: CityInput! @spread): City
+  cityUpdate (id: ID! input: CityInput! @spread): City
+  cityMassUpdateState(ids: [ID!]! state_id: ID! ): [City]
+  cityDelete (id: ID! city_id: ID replace: CityReplaceOptionsInput): City
 }
