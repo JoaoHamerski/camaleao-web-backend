@@ -3,10 +3,9 @@
 namespace App\GraphQL\Mutations;
 
 use App\Models\City;
-use App\Models\State;
 use Illuminate\Support\Facades\Validator;
 
-class CityMassUpdateState
+class CityCreate
 {
     /**
      * @param  null  $_
@@ -15,19 +14,11 @@ class CityMassUpdateState
     public function __invoke($_, array $args)
     {
         Validator::make($args, [
-            'ids' => ['required', 'array'],
-            'ids.*' => ['required', 'exists:cities,id'],
+            'name' => ['required', 'max:191'],
             'state_id' => ['required', 'exists:states,id']
         ], $this->errorMessages())->validate();
 
-        $state = State::find($args['state_id']);
-
-        $cities = City::whereIn('id', $args['ids']);
-        $cities->update([
-            'state_id' => $state->id
-        ]);
-
-        return $cities->get();
+        return City::create($args);
     }
 
     public function errorMessages()
