@@ -4,7 +4,6 @@ type State @guard {
   abbreviation: String!
 }
 
-
 extend type Query {
-  states (orderBy: _ @orderBy): [State] @all
+  states: [State] @all @orderBy(column: "name" direction: ASC)
 }

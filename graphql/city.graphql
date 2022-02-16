@@ -20,10 +20,18 @@ input CityReplaceOptionsInput {
   branches: Boolean
 }
 
+enum QueryCitiesOrderByColumn {
+  NAME @enum(value: "name")
+}
+
+enum QueryCitiesWhereConditionsColumn {
+  NAME @enum(value: "name")
+}
+
 extend type Query {
   cities (
-    where: _ @whereConditions
-    orderBy: _ @orderBy
+    where: _ @whereConditions(columnsEnum: "QueryCitiesWhereConditionsColumn")
+    orderBy: _ @orderBy(columnsEnum: "QueryCitiesOrderByColumn")
   ): [City] @all
 }
 

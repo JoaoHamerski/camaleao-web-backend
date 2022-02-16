@@ -22,11 +22,17 @@ input ExpenseInput {
   date: String
 }
 
+enum QueryExpensesOrderByColumn {
+  CREATED_AT @enum(value: "created_at")
+}
+
 extend type Query {
   expenses (
-    orderBy: _ @orderBy
+    orderBy: _ @orderBy(columnsEnum: "QueryExpensesOrderByColumn")
     descriptionLike: String @where(operator: "like" key: "description")
-  ): [Expense] @paginate @builder(method: "App\\GraphQL\\Builders\\ExpensesBuilder")
+  ): [Expense]
+    @paginate
+    @builder(method: "App\\GraphQL\\Builders\\ExpensesBuilder")
 }
 
 extend type Mutation {

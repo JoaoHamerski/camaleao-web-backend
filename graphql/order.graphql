@@ -1,4 +1,3 @@
-
 scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
@@ -13,7 +12,11 @@ type Order @guard {
   delivery_date: Date
   production_date: Date
   discount: Float
-  payments (orderBy: _ @orderBy): [Payment] @hasMany
+  payments: [Payment]
+    @hasMany
+    @orderBy(column: "date" direction: DESC)
+    @orderBy(column: "created_at" direction: DESC)
+
   clothing_types: [ClothingType] @rename(attribute: "clothingTypes")
   art_paths: [String]
   size_paths: [String]
@@ -30,18 +33,18 @@ type Order @guard {
   closed_at: Date
 }
 
-extend type Query {
-  order (
-    clientId: ID!
-    code: ID! @eq
-  ): Order @find @can(ability: "view" injectArgs: true query: true)
+enum QueryOrdersOrderByColumn {
+  CREATED_AT @enum(value: "created_at")
+  DELIVERY_DATE @enum(value: "delivery_date")
+  PRODUCTION_DATE @enum(value: "production_date")
+}
 
-  orders(
-    orderBy: _ @orderBy(columns: ["created_at", "delivery_date", "production_date"])
-    where: String @whereConditions(columns: ["code", "closed_at", "delivery_date", "quantity", "client_id"])
-    hasCity: String @whereConditions(columns: ["name"])
-    hasStatus: Int @whereConditions(columns: ["id"])
-  ): [Order!] @paginate
+enum QueryOrdersWhereConditionsColumn {
+  CODE @enum(value: "code")
+  CLOSED_AT @enum(value: "closed_at")
+  DELIVERY_DATE @enum(value: "delivery_date")
+  QUANTITY @enum(value: "quantity")
+  CLIENT_ID @enum(value: "client_id")
 }
 
 input ClothingTypesInput {
@@ -65,9 +68,28 @@ input OrderInput {
   payment_voucher_paths: [String!]
 }
 
+extend type Query {
+  order (
+    clientId: ID!
+    code: ID! @eq
+  ): Order
+    @find
+    @can(ability: "view" injectArgs: true query: true)
+
+  orders(
+    orderBy: _ @orderBy(columnsEnum: "QueryOrdersOrderByColumn")
+    where: _ @whereConditions(columnsEnum: "QueryOrdersWhereConditionsColumn")
+  ): [Order!] @paginate
+}
+
 extend type Mutation {
-  orderUpdate (id: ID! @eq input: OrderInput! @spread): Order @can(ability: "update" query: true)
-  orderToggle (id: ID! @eq): Order @can(ability: "toggle" query: true)
+  orderUpdate (id: ID! @eq input: OrderInput! @spread): Order
+    @can(ability: "update" query: true)
+
+  orderToggle (id: ID! @eq): Order
+    @can(ability: "toggle" query: true)
+
   orderDelete (id: ID! @eq): Order
+
   orderCreate (client_id: ID! input: OrderInput! @spread): Order
 }

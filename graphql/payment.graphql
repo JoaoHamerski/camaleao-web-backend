@@ -28,17 +28,6 @@ input PaymentInput {
   note: String
 }
 
-extend type Query {
-  payments (
-    created_at: Date @where(clause: "whereDate")
-    where: _ @whereConditions
-    orderBy: _ @orderBy
-    pendencies: Boolean @scope
-  ): [Payment] @all
-
-  paymentsPendencies: [PaymentPendency]
-}
-
 input DailyCashClientInput {
   id: ID
   name: String
@@ -49,6 +38,20 @@ input DailyCashOrderInput {
   code: String
   price: String
   reminder: String
+}
+
+enum QueryPaymentsOrderByColumn {
+  CREATED_AT @enum(value: "created_at")
+}
+
+extend type Query {
+  payments (
+    created_at: Date @where(clause: "whereDate")
+    orderBy: _ @orderBy(columnsEnum: "QueryPaymentsOrderByColumn")
+    pendencies: Boolean @scope
+  ): [Payment] @all
+
+  paymentsPendencies: [PaymentPendency]
 }
 
 extend type Mutation {

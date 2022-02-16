@@ -30,12 +30,7 @@ type CashFlowEntry @guard {
   )
 }
 
-input CashFlowFilterDatesInput {
-  start_date: String!
-  final_date: String
-}
-
-type CashFlowStatistics {
+type CashFlowStatistics @guard {
   created_orders: Int
   created_shirts: Int
   closed_orders: Int
@@ -45,14 +40,33 @@ type CashFlowStatistics {
   balance: Float
 }
 
+input CashFlowFilterDatesInput {
+  start_date: String!
+  final_date: String
+}
+
+enum QueryCashFlowEntriesWhereConditionsColumn {
+  DATE @enum(value: "date")
+  DESCRIPTION @enum(value: "description")
+}
+
+enum QueryCashFlowEntriesOrderByColumn {
+  DATE @enum(value: "date")
+  CREATED_AT @enum(value: "created_at")
+}
+
 extend type Query {
   cashFlowStatistics (
     input: CashFlowFilterDatesInput! @spread
   ): CashFlowStatistics
 
   cashFlowEntries (
-    where: _ @whereConditions(handler: "App\\GraphQL\\Handlers\\WhereCashFlowHandler")
-    orderBy: _ @orderBy
+    where: _ @whereConditions(
+      columnsEnum: "QueryCashFlowEntriesWhereConditionsColumn"
+      handler: "App\\GraphQL\\Handlers\\WhereCashFlowHandler"
+    )
+
+    orderBy: _ @orderBy(columnsEnum: "QueryCashFlowEntriesOrderByColumn")
   ): [CashFlowEntry]
     @paginate(builder: "App\\GraphQL\\Builders\\CashFlowEntriesBuilder")
 }
