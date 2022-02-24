@@ -2,33 +2,41 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\GraphQL\Mutations\ConfigNew;
+use App\GraphQL\Mutations\ConfigRemove;
+use App\GraphQL\Mutations\ConfigSet;
+use App\GraphQL\Queries\ConfigGet;
+use Error;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Config extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'json'
+    ];
+
+    public static function new($name, $key = null, $value = null)
+    {
+        return (new ConfigNew)->__invoke(null, compact('name', 'key', 'value'));
+    }
+
+    public static function get($name, $key = null)
+    {
+        return (new ConfigGet)->__invoke(null, compact('name', 'key'));
+    }
 
     public static function set($name, $key, $value)
     {
-        $config = Config::where('name', $name)->first();
-        $json = json_decode($config->json);
-
-        $collection = collect($json);
-        $collection = $collection->merge([$key => $value]);
-
-        $config->update(['json' => $collection->toJson()]);
-
-        return response()->json([], 204);
+        return (new ConfigSet)->__invoke(null, compact('name', 'key', 'value'));
     }
 
-    public static function get($name, $key)
+    public static function remove($name, $key)
     {
-        $config = Config::where('name', $name)->first();
-        $json = json_decode($config->json);
-
-        return $json->{$key} ?? null;
+        return (new ConfigRemove)->__invoke(null, compact('name', 'key'));
     }
 }
