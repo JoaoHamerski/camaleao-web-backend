@@ -15,5 +15,5 @@
 #import expense_type.graphql
 #import expense.graphql
 #import cash-flow.graphql
-
-type Query
+#import config.graphql
+#import production.graphql
