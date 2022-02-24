@@ -16,43 +16,6 @@ class City extends Model
         'branch_id'
     ];
 
-    protected static $logName = 'cities';
-    protected static $logUnguarded = true;
-    protected static $logOnlyDirty = true;
-
-    public function getDescriptionForEvent(string $eventName): string
-    {
-        if ($eventName === 'created') {
-            return '
-                <div data-event="created">
-                    <strong>:causer.name</strong>
-                    cadastrou a cidade
-                    <strong>:subject.name</strong>
-                </div>
-            ';
-        }
-
-        if ($eventName === 'updated') {
-            return '
-                <div data-event="updated">
-                    <strong>:causer.name</strong>
-                    alterou os dados da cidade
-                    <strong>:subject.name</strong>
-                </div>
-            ';
-        }
-
-        if ($eventName === 'deleted') {
-            return '
-                <div data-event="deleted">
-                    <strong>:causer.name</strong>
-                    deletou a cidade
-                    <strong>:subject.name</strong>
-                </div>
-            ';
-        }
-    }
-
     public function branch()
     {
         return $this->belongsTo(Branch::class);
@@ -68,14 +31,14 @@ class City extends Model
         return $this->hasMany(Client::class);
     }
 
-    public function shippingCompany()
-    {
-        $branch =  Branch::find($this->branch_id) ?? null;
+    // public function shippingCompany()
+    // {
+    //     $branch =  Branch::find($this->branch_id) ?? null;
 
-        if ($branch === null) {
-            return null;
-        }
+    //     if ($branch === null) {
+    //         return null;
+    //     }
 
-        return ShippingCompany::find($branch->shipping_company_id);
-    }
+    //     return ShippingCompany::find($branch->shipping_company_id);
+    // }
 }

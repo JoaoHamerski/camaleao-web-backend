@@ -13,9 +13,7 @@ class Expense extends Model
     use HasFactory, LogsActivity;
 
     protected $guarded = [];
-    protected static $logName = 'expenses';
-    protected static $logUnguarded = true;
-    protected static $logOnlyDirty = true;
+
     protected $appends = ['receipt_path'];
 
     /**
