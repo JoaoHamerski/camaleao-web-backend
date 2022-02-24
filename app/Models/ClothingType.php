@@ -9,7 +9,14 @@ class ClothingType extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'key',
+        'name',
+        'is_hidden',
+        'order',
+        'commission'
+    ];
+
     protected $appends = [
         'quantity',
         'value',
