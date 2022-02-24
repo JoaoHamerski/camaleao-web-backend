@@ -373,4 +373,24 @@ class Formatter
     {
         return $this->applyParse($fields, __FUNCTION__);
     }
+
+    public function parseCapitalize($value)
+    {
+        return Str::ucfirst($value);
+    }
+
+    public function capitalize($fields): Formatter
+    {
+        return $this->applyParse($fields, __FUNCTION__);
+    }
+
+    public function parseSnake($value)
+    {
+        return Str::snake($value);
+    }
+
+    public function snake($fields): Formatter
+    {
+        return $this->applyParse($fields, __FUNCTION__);
+    }
 }
