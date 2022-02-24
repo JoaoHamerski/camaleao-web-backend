@@ -108,6 +108,7 @@ class CashFlowStatistics
             'final_date' => ['nullable', 'date', 'after:start_date']
         ]);
     }
+
     public function getFormattedData($data)
     {
         return (new Formatter($data))
