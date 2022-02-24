@@ -92,6 +92,7 @@ class User extends Authenticatable
     public function commissions()
     {
         return $this->belongsToMany(Commission::class)
+            ->using(CommissionUser::class)
             ->withPivot([
                 'id',
                 'commission_value',
