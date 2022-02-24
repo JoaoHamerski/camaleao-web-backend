@@ -456,7 +456,7 @@ trait OrderTrait
     public function storeCommissions(Order $order, $isUpdate = false)
     {
         $data = [
-            'print_commission' => Config::get('app', 'order_commission'),
+            'print_commission' => Config::get('orders', 'print_commission'),
             'seam_commission' => $order->getCommissions()->toJson()
         ];
 
@@ -498,8 +498,8 @@ trait OrderTrait
                 $data['role_id'] = $user->role_id;
             } else {
                 $data['commission_value'] = Role::find($commissionWithPivot->pivot->role_id)->name == 'Costura'
-                    ? $commission->getSeamTotalCommission()
-                    : $commission->getPrintTotalCommission();
+                    ? $commission->seam_total_commission
+                    : $commission->print_total_commission;
             }
 
             if ($this->isCommissionConfirmed($user, $commission->id) && $wasQuantityChanged) {
@@ -511,5 +511,16 @@ trait OrderTrait
                 $commission->id => $data,
             ]);
         }
+    }
+
+    public function isCommissionConfirmed(User $user, $commissionId)
+    {
+        $commission = $user->commissions()->find($commissionId);
+
+        if (!$commission) {
+            return null;
+        }
+
+        return !!$commission->pivot->confirmed_at;
     }
 }
