@@ -1,0 +1,51 @@
+type CommissionUser @guard {
+  id: ID!
+  commission_value: Float
+  confirmed_at: DateTime
+  was_quantity_changed: Boolean
+  user: User @belongsTo
+  role: Role @belongsTo
+  commission: Commission @belongsTo
+}
+
+type Commission {
+  id: ID!
+  order: Order!
+  print_commission: Float
+  seam_commission: String
+  seam_total_commission: Float
+  print_total_commission: Float
+  pivot: CommissionUser
+}
+
+type CommissionByMonth {
+  month: String!
+  year: String!
+  value: Float!
+  role: Role
+}
+
+enum QueryCommissionsUsersWhereColumn {
+  CONFIRMED_AT @enum(value: "confirmed_at")
+}
+
+extend type Query {
+  commissionsUser: [Commission]
+    @paginate(builder: "\\App\\GraphQL\\Builders\\CommissionsUserBuilder")
+
+  commissionsUsers (
+    where: _ @whereConditions(columnsEnum: "QueryCommissionsUsersWhereColumn")
+  ): [CommissionUser]
+    @paginate
+    @builder(method: "\\App\\GraphQL\\Builders\\CommissionsUsersOrderByBuilder")
+
+  commissionRoleByMonth (
+    role_id: ID
+    month: String!
+  ): CommissionByMonth
+}
+
+extend type Mutation {
+  commissionValueUpsert (value: String!): String
+  commissionConfirmProduction (id: ID!): Commission
+}

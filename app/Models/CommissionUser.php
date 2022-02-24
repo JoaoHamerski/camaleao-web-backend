@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class CommissionUser extends Pivot
 {
     use HasFactory;
-    
+
     protected $guarded = [];
 
     public function commission()
@@ -19,5 +19,10 @@ class CommissionUser extends Pivot
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 }
