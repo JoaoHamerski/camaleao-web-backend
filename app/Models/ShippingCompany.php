@@ -9,5 +9,5 @@ class ShippingCompany extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = ['name'];
 }

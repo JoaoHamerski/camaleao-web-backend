@@ -11,3 +11,9 @@ type ShippingCompany @guard {
 extend type Query {
   shippingCompanies: [ShippingCompany] @all
 }
+
+extend type Mutation {
+  shippingCompanyCreate (name: String!): ShippingCompany
+  shippingCompanyEdit (id: ID! name: String): ShippingCompany
+  shippingCompanyDelete (id: ID!): ShippingCompany
+}
