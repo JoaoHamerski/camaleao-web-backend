@@ -11,6 +11,19 @@ type ClothingType {
   total_value: String
 }
 
+input ClothingTypeInput {
+  name: String
+  commission: String
+  is_hidden: Boolean
+}
+
 extend type Query {
-  clothingTypes: [ClothingType!]! @all
+  clothingTypes (
+    is_hidden: Boolean @where(operator: "=")
+  ): [ClothingType!]! @all
+}
+
+extend type Mutation {
+  clothingTypeCreate (input: ClothingTypeInput! @spread): ClothingType
+  clothingTypeUpdate (id: ID! input: ClothingTypeInput! @spread): ClothingType
 }
