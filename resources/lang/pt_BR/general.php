@@ -23,6 +23,7 @@ return [
         'password_required' => 'Por favor, digite sua senha',
         'current_password' => 'A senha digitada não confere.',
         'state_id_required' => 'Por favor, selecione um estado.',
+        'commission_required' => 'Por favor, informe uma comissão.',
         'cities' => [
             'city_id_required_if' =>  'Por favor, informe uma cidade caso deseje substituir a cidade deletada, ou desmarque a opção "substituir".'
         ],
@@ -38,6 +39,19 @@ return [
             'type' => 'Por favor, selecione um tipo.',
             'description' => 'Por favor, informe uma descrição.',
             'receipt_path_file_max' => 'O arquivo deve ser menor que :size.'
+        ],
+        'shipping_companies' => [
+            'city_id_required' => 'Por favor, selecione uma filial.',
+            'shipping_company_id_required' => 'Por favor, selecione uma transportadora.',
+            'cities_id_required' => 'Por favor, selecione uma cidade.'
+        ],
+        'clothing_types' => [
+            'key_unique' => 'Este tipo de roupa já foi registrado.'
+        ],
+        'commissions' => [
+            'role_id_required' => 'Por favor, selecione um tipo de usuário.',
+            'month_required' => 'Por favor, selecione um mês.',
+            'month_date_format' => 'O campo deve ter o formato mm/aaaa.',
         ]
     ]
 ];
