@@ -26,7 +26,7 @@ class ChangeDiscountFromOrdersTable extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->decimal('discount')->default(0.00);
+            $table->decimal('discount')->default(0.00)->change();
         });
     }
 }
