@@ -3,11 +3,30 @@ scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date
 type Branch @guard {
   id: ID!
   city: City @belongsTo
+  cities: [City] @hasMany
   shipping_company: ShippingCompany @rename(attribute: "shippingCompany")
   created_at: DateTime
   updated_at: DateTime
 }
 
+enum QueryBranchesGroupByColumn {
+  CREATED_AT @enum(value: "created_at")
+}
+
+input BranchInput {
+  branch_id: ID! @rename(attribute: "city_id")
+  shipping_company_id: ID!
+  cities_id: [ID!]!
+}
+
 extend type Query {
-  branches: [Branch] @all
+  branches (
+    orderBy: _ @orderBy(columnsEnum: "QueryBranchesGroupByColumn")
+  ): [Branch] @all
+}
+
+extend type Mutation {
+  branchCreate (input: BranchInput! @spread): Branch
+  branchUpdate (id: ID! input: BranchInput! @spread): Branch
+  branchDelete(id: ID!): Branch
 }
