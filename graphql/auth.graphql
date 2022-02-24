@@ -2,6 +2,13 @@ type AccessToken {
   token: String!
 }
 
+input AuthInput {
+  name: String
+  email: String
+  password: String
+  password_confirmation: String
+}
+
 extend type Mutation {
   login(
     email: String! @rules(apply: ["required", "email"])
@@ -9,6 +16,9 @@ extend type Mutation {
   ): AccessToken!
 
   logout: User @guard
+
+  authUpdate (input: AuthInput! @spread): User
+  authDelete (password: String!): User
 }
 
 extend type Query {
