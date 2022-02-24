@@ -2,12 +2,14 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\Client;
 use App\GraphQL\Traits\ClientTrait;
+use App\Models\Client;
 
-class ClientCreate
+class ClientUpdate
 {
     use ClientTrait;
+
+    const IS_UPDATE = true;
 
     /**
      * @param  null  $_
@@ -17,8 +19,11 @@ class ClientCreate
     {
         $data = $this->getFormattedData($args);
 
-        $this->validator($data)->validate();
+        $this->validator($data, self::IS_UPDATE)->validate();
 
-        return Client::create($data);
+        $client = Client::find($data['id']);
+        $client->update($data);
+
+        return $client;
     }
 }
