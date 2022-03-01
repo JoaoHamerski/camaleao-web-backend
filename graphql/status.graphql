@@ -1,6 +1,7 @@
 type Status @guard {
   id: ID!
   text: String!
+  is_avaliable: Boolean!
 }
 
 extend type Query {
