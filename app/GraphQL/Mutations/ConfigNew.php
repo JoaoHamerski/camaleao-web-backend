@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\Config;
+use App\Models\AppConfig;
 use App\GraphQL\Traits\ConfigTrait;
 use App\Util\Helper;
 
@@ -23,13 +23,13 @@ class ConfigNew
         $this->validator($data, self::IS_NEW_ORDER)->validate();
 
         if (Helper::filled($data, 'key')) {
-            return Config::create([
+            return AppConfig::create([
                 'name' => $data['name'],
                 'json' => collect([$data['key'] => $data['value'] ?? ''])->toJson()
             ]);
         }
 
-        return Config::create([
+        return AppConfig::create([
             'name' => $data['name']
         ]);
     }

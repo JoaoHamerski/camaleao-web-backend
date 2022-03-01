@@ -12,7 +12,7 @@ use App\Models\User;
 use App\Util\Helper;
 use App\Models\Order;
 use App\Models\Client;
-use App\Models\Config;
+use App\Models\AppConfig;
 use App\Models\Status;
 use App\Util\Validate;
 use App\Util\Formatter;
@@ -106,7 +106,7 @@ class OrdersController extends Controller
     public function storeCommissions(Order $order, $isUpdate = false)
     {
         $data = [
-            'print_commission' => Config::get('app', 'order_commission'),
+            'print_commission' => AppConfig::get('app', 'order_commission'),
             'seam_commission' => $order->getCommissions()->toJson()
         ];
 
@@ -345,7 +345,7 @@ class OrdersController extends Controller
             'value' => ['required', 'numeric']
         ])->validate();
 
-        Config::set('app', 'order_commission', $data['value']);
+        AppConfig::set('app', 'order_commission', $data['value']);
 
         return response()->json([], 204);
     }

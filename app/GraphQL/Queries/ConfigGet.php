@@ -3,7 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use App\Util\Helper;
-use App\Models\Config;
+use App\Models\AppConfig;
 use App\GraphQL\Traits\ConfigTrait;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,7 +21,7 @@ class ConfigGet
 
         $this->validator($data)->validate();
 
-        $config = Config::where('name', $data['name'])->first();
+        $config = AppConfig::where('name', $data['name'])->first();
         $decodedConfig = collect(json_decode($config->json));
 
         if (!Helper::filled($data, 'key')) {

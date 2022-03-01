@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\Config;
+use App\Models\AppConfig;
 use App\GraphQL\Traits\ConfigTrait;
 
 class ConfigRemove
@@ -19,7 +19,7 @@ class ConfigRemove
 
         $this->validator($data)->validate();
 
-        $config = Config::where('name', $data['name'])->first();
+        $config = AppConfig::where('name', $data['name'])->first();
 
         $configDecoded = collect(json_decode($config->json));
         $configDecoded->forget($data['key']);

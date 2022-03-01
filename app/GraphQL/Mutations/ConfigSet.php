@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\Config;
+use App\Models\AppConfig;
 use Illuminate\Support\Facades\Validator;
 use App\GraphQL\Traits\ConfigTrait;
 
@@ -20,7 +20,7 @@ class ConfigSet
 
         $this->validator($data)->validate();
 
-        $config = Config::where('name', $data['name'])->first();
+        $config = AppConfig::where('name', $data['name'])->first();
 
         $configDecoded = collect(json_decode($config->json));
         $configDecoded = $configDecoded->merge([$data['key'] => $data['value']]);

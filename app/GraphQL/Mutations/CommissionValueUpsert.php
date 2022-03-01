@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\Config;
+use App\Models\AppConfig;
 use App\Util\Formatter;
 use Illuminate\Support\Facades\Validator;
 
@@ -25,16 +25,16 @@ class CommissionValueUpsert
             'value' => ['required', 'numeric']
         ])->validate();
 
-        $commission = Config::get(self::CONFIG_NAME);
+        $commission = AppConfig::get(self::CONFIG_NAME);
 
         if ($commission === null) {
-            Config::new(self::CONFIG_NAME, self::CONFIG_KEY, $data['value']);
+            AppConfig::new(self::CONFIG_NAME, self::CONFIG_KEY, $data['value']);
 
-            return Config::get(self::CONFIG_NAME, self::CONFIG_KEY);
+            return AppConfig::get(self::CONFIG_NAME, self::CONFIG_KEY);
         }
 
-        Config::set(self::CONFIG_NAME, self::CONFIG_KEY, $data['value']);
+        AppConfig::set(self::CONFIG_NAME, self::CONFIG_KEY, $data['value']);
 
-        return Config::get(self::CONFIG_NAME, self::CONFIG_KEY);
+        return AppConfig::get(self::CONFIG_NAME, self::CONFIG_KEY);
     }
 }
