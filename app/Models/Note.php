@@ -10,7 +10,11 @@ class Note extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'text',
+        'order_id',
+        'is_reminder'
+    ];
 
     /**
      * Uma anotação pertence a um pedido

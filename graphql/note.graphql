@@ -1,6 +1,13 @@
 type Note @guard {
   id: ID!
-  order: Order @belongsTo
-  text: String
+  text: String!
+  order: Order! @belongsTo
   is_reminder: Boolean
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+extend type Mutation {
+  noteCreate (order_id: ID! text: String!): Note
+  noteUpdate (id: ID! text: String!): Note
 }
