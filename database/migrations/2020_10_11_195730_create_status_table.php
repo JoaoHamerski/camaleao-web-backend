@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateStatusTable extends Migration
 {
@@ -20,12 +21,13 @@ class CreateStatusTable extends Migration
         });
 
         DB::table('status')->insert([
-            ['text' => 'Arte pendente'],
-            ['text' => 'Pagamento pendente'],
-            ['text' => 'Produção'],
-            ['text' => 'Costura'],
-            ['text' => 'Problemas na produção'],
-            ['text' => 'Disponível para retirada'],
+            ['id' => 1, 'text' => 'Arte pendente'],
+            ['id' => 3, 'text' => 'Pagamento pendente'],
+            ['id' => 4, 'text' => 'Produção'],
+            ['id' => 5, 'text' => 'Costura'],
+            ['id' => 7, 'text' => 'Problemas na produção'],
+            ['id' => 8, 'text' => 'Disponível para retirada'],
+            ['id' => 9, 'text' => 'Entregue com pagamento pendente'],
         ]);
     }
 
