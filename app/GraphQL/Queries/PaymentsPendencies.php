@@ -14,7 +14,7 @@ class PaymentsPendencies
     public function __invoke($_, array $args)
     {
         return Payment::pendencies()
-            ->groupBy('created_at')
+            ->groupBy('created_at_payment')
             ->orderBy(DB::raw('DATE(created_at)'), 'desc')
             ->get([
                 DB::raw('DATE(created_at) as created_at_payment'),
