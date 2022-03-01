@@ -123,6 +123,14 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'roles' => [
+        'DESIGN' => 1,
+        'ATENDIMENTO' => 2,
+        'GERENCIA' => 3,
+        'COSTURA' => 4,
+        'ESTAMPA' => 5
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
