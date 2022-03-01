@@ -31,7 +31,7 @@ class OrderPolicy
     public function view(?User $user, Order $order, array $injected)
     {
 
-        return strval($order->client->id) === strval($injected['clientId']);
+        return strval($order->client->id) === strval($injected['client_id']);
     }
 
     public function toggle(?User $user, Order $order)

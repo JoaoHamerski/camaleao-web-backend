@@ -17,7 +17,9 @@ type Order @guard {
     @orderBy(column: "date" direction: DESC)
     @orderBy(column: "created_at" direction: DESC)
 
-  clothing_types: [ClothingType] @rename(attribute: "clothingTypes")
+  clothing_types: [ClothingType]
+    @rename(attribute: "clothingTypes")
+
   art_paths: [String]
   size_paths: [String]
   payment_voucher_paths: [String]
@@ -25,6 +27,10 @@ type Order @guard {
   total_paid: Float
   total_owing: Float
   notes: [Note]
+    @hasMany
+    @orderBy(column: "created_at" direction: DESC)
+    @builder(method: "\\App\\GraphQL\\Builders\\NotesOrderBuilder")
+
   reminder: String
   original_price: Float
   states: [String]
@@ -70,7 +76,7 @@ input OrderInput {
 
 extend type Query {
   order (
-    clientId: ID!
+    client_id: ID!
     code: ID! @eq
   ): Order
     @find
