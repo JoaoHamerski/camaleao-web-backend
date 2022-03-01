@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Models\City;
 use App\Models\Order;
 use App\Models\Client;
-use App\Models\Payment;
-use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 
-class ClientSeeder extends Seeder
+class ClientSeeder extends BaseSeeder
 {
+
     /**
      * Run the database seeds.
      *
@@ -17,11 +17,10 @@ class ClientSeeder extends Seeder
      */
     public function run()
     {
-        $faker = Faker::create();
+        $CLIENTS_QUANTITY = $this->faker->numberBetween(40, 60);
 
         Client::factory()
-            ->count(50)
-            ->hasOrders(5)
+            ->count($CLIENTS_QUANTITY)
             ->create();
     }
 }

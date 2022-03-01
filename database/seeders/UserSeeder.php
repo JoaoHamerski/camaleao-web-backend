@@ -4,8 +4,10 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Hash;
 
-class UserSeeder extends Seeder
+class UserSeeder extends BaseSeeder
 {
     /**
      * Run the database seeds.
@@ -14,29 +16,34 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        User::factory()->create([
-            'email' => 'joaohamerski@hotmail.com',
-            'role_id' => 3
-        ]);
+        $ROLES = Config::get('app.roles');
 
-        User::factory()->create([
-            'email' => 'gerencia@email.com',
-            'role_id' => 3
-        ]);
-
-        User::factory()->create([
-            'email' => 'atendimento@email.com',
-            'role_id' => 2
-        ]);
-
-        User::factory()->create([
-            'email' => 'atendimento2@email.com',
-            'role_id' => 2
-        ]);
-
-        User::factory()->create([
-            'email' => 'design@email.com',
-            'role_id' => 1
+        User::factory()->createMany([
+            [
+                'email' => Config::get('database.seeder.user_email'),
+                'password' => Hash::make(Config::get('database.seeder.user_password')),
+                'role_id' => $ROLES['GERENCIA'],
+            ],
+            [
+                'email' => 'gerencia@email.com',
+                'role_id' => $ROLES['GERENCIA']
+            ],
+            [
+                'email' => 'atendimento@email.com',
+                'role_id' => $ROLES['ATENDIMENTO']
+            ],
+            [
+                'email' => 'design@email.com',
+                'role_id' => $ROLES['DESIGN']
+            ],
+            [
+                'email' => 'costura@email.com',
+                'role_id' => $ROLES['COSTURA']
+            ],
+            [
+                'email' => 'estampa@email.com',
+                'role_id' => $ROLES['ESTAMPA']
+            ]
         ]);
     }
 }

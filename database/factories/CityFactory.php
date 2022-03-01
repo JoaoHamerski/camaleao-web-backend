@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\City;
+use App\Models\State;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CityFactory extends Factory
@@ -22,10 +23,23 @@ class CityFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->city,
-            'state_id' => $this->faker->randomElement([true, true, false])
-                ? $this->faker->numberBetween(1, 25)
-                : null
+            'name' => $this->faker->city
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (City $city) {
+            $this->belongsToState($city);
+        });
+    }
+
+    protected function belongsToState(City $city)
+    {
+        if ($this->faker->boolean($chanceOfTrue = 75)) {
+            $city->update([
+                'state_id' => State::inRandomOrder()->first()->id
+            ]);
+        }
     }
 }

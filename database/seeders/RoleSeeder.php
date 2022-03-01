@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class RoleSeeder extends Seeder
+class RoleSeeder extends BaseSeeder
 {
     /**
      * Run the database seeds.
@@ -14,9 +13,8 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('roles')->insert([
-            ['id' => '4', 'name' => 'Costura'],
-            ['id' => '5', 'name' => 'Estampa'],
-        ]);
+        // Roles são inseridas nos migrations "create_roles_table",
+        // pois é importante que sua estrutura fique como está,
+        // inclusive em testes, sem modificações, apenas adições se necessário.
     }
 }
