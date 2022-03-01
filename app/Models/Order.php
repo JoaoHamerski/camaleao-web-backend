@@ -99,40 +99,24 @@ class Order extends Model
 
     public function isQuantityChanged()
     {
-        $commissionClothingTypes = collect(
-            json_decode($this->commission->seam_commission)
-        )->map(function ($type) {
-            return [
-                'key' => $type->key,
-                'quantity' => $type->quantity
-            ];
+        $oldClothingTypes = collect(json_decode($this->commission->seam_commission));
+        $newClothingTypes = $this->clothingTypes;
+
+        $pluckKeyAndQuantity = fn ($clothingType) => [
+            'key' => $clothingType->key,
+            'quantity' => $clothingType->quantity
+        ];
+
+        $oldClothingTypes->transform($pluckKeyAndQuantity);
+        $newClothingTypes->transform($pluckKeyAndQuantity);
+
+        return $newClothingTypes->some(function ($newClothingType) use ($oldClothingTypes) {
+            $index = $oldClothingTypes->search(
+                fn ($item) => $item['key'] === $newClothingType['key']
+            );
+
+            return $oldClothingTypes[$index]['quantity'] !== $newClothingType['quantity'];
         });
-
-        $clothingTypes = $this->clothingTypes->map(function ($type) {
-            return [
-                'key' => $type->key,
-                'quantity' => $type->pivot->quantity
-            ];
-        });
-
-        $hasDifference = $clothingTypes->pluck('key')
-            ->diff($commissionClothingTypes->pluck('key'));
-
-        if (!$hasDifference->isEmpty()) {
-            return true;
-        }
-
-        foreach ($clothingTypes as $type) {
-            $commission = $commissionClothingTypes
-                ->where('key', $type['key'])
-                ->first();
-
-            if ($type['quantity'] != $commission['quantity']) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public function scopePreRegistered($query)

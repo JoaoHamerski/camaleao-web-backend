@@ -2,20 +2,16 @@
 
 namespace App\GraphQL\Traits;
 
-use ErrorException;
 use App\Util\Mask;
-use App\Models\Role;
 use App\Models\User;
 use App\Models\Order;
-use App\Models\Config;
+use App\Models\AppConfig;
 use App\Util\Formatter;
 use App\Util\FileHelper;
 use App\Models\Commission;
 use App\Models\ClothingType;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
-
-use function Ramsey\Uuid\v1;
 
 trait OrderTrait
 {
@@ -350,7 +346,7 @@ trait OrderTrait
             return null;
         }
 
-        return bcsub($clothingTypesValue, $data['discount'], 2);
+        return bcsub($clothingTypesValue, $data['discount'] ?? 0, 2);
     }
 
     /**
@@ -453,74 +449,87 @@ trait OrderTrait
         FileHelper::deleteFiles($removedFiles, $field);
     }
 
-    public function storeCommissions(Order $order, $isUpdate = false)
+    /**
+     * Método chamada que registra as comissões após o cadastro
+     * de um pedido.
+     *
+     * @param \App\Models\Order $order
+     * @param bool $isUpdate
+     * @return void
+     */
+    public function handleCommissions(Order $order, $isUpdate = false)
     {
         $data = [
-            'print_commission' => Config::get('orders', 'print_commission'),
+            'print_commission' => AppConfig::get('orders', 'print_commission'),
             'seam_commission' => $order->getCommissions()->toJson()
         ];
 
-        $isQuantityChanged = false;
-
         if (!$isUpdate) {
-            $commission = $order->commissions()->create($data);
-        } else {
-            if (!$order->commission) {
-                $commission = $order->commissions()->create($data);
-            } else {
-                $commission = Commission::where('order_id', $order->id)->first();
-                $commission->update($data);
-            }
-
-            try {
-                $isQuantityChanged = $order->isQuantityChanged();
-            } catch (ErrorException $error) {
-                $isQuantityChanged = false;
-            }
+            $this->storeCommissions($order, $data);
+            return;
         }
 
-        $this->storeUserCommissions(
-            $commission->fresh(),
+        $this->updateCommissions($order, $data);
+    }
+
+    public function storeCommissions(Order $order, $data)
+    {
+        $this->storeCommissionOnProduction(
+            $order->commissions()->create($data)
+        );
+    }
+
+    public function updateCommissions(Order $order, $data)
+    {
+        if (!$order->commission) {
+            $this->storeCommissions($order, $data);
+            return;
+        }
+
+        $isQuantityChanged = $order->isQuantityChanged();
+
+        $commission = $order->commission;
+        $commission->update($data);
+
+        $this->updateCommissionOnProduction(
+            $commission,
             $isQuantityChanged
         );
     }
 
-    public function storeUserCommissions(Commission $commission, $wasQuantityChanged = false)
+    public function storeCommissionOnProduction(Commission $commission)
     {
         $users = User::production()->get();
 
-        foreach ($users as $user) {
-            $data = [];
+        $users->each(function ($user) use ($commission) {
+            $user->commissions()->syncWithoutDetaching([
+                $commission->id => [
+                    'role_id' => $user->role->id,
+                    'commission_value' => $commission->getUserCommission($user)
+                ]
+            ]);
+        });
+    }
+
+    public function updateCommissionOnProduction(Commission $commission, $isQuantityChanged)
+    {
+        $users = User::production()->get();
+
+        $users->each(function ($user) use ($commission, $isQuantityChanged) {
             $commissionWithPivot = $user->commissions()->find($commission->id);
 
-            if (!$commissionWithPivot) {
-                $data['commission_value'] = $commission->getUserCommission($user);
-                $data['role_id'] = $user->role_id;
-            } else {
-                $data['commission_value'] = Role::find($commissionWithPivot->pivot->role_id)->name == 'Costura'
-                    ? $commission->seam_total_commission
-                    : $commission->print_total_commission;
-            }
+            $data['commission_value'] = $commissionWithPivot->pivot->user->isProduction()
+                ? $commission->print_total_commission
+                : $commission->seam_total_commission;
 
-            if ($this->isCommissionConfirmed($user, $commission->id) && $wasQuantityChanged) {
+            if ($commissionWithPivot->isConfirmed() && $isQuantityChanged) {
                 $data['confirmed_at'] = null;
-                $data['was_quantity_changed'] = true;
+                $data['was_quantity_changed'] = $isQuantityChanged;
             }
 
             $user->commissions()->syncWithoutDetaching([
-                $commission->id => $data,
+                $commission->id = $data
             ]);
-        }
-    }
-
-    public function isCommissionConfirmed(User $user, $commissionId)
-    {
-        $commission = $user->commissions()->find($commissionId);
-
-        if (!$commission) {
-            return null;
-        }
-
-        return !!$commission->pivot->confirmed_at;
+        });
     }
 }

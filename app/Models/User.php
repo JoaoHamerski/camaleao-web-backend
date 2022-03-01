@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Activitylog\Traits\CausesActivity;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Activitylog\Traits\CausesActivity;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -109,9 +110,11 @@ class User extends Authenticatable
 
     public function scopeProduction()
     {
-        return $this->whereHas('role', function ($query) {
-            $query->where('name', 'estampa');
-            $query->orWhere('name', 'costura');
+        $roles = Config::get('app.roles');
+
+        return $this->whereHas('role', function ($query) use ($roles) {
+            $query->where('id', $roles['ESTAMPA']);
+            $query->orWhere('id', $roles['COSTURA']);
         });
     }
 

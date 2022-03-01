@@ -33,7 +33,7 @@ class OrderUpdate
         }
 
         if (!$order->isPreRegistered()) {
-            $this->storeCommissions($order, true);
+            $this->handleCommissions($order, $isUpdate = true);
         }
 
         return $order;

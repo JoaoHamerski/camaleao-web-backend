@@ -31,6 +31,15 @@ class Commission extends Model
         return $this->belongsToMany(User::class);
     }
 
+    public function isConfirmed()
+    {
+        if (!$this->pivot) {
+            return null;
+        }
+
+        return !!$this->pivot->confirmed_at;
+    }
+
     public function getRoleCommissionAttribute()
     {
         if (!$this->pivot) {

@@ -31,7 +31,7 @@ class OrderCreate
         );
 
         if (!$order->isPreRegistered()) {
-            $this->storeCommissions($order);
+            $this->handleCommissions($order);
         }
 
         if (!empty($data['down_payment']) && !empty($data['payment_via_id'])) {
