@@ -13,6 +13,17 @@ class Status extends Model
      * Tabela para ser usada no model
      */
     protected $table = 'status';
+
+    /**
+     * Fillable properties
+     */
+    protected $fillable = ['text'];
+
+    protected $appends = ['is_avaliable'];
+
+    /**
+     * Indica qual ID da tabela é um status "diponível para retirada"
+     */
     protected $AVALIABLE_ID = 8;
 
     /**
@@ -25,7 +36,7 @@ class Status extends Model
         return $this->hasMany(Order::class);
     }
 
-    public function isAvaliable()
+    public function getIsAvaliableAttribute()
     {
         return $this->id === $this->AVALIABLE_ID;
     }
