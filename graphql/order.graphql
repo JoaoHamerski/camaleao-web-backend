@@ -3,7 +3,7 @@ scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
 type Order @guard {
   id: ID!
-  code: String!
+  code: String
   client: Client @belongsTo
   status: Status @belongsTo
   name: String
@@ -60,6 +60,7 @@ input ClothingTypesInput {
 }
 
 input OrderInput {
+  client_id: ID
   name: String
   code: ID
   discount: String
@@ -76,8 +77,8 @@ input OrderInput {
 
 extend type Query {
   order (
-    client_id: ID!
-    code: ID! @eq
+    id: ID! @eq
+    client_id: ID
   ): Order
     @find
     @can(ability: "view" injectArgs: true query: true)
