@@ -30,6 +30,9 @@ class OrderPolicy
      */
     public function view(?User $user, Order $order, array $injected)
     {
+        if (!isset($injected['client_id'])) {
+            return true;
+        }
 
         return strval($order->client->id) === strval($injected['client_id']);
     }
