@@ -17,3 +17,4 @@
 #import config.graphql
 #import production.graphql
 #import note.graphql
+#import weekly-production.graphql
