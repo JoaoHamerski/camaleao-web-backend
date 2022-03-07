@@ -25,4 +25,9 @@ class CommissionUser extends Pivot
     {
         return $this->belongsTo(Role::class);
     }
+
+    public function isConfirmed()
+    {
+        return !!$this->confirmed_at;
+    }
 }
