@@ -21,24 +21,7 @@ class PaymentCreate
         $data = $this->getFormattedData($args);
         $order = Order::find($data['order_id']);
 
-        if (!$order) {
-            throw new UnprocessableException(
-                'Não foi possível registrar o pagamento.',
-                'O pedido especificado não existe.'
-            );
-        }
-
-        Validator::make(
-            $data,
-            [
-                'order_id' => ['required', 'exists:orders,id'],
-                'payment_via_id' => ['required', 'exists:vias,id'],
-                'value' => ['required', 'max_currency:' . $order->total_owing],
-                'date' => ['required', 'date_format:Y-m-d'],
-                'note' => ['max:255']
-            ],
-            $this->errorMessages(false)
-        )->validate();
+        $this->validator($data, $order)->validate();
 
         $payment = $order->payments()->create($data);
 
@@ -47,5 +30,27 @@ class PaymentCreate
         }
 
         return $payment;
+    }
+
+    public function validator($data, $order)
+    {
+        if (!$order) {
+            throw new UnprocessableException(
+                'Não foi possível registrar o pagamento.',
+                'O pedido especificado não existe.'
+            );
+        }
+
+        return Validator::make(
+            $data,
+            [
+                'order_id' => ['required', 'exists:orders,id'],
+                'payment_via_id' => ['required', 'exists:vias,id'],
+                'value' => ['required', 'min_currency:0.01', 'max_currency:' . $order->total_owing],
+                'date' => ['required', 'date_format:Y-m-d'],
+                'note' => ['max:255']
+            ],
+            $this->errorMessages(false)
+        );
     }
 }
