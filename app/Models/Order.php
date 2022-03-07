@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use App\Util\FileHelper;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
-use App\Http\Resources\ClothingTypeResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
@@ -50,7 +48,9 @@ class Order extends Model
         ];
 
         static::creating(function (Order $order) {
-            $order->status_id = Status::first()->id;
+            if (!$order->status_id) {
+                $order->status_id = Status::first()->id;
+            }
         });
 
         static::deleting(function (Order $order) use ($FILE_FIELDS) {
@@ -146,23 +146,6 @@ class Order extends Model
         return $total;
     }
 
-    /**
-     * Cria uma pagamento de entrada.
-     *
-     * @param string|float $value Valor do pagamento
-     * @param string|int $viaId Via do pagamento
-     * @return \App\Models\Payment
-     */
-    public function createDownPayment($value, $viaId): Payment
-    {
-        return $this->payments()->create([
-            'value' => $value,
-            'date' => Carbon::now(),
-            'payment_via_id' => $viaId,
-            'note' => 'Pagamento de entrada'
-        ]);
-    }
-
     public function getTotalPaidAttribute()
     {
         return $this->payments()
@@ -203,7 +186,11 @@ class Order extends Model
 
     public function isPaid()
     {
-        return $this->getTotalOwingAttribute() <= 0;
+        if ($this->price === null) {
+            return false;
+        }
+
+        return $this->total_owing <= 0;
     }
 
     public function isClosed()
