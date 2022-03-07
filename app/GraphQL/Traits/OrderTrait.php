@@ -10,6 +10,8 @@ use App\Util\Formatter;
 use App\Util\FileHelper;
 use App\Models\Commission;
 use App\Models\ClothingType;
+use App\Models\CommissionUser;
+use App\Util\Helper;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
@@ -53,6 +55,10 @@ trait OrderTrait
             ->get();
 
         $data = $this->evaluateOrderAttributes($data, $order);
+
+        if ($order && $order->client_id) {
+            unset($data['client_id']);
+        }
 
         return $data;
     }
@@ -105,8 +111,12 @@ trait OrderTrait
      * @param \App\Models\Order $order
      * @return string
      */
-    private function getRequiredRule(Order $order = null)
+    private function getRequiredRule(Order $order = null, $field = null)
     {
+        if ($order && $field) {
+            return $order->{$field} ? 'nullable' : 'required';
+        }
+
         return $order ? 'nullable' : 'required';
     }
 
@@ -126,13 +136,13 @@ trait OrderTrait
 
         $rules = [
             'client_id' => [
-                'sometimes',
-                'required',
+                'nullable',
+                Rule::requiredIf(fn () => $order && !$order->client_id),
                 'exists:clients,id'
             ],
             'name' => ['nullable', 'max:90'],
             'code' => [
-                $this->getRequiredRule($order),
+                $this->getRequiredRule($order, 'code'),
                 $this->getUniqueRule($data['id'] ?? null)
             ],
             'discount' => [
@@ -143,7 +153,7 @@ trait OrderTrait
                 "lt:$originalPrice",
             ],
             'price' => [
-                $this->getRequiredRule($order),
+                $this->getRequiredRule($order, 'price'),
                 'numeric',
                 'required_with:discount'
             ],
@@ -362,6 +372,10 @@ trait OrderTrait
 
         $total = $this->evaluateTotalPrice($clothingTypesValue, $data, $order);
 
+        if (floatval($total) === 0.0 && $order && $order->isPreRegistered()) {
+            return null;
+        }
+
         if (floatval($total) === 0.0 && $order) {
             return $order->original_price;
         }
@@ -518,17 +532,18 @@ trait OrderTrait
         $users->each(function ($user) use ($commission, $isQuantityChanged) {
             $commissionWithPivot = $user->commissions()->find($commission->id);
 
-            $data['commission_value'] = $commissionWithPivot->pivot->user->isProduction()
-                ? $commission->print_total_commission
-                : $commission->seam_total_commission;
+            $data['commission_value'] = $commissionWithPivot
+                ->pivot
+                ->commission
+                ->getUserCommission($user);
 
-            if ($commissionWithPivot->isConfirmed() && $isQuantityChanged) {
+            if ($commissionWithPivot->pivot->isConfirmed() && $isQuantityChanged) {
                 $data['confirmed_at'] = null;
                 $data['was_quantity_changed'] = $isQuantityChanged;
             }
 
             $user->commissions()->syncWithoutDetaching([
-                $commission->id = $data
+                $commission->id => $data
             ]);
         });
     }
