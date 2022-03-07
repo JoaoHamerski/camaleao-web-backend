@@ -3,12 +3,10 @@
 namespace App\GraphQL\Mutations;
 
 use App\Models\Order;
-
 use App\GraphQL\Traits\OrderTrait;
 
 class OrderUpdate
 {
-
     use OrderTrait;
 
     /**
@@ -30,10 +28,13 @@ class OrderUpdate
             $order->clothingTypes()->sync(
                 $this->getFilledClothingTypes($data)
             );
-        }
 
-        if (!$order->isPreRegistered()) {
-            $this->handleCommissions($order, $isUpdate = true);
+            if (!$order->isPreRegistered()) {
+                $this->handleCommissions(
+                    $order->fresh(),
+                    $isUpdate = true
+                );
+            }
         }
 
         return $order;
