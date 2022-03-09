@@ -1,16 +1,11 @@
 {
-    "models": {
-        "App\\Models\\Payment": "Pagamentos",
-        "App\\Models\\Order": "Pedidos",
-        "App\\Models\\Client": "Clientes",
-        "App\\Models\\Expense": "Despesas",
-        "App\\Models\\Note": "Anotações de pagamentos",
-        "App\\Models\\ExpenseType": "Tipo de Despesa",
-        "App\\Models\\City": "Cidades",
-        "App\\Models\\Branch": "Filais"
-    },
     "art_paths": "imagens_da_arte",
     "size_paths": "imagens_do_tamanho",
     "payment_voucher_paths": "comprovantes",
-    "receipt_paths": "comprovante_vias"
+    "receipt_paths": "comprovante_vias",
+    "delivery_date": "Data de entrega",
+    "older": "Mais antigo",
+    "newer": "Mais recente",
+    "all": "Todos",
+    "open": "Em aberto"
 }
