@@ -237,12 +237,12 @@ trait OrderTrait
             'art_paths.*.max.file' => __('general.validation.file_min', ['max' => '1MB']),
             'discount.lt' => __(
                 'general.validation.orders.discount_lt',
-                ['total_price' => Mask::money($originalPrice)]
+                ['total_price' => Mask::currencyBRL($originalPrice)]
             ),
             'discount.gt' => __('general.validation.orders.discount_gt'),
             'down_payment.max_currency' => __(
                 'general.validation.orders.down_payment_max_currency',
-                ['final_value' => Mask::money($price)]
+                ['final_value' => Mask::currencyBRL($price)]
             ),
             'size_paths.*.max' => __('general.validation.file_min', ['max' => '1MB']),
             'payment_via_id.required_with' => __('general.validation.orders.payment_via_id_required_with'),
