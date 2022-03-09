@@ -126,19 +126,12 @@ class Helper
         return pathinfo($str, PATHINFO_EXTENSION);
     }
 
-    /**
-     * Converte o URL da image passada para base64.
-     *
-     * @param string $imagePath
-     *
-     * @return string
-     **/
-    public static function imageTo64($imagePath)
+    public static function getPublicPathFromUrl(string $url)
     {
-        $type = pathinfo($imagePath, PATHINFO_EXTENSION);
-        $data = file_get_contents($imagePath);
+        $strPosStorage = strpos($url, '/storage');
+        $storagePath = substr($url, $strPosStorage);
 
-        return 'data:image/' . $type . ';base64,' . base64_encode($data);
+        return public_path($storagePath);
     }
 
     /**
@@ -205,24 +198,6 @@ class Helper
         $basePath = base_path();
 
         return $basePath . $routesPath . self::getRouteFilename($route);
-    }
-
-    /**
-     * Mapeia os arquivos de rotas
-     *
-     * @param array $map
-     * @param string $routesPath
-     *
-     * @return void
-     */
-    public static function mapRoutes(array $map, string $routesPath = '/routes/partials/')
-    {
-        foreach ($map as $route) {
-            $prefixName = self::getRoutePrefixName($route);
-            $filepath = self::getRouteFilepath($route, $routesPath);
-
-            Route::name($prefixName)->group($filepath);
-        }
     }
 
     public static function getLastArrayEl(array $arr)
