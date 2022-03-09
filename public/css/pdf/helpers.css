@@ -1,0 +1,73 @@
+.text-center {
+  text-align: center;
+}
+
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+
+.img-thumbnail {
+  padding: 0.25rem;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  max-width: 100%;
+  height: auto;
+}
+
+.fw-bold {
+  font-weight: bold;
+}
+
+.page-break {
+  page-break-after: always;
+}
+
+.w-25 {
+  width: 25%;
+}
+
+.w-40 {
+  width: 40%;
+}
+
+.max-w-40 {
+  max-width: 40%;
+}
+
+.w-50 {
+  width: 50%;
+}
+
+.w-75 {
+  width: 75%;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.page-break-inside-avoid {
+  page-break-inside: avoid;
+}
+
+.page-break-after-always {
+  page-break-after: always;
+}
+
+.page-break-before-always {
+  page-break-before: always;
+}
+
+.clear-both {
+  clear: both;
+}
+
+.text-end {
+  text-align: right;
+}
+
+.text-subtitle {
+  font-size: .9rem;
+}
