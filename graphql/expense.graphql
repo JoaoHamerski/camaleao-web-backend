@@ -33,6 +33,8 @@ extend type Query {
   ): [Expense]
     @paginate
     @builder(method: "App\\GraphQL\\Builders\\ExpensesBuilder")
+
+  expensesReport (start_date: String! final_date: String): String
 }
 
 extend type Mutation {
