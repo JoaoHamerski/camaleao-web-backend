@@ -30,9 +30,17 @@ class FileHelper
      * @param string $value
      * @return string
      */
-    public static function getFilenameFromUrl(string $value): string
+    public static function getFilenameFromUrl(string $url): string
     {
-        return Helper::getLastArrayEl(explode('/', $value));
+        return Helper::getLastArrayEl(explode('/', $url));
+    }
+
+    public static function imageToBase64(string $path)
+    {
+        $type = pathinfo($path, PATHINFO_EXTENSION);
+        $data = file_get_contents($path);
+
+        return 'data:image/' . $type . ';base64,' . base64_encode($data);
     }
 
     /**
