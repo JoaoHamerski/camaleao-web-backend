@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PDFsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Config;
@@ -15,6 +16,24 @@ use Illuminate\Support\Facades\Config;
 |
 */
 
-if (Config::get('app.env') === 'local') {
-    Route::get('/test', [TestController::class, 'test']);
-}
+Route::prefix('pdf')->name('pdf.')->group(function () {
+    Route::get('orders/report', [
+        PDFsController::class,
+        'ordersReport'
+    ])->name('orders-report');
+
+    Route::get('orders/report/production-date', [
+        PDFsController::class,
+        'ordersReportProductionDate'
+    ])->name('orders-report-production-date');
+
+    Route::get('orders/report/{order}', [
+        PDFsController::class,
+        'orderReport'
+    ])->name('order-report');
+
+    Route::get('/expenses/report', [
+        PDFsController::class,
+        'expensesReport'
+    ])->name('expenses-report');
+});
