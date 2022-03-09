@@ -75,6 +75,32 @@ input OrderInput {
   payment_voucher_paths: [String!]
 }
 
+enum OrderReportInputOrder {
+  OLDER @enum(value: "older")
+  NEWER @enum(value: "newer")
+  DELIVERY_DATE @enum(value: "delivery_date")
+}
+
+enum OrderReportInputState {
+  OPEN @enum(value: "open")
+  ALL @enum(value: "all")
+}
+
+input OrdersReportInput {
+  city_id: ID
+  status_id: ID
+  closed_at: String
+  delivery_date: String
+  display_filter_info: Boolean
+  order: OrderReportInputOrder!
+  state: OrderReportInputState!
+}
+
+input OrdersReportProductionDateInput {
+  date: String!
+  state: OrderReportInputState!
+}
+
 extend type Query {
   order (
     id: ID! @eq
@@ -86,7 +112,12 @@ extend type Query {
   orders(
     orderBy: _ @orderBy(columnsEnum: "QueryOrdersOrderByColumn")
     where: _ @whereConditions(columnsEnum: "QueryOrdersWhereConditionsColumn")
-  ): [Order!] @paginate
+  ): [Order!]
+    @paginate
+
+  orderReport (id: ID!): String
+  ordersReport (input: OrdersReportInput! @spread): String
+  ordersReportProductionDate (input: OrdersReportProductionDateInput! @spread): String
 }
 
 extend type Mutation {
