@@ -239,6 +239,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Mask' => App\Util\Mask::class,
         'Helper' => App\Util\Helper::class,
+        'FileHelper' => App\Util\FileHelper::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
 
     ],
