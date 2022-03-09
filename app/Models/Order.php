@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Util\FileHelper;
 use App\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -62,11 +63,6 @@ class Order extends Model
         });
     }
 
-    public function getRouteKeyName()
-    {
-        return 'code';
-    }
-
     public function client()
     {
         return $this->belongsTo(Client::class);
@@ -119,9 +115,18 @@ class Order extends Model
         });
     }
 
-    public function scopePreRegistered($query)
+    public function scopePreRegistered(Builder $query)
     {
-        return $query->whereNull('quantity')->orWhereNull('client_id');
+        return $query->whereNull('quantity')
+            ->orWhereNull('price')
+            ->orWhereNull('client_id');
+    }
+
+    public function scopeNotPreRegistered(Builder $query)
+    {
+        return $query->whereNotNull('quantity')
+            ->whereNotNull('price')
+            ->whereNotNull('client_id');
     }
 
     public function getCommissions()
