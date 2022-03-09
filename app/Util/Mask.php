@@ -2,6 +2,8 @@
 
 namespace App\Util;
 
+use Carbon\Carbon;
+
 class Mask
 {
 
@@ -56,7 +58,7 @@ class Mask
      * @param bool $strongValue Retorna o valor entre tags <strong>
      * @return string or null;
      */
-    public static function money($str, $strongValue = false)
+    public static function currencyBRL($str, $strongValue = false)
     {
         if (empty($str)) {
             $str = 0;
@@ -73,5 +75,16 @@ class Mask
         return isset($str)
             ? $money
             : null;
+    }
+
+
+    public static function date($date, string $format = 'd/m/Y'): string
+    {
+        if ($date instanceof Carbon) {
+            return $date->format($format);
+        }
+
+        $date = Carbon::createFromFormat('Y-m-d', $date);
+        return $date->format($format);
     }
 }
