@@ -11,7 +11,14 @@ class Expense extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'description',
+        'date',
+        'expense_type_id',
+        'expense_via_id',
+        'receipt_path',
+        'value'
+    ];
 
     protected $appends = ['receipt_path'];
 

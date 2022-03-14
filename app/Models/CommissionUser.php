@@ -9,7 +9,13 @@ class CommissionUser extends Pivot
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'commission_value',
+        'confirmed_at',
+        'role_id',
+        'user_id',
+        'was_quantity_changed'
+    ];
 
     public function commission()
     {

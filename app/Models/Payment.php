@@ -12,7 +12,14 @@ class Payment extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'note',
+        'date',
+        'payment_via_id',
+        'value',
+        'is_confirmed',
+        'confirmed_at'
+    ];
 
     public function via()
     {
