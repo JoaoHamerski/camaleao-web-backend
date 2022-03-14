@@ -24,6 +24,7 @@ return [
         'current_password' => 'A senha digitada não confere.',
         'state_id_required' => 'Por favor, selecione um estado.',
         'commission_required' => 'Por favor, informe uma comissão.',
+        'text_required' => 'Por favor, informe o texto.',
         'cities' => [
             'city_id_required_if' =>  'Por favor, informe uma cidade caso deseje substituir a cidade deletada, ou desmarque a opção "substituir".'
         ],

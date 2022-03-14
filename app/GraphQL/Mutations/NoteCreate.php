@@ -16,11 +16,18 @@ class NoteCreate
         Validator::make($args, [
             'order_id' => ['required', 'exists:orders,id'],
             'text' => ['required']
-        ])->validate();
+        ], $this->errorMessages())->validate();
 
         $order = Order::find($args['order_id']);
         $note = $order->notes()->create($args);
 
         return $note;
+    }
+
+    public function errorMessages()
+    {
+        return [
+            'text.required' => __('general.validation.text_required')
+        ];
     }
 }
