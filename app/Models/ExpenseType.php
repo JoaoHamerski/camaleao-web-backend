@@ -8,7 +8,7 @@ use App\Traits\LogsActivity;
 
 class ExpenseType extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory;
 
     protected $fillable = ['name'];
 

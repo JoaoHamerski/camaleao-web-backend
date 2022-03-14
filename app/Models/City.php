@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class City extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory;
 
     protected $fillable = [
         'name',
@@ -30,15 +30,4 @@ class City extends Model
     {
         return $this->hasMany(Client::class);
     }
-
-    // public function shippingCompany()
-    // {
-    //     $branch =  Branch::find($this->branch_id) ?? null;
-
-    //     if ($branch === null) {
-    //         return null;
-    //     }
-
-    //     return ShippingCompany::find($branch->shipping_company_id);
-    // }
 }

@@ -23,17 +23,6 @@ class ClothingType extends Model
         'total_value'
     ];
 
-    /*
-    Ordenação dos tipos de roupas
-    REVISAR ISSO
-    protected static function booted()
-    {
-        static::creating(function ($clothingType) {
-            $clothingType->order = ClothingType::count();
-        });
-    }
-    */
-
     public function orders()
     {
         return $this->belongsToMany(Order::class);
