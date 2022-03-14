@@ -10,8 +10,6 @@ use App\Util\Formatter;
 use App\Util\FileHelper;
 use App\Models\Commission;
 use App\Models\ClothingType;
-use App\Models\CommissionUser;
-use App\Util\Helper;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
@@ -106,7 +104,7 @@ trait OrderTrait
 
     /**
      * Caso $order seja null, está criando o pedido,
-     * então retorna "required" rule para o attributo.
+     * então retorna "required" rule para o atributo.
      *
      * @param \App\Models\Order $order
      * @return string
@@ -419,6 +417,15 @@ trait OrderTrait
         return $data;
     }
 
+    /**
+     * Verifica se é possível fazer o upload
+     * do arquivo no campo especificado.
+     *
+     * @param $file
+     * @param string $field
+     * @param \App\Models\Order|null $order
+     * @return boolean
+     */
     public function canUploadFileToField($file, $field, $order = null)
     {
         if ($order) {
@@ -433,7 +440,15 @@ trait OrderTrait
         return !empty($file);
     }
 
-    public function storeFiles($files, $field, $order = null)
+    /**
+     * Armazena os arquivos no campo especificado.
+     *
+     * @param array $files
+     * @param string $field
+     * @param \App\Models\Order|null $order
+     * @return string
+     */
+    public function storeFiles(array $files, string $field, $order = null)
     {
         $paths = [];
 
@@ -449,7 +464,15 @@ trait OrderTrait
         return json_encode($paths);
     }
 
-    public function deleteRemovedFiles(array $storedFiles, array $uploadedFiles, $field)
+    /**
+     * Deleta os arquivos removidos no front-end.
+     *
+     * @param array $storedFiles Arquivos atualmente armazenados
+     * @param array $uploadedFiles Arquivos que foram feitos o upload
+     * @param string $field
+     * @return void
+     */
+    public function deleteRemovedFiles(array $storedFiles, array $uploadedFiles, string $field): void
     {
         $uploadedFiles = array_map(
             fn ($file) => FileHelper::isBase64($file)
@@ -464,15 +487,16 @@ trait OrderTrait
     }
 
     /**
-     * Método chamada que registra as comissões após o cadastro
-     * de um pedido.
+     * Registra ou atualiza as comissões após o cadastro de um pedido.
      *
      * @param \App\Models\Order $order
      * @param bool $isUpdate
      * @return void
      */
-    public function handleCommissions(Order $order, $isUpdate = false)
+    public function handleCommissions(Order $order, $isUpdate = false): void
     {
+        $order = $order->fresh();
+
         $data = [
             'print_commission' => AppConfig::get('orders', 'print_commission'),
             'seam_commission' => $order->getCommissions()->toJson()
@@ -486,60 +510,124 @@ trait OrderTrait
         $this->updateCommissions($order, $data);
     }
 
-    public function storeCommissions(Order $order, $data)
+    /**
+     * Armazena as comissões, apenas para usuários da produção.
+     *
+     * @param \App\Models\Order $order
+     * @param array $data
+     * @return void
+     */
+    public function storeCommissions(Order $order, array $data): void
     {
         $this->storeCommissionOnProduction(
             $order->commissions()->create($data)
         );
     }
 
-    public function updateCommissions(Order $order, $data)
+    /**
+     * Atualiza as comissões, ou armazena, caso o pedido seja
+     * pré-registado e sofra uma atualização e conclua seu registro.
+     * Apenas atualiza as comissões se alguma quantidade for alterada,
+     * pois as comissões são baseadas apenas na quantidade e não no valor
+     * de cada camisa.
+     *
+     * @param \App\Models\Order $order
+     * @param array $data
+     * @return void
+     */
+    public function updateCommissions(Order $order, array $data): void
     {
         if (!$order->commission) {
             $this->storeCommissions($order, $data);
             return;
         }
 
-        $isQuantityChanged = $order->isQuantityChanged();
+        if (!$order->isQuantityChanged()) {
+            return;
+        }
 
         $commission = $order->commission;
         $commission->update($data);
 
-        $this->updateCommissionOnProduction(
-            $commission,
-            $isQuantityChanged
-        );
+        $this->updateCommissionOnProduction($commission);
     }
 
-    public function storeCommissionOnProduction(Commission $commission)
+    /**
+     * Armazena a comissão para o usuário.
+     *
+     * @param \App\Models\User $user
+     * @param \App\Models\Commission $commission
+     * @return \App\Models\User
+     */
+    public function storeUserCommission(User $user, Commission $commission): User
+    {
+        $user->commissions()->syncWithoutDetaching([
+            $commission->id => [
+                'role_id' => $user->role->id,
+                'commission_value' => $commission->getUserCommission($user)
+            ]
+        ]);
+
+        return $user->fresh();
+    }
+
+    /**
+     * Armazena comissões apenas para usuários da produção
+     *
+     * @param \App\Models\Commission $commission
+     * @return void
+     */
+    public function storeCommissionOnProduction(Commission $commission): void
     {
         $users = User::production()->get();
 
         $users->each(function ($user) use ($commission) {
-            $user->commissions()->syncWithoutDetaching([
-                $commission->id => [
-                    'role_id' => $user->role->id,
-                    'commission_value' => $commission->getUserCommission($user)
-                ]
-            ]);
+            $this->storeUserCommission($user, $commission);
         });
     }
 
-    public function updateCommissionOnProduction(Commission $commission, $isQuantityChanged)
+    /**
+     * Retorna a comissão com pivô commissions_users.
+     * Se nao encontra a comissão é porque o usuário teve seu nível de
+     * privilégio recém alterado para produção.
+     *
+     * @param \App\Models\User $user
+     * @param \App\Models\Commission $commission
+     * @return \App\Models\Commission
+     */
+    public function getCommissionWithPivot(User $user, Commission $commission): Commission
+    {
+        $commissionWithPivot = $user->commissions()->find($commission->id);
+
+        if (!$commissionWithPivot) {
+            $user = $this->storeUserCommission($user, $commission);
+            $commissionWithPivot = $user->commissions()->find($commission->id);
+        }
+
+        return $commissionWithPivot;
+    }
+
+    /**
+     * Atualiza as comissões dos usuários da produção
+     *
+     * @param \App\Models\Commission $commission
+     * @return void
+     */
+    public function updateCommissionOnProduction(Commission $commission): void
     {
         $users = User::production()->get();
 
-        $users->each(function ($user) use ($commission, $isQuantityChanged) {
-            $commissionWithPivot = $user->commissions()->find($commission->id);
+        $users->each(function ($user) use ($commission) {
+            $commissionWithPivot = $this->getCommissionWithPivot($user, $commission);
 
             $data['commission_value'] = $commissionWithPivot
                 ->pivot
                 ->commission
                 ->getUserCommission($user);
 
-            if ($commissionWithPivot->pivot->isConfirmed() && $isQuantityChanged) {
+            if ($commissionWithPivot->pivot->isConfirmed()) {
                 $data['confirmed_at'] = null;
-                $data['was_quantity_changed'] = $isQuantityChanged;
+                $data['was_quantity_changed'] = true;
             }
 
             $user->commissions()->syncWithoutDetaching([
