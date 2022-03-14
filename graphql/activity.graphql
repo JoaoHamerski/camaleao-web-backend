@@ -1,0 +1,19 @@
+union Subject = Order
+union Causer = User
+
+type Activity {
+  id: ID!
+  log_name: String
+  description: String!
+  subject: Subject @morphTo
+  subject_type: String
+  causer: User @morphTo
+  causer_type: String
+  properties: String!
+  created_at: DateTime
+}
+
+
+extend type Query {
+  activities: [Activity] @paginate
+}

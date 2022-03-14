@@ -18,3 +18,4 @@
 #import production.graphql
 #import note.graphql
 #import weekly-production.graphql
+#import activity.graphql
