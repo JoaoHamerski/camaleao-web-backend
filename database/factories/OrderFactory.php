@@ -114,7 +114,7 @@ class OrderFactory extends FactoryByProbabilities
 
         $commission = $order->commissions()->create([
             'print_commission' => AppConfig::get('orders', 'print_commission'),
-            'seam_commission' => $order->getCommissions()->toJson(),
+            'seam_commission' => $order->fresh()->getCommissions()->toJson(),
             'created_at' => $order->created_at,
             'updated_at' => $order->created_at
         ]);
