@@ -12,6 +12,11 @@ class Order extends Model
 {
     use HasFactory, LogsActivity;
 
+    protected static $logFillable = true;
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
+    protected static $logName = 'orders';
+
     protected $fillable = [
         'name',
         'code',
@@ -39,6 +44,60 @@ class Order extends Model
         'payment_voucher_paths',
         'total_clothings_value'
     ];
+
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        if ($eventName === 'created') {
+            return $this->getCreatedLog();
+        }
+
+        if ($eventName === 'updated') {
+            return $this->getUpdatedLog();
+        }
+
+        if ($eventName === 'deleted') {
+            return $this->getDeletedLog();
+        }
+    }
+
+    public function getCreatedLog(): string
+    {
+        if (!$this->code) {
+            return $this->getDescriptionLog(
+                'created',
+                ':causer.name',
+                '',
+                ':causer pré-cadastrou um pedido'
+            );
+        }
+
+        return $this->getDescriptionLog(
+            'created',
+            ':causer.name',
+            ':subject.code',
+            ':causer cadastrou o pedido :subject'
+        );
+    }
+
+    public function getUpdatedLog(): string
+    {
+        return $this->getDescriptionLog(
+            'updated',
+            ':causer.name',
+            ':subject.code',
+            ':causer atualizou o pedido :subject'
+        );
+    }
+
+    public function getDeletedLog(): string
+    {
+        return $this->getDescriptionLog(
+            'deleted',
+            ':causer.name',
+            ':subject.code',
+            ':causer deletou o pedido :subject'
+        );
+    }
 
     public static function booted()
     {
