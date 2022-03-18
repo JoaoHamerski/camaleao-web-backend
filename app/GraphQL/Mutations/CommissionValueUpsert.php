@@ -2,8 +2,9 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\AppConfig;
 use App\Util\Formatter;
+use App\Models\AppConfig;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class CommissionValueUpsert
@@ -25,16 +26,28 @@ class CommissionValueUpsert
             'value' => ['required', 'numeric']
         ])->validate();
 
-        $commission = AppConfig::get(self::CONFIG_NAME);
+        $config = AppConfig::set(self::CONFIG_NAME, self::CONFIG_KEY, $data['value']);
 
-        if ($commission === null) {
-            AppConfig::new(self::CONFIG_NAME, self::CONFIG_KEY, $data['value']);
-
-            return AppConfig::get(self::CONFIG_NAME, self::CONFIG_KEY);
-        }
-
-        AppConfig::set(self::CONFIG_NAME, self::CONFIG_KEY, $data['value']);
+        $this->logCommissionValue($data, $config);
 
         return AppConfig::get(self::CONFIG_NAME, self::CONFIG_KEY);
+    }
+
+    public function logCommissionValue($data, $config)
+    {
+        $description = [
+            'type' => 'updated',
+            'placeholderText' => ':causer alterou a comissão da estampa para :attribute',
+            'causerProps' => ['name' => Auth::user()->name],
+            'subjectProps' => [],
+            'attributesProps' => [
+                'commission_value' => $data['value']
+            ]
+        ];
+
+        activity('configs_orders')
+            ->causedBy(Auth::user())
+            ->performedOn($config)
+            ->log(json_encode($description));
     }
 }
