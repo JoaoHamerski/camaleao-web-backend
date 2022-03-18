@@ -8,7 +8,7 @@ abstract class FactoryByProbabilities extends Factory
 {
     /**
      * Mapa de métodos para serem executados
-     * de acordo com as probabilidades atribuidas,
+     * de acordo com as probabilidades atribuídas,
      * utilizando o método "executeMethods"
      *
      * @var array
