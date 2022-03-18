@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Spatie\Activitylog\ActivityLogStatus;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,15 +14,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call([
-            UserSeeder::class,
-            CitySeeder::class,
-            ShippingCompanySeeder::class,
-            BranchSeeder::class,
-            ClothingTypeSeeder::class,
-            ExpenseTypeSeeder::class,
-            ExpenseSeeder::class,
-            ClientSeeder::class,
-        ]);
+        activity()->withoutLogs(function () {
+            $this->call([
+                UserSeeder::class,
+                CitySeeder::class,
+                ShippingCompanySeeder::class,
+                BranchSeeder::class,
+                ClothingTypeSeeder::class,
+                ExpenseTypeSeeder::class,
+                ExpenseSeeder::class,
+                ClientSeeder::class,
+            ]);
+        });
     }
 }
