@@ -26,7 +26,9 @@ class PaymentCreate
         $payment = $order->payments()->create($data);
 
         if (Auth::user()->hasRole('gerencia')) {
-            $payment->confirm();
+            activity()->withoutLogs(function () use ($payment) {
+                $payment->confirm();
+            });
         }
 
         return $payment;
