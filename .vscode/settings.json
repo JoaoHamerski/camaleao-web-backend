@@ -11,5 +11,13 @@
         "/public",
         "/database/migrations"
     ],
-    "phpcs.executablePath": "./vendor/squizlabs/php_codesniffer/bin/phpcs"
+    "phpcs.executablePath": "./vendor/squizlabs/php_codesniffer/bin/phpcs",
+    "cSpell.language": "en,pt-BR",
+    "cSpell.words": [
+        "Activitylog",
+        "Authenticatable",
+        "Laravel",
+        "Spatie",
+        "Upsert"
+    ]
 }
