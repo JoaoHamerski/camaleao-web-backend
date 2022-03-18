@@ -22,7 +22,7 @@ class OrderUpdate
 
         $data = $this->handleFilesUpload($data, $order);
 
-        $order->update($data);
+        $order->fill($data);
 
         if (isset($data['clothing_types'])) {
             $order->clothingTypes()->sync(
@@ -36,6 +36,8 @@ class OrderUpdate
                 );
             }
         }
+
+        $order->save();
 
         return $order;
     }
