@@ -6,9 +6,12 @@ use App\Models\City;
 use App\Models\Client;
 use App\Models\Order;
 use App\Models\ShippingCompany;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ClientFactory extends FactoryByProbabilities
+class ClientFactory extends Factory
 {
+    use FactoryByProbabilitiesTrait;
+
     /**
      * The name of the factory's corresponding model.
      *
@@ -16,7 +19,7 @@ class ClientFactory extends FactoryByProbabilities
      */
     protected $model = Client::class;
 
-    protected $methodsByProbability = [
+    protected static $methodsByProbability = [
         ['belongsToCity', 'chance' => 80],
         ['hasManyOrders', 'chance' => 75],
         ['belongsToShippingCompany', 'chance' => 75]

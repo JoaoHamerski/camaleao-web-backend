@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Error;
 
-abstract class FactoryByProbabilities extends Factory
+trait FactoryByProbabilitiesTrait
 {
     /**
      * Mapa de métodos para serem executados
@@ -16,11 +16,16 @@ abstract class FactoryByProbabilities extends Factory
      *      [methodName, 'chance' => 0...100]...
      *  ]
      */
-    protected $methodsByProbability = [];
+    // protected static $methodsByProbability = [];
 
     public function executeMethodsByProbability($model): void
     {
-        foreach ($this->methodsByProbability as $method) {
+        if (!isset(static::$methodsByProbability)) {
+            throw new Error('A variável $methodsByProbability não foi definida.');
+            return;
+        }
+
+        foreach (static::$methodsByProbability as $method) {
             if ($this->faker->boolean($method['chance'])) {
                 $this->{$method[0]}($model);
             }

@@ -6,17 +6,17 @@ use Carbon\Carbon;
 use App\Models\Note;
 use App\Models\User;
 use App\Models\Order;
-use App\Models\Client;
 use App\Models\Status;
 use App\Models\Payment;
 use App\Models\AppConfig;
 use App\Models\ClothingType;
-use App\Models\ClothingTypeOrder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
-class OrderFactory extends FactoryByProbabilities
+class OrderFactory extends Factory
 {
+    use FactoryByProbabilitiesTrait;
+
     /**
      * The name of the factory's corresponding model.
      *
@@ -32,7 +32,7 @@ class OrderFactory extends FactoryByProbabilities
      */
     protected $CREATED_AT_START_DATE = '-1 month';
 
-    protected $methodsByProbability = [
+    protected static $methodsByProbability = [
         ['hasManyNotes', 'chance' => 20],
         ['belongsToStatus', 'chance' => 100],
         ['hasManyPayments', 'chance' => 90]
