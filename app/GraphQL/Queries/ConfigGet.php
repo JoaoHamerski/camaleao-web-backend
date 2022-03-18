@@ -30,4 +30,12 @@ class ConfigGet
 
         return $decodedConfig[$data['key']] ?? null;
     }
+
+    public function validator($data)
+    {
+        return Validator::make($data, [
+            'name' => ['required', 'exists:configs,name'],
+            'key' => ['nullable']
+        ]);
+    }
 }

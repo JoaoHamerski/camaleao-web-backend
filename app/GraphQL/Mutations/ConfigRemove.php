@@ -4,6 +4,7 @@ namespace App\GraphQL\Mutations;
 
 use App\Models\AppConfig;
 use App\GraphQL\Traits\ConfigTrait;
+use Illuminate\Support\Facades\Validator;
 
 class ConfigRemove
 {
@@ -27,5 +28,13 @@ class ConfigRemove
         $config->update(['json' => $configDecoded->toJson()]);
 
         return $config;
+    }
+
+    public function validator($data)
+    {
+        return Validator::make($data, [
+            'name' => ['required', 'exists:configs,name'],
+            'key' => ['required']
+        ]);
     }
 }
