@@ -9,7 +9,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Client extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
+
+    protected static $logAttributes = [
+        'branchCity.name',
+        'city.name',
+        'shippingCompany.name'
+    ];
+    protected static $logFillable = true;
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
+    protected static $logName = 'clients';
 
     protected $fillable = [
         'name',
@@ -22,6 +32,36 @@ class Client extends Model
     protected $cascadeDeletes = ['orders', 'payments'];
 
     protected $appends = ['total_owing'];
+
+    public function getCreatedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$CREATE_TYPE,
+            ':causer cadastrou o cliente :subject',
+            [':causer.name'],
+            [':subject.name']
+        );
+    }
+
+    public function getUpdatedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$UPDATE_TYPE,
+            ':causer atualizou os dados do cliente :subject',
+            [':causer.name'],
+            [':subject.name']
+        );
+    }
+
+    public function getDeletedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$DELETE_TYPE,
+            ':causer deletou o cliente :subject',
+            [':causer.name'],
+            [':subject.name']
+        );
+    }
 
     /**
      * Método booted do model
@@ -122,4 +162,22 @@ class Client extends Model
     {
         return $this->belongsTo(Branch::class);
     }
+
+    public function branchCity()
+    {
+        if (!$this->branch) {
+            return $this->branch();
+        }
+
+        return $this->branch->city();
+    }
+
+    // public function branchCity()
+    // {
+    //     if (!$this->branch) {
+    //         return $this->branch();
+    //     }
+
+    //     return $this->branch->city();
+    // }
 }

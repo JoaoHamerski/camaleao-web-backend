@@ -9,8 +9,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Expense extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
+    protected static $logAlways = [
+        'type.name',
+        'via.name'
+    ];
+    protected static $logFillable = true;
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
+    protected static $logName = 'expenses';
     protected $fillable = [
         'description',
         'date',
@@ -22,11 +30,38 @@ class Expense extends Model
 
     protected $appends = ['receipt_path'];
 
-    /**
-     * Método booted do model
-     *
-     * @return void
-     */
+    public function getCreatedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$CREATE_TYPE,
+            ':causer cadastrou uma despesa de :subject (:attribute) via :attribute: :subject',
+            [':causer.name'],
+            [':subject.value', ':subject.description'],
+            [':attributes.type.name', ':attributes.via.name']
+        );
+    }
+
+    public function getUpdatedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$UPDATE_TYPE,
+            ':causer alterou a despesa de :subject',
+            [':causer.name'],
+            [':subject.value']
+        );
+    }
+
+    public function getDeletedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$DELETE_TYPE,
+            ':causer deletou a despesa de :subject (:attribute)',
+            [':causer.name'],
+            [':subject.value'],
+            [':attributes.type.name']
+        );
+    }
+
     public static function booted()
     {
         $FILE_FIELD = 'receipt_path';
@@ -41,31 +76,16 @@ class Expense extends Model
         });
     }
 
-    /**
-     * Uma despesa pertence a um usuário
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Uma despesa pertence a um tipo de despesa
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function type()
     {
         return $this->belongsTo(ExpenseType::class, 'expense_type_id');
     }
 
-    /**
-     * Uma despesa pertence a uma via
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function via()
     {
         return $this->belongsTo(Via::class, 'expense_via_id');

@@ -12,6 +12,12 @@ class Order extends Model
 {
     use HasFactory, LogsActivity;
 
+    protected static $logAlways = [
+        'client.name'
+    ];
+    protected static $logAttributes = [
+        'status.text'
+    ];
     protected static $logFillable = true;
     protected static $logOnlyDirty = true;
     protected static $submitEmptyLogs = false;
@@ -45,57 +51,44 @@ class Order extends Model
         'total_clothings_value'
     ];
 
-    public function getDescriptionForEvent(string $eventName): string
-    {
-        if ($eventName === 'created') {
-            return $this->getCreatedLog();
-        }
-
-        if ($eventName === 'updated') {
-            return $this->getUpdatedLog();
-        }
-
-        if ($eventName === 'deleted') {
-            return $this->getDeletedLog();
-        }
-    }
-
     public function getCreatedLog(): string
     {
         if (!$this->code) {
             return $this->getDescriptionLog(
-                'created',
-                ':causer.name',
-                '',
-                ':causer pré-cadastrou um pedido'
+                static::$CREATE_TYPE,
+                ':causer pré-cadastrou um pedido',
+                [':causer.name']
             );
         }
 
         return $this->getDescriptionLog(
-            'created',
-            ':causer.name',
-            ':subject.code',
-            ':causer cadastrou o pedido :subject'
+            static::$CREATE_TYPE,
+            ':causer cadastrou o pedido :subject para o cliente :attribute',
+            [':causer.name'],
+            [':subject.code'],
+            [':attributes.client.name']
         );
     }
 
     public function getUpdatedLog(): string
     {
         return $this->getDescriptionLog(
-            'updated',
-            ':causer.name',
-            ':subject.code',
-            ':causer atualizou o pedido :subject'
+            static::$UPDATE_TYPE,
+            ':causer alterou o pedido :subject do cliente :attribute',
+            [':causer.name'],
+            [':subject.code'],
+            [':attributes.client.name']
         );
     }
 
     public function getDeletedLog(): string
     {
         return $this->getDescriptionLog(
-            'deleted',
-            ':causer.name',
-            ':subject.code',
-            ':causer deletou o pedido :subject'
+            static::$DELETE_TYPE,
+            ':causer deletou o pedido :subject do cliente :attribute',
+            [':causer.name'],
+            [':subject.code'],
+            [':attributes.client.name']
         );
     }
 

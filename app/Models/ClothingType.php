@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ClothingType extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
+
+    protected static $logFillable = true;
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
+    protected static $logName = 'clothing_types';
 
     protected $fillable = [
         'key',
@@ -22,6 +28,36 @@ class ClothingType extends Model
         'value',
         'total_value'
     ];
+
+    public function getCreatedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$CREATE_TYPE,
+            ':causer cadastrou um tipo de camisa: :subject',
+            [':causer.name'],
+            [':subject.name'],
+        );
+    }
+
+    public function getUpdatedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$UPDATE_TYPE,
+            ':causer alterou os dados do tipo de camisa :subject',
+            [':causer.name'],
+            [':subject.name']
+        );
+    }
+
+    public function getDeletedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$DELETE_TYPE,
+            ':causer deletou o tipo de camisa :subject',
+            [':causer.name'],
+            [':subject.name']
+        );
+    }
 
     public function orders()
     {

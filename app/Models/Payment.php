@@ -10,7 +10,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Payment extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
+
+    protected static $logAlways = [
+        'via.name',
+        'order.code'
+    ];
+    protected static $logFillable = true;
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
+    protected static $logName = 'payments';
 
     protected $fillable = [
         'note',
@@ -20,6 +29,39 @@ class Payment extends Model
         'is_confirmed',
         'confirmed_at'
     ];
+
+    public function getCreatedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$CREATE_TYPE,
+            ':causer registrou o pagamento de :subject para o pedido :attribute',
+            [':causer.name'],
+            [':subject.value'],
+            [':attributes.order.code']
+        );
+    }
+
+    public function getUpdatedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$UPDATE_TYPE,
+            ':causer alterou o pagamento de :subject no pedido :attribute',
+            [':causer.name'],
+            [':subject.value'],
+            [':attributes.order.code']
+        );
+    }
+
+    public function getDeletedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$DELETE_TYPE,
+            ':causer deletou o pagamento de :subject no pedido :attribute',
+            [':causer.name'],
+            [':subject.value'],
+            [':attributes.order.code']
+        );
+    }
 
     public function via()
     {
