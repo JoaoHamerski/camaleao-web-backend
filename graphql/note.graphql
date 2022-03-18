@@ -10,4 +10,5 @@ type Note @guard {
 extend type Mutation {
   noteCreate (order_id: ID! text: String!): Note
   noteUpdate (id: ID! text: String!): Note
+  noteDelete (id: ID!): Note
 }
