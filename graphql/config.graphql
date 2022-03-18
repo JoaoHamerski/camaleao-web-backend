@@ -1,4 +1,4 @@
-type Config @guard {
+type AppConfig @guard {
   name: String
   json: String
 }
@@ -8,7 +8,6 @@ extend type Query {
 }
 
 extend type Mutation {
-  configNew(name: String! key: String value: String): Config
-  configSet(name: String! key: String! value: String!): Config
-  configRemove(name: String! key: String!): Config
+  configSet(name: String! key: String! value: String!): AppConfig
+  configRemove(name: String! key: String!): AppConfig
 }
