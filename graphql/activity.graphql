@@ -1,4 +1,16 @@
 union Subject = Order
+  | Client
+  | Payment
+  | Note
+  | Expense
+  | User
+  | City
+  | ShippingCompany
+  | Branch
+  | ClothingType
+  | CommissionUser
+  | AppConfig
+
 union Causer = User
 
 type Activity {
@@ -13,7 +25,19 @@ type Activity {
   created_at: DateTime
 }
 
+enum QueryActivitiesOrderByColumn {
+  CREATED_AT @enum(value: "created_at")
+}
+
+enum QueryActivitiesWhereColumn {
+  SUBJECT_TYPE @enum(value: "subject_type")
+  CAUSER_ID @enum(value: "causer_id")
+  CREATED_AT @enum(value: "created_at")
+}
 
 extend type Query {
-  activities: [Activity] @paginate
+  activities (
+    orderBy: _ @orderBy(columnsEnum: "QueryActivitiesOrderByColumn")
+    where: _ @whereConditions(columnsEnum: "QueryActivitiesWhereColumn")
+  ): [Activity] @paginate
 }
