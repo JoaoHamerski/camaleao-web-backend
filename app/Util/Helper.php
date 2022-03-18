@@ -2,8 +2,10 @@
 
 namespace App\Util;
 
+use GraphQL\Experimental\Executor\Collector;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Route;
 
@@ -302,6 +304,22 @@ class Helper
         };
 
         return array_map($func, $array);
+    }
+
+    public static function arrayFullDiff($array1, $array2)
+    {
+        if ($array1 instanceof Collection) {
+            $array1 = $array1->toArray();
+        }
+
+        if ($array2 instanceof Collection) {
+            $array2 = $array2->toArray();
+        }
+
+        return array_merge(
+            array_diff($array1, $array2),
+            array_diff($array2, $array1)
+        );
     }
 
     public static function filled($data, $field)
