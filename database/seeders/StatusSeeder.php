@@ -2,9 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-
-class StatusSeeder extends Seeder
+class StatusSeeder extends BaseSeeder
 {
     /**
      * Run the database seeds.

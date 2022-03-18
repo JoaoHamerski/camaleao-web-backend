@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\ClothingType;
 use App\Models\AppConfig;
-use Illuminate\Database\Seeder;
 
 class ClothingTypeSeeder extends BaseSeeder
 {
@@ -27,7 +26,7 @@ class ClothingTypeSeeder extends BaseSeeder
             ]);
         });
 
-        AppConfig::new(
+        AppConfig::set(
             'orders',
             'print_commission',
             round($this->faker->randomFloat(2, 30, 50), 1)

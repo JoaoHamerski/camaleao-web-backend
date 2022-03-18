@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\ShippingCompany;
-use Illuminate\Database\Seeder;
 
 class ShippingCompanySeeder extends BaseSeeder
 {

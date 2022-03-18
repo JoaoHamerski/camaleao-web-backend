@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\City;
-use App\Models\Order;
 use App\Models\Client;
-use Illuminate\Database\Seeder;
 
 class ClientSeeder extends BaseSeeder
 {
