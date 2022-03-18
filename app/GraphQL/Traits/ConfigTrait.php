@@ -13,19 +13,4 @@ trait ConfigTrait
             ->snake('key')
             ->get();
     }
-
-    public function getUniqueOrExistsRule($isNew)
-    {
-        return $isNew
-            ? 'unique:configs,name'
-            : 'exists:configs,name';
-    }
-
-    public function validator($data, $isNew = false)
-    {
-        return Validator::make($data, [
-            'name' => ['required', $this->getUniqueOrExistsRule($isNew)],
-            'key' => ['nullable']
-        ]);
-    }
 }
