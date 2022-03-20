@@ -46,6 +46,7 @@ enum QueryOrdersOrderByColumn {
 }
 
 enum QueryOrdersWhereConditionsColumn {
+  PRICE @enum(value: "price")
   CODE @enum(value: "code")
   CLOSED_AT @enum(value: "closed_at")
   DELIVERY_DATE @enum(value: "delivery_date")
