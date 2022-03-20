@@ -19,15 +19,15 @@ class Status extends Model
      */
     protected $fillable = ['text'];
 
-    protected $appends = ['is_avaliable'];
+    protected $appends = ['is_available'];
 
     /**
-     * Indica qual ID da tabela é um status "diponível para retirada"
+     * Indica qual ID da tabela é um status "disponível para retirada"
      */
-    protected $AVALIABLE_ID = 8;
+    protected $AVAILABLE_ID = 8;
 
     /**
-     * Um status tem varios pedidos
+     * Um status tem vários pedidos
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -36,8 +36,8 @@ class Status extends Model
         return $this->hasMany(Order::class);
     }
 
-    public function getIsAvaliableAttribute()
+    public function getIsAvailableAttribute()
     {
-        return $this->id === $this->AVALIABLE_ID;
+        return $this->id === $this->AVAILABLE_ID;
     }
 }

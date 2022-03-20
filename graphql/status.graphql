@@ -1,7 +1,7 @@
 type Status @guard {
   id: ID!
   text: String!
-  is_avaliable: Boolean!
+  is_available: Boolean!
 }
 
 extend type Query {
