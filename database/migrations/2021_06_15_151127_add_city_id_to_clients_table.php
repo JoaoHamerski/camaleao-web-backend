@@ -31,6 +31,7 @@ class AddCityIdToClientsTable extends Migration
     public function down()
     {
         Schema::table('clients', function (Blueprint $table) {
+            $table->dropForeign(['city_id']);
             $table->dropColumn('city_id');
         });
     }

@@ -123,6 +123,14 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'roles' => [
+        'DESIGN' => 1,
+        'ATENDIMENTO' => 2,
+        'GERENCIA' => 3,
+        'COSTURA' => 4,
+        'ESTAMPA' => 5
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
@@ -175,6 +183,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        \Nuwave\Lighthouse\WhereConditions\WhereConditionsServiceProvider::class,
+
 
     ],
 
@@ -229,6 +239,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Mask' => App\Util\Mask::class,
         'Helper' => App\Util\Helper::class,
+        'FileHelper' => App\Util\FileHelper::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
 
     ],

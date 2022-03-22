@@ -1,0 +1,19 @@
+type WeeklyProduction @guard {
+  date: Date
+  orders: [Order]
+}
+
+input OrderPreRegisteredInput {
+  reminder: String
+  status_id: ID
+  art_paths: [String]
+  production_date: String
+}
+
+extend type Query {
+  weeklyProduction (date: String!): [WeeklyProduction]
+}
+
+extend type Mutation {
+  orderCreatePreRegistered (input: OrderPreRegisteredInput! @spread): Order
+}

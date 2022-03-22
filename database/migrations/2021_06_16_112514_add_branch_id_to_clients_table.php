@@ -31,6 +31,7 @@ class AddBranchIdToClientsTable extends Migration
     public function down()
     {
         Schema::table('clients', function (Blueprint $table) {
+            $table->dropForeign(['branch_id']);
             $table->dropColumn('branch_id');
         });
     }

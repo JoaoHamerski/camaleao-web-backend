@@ -1,4 +1,7 @@
 {
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#4f5b937a",
+    },
     "search.exclude": {
         "public/css": true,
         "public/js": true
@@ -8,10 +11,13 @@
         "/public",
         "/database/migrations"
     ],
-    "[blade]": {
-        "editor.defaultFormatter": "shufo.vscode-blade-formatter",
-        "editor.formatOnSave": true
-    },
-    "bladeFormatter.format.indentSize": 2,
-    "bladeFormatter.format.wrapAttributes": "force-expand-multiline"
+    "phpcs.executablePath": "./vendor/squizlabs/php_codesniffer/bin/phpcs",
+    "cSpell.language": "en,pt-BR",
+    "cSpell.words": [
+        "Activitylog",
+        "Authenticatable",
+        "Laravel",
+        "Spatie",
+        "Upsert"
+    ]
 }

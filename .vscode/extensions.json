@@ -7,6 +7,8 @@
         "dbaeumer.vscode-eslint",
         "onecentlin.laravel-blade",
         "amiralizadeh9480.laravel-extra-intellisense",
-        "ikappas.phpcs"
+        "streetsidesoftware.code-spell-checker",
+        "streetsidesoftware.code-spell-checker-portuguese-brazilian",
+        "kumar-harsh.graphql-for-vscode"
     ]
 }

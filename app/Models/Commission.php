@@ -9,7 +9,17 @@ class Commission extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'order_id',
+        'print_commission',
+        'seam_commission'
+    ];
+
+    protected $appends = [
+        'seam_total_commission',
+        'print_total_commission',
+        'role_commission',
+    ];
 
     public function order()
     {
@@ -21,27 +31,43 @@ class Commission extends Model
         return $this->belongsToMany(User::class);
     }
 
-    /**
-     * Return the user total comission value.
-     *
-     * @param $user App\Models\User | int Instance of user model or user id
-     *
-     * return double
-     */
+    public function getRoleCommissionAttribute()
+    {
+        if (!$this->pivot) {
+            return null;
+        }
+
+        if ($this->pivot->role->name === 'Estampa') {
+            return $this->print_total_commission;
+        }
+
+        if ($this->pivot->role->name === 'Costura') {
+            return $this->seam_total_commission;
+        }
+
+        return null;
+    }
+
     public function getUserCommission($user)
     {
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             $user = User::find($user);
         }
 
-        if ($user->hasRole('costura')) {
-            return $this->getSeamTotalCommission();
+        if (!$user) {
+            return null;
         }
 
-        return $this->getPrintTotalCommission();
+        if ($user->hasRole('costura')) {
+            return $this->seam_total_commission;
+        }
+
+        if ($user->hasRole('estampa')) {
+            return $this->print_total_commission;
+        }
     }
 
-    public function getPrintTotalCommission()
+    public function getPrintTotalCommissionAttribute()
     {
         return bcmul(
             $this->print_commission,
@@ -50,19 +76,15 @@ class Commission extends Model
         );
     }
 
-    public function getSeamTotalCommission()
+    public function getSeamTotalCommissionAttribute()
     {
-        $commissions = json_decode($this->seam_commission);
-        $total = 0;
+        $INITIAL_VALUE = 0;
+        $seamCommissions = json_decode($this->seam_commission);
 
-        foreach ($commissions as $commission) {
-            $total = bcadd(
-                $total,
-                bcmul($commission->commission, $commission->quantity, 2),
-                2
-            );
-        }
+        return array_reduce($seamCommissions, function ($total, $item) {
+            $clothingCommission = bcmul($item->commission, $item->quantity, 2);
 
-        return $total;
+            return bcadd($total, $clothingCommission);
+        }, $INITIAL_VALUE);
     }
 }

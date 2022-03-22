@@ -4,51 +4,53 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
+use App\Traits\LogsActivity;
 
 class Branch extends Model
 {
-    use HasFactory,LogsActivity;
+    use HasFactory, LogsActivity;
 
-    protected $guarded = [];
-    protected $with = ['city'];
-
-    protected static $logName = 'branches';
-    protected static $logUnguarded = true;
+    protected $recordEvents = ['created', 'deleted'];
+    protected static $logAlways = [
+        'city.name',
+        'shippingCompany.name',
+    ];
+    protected static $logAttributes = [
+        'cities'
+    ];
+    protected static $logFillable = true;
     protected static $logOnlyDirty = true;
-    protected static $logAttributes = ['city'];
+    protected static $submitEmptyLogs = false;
+    protected static $logName = 'branches';
 
-    public function getDescriptionForEvent(string $eventName): string
+    protected $fillable = [
+        'city_id',
+        'shipping_company_id'
+    ];
+
+    public function getCreatedLog(): string
     {
-        if ($eventName === 'created') {
-            return '
-                <div data-event="created">
-                    <strong>:causer.name</strong>
-                    cadastrou a filial
-                    <strong>:properties.attributes.city.name</strong>
-                </div>
-            ';
-        }
+        return $this->getDescriptionLog(
+            static::$CREATE_TYPE,
+            ':causer cadastrou a filial :attribute',
+            [':causer.name'],
+            [],
+            [':attributes.city.name']
+        );
+    }
 
-        if ($eventName === 'updated') {
-            return '
-                <div data-event="updated">
-                    <strong>:causer.name</strong>
-                    alterou os dados da filial
-                    <strong>:properties.attributes.city.name</strong>
-                </div>
-            ';
-        }
+    // Update log feito manualmente na BranchUpdate mutation
+    // App\GraphQL\Mutations\BranchUpdate.php
 
-        if ($eventName === 'deleted') {
-            return '
-                <div data-event="deleted">
-                    <strong>:causer.name</strong>
-                    deletou a filial
-                    <strong>:properties.attributes.city.name</strong>
-                </div>  
-            ';
-        }
+    public function getDeletedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$DELETE_TYPE,
+            ':causer deletou a filial :attribute',
+            [':causer.name'],
+            [],
+            [':attributes.city.name']
+        );
     }
 
     public function city()
@@ -59,5 +61,10 @@ class Branch extends Model
     public function cities()
     {
         return $this->hasMany(City::class);
+    }
+
+    public function shippingCompany()
+    {
+        return $this->belongsTo(ShippingCompany::class);
     }
 }

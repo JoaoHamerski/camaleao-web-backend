@@ -1,0 +1,17 @@
+type ExpenseType @guard {
+  id: ID!
+  name: String!
+}
+
+input ExpenseTypesInput {
+  name: String!
+}
+
+extend type Query {
+  expenseTypes: [ExpenseType] @all
+}
+
+extend type Mutation {
+  expenseTypesCreate (input: ExpenseTypesInput! @spread ): ExpenseType
+  expenseTypesUpdate (id: ID! input: ExpenseTypesInput! @spread): ExpenseType
+}

@@ -1,0 +1,9 @@
+type Status @guard {
+  id: ID!
+  text: String!
+  is_available: Boolean!
+}
+
+extend type Query {
+  status: [Status!]! @all
+}

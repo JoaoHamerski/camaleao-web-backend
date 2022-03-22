@@ -10,45 +10,70 @@ class City extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $guarded = [];
-    protected $with = ['state'];
-    protected $appends = ['shipping_company'];
-    
-    protected static $logName = 'cities';
-    protected static $logUnguarded = true;
+    protected static $logAlways = [
+        'state.name',
+        'state.abbreviation'
+    ];
+    protected static $logFillable = true;
     protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
+    protected static $logName = 'cities';
 
-    public function getDescriptionForEvent(string $eventName): string
+    protected $fillable = [
+        'name',
+        'state_id',
+        'branch_id'
+    ];
+
+    public function getCreatedLog(): string
     {
-        if ($eventName === 'created') {
-            return '
-                <div data-event="created">
-                    <strong>:causer.name</strong>
-                    cadastrou a cidade
-                    <strong>:subject.name</strong>
-                </div>
-            ';
+        return $this->getDescriptionLog(
+            static::$CREATE_TYPE,
+            ':causer cadastrou a cidade :subject (:attribute)',
+            [':causer.name'],
+            [':subject.name'],
+            [':attributes.state.abbreviation']
+        );
+    }
+
+    public function getUpdatedLog(): string
+    {
+        if (!$this->state) {
+            return $this->getDescriptionLog(
+                static::$UPDATE_TYPE,
+                ':causer alterou a cidade :subject',
+                [':causer.name'],
+                [':subject.name']
+            );
         }
 
-        if ($eventName === 'updated') {
-            return '
-                <div data-event="updated">
-                    <strong>:causer.name</strong>
-                    alterou os dados da cidade
-                    <strong>:subject.name</strong>
-                </div>
-            ';
+        return $this->getDescriptionLog(
+            static::$UPDATE_TYPE,
+            ':causer alterou a cidade :subject (:attribute)',
+            [':causer.name'],
+            [':subject.name'],
+            [':attributes.state.abbreviation']
+        );
+    }
+
+    public function getDeletedLog(): string
+    {
+        if (!$this->state) {
+            return $this->getDescriptionLog(
+                static::$DELETE_TYPE,
+                ':causer deletou a cidade :subject',
+                [':causer.name'],
+                [':subject.name']
+            );
         }
 
-        if ($eventName === 'deleted') {
-            return '
-                <div data-event="deleted">
-                    <strong>:causer.name</strong>
-                    deletou a cidade
-                    <strong>:subject.name</strong>
-                </div>  
-            ';
-        }
+        return $this->getDescriptionLog(
+            static::$DELETE_TYPE,
+            ':causer deletou a cidade :subject (:attribute)',
+            [':causer.name'],
+            [':subject.name'],
+            [':attributes.state.abbreviation']
+        );
     }
 
     public function branch()
@@ -64,16 +89,5 @@ class City extends Model
     public function clients()
     {
         return $this->hasMany(Client::class);
-    }
-
-    public function getShippingCompanyAttribute()
-    {
-        $branch =  Branch::find($this->branch_id) ?? null;
-
-        if ($branch === null) {
-            return null;
-        }
-
-        return ShippingCompany::find($branch->shipping_company_id);
     }
 }

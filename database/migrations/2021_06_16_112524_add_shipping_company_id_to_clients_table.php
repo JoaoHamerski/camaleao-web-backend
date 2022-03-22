@@ -31,6 +31,7 @@ class AddShippingCompanyIdToClientsTable extends Migration
     public function down()
     {
         Schema::table('clients', function (Blueprint $table) {
+            $table->dropForeign(['shipping_company_id']);
             $table->dropColumn('shipping_company_id');
         });
     }

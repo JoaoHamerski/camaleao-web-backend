@@ -1,0 +1,10 @@
+type Commission {
+  id: ID!
+  order: Order!
+  print_commission: Float
+  seam_commission: String
+  seam_total_commission: Float
+  print_total_commission: Float
+  created_at: DateTime
+  pivot: CommissionUser
+}

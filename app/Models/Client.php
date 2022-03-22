@@ -2,64 +2,65 @@
 
 namespace App\Models;
 
-use App\Traits\FileManager;
+use App\Util\FileHelper;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Client extends Model
 {
-    use HasFactory, FileManager, LogsActivity;
+    use HasFactory, LogsActivity;
 
-    protected $guarded = [];
-
-    protected static $logName = 'clients';
-    protected static $logUnguarded = true;
+    protected static $logAttributes = [
+        'branchCity.name',
+        'city.name',
+        'shippingCompany.name'
+    ];
+    protected static $logFillable = true;
     protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
+    protected static $logName = 'clients';
+
+    protected $fillable = [
+        'name',
+        'phone',
+        'branch_id',
+        'city_id',
+        'shipping_company_id'
+    ];
 
     protected $cascadeDeletes = ['orders', 'payments'];
 
-    protected $appends = ['path'];
+    protected $appends = ['total_owing'];
 
-    /**
-     * Descrição que é cadastrada no log de atividades toda vez que um tipo
-     * de evento ocorre no model
-     *
-     * @param string $eventname
-     *
-     * @return string
-     */
-    public function getDescriptionForEvent(string $eventName): string
+    public function getCreatedLog(): string
     {
-        if ($eventName == 'created') {
-            return '
-                <div data-event="created">
-                    <strong>:causer.name</strong> 
-                    cadastrou o cliente 
-                    <strong>:subject.name</strong>
-                </div>
-            ';
-        }
+        return $this->getDescriptionLog(
+            static::$CREATE_TYPE,
+            ':causer cadastrou o cliente :subject',
+            [':causer.name'],
+            [':subject.name']
+        );
+    }
 
-        if ($eventName == 'updated') {
-            return '
-                <div data-event="updated">
-                    <strong>:causer.name</strong> 
-                    alterou os dados do cliente 
-                    <strong>:subject.name</strong>
-                </div>
-            ';
-        }
+    public function getUpdatedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$UPDATE_TYPE,
+            ':causer atualizou os dados do cliente :subject',
+            [':causer.name'],
+            [':subject.name']
+        );
+    }
 
-        if ($eventName == 'deleted') {
-            return '
-                <div data-event="deleted">
-                    <strong>:causer.name</strong> 
-                    deletou o cliente 
-                    <strong>:subject.name</strong>
-                </div>
-            ';
-        }
+    public function getDeletedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$DELETE_TYPE,
+            ':causer deletou o cliente :subject',
+            [':causer.name'],
+            [':subject.name']
+        );
     }
 
     /**
@@ -70,10 +71,24 @@ class Client extends Model
     public static function booted()
     {
         static::deleting(function ($client) {
-            static::deleteFiles($client->orders, [
-                'art_paths', 'size_paths', 'payment_voucher_paths'
-            ]);
+            self::deleteFiles($client->orders);
         });
+    }
+
+    public static function deleteFiles($orders)
+    {
+        $FILE_FIELDS = [
+            'art_paths',
+            'size_paths',
+            'payment_voucher_paths'
+        ];
+
+        foreach ($orders as $order) {
+            foreach ($FILE_FIELDS as $field) {
+                $filesToDelete = FileHelper::getFilesFromField($order->{$field});
+                FileHelper::deleteFiles($filesToDelete, $field);
+            }
+        }
     }
 
     /**
@@ -97,28 +112,13 @@ class Client extends Model
     }
 
     /**
-     * Retorna a URL para a página do cliente
-     *
-     * @return string
-     */
-    public function path()
-    {
-        return route('clients.show', $this);
-    }
-
-    public function getPathAttribute()
-    {
-        return $this->path();
-    }
-
-    /**
      * Retorna o total que o cliente está devendo
      *
      * @return double
      */
-    public function getTotalOwing()
+    public function getTotalOwingAttribute()
     {
-        return bcsub($this->getTotalBuyied(), $this->getTotalPaid(), 2);
+        return bcsub($this->getTotalBought(), $this->getTotalPaid(), 2);
     }
 
     /**
@@ -138,7 +138,7 @@ class Client extends Model
      *
      * @return double
      */
-    public function getTotalBuyied()
+    public function getTotalBought()
     {
         return $this->orders()->sum('price');
     }
@@ -153,27 +153,6 @@ class Client extends Model
         return $this->belongsTo(City::class);
     }
 
-    public function getBranchCityNameAttribute()
-    {
-        return $this->branch
-            ? ($this->branch->city ? $this->branch->city->name : null)
-            : null;
-    }
-
-    public function getBranchStateAbbr()
-    {
-        return $this->branchCityName
-            ? ($this->branch->city->state ? $this->branch->city->state->abbreviation : null)
-            : null;
-    }
-    
-    public function getStateAbbrAttribute()
-    {
-        return $this->city
-            ? ($this->city->state ? $this->city->state->abbreviation : null)
-            : null;
-    }
-
     public function shippingCompany()
     {
         return $this->belongsTo(ShippingCompany::class);
@@ -183,4 +162,22 @@ class Client extends Model
     {
         return $this->belongsTo(Branch::class);
     }
+
+    public function branchCity()
+    {
+        if (!$this->branch) {
+            return $this->branch();
+        }
+
+        return $this->branch->city();
+    }
+
+    // public function branchCity()
+    // {
+    //     if (!$this->branch) {
+    //         return $this->branch();
+    //     }
+
+    //     return $this->branch->city();
+    // }
 }

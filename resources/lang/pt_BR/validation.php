@@ -82,6 +82,7 @@ return [
         'string'  => 'O campo :attribute não pode ser superior a :max caracteres.',
         'array'   => 'O campo :attribute não pode ter mais do que :max itens.',
     ],
+    'max_currency' => 'O valor não pode ser maior que :max',
     'mimes'                => 'O campo :attribute deve ser um arquivo do tipo: :values.',
     'mimetypes'            => 'O campo :attribute deve ser um arquivo do tipo: :values.',
     'min' => [
@@ -90,6 +91,7 @@ return [
         'string'  => 'O campo :attribute deve ter pelo menos :min caracteres.',
         'array'   => 'O campo :attribute deve ter pelo menos :min itens.',
     ],
+    'min_currency' => 'O valor não pode ser menor que :min',
     'not_in'               => 'O campo :attribute selecionado é inválido.',
     'not_regex'            => 'O campo :attribute possui um formato inválido.',
     'numeric'              => 'O campo :attribute deve ser um número.',
@@ -117,8 +119,6 @@ return [
     'uploaded'             => 'Ocorreu uma falha no upload do campo :attribute.',
     'url'                  => 'O campo :attribute tem um formato inválido.',
     'uuid' => 'O campo :attribute deve ser um UUID válido.',
-    'max_double' => 'O valor não pode ser maior que :max',
-
 
     /*
     |--------------------------------------------------------------------------
@@ -131,92 +131,101 @@ return [
     |
     */
     'custom' => [
-        'value' => [
-            'required' => 'Por favor, informe um valor',
-            'max_double' => 'O pagamento não pode ser maior que o restante (:max)'
+        'art_paths.*' => [
+            'image' => 'Os arquivos devem conter apenas imagens.',
         ],
-        'name' => [
-            'required' => 'Por favor, informe um nome'
-        ],
-        'description.*' => [
-            'required' => 'Por favor, informe uma descrição.'
-        ],
-        'type.*' => [
-            'required' => 'Por favor, informe um tipo',
-            'exists' => 'O tipo informado não existe'
-        ],
-        'value.*' => [ 
-            'required' => 'Por favor, informe um valor',
-        ],
-        'date.*' => [
-            'required' => 'Por favor, informe uma data',
-            'date' => 'Por favor, informe uma data válida'
-        ],
-        'data_de_producao' => [
-            'required' => 'Por favor, informe uma data de produção',
-            'date' => 'Por favor, informe uma data de produção válida'
-        ],
-        'data_de_fechamento' => [
-            'date_format' => 'Por favor, informe uma data válida',
-        ],
-        'dia*' => [
-            'required' => 'Por favor, informe uma data',
-            'date' => 'Por favor, informe uma data válida'
-        ],
-        'dia_final.after' => 'A segunda data deve ser posterior a primeira data.',
-        'order_note' => [
-            'required' => 'Por favor, informe uma anotação'
-        ],
-        'email' => [
-            'required' => 'Por favor, informe um e-mail',
-            'unique' => 'Este e-mail já está sendo utilizado por outro usuário'
-        ],
-        'password' => [
-            'required' => 'Por favor, informe uma senha',
-            'confirmed' => 'As senhas digitadas não conferem',
-            'min' => 'A senha deve conter no mínimo :min caracteres '
-        ],
-        'role_id' => [
-            'required' => 'Por favor, selecione um nível de autenticação',
-            'exists' => 'O nível de autenticação selecionado não existe'
+        'client_id' => [
+            'required' => 'Por favor, informe o cliente.'
         ],
         'cidade' => [
-            'in' => 'A cidade digitada não está presente em nenhum pedido'
-        ],
-        'date' => [
-            'required' => 'Por favor, informe uma data',
-            'date_format' => 'Por favor, informe uma data válida'
+            'in' => 'A cidade digitada não está presente em nenhum pedido.',
         ],
         'code' => [
-            'required' => 'Por favor, informe um código',
-            'unique' => 'Este código já está sendo utilizado por outro pedido'
+            'required' => 'Por favor, informe um código.',
+            'unique' => 'Este código já está sendo utilizado por outro pedido.',
         ],
-        'quantity' => [
-            'required' => 'Por favor, informe uma quantidade'
+        'data_de_producao' => [
+            'required' => 'Por favor, informe uma data de produção.',
+            'date' => 'Por favor, informe uma data de produção válida.',
         ],
-        'price' => [
-            'required' => 'Por favor, informe um preço',
-            'min_double' => 'O valor do pedido não pode ser menor que o total já pago (:min)'
+        'data_de_fechamento' => [
+            'date_format' => __('general.validation.date_valid'),
         ],
-        'production_date' => [
-            'date_format' => 'Por favor, informe uma data válida'
+        'date' => [
+            'required' => __('general.validation.date_required'),
+            'date_format' => __('general.validation.date_valid'),
+        ],
+        'date.*' => [
+            'required' => __('general.validation.date_required'),
+            'date' => __('general.validation.date_valid'),
+        ],
+        'description.*' => [
+            'required' => 'Por favor, informe uma descrição.',
+        ],
+        'dia*' => [
+            'required' => __('general.validation.date_required'),
+            'date' => __('general.validation.date_valid'),
+        ],
+        'dia_final' => [
+            'after' => 'A segunda data deve ser posterior a primeira data..',
+        ],
+        'down_payment' => [
+            'max_currency' => 'O valor não pode ser maior que o valor total (:max).',
         ],
         'delivery_date' => [
-            'date_format' => 'Por favor, informe uma data válida'
+            'date_format' => __('general.validation.date_valid'),
         ],
-        'art_paths.*' => [
-            'image' => 'Os arquivos devem conter apenas imagens'
+        'email' => [
+            'required' => 'Por favor, informe um e-mail.',
+            'unique' => 'Este e-mail já está sendo utilizado por outro usuário.',
+        ],
+        'expense_type.*' => [
+            'required' => 'Por favor, informe o tipo de despesa.',
+        ],
+        'expense_via.*' => [
+            'required' => 'Por favor, informe a via.',
+        ],
+        'name' => [
+            'required' => 'Por favor, informe um nome.',
+        ],
+        'order_note' => [
+            'required' => 'Por favor, informe uma anotação.',
+        ],
+        'password' => [
+            'required' => 'Por favor, informe uma senha.',
+            'confirmed' => 'As senhas digitadas não conferem.',
+            'min' => 'A senha deve conter no mínimo :min caracteres.',
+        ],
+        'payment_via_id' => [
+            'required' => 'Por favor, informe a via.',
+            'exists' => 'Por favor, selecione uma via válida.',
+        ],
+        'price' => [
+            'required' => 'Por favor, informe um preço.'
+        ],
+        'production_date' => [
+            'date_format' => 'Por favor, informe uma data válida.',
+        ],
+        'quantity' => [
+            'required' => 'Por favor, informe uma quantidade.',
+        ],
+        'role_id' => [
+            'required' => 'Por favor, selecione um nível de autenticação.',
+            'exists' => 'O nível de autenticação selecionado não existe.',
         ],
         'size_paths.*' => [
-            'image' => 'Os arquivos devem conter apenas imagens'
+            'image' => 'Os arquivos devem conter apenas imagens.',
         ],
-        'expense_type*.required' => 'Por favor, informe o tipo de despesa',
-        'expense_via*.required' => 'Por favor, informe a via',
-        'payment_via_id' => [
-            'required' => 'Por favor, informe a via',
-            'exists' => 'Por favor, selecione uma via válida',
+        'type.*' => [
+            'required' => 'Por favor, informe um tipo.',
+            'exists' => 'O tipo informado não existe.',
         ],
-        'down_payment.max_double' => 'O valor não pode ser maior que o valor total (:max)'
+        'value' => [
+            'required' => __('general.validation.value_required'),
+        ],
+        'value.*' => [
+            'required' => __('general.validation.value_required'),
+        ],
     ],
 
     /*
@@ -240,7 +249,7 @@ return [
         'date'      => 'data',
         'day'       => 'dia',
         'excerpt'   => 'resumo',
-        'first_name'=> 'primeiro nome',
+        'first_name' => 'primeiro nome',
         'gender'    => 'gênero',
         'hour'      => 'hora',
         'last_name' => 'sobrenome',
@@ -265,6 +274,8 @@ return [
         'year'      => 'ano',
         'description' => 'descrição',
         'password_confirmation' => 'confirmação da senha',
+        'discount' => 'desconto',
+        'start_date' => 'data inicial'
     ],
 
 ];

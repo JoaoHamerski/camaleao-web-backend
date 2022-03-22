@@ -26,7 +26,7 @@ class ChangePriceFromOrdersTable extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->decimal('price', 9, 2);
+            $table->decimal('price', 9, 2)->change();
         });
     }
 }

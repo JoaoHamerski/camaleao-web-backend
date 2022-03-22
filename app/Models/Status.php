@@ -15,12 +15,29 @@ class Status extends Model
     protected $table = 'status';
 
     /**
-     * Um status tem varios pedidos
-     * 
+     * Fillable properties
+     */
+    protected $fillable = ['text'];
+
+    protected $appends = ['is_available'];
+
+    /**
+     * Indica qual ID da tabela é um status "disponível para retirada"
+     */
+    protected $AVAILABLE_ID = 8;
+
+    /**
+     * Um status tem vários pedidos
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function orders()
     {
-    	return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class);
+    }
+
+    public function getIsAvailableAttribute()
+    {
+        return $this->id === $this->AVAILABLE_ID;
     }
 }

@@ -13,13 +13,13 @@ class RenameExpenseViasTable extends Migration
      */
     public function up()
     {
-        Schema::table('expenses', function(Blueprint $table) {
+        Schema::table('expenses', function (Blueprint $table) {
             $table->dropForeign(['expense_via_id']);
         });
 
         Schema::rename('expense_vias', 'vias');
 
-        Schema::table('expenses', function(Blueprint $table) {
+        Schema::table('expenses', function (Blueprint $table) {
             $table->foreign('expense_via_id')
                 ->references('id')
                 ->on('vias')
@@ -34,6 +34,10 @@ class RenameExpenseViasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vias');
+        Schema::table('expenses', function (Blueprint $table) {
+            $table->dropForeign(['expense_via_id']);
+        });
+
+        Schema::rename('vias', 'expense_vias');
     }
 }

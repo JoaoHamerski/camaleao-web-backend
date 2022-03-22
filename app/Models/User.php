@@ -2,15 +2,26 @@
 
 namespace App\Models;
 
-use Spatie\Activitylog\Traits\CausesActivity;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Spatie\Activitylog\Traits\CausesActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Traits\LogsActivity;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, CausesActivity;
+    use HasApiTokens, HasFactory, Notifiable, CausesActivity, LogsActivity;
+
+    protected static $logAlways = [
+        'name',
+        'email',
+        'role.name'
+    ];
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
+    protected static $logName = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -43,6 +54,38 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getCreatedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$CREATE_TYPE,
+            ':causer adicionou o usuário :subject com privilégio de :attribute',
+            [':causer.name'],
+            [':subject.name'],
+            [':attributes.role.name']
+        );
+    }
+
+    public function getUpdatedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$UPDATE_TYPE,
+            ':causer alterou os dados do usuário :subject',
+            [':causer.name'],
+            [':subject.name']
+        );
+    }
+
+    public function getDeletedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$DELETE_TYPE,
+            ':causer deletou o usuário :subject de privilégio :attribute',
+            [':causer.name'],
+            [':subject.name'],
+            [':attributes.role.name']
+        );
+    }
 
     /**
      * Um usuário pertence a uma regra
@@ -91,6 +134,7 @@ class User extends Authenticatable
     public function commissions()
     {
         return $this->belongsToMany(Commission::class)
+            ->using(CommissionUser::class)
             ->withPivot([
                 'id',
                 'commission_value',
@@ -100,11 +144,18 @@ class User extends Authenticatable
             ]);
     }
 
+    public function secrets()
+    {
+        return $this->hasMany(Secret::class);
+    }
+
     public function scopeProduction()
     {
-        return $this->whereHas('role', function ($query) {
-            $query->where('name', 'estampa');
-            $query->orWhere('name', 'costura');
+        $roles = Config::get('app.roles');
+
+        return $this->whereHas('role', function ($query) use ($roles) {
+            $query->where('id', $roles['ESTAMPA']);
+            $query->orWhere('id', $roles['COSTURA']);
         });
     }
 

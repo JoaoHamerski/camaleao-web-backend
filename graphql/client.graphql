@@ -1,0 +1,58 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type Client @guard {
+  id: ID!
+  name: String!
+  phone: String
+  orders (
+    orderBy: _ @orderBy(columnsEnum: "QueryOrdersOrderByColumn")
+    where: _ @whereConditions(columnsEnum: "QueryOrdersWhereConditionsColumn")
+  ): [Order]  @hasMany(type: "paginator")
+  city: City @belongsTo
+  branch: Branch @belongsTo
+  shipping_company: ShippingCompany @rename(attribute: "shippingCompany")
+  total_owing: String
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+enum QueryClientsOrderByColumn {
+  NAME @enum(value: "name")
+  CREATED_AT @enum(value: "created_at")
+}
+
+enum QueryClientsWhereConditionsColumn {
+  NAME @enum(value: "name")
+  PHONE @enum(value: "phone")
+  CITY_ID @enum(value: "city_id")
+}
+
+enum QueryClientsWhereHasCityColumn {
+  NAME @enum(value: "name")
+}
+
+input ClientInput {
+  name: String
+  phone: String
+  city_id: ID
+  branch_id: ID
+  shipping_company_id: ID
+}
+
+extend type Query {
+  client (
+    id: ID! @eq
+  ): Client @find
+
+  clients (
+    orderBy: _ @orderBy(columnsEnum: "QueryClientsOrderByColumn")
+    where: _ @whereConditions(columnsEnum: "QueryClientsWhereConditionsColumn")
+    hasCity: _ @whereHasConditions(columnsEnum: "QueryClientsWhereHasCityColumn")
+  ): [Client!] @paginate
+}
+
+extend type Mutation {
+  clientCreate (input: ClientInput @spread): Client
+  clientUpdate (id: ID! input: ClientInput @spread): Client
+  clientDelete (id: ID!): Client
+}
