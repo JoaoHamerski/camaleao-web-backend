@@ -5,7 +5,7 @@ namespace App\GraphQL\Mutations;
 use App\Models\ShippingCompany;
 use Illuminate\Support\Facades\Validator;
 
-class ShippingCompanyEdit
+class ShippingCompanyUpdate
 {
     /**
      * @param  null  $_
