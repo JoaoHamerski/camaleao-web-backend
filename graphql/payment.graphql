@@ -40,6 +40,13 @@ input DailyCashOrderInput {
   reminder: String
 }
 
+input DailyCashInput {
+  client: DailyCashClientInput!
+  order: DailyCashOrderInput!
+  value: String!
+  via_id: ID!
+}
+
 enum QueryPaymentsOrderByColumn {
   CREATED_AT @enum(value: "created_at")
 }
@@ -67,10 +74,5 @@ extend type Mutation {
     confirmation: Boolean!
   ): Payment @can(ability: "confirm")
 
-  dailyCashEntry (
-    client: DailyCashClientInput!
-    order: DailyCashOrderInput!
-    value: String!
-    via_id: ID!
-  ): Payment
+  dailyCashEntry (input: DailyCashInput! @spread): Payment
 }
