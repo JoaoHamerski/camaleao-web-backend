@@ -84,7 +84,7 @@ class Commission extends Model
         return array_reduce($seamCommissions, function ($total, $item) {
             $clothingCommission = bcmul($item->commission, $item->quantity, 2);
 
-            return bcadd($total, $clothingCommission);
+            return bcadd($total, $clothingCommission, 2);
         }, $INITIAL_VALUE);
     }
 }
