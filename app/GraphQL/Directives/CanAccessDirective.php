@@ -40,7 +40,9 @@ GRAPHQL;
                     $role = $this->directiveArgValue('role');
 
                     if ($role === null) {
-                        throw new DefinitionException("Missing argument 'role' for directive '@canAccess'.");
+                        throw new DefinitionException(
+                            "Missing argument 'role' for directive '@canAccess'."
+                        );
                     }
 
                     $user = $context->user();
