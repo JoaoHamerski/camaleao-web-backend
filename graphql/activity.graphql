@@ -13,7 +13,7 @@ union Subject = Order
 
 union Causer = User
 
-type Activity {
+type Activity @guard {
   id: ID!
   log_name: String
   description: String!

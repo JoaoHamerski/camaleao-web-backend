@@ -1,3 +1,4 @@
+#import scalars.graphql
 #import role.graphql
 #import user.graphql
 #import auth.graphql
