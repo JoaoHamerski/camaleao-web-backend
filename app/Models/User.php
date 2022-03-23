@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Arr;
+use App\Traits\LogsActivity;
+use Error;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Activitylog\Traits\CausesActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use App\Traits\LogsActivity;
+use Illuminate\Support\Facades\Validator;
 
 class User extends Authenticatable
 {
@@ -100,20 +103,23 @@ class User extends Authenticatable
     /**
      * Verifica se o usuário possui determinada regra
      *
-     * @param int | array $role
+     * @param string|array $role
      * @return boolean
      */
-    public function hasRole($role)
+    public function hasRole($roles)
     {
-        if (is_array($role)) {
-            foreach ($role as $r) {
-                if ($this->role()->where('name', $r)->exists()) {
-                    return true;
-                }
-            }
+        $validator = Validator::make(compact('roles'), [
+            'roles.*' => ['string']
+        ]);
+
+        if ($validator->fails()) {
+            throw new Error("As regras passadas devem ser apenas strings, verifique as regras em app\config\app.php roles");
         }
 
-        return $this->role()->where('name', $role)->exists();
+        return $this
+            ->role()
+            ->whereIn('name', Arr::flatten([$roles]))
+            ->exists();
     }
 
     public function isAdmin()
