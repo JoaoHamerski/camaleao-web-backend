@@ -378,6 +378,10 @@ trait OrderTrait
             return $order->original_price;
         }
 
+        if (floatval($total) === 0.0) {
+            return null;
+        }
+
         return $total;
     }
 
