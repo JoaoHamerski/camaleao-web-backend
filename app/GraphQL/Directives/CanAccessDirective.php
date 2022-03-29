@@ -36,18 +36,23 @@ GRAPHQL;
 
         return $next(
             $fieldValue->setResolver(
-                function ($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) use ($originalResolver) {
-                    $role = $this->directiveArgValue('role');
+                function (
+                    $root,
+                    array $args,
+                    GraphQLContext $context,
+                    ResolveInfo $resolveInfo
+                ) use ($originalResolver) {
+                    $roles = $this->directiveArgValue('roles');
 
-                    if ($role === null) {
+                    if ($roles === null) {
                         throw new DefinitionException(
-                            "Missing argument 'role' for directive '@canAccess'."
+                            "Missing argument 'roles' for directive '@canAccess'."
                         );
                     }
 
                     $user = $context->user();
 
-                    if (!$user || !$user->hasRole($role)) {
+                    if (!$user || !$user->hasRole($roles)) {
                         return null;
                     }
 
