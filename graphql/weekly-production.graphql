@@ -12,8 +12,10 @@ input OrderPreRegisteredInput {
 
 extend type Query {
   weeklyProduction (date: String!): [WeeklyProduction]
+    @canAccess(roles: ["gerencia", "atendimento", "design", "costura", "estampa"])
 }
 
 extend type Mutation {
   orderCreatePreRegistered (input: OrderPreRegisteredInput! @spread): Order
+  @canAccess(roles: ["gerencia", "atendimento", "design"])
 }

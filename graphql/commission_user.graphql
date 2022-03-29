@@ -19,6 +19,7 @@ enum QueryCommissionUsersOrderByColumn {
 extend type Query {
   commissionsUser: [Commission]
     @paginate(builder: "\\App\\GraphQL\\Builders\\CommissionsUserBuilder")
+    @canAccess(roles: ["costura", "estampa"])
 
   commissionsUsers (
     where: _ @whereConditions(columnsEnum: "QueryCommissionsUsersWhereColumn")
@@ -26,9 +27,13 @@ extend type Query {
   ): [CommissionUser]
     @paginate
     @builder(method: "\\App\\GraphQL\\Builders\\CommissionsUsersOrderByBuilder")
+    @canAccess(roles: ["gerencia"])
 }
 
 extend type Mutation {
   commissionValueUpsert (value: String!): String
+    @canAccess(roles: ["gerencia"])
+
   commissionConfirmProduction (id: ID!): Commission
+    @canAccess(roles: ["costura", "estampa"])
 }

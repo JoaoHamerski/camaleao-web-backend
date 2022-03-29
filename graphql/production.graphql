@@ -10,5 +10,6 @@ extend type Query {
     role_id: ID
     month: String!
   ): CommissionByMonth
+    @canAccess(roles: ["gerencia", "costura", "estampa"])
 }
 

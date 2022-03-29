@@ -8,10 +8,13 @@ input ExpenseTypesInput {
 }
 
 extend type Query {
-  expenseTypes: [ExpenseType] @all
+  expenseTypes: [ExpenseType] @all @canAccess(roles: ["gerencia"])
 }
 
 extend type Mutation {
   expenseTypesCreate (input: ExpenseTypesInput! @spread ): ExpenseType
+    @canAccess(roles: ["gerencia"])
+
   expenseTypesUpdate (id: ID! input: ExpenseTypesInput! @spread): ExpenseType
+    @canAccess(roles: ["gerencia"])
 }

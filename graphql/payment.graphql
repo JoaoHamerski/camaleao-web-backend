@@ -52,23 +52,32 @@ extend type Query {
     created_at: Date @where(clause: "whereDate")
     orderBy: _ @orderBy(columnsEnum: "QueryPaymentsOrderByColumn")
     pendencies: Boolean @scope
-  ): [Payment] @all
+  ): [Payment]
+    @all
+    @canAccess(roles: ["gerencia", "atendimento"])
 
   paymentsPendencies: [PaymentPendency]
+    @canAccess(roles: ["gerencia", "atendimento"])
 }
 
 extend type Mutation {
   paymentCreate (input: PaymentInput! @spread): Payment
+    @canAccess(roles: ["gerencia", "atendimento"])
 
   paymentUpdate (
     id: ID! @eq
     input: PaymentInput! @spread
-  ): Payment @can(ability: "update" query: true injectArgs: true)
+  ): Payment
+    @can(ability: "update" query: true injectArgs: true)
+    @canAccess(roles: ["gerencia", "atendimento"])
 
   paymentConfirm (
     id: ID! @eq
     confirmation: Boolean!
-  ): Payment @can(ability: "confirm")
+  ): Payment
+    @can(ability: "confirm")
+    @canAccess(roles: ["gerencia", "atendimento"])
 
   dailyCashEntry (input: DailyCashInput! @spread): Payment
+    @canAccess(roles: ["gerencia", "atendimento"])
 }

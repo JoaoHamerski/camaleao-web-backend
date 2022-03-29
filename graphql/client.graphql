@@ -40,17 +40,22 @@ input ClientInput {
 extend type Query {
   client (
     id: ID! @eq
-  ): Client @find
+  ): Client @find @canAccess(roles: ["gerencia", "atendimento"])
 
   clients (
     orderBy: _ @orderBy(columnsEnum: "QueryClientsOrderByColumn")
     where: _ @whereConditions(columnsEnum: "QueryClientsWhereConditionsColumn")
     hasCity: _ @whereHasConditions(columnsEnum: "QueryClientsWhereHasCityColumn")
-  ): [Client!] @paginate
+  ): [Client!] @paginate @canAccess(roles: ["gerencia", "atendimento"])
 }
 
 extend type Mutation {
   clientCreate (input: ClientInput @spread): Client
+    @canAccess(roles: ["gerencia", "atendimento"])
+
   clientUpdate (id: ID! input: ClientInput @spread): Client
+    @canAccess(roles: ["gerencia", "atendimento"])
+
   clientDelete (id: ID!): Client
+    @canAccess(roles: ["gerencia"])
 }

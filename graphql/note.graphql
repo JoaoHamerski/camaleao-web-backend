@@ -9,6 +9,11 @@ type Note @guard {
 
 extend type Mutation {
   noteCreate (order_id: ID! text: String!): Note
+    @canAccess(roles: ["gerencia", "atendimento"])
+
   noteUpdate (id: ID! text: String!): Note
+    @canAccess(roles: ["gerencia", "atendimento"])
+
   noteDelete (id: ID!): Note
+    @canAccess(roles: ["gerencia", "atendimento"])
 }

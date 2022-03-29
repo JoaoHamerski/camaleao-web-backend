@@ -30,11 +30,16 @@ extend type Query {
   ): [Expense]
     @paginate
     @builder(method: "App\\GraphQL\\Builders\\ExpensesBuilder")
+    @canAccess(roles: ["gerencia", "atendimento"])
 
   expensesReport (start_date: String! final_date: String): String
+    @canAccess(roles: ["gerencia"])
 }
 
 extend type Mutation {
   expenseCreate (input: ExpenseInput @spread): Expense
+    @canAccess(roles: ["gerencia", "atendimento"])
+
   expenseUpdate(id: ID! input: ExpenseInput @spread): Expense
+    @canAccess(roles: ["gerencia", "atendimento"])
 }

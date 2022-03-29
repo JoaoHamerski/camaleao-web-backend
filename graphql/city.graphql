@@ -30,12 +30,19 @@ extend type Query {
   cities (
     where: _ @whereConditions(columnsEnum: "QueryCitiesWhereConditionsColumn")
     orderBy: _ @orderBy(columnsEnum: "QueryCitiesOrderByColumn")
-  ): [City] @all
+  ): [City] @all @canAccess(roles: ["gerencia", "atendimento"])
 }
 
 extend type Mutation {
   cityCreate(input: CityInput! @spread): City
+    @canAccess(roles: ["gerencia", "atendimento"])
+
   cityUpdate (id: ID! input: CityInput! @spread): City
+    @canAccess(roles: ["gerencia"])
+
   cityMassUpdateState(ids: [ID!]! state_id: ID! ): [City]
+    @canAccess(roles: ["gerencia"])
+
   cityDelete (id: ID! city_id: ID replace: CityReplaceOptionsInput): City
+    @canAccess(roles: ["gerencia"])
 }

@@ -39,5 +39,5 @@ extend type Query {
   activities (
     orderBy: _ @orderBy(columnsEnum: "QueryActivitiesOrderByColumn")
     where: _ @whereConditions(columnsEnum: "QueryActivitiesWhereColumn")
-  ): [Activity] @paginate
+  ): [Activity] @paginate @canAccess(roles: ["gerencia"])
 }

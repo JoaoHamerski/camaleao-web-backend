@@ -106,26 +106,37 @@ extend type Query {
   ): Order
     @find
     @can(ability: "view" injectArgs: true query: true)
+    @canAccess(roles: ["gerencia", "atendimento"])
 
   orders(
     orderBy: _ @orderBy(columnsEnum: "QueryOrdersOrderByColumn")
     where: _ @whereConditions(columnsEnum: "QueryOrdersWhereConditionsColumn")
   ): [Order!]
     @paginate
+    @canAccess(roles: ["gerencia", "atendimento"])
 
   orderReport (id: ID!): String
+    @canAccess(roles: ["gerencia", "atendimento"])
+
   ordersReport (input: OrdersReportInput! @spread): String
+    @canAccess(roles: ["gerencia", "atendimento"])
+
   ordersReportProductionDate (input: OrdersReportProductionDateInput! @spread): String
+    @canAccess(roles: ["gerencia", "atendimento"])
 }
 
 extend type Mutation {
+  orderCreate (client_id: ID! input: OrderInput! @spread): Order
+
+    @canAccess(roles: ["gerencia", "atendimento"])
   orderUpdate (id: ID! @eq input: OrderInput! @spread): Order
     @can(ability: "update" query: true)
+    @canAccess(roles: ["gerencia", "atendimento"])
 
   orderToggle (id: ID! @eq): Order
     @can(ability: "toggle" query: true)
+    @canAccess(roles: ["gerencia", "atendimento"])
 
   orderDelete (id: ID! @eq): Order
-
-  orderCreate (client_id: ID! input: OrderInput! @spread): Order
+    @canAccess(roles: ["gerencia", "atendimento"])
 }

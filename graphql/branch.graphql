@@ -20,11 +20,11 @@ input BranchInput {
 extend type Query {
   branches (
     orderBy: _ @orderBy(columnsEnum: "QueryBranchesGroupByColumn")
-  ): [Branch] @all
+  ): [Branch] @all @canAccess(roles: ["gerencia"])
 }
 
 extend type Mutation {
-  branchCreate (input: BranchInput! @spread): Branch
-  branchUpdate (id: ID! input: BranchInput! @spread): Branch
-  branchDelete(id: ID!): Branch
+  branchCreate (input: BranchInput! @spread): Branch @canAccess(roles: ["gerencia"])
+  branchUpdate (id: ID! input: BranchInput! @spread): Branch @canAccess(roles: ["gerencia"])
+  branchDelete(id: ID!): Branch @canAccess(roles: ["gerencia"])
 }

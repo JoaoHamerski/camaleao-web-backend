@@ -55,15 +55,16 @@ enum QueryCashFlowEntriesOrderByColumn {
 extend type Query {
   cashFlowStatistics (
     input: CashFlowFilterDatesInput! @spread
-  ): CashFlowStatistics
+  ): CashFlowStatistics @canAccess(roles: ["gerencia"])
 
   cashFlowEntries (
     where: _ @whereConditions(
       columnsEnum: "QueryCashFlowEntriesWhereConditionsColumn"
       handler: "App\\GraphQL\\Handlers\\WhereCashFlowHandler"
-    )
+    ) @canAccess(roles: ["gerencia"])
 
     orderBy: _ @orderBy(columnsEnum: "QueryCashFlowEntriesOrderByColumn")
   ): [CashFlowEntry]
     @paginate(builder: "App\\GraphQL\\Builders\\CashFlowEntriesBuilder")
+    @canAccess(roles: ["gerencia"])
 }
