@@ -13,8 +13,10 @@ class Logout
     public function __invoke($_, array $args)
     {
         $guard = Auth::guard(config('sanctum.guard', 'web'));
+        $user = request()->user();
 
-        $user = $guard->user();
+        $user->currentAccessToken()->delete();
+
         $guard->logout();
 
         return $user;
