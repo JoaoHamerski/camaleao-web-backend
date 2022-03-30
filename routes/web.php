@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Controllers\PDFsController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TestController;
-use Illuminate\Support\Facades\Config;
+use App\Http\Controllers\PDFsController;
 
 /*
 |--------------------------------------------------------------------------
