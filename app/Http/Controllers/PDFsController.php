@@ -11,8 +11,6 @@ use App\Util\Mask;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade as PDF;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
 
 class PDFsController extends Controller
 {
