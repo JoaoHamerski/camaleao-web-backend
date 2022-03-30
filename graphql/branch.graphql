@@ -20,7 +20,7 @@ input BranchInput {
 extend type Query {
   branches (
     orderBy: _ @orderBy(columnsEnum: "QueryBranchesGroupByColumn")
-  ): [Branch] @all @canAccess(roles: ["gerencia"])
+  ): [Branch] @all @canAccess(roles: ["gerencia", "atendimento"])
 }
 
 extend type Mutation {
