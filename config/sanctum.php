@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'prefix' => 'api',
 
     /*
