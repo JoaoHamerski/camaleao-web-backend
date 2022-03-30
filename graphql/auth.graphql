@@ -11,8 +11,9 @@ input AuthInput {
 
 extend type Mutation {
   login(
-    email: String! @rules(apply: ["required", "email"])
-    password: String! @rules(apply: ["required"])
+    email: String!
+    password: String!
+    remember: Boolean
   ): AccessToken!
 
   logout: User @guard

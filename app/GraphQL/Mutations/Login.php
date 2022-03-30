@@ -4,6 +4,7 @@ namespace App\GraphQL\Mutations;
 
 use Error;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class Login
 {
@@ -15,7 +16,9 @@ class Login
     {
         $guard = Auth::guard(config('sanctum.guard', 'web'));
 
-        if (!$guard->attempt($args)) {
+        $this->validator($args)->validate();
+
+        if (!$guard->attempt($args, $args['remember'] ?? false)) {
             throw new Error('Invalid credentials.');
         }
 
@@ -24,5 +27,13 @@ class Login
         return [
             'token' => $user->createToken('default')->plainTextToken
         ];
+    }
+
+    public function validator($data)
+    {
+        return Validator::make($data, [
+            'email' => ['required', 'email'],
+            'password' => ['required']
+        ]);
     }
 }
