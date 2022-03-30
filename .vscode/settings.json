@@ -16,6 +16,9 @@
     "cSpell.words": [
         "Activitylog",
         "Authenticatable",
+        "csrf",
+        "Csrf",
+        "laravel",
         "Laravel",
         "Nuwave",
         "Spatie",
