@@ -14,6 +14,10 @@ use App\Http\Controllers\PDFsController;
 |
 */
 
+Route::get('teste', function () {
+    return 'teste';
+});
+
 Route::prefix('pdf')->name('pdf.')->group(function () {
     Route::get('orders/report', [
         PDFsController::class,
