@@ -14,7 +14,7 @@ use App\Http\Controllers\PDFsController;
 |
 */
 
-Route::get('teste', function () {
+Route::get('graphql', function () {
     return 'teste';
 });
 
