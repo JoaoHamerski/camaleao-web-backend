@@ -17,8 +17,7 @@ return [
 
     'paths' => [
         'api/*',
-        'graphql',
-        'teste'
+        'graphql-api',
     ],
 
     'allowed_methods' => ['*'],
