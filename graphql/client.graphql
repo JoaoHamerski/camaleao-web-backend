@@ -56,6 +56,6 @@ extend type Mutation {
   clientUpdate (id: ID! input: ClientInput @spread): Client
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  clientDelete (id: ID!): Client
+  clientDelete (id: ID! password: String!): Client
     @canAccess(roles: ["gerencia"])
 }

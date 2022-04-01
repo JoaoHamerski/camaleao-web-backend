@@ -14,7 +14,10 @@ class ClientDelete
     public function __invoke($_, array $args)
     {
         Validator::make($args, [
-            'id' => ['required', 'exists:clients,id']
+            'id' => ['required', 'exists:clients,id'],
+            'password' => ['required', 'current_password']
+        ], [
+            'current_password' => 'A senha digitada não confere.'
         ])->validate();
 
         $client = Client::find($args['id']);
