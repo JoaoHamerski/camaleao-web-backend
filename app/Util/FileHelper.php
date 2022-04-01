@@ -21,7 +21,7 @@ class FileHelper
         'art_paths' => 'imagens_da_arte',
         'size_paths' => 'imagens_do_tamanho',
         'payment_voucher_paths' => 'comprovantes',
-        'receipt_path' => 'comprovantes_vias'
+        'receipt_path' => 'comprovante_vias'
     ];
 
     /**
@@ -104,7 +104,7 @@ class FileHelper
         'art_paths' => 'imagens_da_arte',
         'size_paths' => 'imagens_do_tamanho',
         'payment_voucher_paths' => 'comprovantes',
-        'receipt_path' => 'comprovantes_vias'
+        'receipt_path' => 'comprovante_vias'
     ];
 
     public static function isBase64($data)
