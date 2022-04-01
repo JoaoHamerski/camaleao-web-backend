@@ -13,11 +13,12 @@ use Illuminate\Support\Facades\Storage;
 
 class FileHelper
 {
+
     /**
      * Mapeamento dos campos do banco de dados que armazenam arquivos
      * para o nome dos diretórios em "storage/public"
      */
-    protected static $FIELDS_MAP = [
+    protected static $FIELDS_FOLDER_MAP = [
         'art_paths' => 'imagens_da_arte',
         'size_paths' => 'imagens_do_tamanho',
         'payment_voucher_paths' => 'comprovantes',
@@ -81,7 +82,7 @@ class FileHelper
 
     public static function getFilesURL($files, string $field)
     {
-        $baseFileURL = URL::to('/storage/' . self::$FIELDS_MAP[$field]);
+        $baseFileURL = URL::to('/storage/' . self::$FIELDS_FOLDER_MAP[$field]);
         $decodedFiles = json_decode($files);
 
         if (!Helper::isValidJson($files) && empty($files)) {
@@ -96,16 +97,6 @@ class FileHelper
 
         return $baseFileURL . '/' . $files;
     }
-    /**
-     * Mapeamento do nome dos campos para nome dos diretórios
-     * que são armazenados os arquivos do sistema.
-     */
-    protected static $FIELDS_FOLDER_MAP = [
-        'art_paths' => 'imagens_da_arte',
-        'size_paths' => 'imagens_do_tamanho',
-        'payment_voucher_paths' => 'comprovantes',
-        'receipt_path' => 'comprovante_vias'
-    ];
 
     public static function isBase64($data)
     {
