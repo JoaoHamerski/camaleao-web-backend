@@ -25,6 +25,15 @@ class Note extends Model
 
     public function getCreatedLog(): string
     {
+        if ($this->is_reminder) {
+            return $this->getDescriptionLog(
+                static::$CREATE_TYPE,
+                ':causer adicionou um lembrete ao pré-registrar um pedido: :subject',
+                [':causer.name'],
+                [':subject.text']
+            );
+        }
+
         return $this->getDescriptionLog(
             static::$CREATE_TYPE,
             ':causer adicionou uma anotação ao pedido :attribute: :subject',
