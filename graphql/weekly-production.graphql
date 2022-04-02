@@ -1,6 +1,7 @@
 type WeeklyProduction @guard {
   date: Date
   orders: [Order]
+  total_quantity: Int
 }
 
 input OrderPreRegisteredInput {

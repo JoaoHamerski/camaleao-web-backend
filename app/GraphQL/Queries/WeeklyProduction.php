@@ -32,7 +32,10 @@ class WeeklyProduction
         return Order::whereBetween('production_date', [
             $startOfWeek->toDateString(),
             $endOfWeek->toDateString()
-        ])->orderBy('created_at', 'desc')->get()->groupBy('production_date');
+        ])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('production_date');
     }
 
     public function getPopulatedWeekDays($orders, $startOfWeek)
@@ -41,9 +44,12 @@ class WeeklyProduction
 
         for ($i = 0; $i < 6; $i++) {
             $date = $startOfWeek->clone()->addDays($i);
+            $ordersOfDate = collect($orders->get($date->toDateString())) ?? [];
+
             $daysOfWeek[] = [
                 'date' => $date->toDateString(),
-                'orders' => $orders->get($date->toDateString()) ?? []
+                'orders' => $ordersOfDate,
+                'total_quantity' => $ordersOfDate->sum('quantity')
             ];
         }
 
