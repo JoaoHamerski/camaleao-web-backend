@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PDFsController;
+use App\Http\Controllers\StorageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,9 +15,12 @@ use App\Http\Controllers\PDFsController;
 |
 */
 
-Route::get('teste', function () {
-    return 'teste';
-});
+/*
+Route::get('storage/{filepath?}', [
+    StorageController::class,
+    'get'
+])->where('filepath', '(.*)');
+ */
 
 Route::prefix('pdf')->name('pdf.')->group(function () {
     Route::get('orders/report', [
