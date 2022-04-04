@@ -2,13 +2,12 @@
     "recommendations": [
         "bmewburn.vscode-intelephense-client",
         "mehedidracula.php-namespace-resolver",
-        "syler.sass-indented",
-        "octref.vetur",
-        "dbaeumer.vscode-eslint",
         "onecentlin.laravel-blade",
         "amiralizadeh9480.laravel-extra-intellisense",
         "streetsidesoftware.code-spell-checker",
         "streetsidesoftware.code-spell-checker-portuguese-brazilian",
-        "kumar-harsh.graphql-for-vscode"
+        "kumar-harsh.graphql-for-vscode",
+        "ikappas.phpcs",
+        "aaron-bond.better-comments"
     ]
 }
