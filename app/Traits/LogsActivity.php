@@ -2,79 +2,110 @@
 
 namespace App\Traits;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Spatie\Activitylog\ActivityLogger;
-use Spatie\Activitylog\ActivitylogServiceProvider;
-use Spatie\Activitylog\ActivityLogStatus;
-use Spatie\Activitylog\Traits\DetectsChanges;
+use Illuminate\Support\Str;
+use App\Extend\ActivityLogger;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity as SpatieLogsActivity;
 
 trait LogsActivity
 {
-    use DetectsChanges {
-        attributeValuesToBeLogged as AVTBL;
+    use SpatieLogsActivity;
+
+    public static $CREATE_TYPE = 'created';
+    public static $UPDATE_TYPE = 'updated';
+    public static $DELETE_TYPE = 'deleted';
+
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        $events = [
+            'created' => $this->getCreatedLog(),
+            'updated' => $this->getUpdatedLog(),
+            'deleted' => $this->getDeletedLog()
+        ];
+
+        foreach ($events as $key => $event) {
+            if ($key === $eventName) {
+                return $event;
+            }
+        }
     }
 
-    protected $enableLoggingModelsEvents = true;
-
-    public function attributeValuesToBeLogged(string $processingEvent): array
+    public function getCreatedLog(): string
     {
-        if (! count($this->attributesToBeLogged())) {
-            return [];
-        }
+        return 'created';
+    }
 
-        $properties['attributes'] = static::logChanges(
-            $processingEvent == 'retrieved'
-                ? $this
-                : (
-                    $this->exists
-                        ? $this->fresh() ?? $this
-                        : $this
-                )
-        );
+    public function getUpdatedLog(): string
+    {
+        return 'updated';
+    }
 
-        if (static::eventsToBeRecorded()->contains('updated') && $processingEvent == 'updated') {
-            $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);
+    public function getDeletedLog(): string
+    {
+        return 'deleted';
+    }
 
-            $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
+    protected function replaceProps($item, string $search)
+    {
+        $prop = str_replace($search, '', $item);
+        return [$prop => $item];
+    }
 
-            $this->oldAttributes = [];
-        }
+    public function getDescriptionLog(
+        string $type,
+        string $placeholderText,
+        array $replaceCauser = [],
+        array $replaceSubject = [],
+        array $replaceAttributes = []
+    ): string {
+        $causerProps = [];
+        $subjectProps = [];
+        $attributesProps = [];
 
-        if ($this->shouldLogOnlyDirty() && isset($properties['old'])) {
+        $description = Str::replaceArray(':causer', $replaceCauser, $placeholderText);
+        $description = Str::replaceArray(':subject', $replaceSubject, $description);
+        $description = Str::replaceArray(':attribute', $replaceAttributes, $description);
 
-            $properties['attributes'] = array_udiff_assoc(
-                $properties['attributes'],
-                $properties['old'],
-                function ($new, $old) {
-                    if ($old === null || $new === null) {
-                        return $new === $old ? 0 : 1;
-                    }
-
-                    if (is_object($new)) {
-                        return 1;
-                    }
-
-                    return $new <=> $old;
-                }
+        if ($replaceCauser) {
+            $causerProps = array_map(
+                fn ($item) => $this->replaceProps($item, ':causer.'),
+                $replaceCauser
             );
-
-            $properties['old'] = collect($properties['old'])
-                ->only(array_keys($properties['attributes']))
-                ->all();
+            $causerProps = array_merge(...$causerProps);
         }
 
-        return $properties;
+        if ($replaceSubject) {
+            $subjectProps = array_map(
+                fn ($item) => $this->replaceProps($item, ':subject.'),
+                $replaceSubject
+            );
+            $subjectProps = array_merge(...$subjectProps);
+        }
+
+        if ($replaceAttributes) {
+            $attributesProps = array_map(
+                fn ($item) => $this->replaceProps($item, ':attributes.'),
+                $replaceAttributes
+            );
+            $attributesProps = array_merge(...$attributesProps);
+        }
+
+        return json_encode(compact(
+            'type',
+            'description',
+            'placeholderText',
+            'causerProps',
+            'subjectProps',
+            'attributesProps'
+        ));
     }
 
     protected static function bootLogsActivity()
     {
         static::eventsToBeRecorded()->each(function ($eventName) {
             return static::$eventName(function (Model $model) use ($eventName) {
-                if (! $model->shouldLogEvent($eventName)) {
+                if (!$model->shouldLogEvent($eventName)) {
                     return;
                 }
 
@@ -88,7 +119,7 @@ trait LogsActivity
 
                 $attrs = $model->attributeValuesToBeLogged($eventName);
 
-                if ($model->isLogEmpty($attrs) && ! $model->shouldSubmitEmptyLogs()) {
+                if ($model->isLogEmpty($attrs) && !$model->shouldSubmitEmptyLogs()) {
                     return;
                 }
 
@@ -106,99 +137,93 @@ trait LogsActivity
         });
     }
 
-    public function shouldSubmitEmptyLogs(): bool
+    public function attributesToBeLogged(): array
     {
-        return ! isset(static::$submitEmptyLogs) ? true : static::$submitEmptyLogs;
-    }
+        $attributes = [];
 
-    public function isLogEmpty($attrs): bool
-    {
-        return empty($attrs['attributes'] ?? []) && empty($attrs['old'] ?? []);
-    }
-
-    public function disableLogging()
-    {
-        $this->enableLoggingModelsEvents = false;
-
-        return $this;
-    }
-
-    public function enableLogging()
-    {
-        $this->enableLoggingModelsEvents = true;
-
-        return $this;
-    }
-
-    public function activities(): MorphMany
-    {
-        return $this->morphMany(ActivitylogServiceProvider::determineActivityModel(), 'subject');
-    }
-
-    public function getDescriptionForEvent(string $eventName): string
-    {
-        return $eventName;
-    }
-
-    public function getLogNameToUse(string $eventName = ''): string
-    {
-        if (isset(static::$logName)) {
-            return static::$logName;
+        if (isset(static::$logFillable) && static::$logFillable) {
+            $attributes = array_merge($attributes, $this->getFillable());
         }
 
-        return config('activitylog.default_log_name');
-    }
-
-    /*
-     * Get the event names that should be recorded.
-     */
-    protected static function eventsToBeRecorded(): Collection
-    {
-        if (isset(static::$recordEvents)) {
-            return collect(static::$recordEvents);
+        if ($this->shouldLogUnguarded()) {
+            $attributes = array_merge($attributes, array_diff(array_keys($this->getAttributes()), $this->getGuarded()));
         }
 
-        $events = collect([
-            'created',
-            'updated',
-            'deleted',
-        ]);
+        if (isset(static::$logAttributes) && is_array(static::$logAttributes)) {
+            $attributes = array_merge($attributes, array_diff(static::$logAttributes, ['*']));
 
-        if (collect(class_uses_recursive(static::class))->contains(SoftDeletes::class)) {
-            $events->push('restored');
-        }
-
-        return $events;
-    }
-
-    public function attributesToBeIgnored(): array
-    {
-        if (! isset(static::$ignoreChangedAttributes)) {
-            return [];
-        }
-
-        return static::$ignoreChangedAttributes;
-    }
-
-    protected function shouldLogEvent(string $eventName): bool
-    {
-        $logStatus = app(ActivityLogStatus::class);
-
-        if (! $this->enableLoggingModelsEvents || $logStatus->disabled()) {
-            return false;
-        }
-
-        if (! in_array($eventName, ['created', 'updated'])) {
-            return true;
-        }
-
-        if (Arr::has($this->getDirty(), 'deleted_at')) {
-            if ($this->getDirty()['deleted_at'] === null) {
-                return false;
+            if (in_array('*', static::$logAttributes)) {
+                $attributes = array_merge($attributes, array_keys($this->getAttributes()));
             }
         }
 
-        //do not log update event if only ignored attributes are changed
-        return (bool) count(Arr::except($this->getDirty(), $this->attributesToBeIgnored()));
+        if (isset(static::$logAttributesToIgnore) && is_array(static::$logAttributesToIgnore)) {
+            $attributes = array_diff($attributes, static::$logAttributesToIgnore);
+        }
+
+        if (isset(static::$logAlways) && is_array(static::$logAlways)) {
+            $attributes = array_merge($attributes, static::$logAlways);
+        }
+
+        return $attributes;
+    }
+
+    public function attributeValuesToBeLogged(string $processingEvent): array
+    {
+        if (!count($this->attributesToBeLogged())) {
+            return [];
+        }
+
+        $properties['attributes'] = static::logChanges(
+            $processingEvent == 'retrieved'
+                ? $this
+                : ($this->exists
+                    ? $this->fresh() ?? $this
+                    : $this
+                )
+        );
+
+        $attributes = $properties['attributes'];
+
+        if (static::eventsToBeRecorded()->contains('updated') && $processingEvent == 'updated') {
+            $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);
+
+            $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
+
+            $this->oldAttributes = [];
+        }
+
+        if ($this->shouldLogOnlyDirty() && isset($properties['old'])) {
+            $properties['attributes'] = array_udiff_assoc(
+                $properties['attributes'],
+                $properties['old'],
+                function ($new, $old) {
+                    if ($old === null || $new === null) {
+                        return $new === $old ? 0 : 1;
+                    }
+
+                    return $new <=> $old;
+                }
+            );
+            $properties['old'] = collect($properties['old'])
+                ->only(array_keys($properties['attributes']))
+                ->all();
+        }
+
+        if ($this->hasAlwaysLogAttributes()) {
+            $properties['attributes'] = array_merge(
+                $properties['attributes'],
+                Arr::only($attributes, static::$logAlways)
+            );
+        }
+
+        return $properties;
+    }
+
+    public function hasAlwaysLogAttributes()
+    {
+        return isset(static::$logAlways)
+            && is_array(static::$logAlways)
+            && count(static::$logAlways);
     }
 }

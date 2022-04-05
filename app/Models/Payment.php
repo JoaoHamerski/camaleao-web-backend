@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use App\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -11,53 +12,55 @@ class Payment extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $guarded = [];
-    protected static $logName = 'payments';
-    protected static $logUnguarded = true;
+    protected static $logAlways = [
+        'via.name',
+        'order.code'
+    ];
+    protected static $logFillable = true;
     protected static $logOnlyDirty = true;
-    protected static $logAttributes = ['order'];
+    protected static $submitEmptyLogs = false;
+    protected static $logName = 'payments';
 
-    /**
-     * Descrição que é cadastrada no log de atividades toda vez que um tipo
-     * de evento ocorre no model
-     *
-     * @param string $eventname
-     *
-     * @return string
-     */
-    public function getDescriptionForEvent(string $eventName): string
+    protected $fillable = [
+        'note',
+        'date',
+        'payment_via_id',
+        'value',
+        'is_confirmed',
+        'confirmed_at'
+    ];
+
+    public function getCreatedLog(): string
     {
-        if ($eventName == 'created') {
-            return '
-                <div data-event="created">
-                    <strong>:causer.name</strong> 
-                    registrou um pagamento de 
-                    <span class="font-weight-bold" data-mask="money">:subject.value</span> 
-                    para o pedido 
-                    <strong>:properties.attributes.order.code</strong>
-                </div>
-            ';
-        }
+        return $this->getDescriptionLog(
+            static::$CREATE_TYPE,
+            ':causer registrou o pagamento de :subject para o pedido :attribute',
+            [':causer.name'],
+            [':subject.value'],
+            [':attributes.order.code']
+        );
+    }
 
-        if ($eventName == 'updated') {
-            return '
-                <div data-event="updated">
-                    <strong>:causer.name</strong> 
-                    alterou os dados de pagamento do pedido 
-                    <strong>:properties.attributes.order.code</strong>
-                </div>
-            ';
-        }
+    public function getUpdatedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$UPDATE_TYPE,
+            ':causer alterou o pagamento de :subject no pedido :attribute',
+            [':causer.name'],
+            [':subject.value'],
+            [':attributes.order.code']
+        );
+    }
 
-        if ($eventName == 'deleted') {
-            return '
-                <div data-event="deleted">
-                    <strong>:causer.name</strong> 
-                    deletou o pedido :subject.code do cliente 
-                    <strong>:properties.attributes.client.name</strong>
-                </div>
-            ';
-        }
+    public function getDeletedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$DELETE_TYPE,
+            ':causer deletou o pagamento de :subject no pedido :attribute',
+            [':causer.name'],
+            [':subject.value'],
+            [':attributes.order.code']
+        );
     }
 
     public function via()
@@ -70,9 +73,23 @@ class Payment extends Model
         return $this->belongsTo(Order::class);
     }
 
-    public function scopePendencies()
+    public function confirm()
     {
-        return $this->where(function ($query) {
+        $this->update([
+            'confirmed_at' => Carbon::now(),
+            'is_confirmed' => true
+        ]);
+    }
+
+    public function scopePendencies(Builder $builder = null, bool $pendencies = true)
+    {
+        $builder = $builder ?? $this;
+
+        if (!$pendencies) {
+            return $builder;
+        }
+
+        return $builder->where(function ($query) {
             $query->whereNull('is_confirmed');
             $query->whereDate('created_at', '<', Carbon::now()->toDateString());
         });

@@ -2,6 +2,10 @@
 
 namespace App\Util;
 
+use GraphQL\Experimental\Executor\Collector;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Route;
 
@@ -124,19 +128,12 @@ class Helper
         return pathinfo($str, PATHINFO_EXTENSION);
     }
 
-    /**
-     * Converte o URL da image passada para base64.
-     *
-     * @param string $imagePath
-     *
-     * @return string
-     **/
-    public static function imageTo64($imagePath)
+    public static function getPublicPathFromUrl(string $url)
     {
-        $type = pathinfo($imagePath, PATHINFO_EXTENSION);
-        $data = file_get_contents($imagePath);
+        $strPosStorage = strpos($url, '/storage');
+        $storagePath = substr($url, $strPosStorage);
 
-        return 'data:image/' . $type . ';base64,' . base64_encode($data);
+        return public_path($storagePath);
     }
 
     /**
@@ -184,13 +181,171 @@ class Helper
         return $attr;
     }
 
-    public static function mapRoutes(array $map, string $path = '/routes/partials/')
+    private static function getRoutePrefixName($route)
     {
-        foreach ($map as $route) {
-            $routeName = ($route['name'] ?? $route) . '.';
-            $routeFilepath = base_path() . $path . ($route['filename'] ?? $route) . '.php';
+        $routeName = $route['name'] ?? $route;
 
-            Route::name($routeName)->group($routeFilepath);
+        return "$routeName.";
+    }
+
+    private static function getRouteFilename($route)
+    {
+        $filename = $route['filename'] ?? $route;
+
+        return "$filename.php";
+    }
+
+    private static function getRouteFilepath($route, $routesPath)
+    {
+        $basePath = base_path();
+
+        return $basePath . $routesPath . self::getRouteFilename($route);
+    }
+
+    public static function getLastArrayEl(array $arr)
+    {
+        return array_values(array_slice($arr, -1))[0];
+    }
+
+    public static function isValidUrl(string $url)
+    {
+        $exceptions = [':', '/', '.'];
+
+        $url = array_map(function ($char) use ($exceptions) {
+            if (Str::contains($char, $exceptions)) {
+                return $char;
+            }
+
+            return rawurlencode($char);
+        }, str_split($url));
+
+        $url = join('', $url);
+
+        return filter_var($url, FILTER_VALIDATE_URL) !== false;
+    }
+
+    public static function getFilenameFromURL(string $url)
+    {
+        return self::getLastArrayEl(explode('/', $url));
+    }
+
+    /**
+     * Verifica se todos os itens do array
+     * pertence ou não à instância.
+     *
+     * @param array $array
+     * @param mix $instance
+     * @param boolean $checkForTrue
+     *
+     * @return array $array
+     */
+    public static function filterInstanceOf($array, $instance, bool $checkForTrue = true)
+    {
+        if (!is_array($array)) {
+            return $array;
         }
+
+        return array_filter(
+            $array,
+            function ($item) use ($instance, $checkForTrue) {
+                if ($checkForTrue) {
+                    return $item instanceof $instance;
+                }
+
+                return !($item instanceof $instance);
+            }
+        );
+    }
+
+    public static function lastElement(array $array)
+    {
+        return array_values(array_slice($array, -1))[0];
+    }
+
+    /**
+     * Retorna true para: "1", "true", "on", e "yes",
+     * e false para: "0", "false", "off", "no" e ""
+     *
+     * @param  $value
+     * @return boolean
+     */
+    public static function parseBool($value)
+    {
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    public static function isValidJson($string)
+    {
+        json_decode($string);
+        return json_last_error() === JSON_ERROR_NONE;
+    }
+
+    public static function formatBytes($size, $precision = 2)
+    {
+        $base = log($size, 1024);
+        $suffixes = array('', 'KB', 'MB', 'GB', 'TB');
+
+        $result = round(pow(1024, $base - floor($base)), $precision) . ' ' . $suffixes[floor($base)];
+
+        return str_replace('.', ',', $result);
+    }
+
+    public static function formatKBytes($size, $precision = 2)
+    {
+        $size *= 1024;
+
+        return self::formatBytes($size, $precision);
+    }
+
+    public static function arrayMapRecursive($callback, $array)
+    {
+        $func = function ($item) use (&$func, &$callback) {
+            return is_array($item) ? array_map($func, $item) : call_user_func($callback, $item);
+        };
+
+        return array_map($func, $array);
+    }
+
+    public static function arrayFullDiff($array1, $array2)
+    {
+        if ($array1 instanceof Collection) {
+            $array1 = $array1->toArray();
+        }
+
+        if ($array2 instanceof Collection) {
+            $array2 = $array2->toArray();
+        }
+
+        return array_merge(
+            array_diff($array1, $array2),
+            array_diff($array2, $array1)
+        );
+    }
+
+    public static function filled($data, $field)
+    {
+        return isset($data[$field]) && !empty($data[$field]);
+    }
+
+    public static function filledAll($data, $fields)
+    {
+        foreach ($fields as $field) {
+            if (!static::filled($data, $field)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static function filledAny($data, $fields)
+    {
+        foreach ($fields as $field) {
+            if (static::filled($data, $field)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

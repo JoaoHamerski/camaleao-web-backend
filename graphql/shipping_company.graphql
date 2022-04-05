@@ -1,0 +1,24 @@
+type ShippingCompany @guard {
+  id: ID!
+  name: String!
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+
+extend type Query {
+  shippingCompanies: [ShippingCompany]
+    @all
+    @canAccess(roles: ["gerencia", "atendimento"])
+}
+
+extend type Mutation {
+  shippingCompanyCreate (name: String!): ShippingCompany
+    @canAccess(roles: ["gerencia"])
+
+  shippingCompanyUpdate (id: ID! name: String): ShippingCompany
+    @canAccess(roles: ["gerencia"])
+
+  shippingCompanyDelete (id: ID!): ShippingCompany
+    @canAccess(roles: ["gerencia"])
+}

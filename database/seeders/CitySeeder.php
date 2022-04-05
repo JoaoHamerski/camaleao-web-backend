@@ -3,9 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\City;
-use Illuminate\Database\Seeder;
 
-class CitySeeder extends Seeder
+class CitySeeder extends BaseSeeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +13,8 @@ class CitySeeder extends Seeder
      */
     public function run()
     {
-        City::factory()->count(30)->create();
+        $CITIES_QUANTITY = 20;
+
+        City::factory()->count($CITIES_QUANTITY)->create();
     }
 }

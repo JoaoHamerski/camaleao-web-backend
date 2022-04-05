@@ -1,0 +1,30 @@
+type Branch @guard {
+  id: ID!
+  city: City @belongsTo
+  cities: [City] @hasMany
+  shipping_company: ShippingCompany @rename(attribute: "shippingCompany")
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+enum QueryBranchesGroupByColumn {
+  CREATED_AT @enum(value: "created_at")
+}
+
+input BranchInput {
+  branch_id: ID! @rename(attribute: "city_id")
+  shipping_company_id: ID!
+  cities_id: [ID!]!
+}
+
+extend type Query {
+  branches (
+    orderBy: _ @orderBy(columnsEnum: "QueryBranchesGroupByColumn")
+  ): [Branch] @all @canAccess(roles: ["gerencia", "atendimento"])
+}
+
+extend type Mutation {
+  branchCreate (input: BranchInput! @spread): Branch @canAccess(roles: ["gerencia"])
+  branchUpdate (id: ID! input: BranchInput! @spread): Branch @canAccess(roles: ["gerencia"])
+  branchDelete(id: ID!): Branch @canAccess(roles: ["gerencia"])
+}

@@ -1,0 +1,93 @@
+* {
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+.header {
+  height: 75px;
+}
+
+.header .header-logo {
+  clear: both;
+  float: left;
+}
+
+.header .header-camaleao-logo {
+  width: 25%;
+  opacity: .5;
+}
+
+.header .header-title {
+  position: absolute;
+  clear: both;
+  right: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  opacity: .5;
+  margin-top: .25rem;
+}
+
+.header .header-subtitle {
+  font-weight: bold;
+  opacity: .5;
+  font-size: 1.1rem;
+  top: 2.25rem;
+  right: 0;
+  position: absolute;
+}
+
+.content {
+  width: 100% !important;
+}
+
+footer {
+  width: 100%;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  border-top: 1px solid #6c757d6b;
+  color: #6c757d;
+}
+
+footer .generated-time {
+  position: fixed;
+  bottom: -5px;
+  left: 70%;
+}
+
+footer .page {
+  position: fixed;
+  bottom: -5px;
+}
+
+footer .page:after {
+  content: counter(page, decimal);
+}
+
+.table {
+  width: 100%;
+}
+
+.table td,
+.table th {
+  padding: .3rem;
+}
+
+.table tr:last-child th {
+  border-bottom: 2px solid white;
+}
+
+.table-title {
+  padding: 1rem !important;
+  font-size: 1.25rem;
+  color: white;
+  text-transform: uppercase;
+}
+
+.table-striped tbody tr:nth-child(even) td {
+  background-color: #6c757d27;
+}
+
+.table-striped tbody tr:nth-child(odd) td {
+  background-color: #6c757d17;
+}

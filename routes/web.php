@@ -1,8 +1,8 @@
 <?php
 
-use App\Util\Helper;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\PDFsController;
+use App\Http\Controllers\StorageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,32 +15,31 @@ use App\Http\Controllers\OrdersController;
 |
 */
 
-Helper::mapRoutes([
-    'cookies',
-    ['name' => 'auth', 'filename' => '_auth']
-]);
+/*
+Route::get('storage/{filepath?}', [
+    StorageController::class,
+    'get'
+])->where('filepath', '(.*)');
+ */
 
-Route::middleware('auth')->group(function () {
-    Helper::mapRoutes([
-        'production',
-        'users',
-        'clients',
-        'orders',
-        'expenses',
-        'cash-flow',
-        'via',
-        'expenses-types',
-        'payments',
-        'daily-cash',
-        'order-notes',
-        'cities',
-        'branches',
-        'shipping-companies',
-        'clothing-types',
-        'backup',
-        'status',
-        'financial',
-        'activities',
-        'production-calendar'
-    ]);
+Route::prefix('pdf')->name('pdf.')->group(function () {
+    Route::get('orders/report', [
+        PDFsController::class,
+        'ordersReport'
+    ])->name('orders-report');
+
+    Route::get('orders/report/production-date', [
+        PDFsController::class,
+        'ordersReportProductionDate'
+    ])->name('orders-report-production-date');
+
+    Route::get('orders/report/{order}', [
+        PDFsController::class,
+        'orderReport'
+    ])->name('order-report');
+
+    Route::get('/expenses/report', [
+        PDFsController::class,
+        'expensesReport'
+    ])->name('expenses-report');
 });

@@ -26,7 +26,7 @@ class ChangeCodeFromOrdersTable extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('code');
+            $table->string('code')->change();
         });
     }
 }

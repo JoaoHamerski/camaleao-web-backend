@@ -28,15 +28,18 @@ class OrderPolicy
      * @param  \App\Models\Order  $order
      * @return mixed
      */
-    public function view(?User $user, Order $order, int $clientId)
+    public function view(?User $user, Order $order, array $injected)
     {
-        return $order->client->id == $clientId;
+        if (!isset($injected['client_id'])) {
+            return true;
+        }
+
+        return strval($order->client->id) === strval($injected['client_id']);
     }
 
-    public function toggleOrder(?User $user, Order $order, int $clientId)
-    {  
-        return ($order->getTotalOwing() == 0 || $order->isClosed())
-            && $order->client->id == $clientId;
+    public function toggle(?User $user, Order $order)
+    {
+        return +$order->total_owing === 0.0 || $order->isClosed();
     }
 
     /**
@@ -57,9 +60,9 @@ class OrderPolicy
      * @param  \App\Models\Order  $order
      * @return mixed
      */
-    public function update(?User $user, Order $order, $clientId)
+    public function update(?User $user, Order $order)
     {
-        return ! $order->is_closed && $order->client->id == $clientId;
+        return !$order->isClosed();
     }
 
     /**

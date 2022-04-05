@@ -1,0 +1,142 @@
+type Order @guard {
+  id: ID!
+  code: String
+  client: Client @belongsTo
+  status: Status @belongsTo
+  name: String
+  quantity: Int
+  price: Float
+  delivery_date: Date
+  production_date: Date
+  discount: Float
+  payments: [Payment]
+    @hasMany
+    @orderBy(column: "date" direction: DESC)
+    @orderBy(column: "created_at" direction: DESC)
+
+  clothing_types: [ClothingType]
+    @rename(attribute: "clothingTypes")
+
+  art_paths: [String]
+  size_paths: [String]
+  payment_voucher_paths: [String]
+  total_clothings_value: Float
+  total_paid: Float
+  total_owing: Float
+  notes: [Note]
+    @hasMany
+    @orderBy(column: "created_at" direction: DESC)
+    @builder(method: "\\App\\GraphQL\\Builders\\NotesOrderBuilder")
+
+  reminder: String
+  original_price: Float
+  states: [String]
+  created_at: DateTime
+  updated_at: DateTime
+  closed_at: Date
+}
+
+enum QueryOrdersOrderByColumn {
+  CREATED_AT @enum(value: "created_at")
+  DELIVERY_DATE @enum(value: "delivery_date")
+  PRODUCTION_DATE @enum(value: "production_date")
+}
+
+enum QueryOrdersWhereConditionsColumn {
+  PRICE @enum(value: "price")
+  CODE @enum(value: "code")
+  CLOSED_AT @enum(value: "closed_at")
+  DELIVERY_DATE @enum(value: "delivery_date")
+  QUANTITY @enum(value: "quantity")
+  CLIENT_ID @enum(value: "client_id")
+}
+
+input ClothingTypesInput {
+  key: String!
+  value: String!
+  quantity: String!
+}
+
+input OrderInput {
+  client_id: ID
+  name: String
+  code: ID
+  discount: String
+  down_payment: String
+  payment_via_id: ID
+  production_date: String
+  delivery_date: String
+  clothing_types: [ClothingTypesInput]
+  status_id: ID
+  art_paths: [String!]
+  size_paths: [String!]
+  payment_voucher_paths: [String!]
+}
+
+enum OrderReportInputOrder {
+  OLDER @enum(value: "older")
+  NEWER @enum(value: "newer")
+  DELIVERY_DATE @enum(value: "delivery_date")
+}
+
+enum OrderReportInputState {
+  OPEN @enum(value: "open")
+  ALL @enum(value: "all")
+}
+
+input OrdersReportInput {
+  city_id: ID
+  status_id: ID
+  closed_at: String
+  delivery_date: String
+  display_filter_info: Boolean
+  order: OrderReportInputOrder!
+  state: OrderReportInputState!
+}
+
+input OrdersReportProductionDateInput {
+  date: String!
+  state: OrderReportInputState!
+}
+
+extend type Query {
+  order (
+    id: ID! @eq
+    client_id: ID
+  ): Order
+    @find
+    @can(ability: "view" injectArgs: true query: true)
+    @canAccess(roles: ["gerencia", "atendimento"])
+
+  orders(
+    orderBy: _ @orderBy(columnsEnum: "QueryOrdersOrderByColumn")
+    where: _ @whereConditions(columnsEnum: "QueryOrdersWhereConditionsColumn")
+  ): [Order!]
+    @paginate
+    @canAccess(roles: ["gerencia", "atendimento"])
+
+  orderReport (id: ID!): String
+    @canAccess(roles: ["gerencia", "atendimento"])
+
+  ordersReport (input: OrdersReportInput! @spread): String
+    @canAccess(roles: ["gerencia", "atendimento"])
+
+  ordersReportProductionDate (input: OrdersReportProductionDateInput! @spread): String
+    @canAccess(roles: ["gerencia", "atendimento"])
+}
+
+extend type Mutation {
+  orderCreate (client_id: ID! input: OrderInput! @spread): Order
+
+    @canAccess(roles: ["gerencia", "atendimento"])
+  orderUpdate (id: ID! @eq input: OrderInput! @spread): Order
+    @can(ability: "update" query: true)
+    @canAccess(roles: ["gerencia", "atendimento"])
+
+  orderToggle (id: ID! @eq): Order
+    @can(ability: "toggle" query: true)
+    @canAccess(roles: ["gerencia", "atendimento"])
+
+  orderDelete (id: ID! @eq): Order
+    @canAccess(roles: ["gerencia", "atendimento"])
+}

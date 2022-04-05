@@ -1,0 +1,48 @@
+type City @guard {
+  id: ID!
+  name: String!
+  branch: Branch @belongsTo
+  state: State @belongsTo
+  clients: [Client] @hasMany
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+input CityInput {
+  name: String
+  state_id: ID
+}
+
+input CityReplaceOptionsInput {
+  clients: Boolean
+  branches: Boolean
+}
+
+enum QueryCitiesOrderByColumn {
+  NAME @enum(value: "name")
+}
+
+enum QueryCitiesWhereConditionsColumn {
+  NAME @enum(value: "name")
+}
+
+extend type Query {
+  cities (
+    where: _ @whereConditions(columnsEnum: "QueryCitiesWhereConditionsColumn")
+    orderBy: _ @orderBy(columnsEnum: "QueryCitiesOrderByColumn")
+  ): [City] @all @canAccess(roles: ["gerencia", "atendimento"])
+}
+
+extend type Mutation {
+  cityCreate(input: CityInput! @spread): City
+    @canAccess(roles: ["gerencia", "atendimento"])
+
+  cityUpdate (id: ID! input: CityInput! @spread): City
+    @canAccess(roles: ["gerencia"])
+
+  cityMassUpdateState(ids: [ID!]! state_id: ID! ): [City]
+    @canAccess(roles: ["gerencia"])
+
+  cityDelete (id: ID! city_id: ID replace: CityReplaceOptionsInput): City
+    @canAccess(roles: ["gerencia"])
+}

@@ -26,7 +26,7 @@ class ChangeQuantityFromOrdersTable extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->integer('quantity');
+            $table->integer('quantity')->change();
         });
     }
 }

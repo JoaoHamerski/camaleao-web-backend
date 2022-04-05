@@ -1,5 +1,5 @@
 @extends('errors::minimal')
 
-@section('title', __('Dados inválidos'))
-{{-- @section('code', '422') --}}
-@section('message', __('Dados inválidos'))
+@section('title', __('Unprocessable entity'))
+@section('code', '422')
+@section('message', __('Unprocessable entity'))

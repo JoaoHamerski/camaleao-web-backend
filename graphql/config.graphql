@@ -1,0 +1,13 @@
+type AppConfig @guard {
+  name: String
+  json: String
+}
+
+extend type Query {
+  configGet(name: String! key: String): String
+}
+
+extend type Mutation {
+  configSet(name: String! key: String! value: String!): AppConfig
+  configRemove(name: String! key: String!): AppConfig
+}

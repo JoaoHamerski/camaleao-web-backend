@@ -9,56 +9,60 @@ use App\Traits\LogsActivity;
 class Note extends Model
 {
     use HasFactory, LogsActivity;
-
-    protected $guarded = [];
-    protected static $logName = 'notes';
-    protected static $logUnguarded = true;
+    protected static $logAlways = [
+        'order.code'
+    ];
+    protected static $logFillable = true;
     protected static $logOnlyDirty = true;
-    protected static $logAttributes = ['order'];
+    protected static $submitEmptyLogs = false;
+    protected static $logName = 'notes';
 
-    /**
-     * Descrição que é cadastrada no log de atividades toda vez que um tipo
-     * de evento ocorre no model
-     *
-     * @param string $eventname
-     *
-     * @return string
-     */
-    public function getDescriptionForEvent(string $eventName): string
+    protected $fillable = [
+        'text',
+        'order_id',
+        'is_reminder'
+    ];
+
+    public function getCreatedLog(): string
     {
-        if ($eventName == 'created') {
-            return '
-            	<div data-event="created">
-	            	<strong>:causer.name</strong> 
-	        		adicionou a anotação 
-	        		<strong>":subject.text"</strong> 
-	        		ao pedido 
-	        		<strong>:properties.attributes.order.code</strong>
-        		</div>
-        	';
+        if ($this->is_reminder) {
+            return $this->getDescriptionLog(
+                static::$CREATE_TYPE,
+                ':causer adicionou um lembrete ao pré-registrar um pedido: :subject',
+                [':causer.name'],
+                [':subject.text']
+            );
         }
 
-        if ($eventName == 'updated') {
-            return '
-            	<div data-event="updated">
-	            	<strong>:causer.name</strong> 
-	            	alterou uma anotação do pedido 
-	            	<strong>:properties.attributes.order.code</strong>
-            	</div>
-        	';
-        }
+        return $this->getDescriptionLog(
+            static::$CREATE_TYPE,
+            ':causer adicionou uma anotação ao pedido :attribute: :subject',
+            [':causer.name'],
+            [':subject.text'],
+            [':attributes.order.code']
+        );
+    }
 
-        if ($eventName == 'deleted') {
-            return '
-            	<div data-event="deleted">
-	        		<strong>:causer.name</strong> 
-	        		deletou a anotação 
-	        		<strong>":subject.text"</strong> 
-	        		do pedido 
-	        		<strong>:properties.attributes.order.code</strong>
-        		</div>
-    		';
-        }
+    public function getUpdatedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$UPDATE_TYPE,
+            ':causer alterou uma anotação do pedido :attribute',
+            [':causer.name'],
+            [],
+            [':attributes.order.code']
+        );
+    }
+
+    public function getDeletedLog(): string
+    {
+        return $this->getDescriptionLog(
+            static::$DELETE_TYPE,
+            ':causer deletou uma anotação do pedido :attribute: :subject',
+            [':causer.name'],
+            [':subject.text'],
+            [':attributes.order.code']
+        );
     }
 
     /**

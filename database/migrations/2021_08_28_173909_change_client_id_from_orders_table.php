@@ -26,7 +26,7 @@ class ChangeClientIdFromOrdersTable extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->foreignId('client_id')->unsigned();
+            $table->foreignId('client_id')->unsigned()->change();
         });
     }
 }

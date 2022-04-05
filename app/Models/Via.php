@@ -11,21 +11,21 @@ class Via extends Model
 
     /**
      * Uma via tem vários pagamentos
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function payments()
     {
-    	return $this->hasMany(Payment::class);
+        return $this->hasMany(Payment::class);
     }
 
     /**
      * Uma via tem várias despesas
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function expenses()
     {
-    	return $this->hasMany(Expense::class);
+        return $this->hasMany(Expense::class);
     }
 }

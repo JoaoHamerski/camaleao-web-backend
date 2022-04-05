@@ -31,7 +31,7 @@ class AddUserIdToExpensesTable extends Migration
     public function down()
     {
         Schema::table('expenses', function (Blueprint $table) {
-            $table->dropColumn('user_id');
+            $table->dropForeign(['user_id']);
         });
     }
 }

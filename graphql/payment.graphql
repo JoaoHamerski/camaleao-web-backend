@@ -1,0 +1,83 @@
+type Payment @guard {
+  id: ID!
+  value: Float!
+  date: Date
+  note: String
+  order: Order @belongsTo
+  via: Via @belongsTo
+  confirmed_at: Date
+  is_confirmed: Boolean
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+type PaymentPendency @guard {
+  created_at_payment: Date!
+  total: Int!
+}
+
+input PaymentInput {
+  order_id: ID!
+  payment_via_id: ID
+  value: String
+  date: String
+  note: String
+}
+
+input DailyCashClientInput {
+  id: ID
+  name: String
+}
+
+input DailyCashOrderInput {
+  id: ID
+  code: String
+  price: String
+  reminder: String
+}
+
+input DailyCashInput {
+  client: DailyCashClientInput!
+  order: DailyCashOrderInput!
+  value: String!
+  via_id: ID!
+}
+
+enum QueryPaymentsOrderByColumn {
+  CREATED_AT @enum(value: "created_at")
+}
+
+extend type Query {
+  payments (
+    created_at: Date @where(clause: "whereDate")
+    orderBy: _ @orderBy(columnsEnum: "QueryPaymentsOrderByColumn")
+    pendencies: Boolean @scope
+  ): [Payment]
+    @all
+    @canAccess(roles: ["gerencia", "atendimento"])
+
+  paymentsPendencies: [PaymentPendency]
+    @canAccess(roles: ["gerencia", "atendimento"])
+}
+
+extend type Mutation {
+  paymentCreate (input: PaymentInput! @spread): Payment
+    @canAccess(roles: ["gerencia", "atendimento"])
+
+  paymentUpdate (
+    id: ID! @eq
+    input: PaymentInput! @spread
+  ): Payment
+    @can(ability: "update" query: true injectArgs: true)
+    @canAccess(roles: ["gerencia", "atendimento"])
+
+  paymentConfirm (
+    id: ID! @eq
+    confirmation: Boolean!
+  ): Payment
+    @can(ability: "confirm")
+    @canAccess(roles: ["gerencia", "atendimento"])
+
+  dailyCashEntry (input: DailyCashInput! @spread): Payment
+    @canAccess(roles: ["gerencia", "atendimento"])
+}

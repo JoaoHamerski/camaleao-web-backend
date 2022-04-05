@@ -1,0 +1,39 @@
+type CommissionUser @guard {
+  id: ID!
+  commission_value: Float
+  confirmed_at: DateTime
+  was_quantity_changed: Boolean
+  user: User @belongsTo
+  role: Role @belongsTo
+  commission: Commission @belongsTo
+}
+
+enum QueryCommissionsUsersWhereColumn {
+  CONFIRMED_AT @enum(value: "confirmed_at")
+}
+
+enum QueryCommissionUsersOrderByColumn {
+  CONFIRMED_AT @enum(value: "confirmed_at")
+}
+
+extend type Query {
+  commissionsUser: [Commission]
+    @paginate(builder: "\\App\\GraphQL\\Builders\\CommissionsUserBuilder")
+    @canAccess(roles: ["costura", "estampa"])
+
+  commissionsUsers (
+    where: _ @whereConditions(columnsEnum: "QueryCommissionsUsersWhereColumn")
+    orderBy: _ @orderBy(columnsEnum: "QueryCommissionUsersOrderByColumn")
+  ): [CommissionUser]
+    @paginate
+    @builder(method: "\\App\\GraphQL\\Builders\\CommissionsUsersOrderByBuilder")
+    @canAccess(roles: ["gerencia"])
+}
+
+extend type Mutation {
+  commissionValueUpsert (value: String!): String
+    @canAccess(roles: ["gerencia"])
+
+  commissionConfirmProduction (id: ID!): Commission
+    @canAccess(roles: ["costura", "estampa"])
+}

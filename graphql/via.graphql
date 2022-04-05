@@ -1,0 +1,8 @@
+type Via {
+  id: ID!
+  name: String!
+}
+
+extend type Query {
+  vias: [Via!]! @all
+}
