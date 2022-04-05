@@ -9,7 +9,8 @@
     "phpcs.ignorePatterns": [
         "/resources",
         "/public",
-        "/database/migrations"
+        "/database/migrations",
+        "/vendor"
     ],
     "phpcs.executablePath": "./vendor/squizlabs/php_codesniffer/bin/phpcs",
     "cSpell.language": "en,pt-BR",
