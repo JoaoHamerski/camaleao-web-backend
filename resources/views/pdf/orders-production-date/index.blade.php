@@ -5,7 +5,7 @@
 @section('content')
 @forelse ($orders as $order)
 <div @class([
-  'page-break-before-always' => !$loop->first && ($order->art_paths || $order->size_paths),
+  'page-break-before-always' => !$loop->first,
   'page-break-after-always' => !$loop->last && ($order->art_paths || $order->size_paths),
   'mb-4',
 ])>
