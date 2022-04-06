@@ -126,7 +126,8 @@ class PDFsController extends Controller
     public function ordersWeeklyProduction(Request $request)
     {
         $date = $request->date;
-        $formattedDate = Carbon::createFromFormat('Y-m-d', $date)->format('d \d\e F');
+        $formattedDate = Carbon::createFromFormat('Y-m-d', $date)
+            ->isoFormat('DD [de] MMMM');
 
         $orders = Order::where('production_date', $date);
         $ordersClothingQuantity = $orders->count('quantity');
