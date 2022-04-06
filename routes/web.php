@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PDFsController;
-use App\Http\Controllers\StorageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,13 +13,6 @@ use App\Http\Controllers\StorageController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-/*
-Route::get('storage/{filepath?}', [
-    StorageController::class,
-    'get'
-])->where('filepath', '(.*)');
- */
 
 Route::prefix('pdf')->name('pdf.')->group(function () {
     Route::get('orders/report', [
@@ -38,7 +30,12 @@ Route::prefix('pdf')->name('pdf.')->group(function () {
         'orderReport'
     ])->name('order-report');
 
-    Route::get('/expenses/report', [
+    Route::get('weekly-production', [
+        PDFsController::class,
+        'ordersWeeklyProduction'
+    ])->name('orders-weekly-production');
+
+    Route::get('expenses/report', [
         PDFsController::class,
         'expensesReport'
     ])->name('expenses-report');

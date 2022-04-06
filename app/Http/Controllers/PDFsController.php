@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Util\Helper;
 use App\Models\Order;
 use App\Models\Expense;
-use App\Util\FileHelper;
 use App\Util\Mask;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
@@ -105,10 +103,6 @@ class PDFsController extends Controller
 
     public function ordersReportProductionDate(Request $request)
     {
-        if (!$request->hasValidSignature()) {
-            abort(401);
-        }
-
         $orders = Order::query();
         $date = Carbon::createFromFormat('Y-m-d', $request->date);
 
@@ -126,7 +120,26 @@ class PDFsController extends Controller
                 : ''
         ]);
 
-        return $pdf->stream("relatorio-de-producao-" . $date->format('d-m-Y'));
+        return $pdf->stream("relatorio-de-producao-" . $date->format('d-m-Y') . '.pdf');
+    }
+
+    public function ordersWeeklyProduction(Request $request)
+    {
+        $date = $request->date;
+        $formattedDate = Carbon::createFromFormat('Y-m-d', $date)->format('d \d\e F');
+
+        $orders = Order::where('production_date', $date);
+        $ordersClothingQuantity = $orders->count('quantity');
+
+        $pdf = PDF::loadView('pdf.weekly-production.index', [
+            'title' => "Produção de $formattedDate",
+            'subtitle' => $ordersClothingQuantity
+                ? "$ordersClothingQuantity PEÇAS"
+                : "NENHUMA PEÇA",
+            'orders' => $orders->get(),
+        ]);
+
+        return $pdf->stream("weekly-production-$date.pdf");
     }
 
     public function queryOrders($orders, $data, Request $request)
@@ -180,6 +193,7 @@ class PDFsController extends Controller
 
         return $query;
     }
+
     public function queryOrdersState($query, $state)
     {
         if ($state === 'open') {

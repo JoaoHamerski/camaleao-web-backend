@@ -2,11 +2,9 @@
 
 namespace App\GraphQL\Queries;
 
-use App\Models\Order;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Validator;
 
-class OrderReport
+class OrderWeeklyProduction
 {
     /**
      * @param  null  $_
@@ -14,16 +12,10 @@ class OrderReport
      */
     public function __invoke($_, array $args)
     {
-        Validator::make($args, [
-            'id' => ['required', 'exists:orders,id']
-        ])->validate();
-
-        $order = Order::find($args['id']);
-
         return URL::temporarySignedRoute(
-            'pdf.order-report',
+            'pdf.orders-weekly-production',
             now()->addMinutes(10),
-            compact('order')
+            $args
         );
     }
 }

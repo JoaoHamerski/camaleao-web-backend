@@ -21,7 +21,7 @@ class OrdersReport
 
         return URL::temporarySignedRoute(
             'pdf.orders-report',
-            now()->addSeconds(60),
+            now()->addMinutes(10),
             array_filter($data, fn ($item) => $item !== '')
         );
     }

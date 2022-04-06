@@ -20,7 +20,7 @@ class ExpensesReport
 
         return URL::temporarySignedRoute(
             'pdf.expenses-report',
-            now()->addSeconds(60),
+            now()->addMinutes(10),
             $data
         );
     }
