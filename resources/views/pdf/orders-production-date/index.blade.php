@@ -4,11 +4,7 @@
 
 @section('content')
 @forelse ($orders as $order)
-<div @class([
-  'page-break-before-always' => !$loop->first,
-  'page-break-after-always' => !$loop->last && ($order->art_paths || $order->size_paths),
-  'mb-4',
-])>
+<div class="page-break-after-always mb-4">
   <table class="table page-break-inside-avoid">
     <thead>
       <tr class="bg-primary text-white">
