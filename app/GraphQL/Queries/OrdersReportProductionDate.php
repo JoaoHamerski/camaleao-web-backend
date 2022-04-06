@@ -26,7 +26,7 @@ class OrdersReportProductionDate
 
         return URL::temporarySignedRoute(
             'pdf.orders-report-production-date',
-            now()->addSeconds(60),
+            now()->addMinutes(10),
             array_filter($data, fn ($item) => $item !== '')
         );
     }

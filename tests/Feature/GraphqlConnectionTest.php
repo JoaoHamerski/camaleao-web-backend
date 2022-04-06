@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class GraphqlTest extends TestCase
+class GraphqlConnectionTest extends TestCase
 {
     public function testGraphqlConnection()
     {
