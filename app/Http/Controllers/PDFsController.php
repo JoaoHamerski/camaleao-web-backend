@@ -140,8 +140,7 @@ class PDFsController extends Controller
             'orders' => $orders->get(),
         ]);
 
-        return $pdf->download("weekly-production-$date.pdf");
-        // return $pdf->stream("weekly-production-$date.pdf");
+        return $pdf->stream("weekly-production-$date.pdf");
     }
 
     public function queryOrders($orders, $data, Request $request)
