@@ -124,8 +124,8 @@ extend type Query {
   ordersReportProductionDate (input: OrdersReportProductionDateInput! @spread): String
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  orderWeeklyProduction (date: String!): String
-    @canAccess(roles: ["gerencia", "atendimento"])
+  ordersWeeklyProductionReport (date: String!): String
+    @canAccess(roles: ["gerencia", "atendimento", "design", "costura", "estampa"])
 }
 
 extend type Mutation {

@@ -4,7 +4,7 @@ namespace App\GraphQL\Queries;
 
 use Illuminate\Support\Facades\URL;
 
-class OrderWeeklyProduction
+class OrdersWeeklyProductionReport
 {
     /**
      * @param  null  $_
