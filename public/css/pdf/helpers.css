@@ -71,3 +71,7 @@
 .text-subtitle {
   font-size: .9rem;
 }
+
+.text-uppercase {
+  text-transform: uppercase;
+}
