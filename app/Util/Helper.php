@@ -348,4 +348,27 @@ class Helper
 
         return false;
     }
+
+    /**
+     * Transforma o valor em plural para humanos.
+     *
+     * @param int $value Valor
+     * @param string $gender O gênero da palavra
+     * @param string $word A palavra
+     * @param string $wordPlural Caso o plural da palavra não termine em "s", informe uma exceção a ser usada
+     */
+    public static function plural($value, $gender = 'M',  $word, $wordPlural = null)
+    {
+        $pronoun = strtolower($gender) === 'm'
+            ? 'nenhum'
+            : 'nenhuma';
+
+        if ($value === null || $value === 0) {
+            return "$pronoun $word";
+        }
+
+        return $value !== 1
+            ? $value . ' ' . ($wordPlural ?? $word . 's')
+            : "$value $word";
+    }
 }
