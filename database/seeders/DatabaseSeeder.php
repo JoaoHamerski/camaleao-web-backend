@@ -24,6 +24,9 @@ class DatabaseSeeder extends Seeder
                 ExpenseTypeSeeder::class,
                 ExpenseSeeder::class,
                 ClientSeeder::class,
+                OrdersSeeder::class,
+                PaymentsSeeder::class,
+                NotesSeeder::class,
             ]);
         });
     }

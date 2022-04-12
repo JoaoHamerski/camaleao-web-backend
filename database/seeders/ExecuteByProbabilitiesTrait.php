@@ -1,10 +1,10 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Seeders;
 
 use Error;
 
-trait FactoryByProbabilitiesTrait
+trait ExecuteByProbabilitiesTrait
 {
     /**
      * Mapa de métodos para serem executados
@@ -22,7 +22,6 @@ trait FactoryByProbabilitiesTrait
     {
         if (!isset(static::$methodsByProbability)) {
             throw new Error('A variável $methodsByProbability não foi definida.');
-            return;
         }
 
         foreach (static::$methodsByProbability as $method) {

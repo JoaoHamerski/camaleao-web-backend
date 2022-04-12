@@ -29,7 +29,7 @@ class ClothingTypeSeeder extends BaseSeeder
         AppConfig::set(
             'orders',
             'print_commission',
-            round($this->faker->randomFloat(2, 30, 50), 1)
+            round($this->faker->randomFloat(2, 1, 5), 1)
         );
     }
 }
