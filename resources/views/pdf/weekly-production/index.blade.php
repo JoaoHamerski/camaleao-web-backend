@@ -15,10 +15,6 @@
             }}">
             <div class="img-thumbnail">SEM IMAGEM</div>
             @endforeach
-        @else
-            <div class="img-thumbnail py-5 text-secondary fw-bold">
-                SEM IMAGEM
-            </div>
         @endif
     </div>
     @empty
