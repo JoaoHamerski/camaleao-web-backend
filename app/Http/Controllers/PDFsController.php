@@ -130,7 +130,7 @@ class PDFsController extends Controller
             ->isoFormat('DD [de] MMMM');
 
         $orders = Order::where('production_date', $date);
-        $ordersClothingQuantity = $orders->count('quantity');
+        $ordersClothingQuantity = $orders->sum('quantity');
 
         $pdf = PDF::loadView('pdf.weekly-production.index', [
             'title' => "Produção de $formattedDate",
