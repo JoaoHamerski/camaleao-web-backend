@@ -13,7 +13,6 @@
                     Helper::getPublicPathFromUrl($imageUrl)
                 )
             }}">
-            <div class="img-thumbnail">SEM IMAGEM</div>
             @endforeach
         @endif
     </div>
