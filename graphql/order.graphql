@@ -58,7 +58,6 @@ input ClothingTypesInput {
 }
 
 input OrderInput {
-  client_id: ID
   name: String
   code: ID
   discount: String
@@ -130,8 +129,8 @@ extend type Query {
 
 extend type Mutation {
   orderCreate (client_id: ID! input: OrderInput! @spread): Order
-
     @canAccess(roles: ["gerencia", "atendimento"])
+
   orderUpdate (id: ID! @eq input: OrderInput! @spread): Order
     @can(ability: "update" query: true)
     @canAccess(roles: ["gerencia", "atendimento"])
