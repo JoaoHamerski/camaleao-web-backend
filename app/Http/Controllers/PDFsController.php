@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Util\Mask;
 use Carbon\Carbon;
+use App\Util\Helper;
 use App\Models\Order;
 use App\Models\Expense;
-use App\Util\Mask;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade as PDF;
 
@@ -126,21 +128,17 @@ class PDFsController extends Controller
     public function ordersWeeklyProduction(Request $request)
     {
         $date = $request->date;
-        $formattedDate = Carbon::createFromFormat('Y-m-d', $date)
-            ->isoFormat('DD [de] MMMM');
+        $carbonDate = Carbon::createFromFormat('Y-m-d', $date);
 
         $orders = Order::where('production_date', $date);
-        $ordersClothingQuantity = $orders->sum('quantity');
 
         $pdf = PDF::loadView('pdf.weekly-production.index', [
-            'title' => "Produção de $formattedDate",
-            'subtitle' => $ordersClothingQuantity
-                ? "$ordersClothingQuantity PEÇAS"
-                : "NENHUMA PEÇA",
+            'title' =>  'Produção de ' . $carbonDate->isoFormat('DD [de] MMMM'),
+            'subtitle' => Str::upper(Helper::plural($orders->sum('quantity'), 'f', 'peça')),
             'orders' => $orders->get(),
         ]);
 
-        return $pdf->stream("weekly-production-$date.pdf");
+        return $pdf->stream('producao-semanal-' . $carbonDate->format('d-m-Y') . '.pdf');
     }
 
     public function queryOrders($orders, $data, Request $request)

@@ -14,6 +14,14 @@
                 )
             }}">
             @endforeach
+        @else
+            <div class="img-thumbnail py-5 fw-bold text-secondary">
+                PEDIDO SEM IMAGEM DE TAMANHOS
+                <div class="text-uppercase">
+                    @if ($order->code) {{ $order->code }} - @endif
+                    {{ Helper::plural($order->quantity, 'f', 'peça') }}
+                </div>
+            </div>
         @endif
     </div>
     @empty
