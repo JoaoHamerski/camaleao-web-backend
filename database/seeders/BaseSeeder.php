@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
+use Bluemmb\Faker\PicsumPhotosProvider;
 
 class BaseSeeder extends Seeder
 {
@@ -11,6 +12,8 @@ class BaseSeeder extends Seeder
 
     public function __construct()
     {
-        $this->faker = Faker::create('pt_BR');
+        $faker = Faker::create('pt_BR');
+        $faker->addProvider(new PicsumPhotosProvider($faker));
+        $this->faker = $faker;
     }
 }
