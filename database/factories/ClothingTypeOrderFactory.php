@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\ClothingTypeOrder;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ClothingTypeOrderFactory extends Factory
 {

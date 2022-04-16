@@ -8,7 +8,6 @@ use App\Models\Order;
 use App\Models\Status;
 use App\Models\AppConfig;
 use App\Models\ClothingType;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 class OrderFactory extends Factory
 {

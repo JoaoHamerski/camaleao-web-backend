@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use Carbon\Carbon;
 use App\Models\Expense;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ExpenseFactory extends Factory
 {

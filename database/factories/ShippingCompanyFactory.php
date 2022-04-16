@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\ShippingCompany;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ShippingCompanyFactory extends Factory
 {
