@@ -24,7 +24,7 @@ class ClientFactory extends Factory
 
         return [
             'name' => $this->getClientName(),
-            'phone' => $this->faker->optional(.8)->phoneNumberCleared,
+            'phone' => $this->faker->optional(.8)->phoneNumberCleared(),
             'created_at' => $CREATED_AT,
             'updated_at' => $CREATED_AT,
         ];
@@ -38,7 +38,7 @@ class ClientFactory extends Factory
             $this->faker->randomElement($genders)
         );
 
-        $lastName = $this->faker->lastName;
+        $lastName = $this->faker->lastName();
 
         return "$firstName $lastName";
     }
