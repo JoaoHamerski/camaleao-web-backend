@@ -90,9 +90,12 @@ class FileHelper
         }
 
         if (is_array($decodedFiles)) {
-            return array_map(function ($file) use ($baseFileURL) {
-                return $baseFileURL . '/' . $file;
-            }, $decodedFiles);
+            return array_map(
+                fn ($fileURL) => Str::startsWith($fileURL, 'http')
+                    ? $fileURL
+                    : $baseFileURL . '/' . $fileURL,
+                $decodedFiles
+            );
         }
 
         return $baseFileURL . '/' . $files;

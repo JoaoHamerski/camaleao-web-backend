@@ -51,7 +51,14 @@ class OrderFactory extends Factory
             'code' => $data['code'],
             'name' => $data['name'],
             'created_at' => $data['created_at'],
-            'updated_at' => $data['created_at']
+            'updated_at' => $data['created_at'],
+            'art_paths' => json_encode([
+                $this->faker->imageUrl(
+                    600,
+                    400,
+                    true
+                )
+            ])
         ];
     }
 
