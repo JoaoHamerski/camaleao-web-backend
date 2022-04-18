@@ -6,11 +6,13 @@ use App\Util\Mask;
 use Carbon\Carbon;
 use App\Util\Helper;
 use App\Models\Order;
+use App\Models\Status;
 use App\Models\Expense;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\Validator;
 
 class PDFsController extends Controller
 {
@@ -125,16 +127,45 @@ class PDFsController extends Controller
         return $pdf->stream("relatorio-de-producao-" . $date->format('d-m-Y') . '.pdf');
     }
 
+    private function getTitleForOrdersWeeklyProduction(Carbon $date)
+    {
+        $date = $date->isoFormat('DD [de] MMMM');
+
+        return "Produção de $date";
+    }
+
+    private function getSubtitleForOrdersWeeklyProduction($orders, $request)
+    {
+        $status = null;
+        $shirtPiecesText = Str::upper(
+            Helper::plural($orders->sum('quantity'), 'f', 'peça')
+        );
+
+        if ($request->filled('status_id')) {
+            $status = Status::find($request->status_id);
+
+            return "$status->text - $shirtPiecesText";
+        }
+
+        return $shirtPiecesText;
+    }
+
     public function ordersWeeklyProduction(Request $request)
     {
-        $date = $request->date;
+        Validator::make($request->all(), [
+            'status_id' => ['nullable', 'exists:status,id'],
+            'production_date' => ['required', 'date']
+        ])->validate();
+
+        $date = $request->production_date;
         $carbonDate = Carbon::createFromFormat('Y-m-d', $date);
 
-        $orders = Order::where('production_date', $date);
+        $orders = Order::query();
+        $orders = $this->queryOrders($orders, $request->all(), $request);
 
         $pdf = PDF::loadView('pdf.weekly-production.index', [
-            'title' =>  'Produção de ' . $carbonDate->isoFormat('DD [de] MMMM'),
-            'subtitle' => Str::upper(Helper::plural($orders->sum('quantity'), 'f', 'peça')),
+            'title' =>  $this->getTitleForOrdersWeeklyProduction($carbonDate),
+            'subtitle' => $this->getSubtitleForOrdersWeeklyProduction($orders, $request),
             'orders' => $orders->get(),
         ]);
 
