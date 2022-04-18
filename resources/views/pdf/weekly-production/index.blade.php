@@ -4,18 +4,24 @@
 
 @section('content')
 <div class="position-relative text-center mt-5">
-    <div class="page-break-after-always">
+    <div>
     @forelse ($orders as $order)
-        @if ($order->art_paths)
-            @foreach($order->art_paths as $imageUrl)
-            <img class="img-fluid img-thumbnail w-100 mb-2" src="{{
-                FileHelper::imageToBase64(
-                    Helper::getPublicPathFromUrl($imageUrl)
-                )
-            }}">
-            @endforeach
+        @if ($order->size_paths)
+            <div @class([
+                    'page-break-after-always' => !$loop->last,
+                    'page-break-before-always' => !$loop->first
+                ])
+            >
+                @foreach($order->size_paths as $imageUrl)
+                <img class="img-fluid img-thumbnail w-100 mb-2" src="{{
+                    FileHelper::imageToBase64(
+                        Helper::getPublicPathFromUrl($imageUrl)
+                    )
+                }}">
+                @endforeach
+            </div>
         @else
-            <div class="img-thumbnail py-5 fw-bold text-secondary">
+            <div class="img-thumbnail py-5 my-4 fw-bold text-secondary text-center">
                 PEDIDO SEM IMAGEM DE TAMANHOS
                 <div class="text-uppercase">
                     @if ($order->code) {{ $order->code }} - @endif
