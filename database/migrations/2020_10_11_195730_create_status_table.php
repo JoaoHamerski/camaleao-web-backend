@@ -28,6 +28,7 @@ class CreateStatusTable extends Migration
             ['id' => 7, 'text' => 'Problemas na produção'],
             ['id' => 8, 'text' => 'Disponível para retirada'],
             ['id' => 9, 'text' => 'Entregue com pagamento pendente'],
+            ['id' => 10, 'text' => 'Entregue'],
         ]);
     }
 

@@ -24,7 +24,7 @@ class Status extends Model
     /**
      * Indica qual ID da tabela é um status "disponível para retirada"
      */
-    protected $AVAILABLE_ID = 8;
+    protected $AVAILABLE_IDS = [8, 10];
 
     /**
      * Um status tem vários pedidos
@@ -38,6 +38,6 @@ class Status extends Model
 
     public function getIsAvailableAttribute()
     {
-        return $this->id === $this->AVAILABLE_ID;
+        return in_array($this->id, $this->AVAILABLE_IDS);
     }
 }
