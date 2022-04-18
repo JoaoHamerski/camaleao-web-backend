@@ -52,10 +52,11 @@ class OrderFactory extends Factory
             'name' => $data['name'],
             'created_at' => $data['created_at'],
             'updated_at' => $data['created_at'],
+            'status_id' => Status::inRandomOrder()->first()->id,
             'art_paths' => json_encode([
                 $this->faker->imageUrl(
-                    600,
-                    400,
+                    1400,
+                    800,
                     true
                 )
             ])
@@ -68,15 +69,7 @@ class OrderFactory extends Factory
             $this->populatePriceAndQuantity($order);
             $this->populateDeliveryAndProductionDate($order);
             $this->populateCommissions($order);
-            $this->belongsToStatus($order);
         });
-    }
-
-    protected function belongsToStatus(Order $order)
-    {
-        $order->update([
-            'status_id' => Status::inRandomOrder()->first()->id
-        ]);
     }
 
     protected function populateCommissions(Order $order)
