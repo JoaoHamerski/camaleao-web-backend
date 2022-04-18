@@ -58,6 +58,7 @@ input ClothingTypesInput {
 }
 
 input OrderInput {
+  client_id: ID
   name: String
   code: ID
   discount: String
@@ -98,6 +99,11 @@ input OrdersReportProductionDateInput {
   state: OrderReportInputState!
 }
 
+input OrdersWeeklyProductionReport {
+  production_date: String!
+  status_id: ID
+}
+
 extend type Query {
   order (
     id: ID! @eq
@@ -123,7 +129,7 @@ extend type Query {
   ordersReportProductionDate (input: OrdersReportProductionDateInput! @spread): String
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  ordersWeeklyProductionReport (date: String!): String
+  ordersWeeklyProductionReport (input: OrdersWeeklyProductionReport! @spread): String
     @canAccess(roles: ["gerencia", "atendimento", "design", "costura", "estampa"])
 }
 
