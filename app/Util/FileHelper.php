@@ -86,7 +86,7 @@ class FileHelper
         $decodedFiles = json_decode($files);
 
         if (!Helper::isValidJson($files) && empty($files)) {
-            return null;
+            return [];
         }
 
         if (is_array($decodedFiles)) {
