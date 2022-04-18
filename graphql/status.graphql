@@ -4,6 +4,29 @@ type Status @guard {
   is_available: Boolean!
 }
 
+input StatusInput {
+  text: String!
+}
+
+input StatusDeleteInput {
+  replace_status_id: ID!
+  password: String!
+}
+
 extend type Query {
   status: [Status!]! @all
+}
+
+extend type Mutation {
+  statusCreate (input: StatusInput! @spread): Status!
+    @canAccess(roles: ["gerencia"])
+
+  statusUpdate (id: ID! input: StatusInput! @spread): Status!
+    @canAccess(roles: ["gerencia"])
+
+  statusDelete(id: ID! input: StatusDeleteInput! @spread): Status!
+    @canAccess(roles: ["gerencia"])
+
+  statusSetAvailable(ids: [ID]): [Status]
+    @canAccess(roles: ["gerencia"])
 }

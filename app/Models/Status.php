@@ -19,13 +19,6 @@ class Status extends Model
      */
     protected $fillable = ['text'];
 
-    protected $appends = ['is_available'];
-
-    /**
-     * Indica qual ID da tabela é um status "disponível para retirada"
-     */
-    protected $AVAILABLE_IDS = [8, 10];
-
     /**
      * Um status tem vários pedidos
      *
@@ -38,6 +31,8 @@ class Status extends Model
 
     public function getIsAvailableAttribute()
     {
-        return in_array($this->id, $this->AVAILABLE_IDS);
+        $availableIds = AppConfig::get('app', 'status_available');
+
+        return in_array($this->id, $availableIds);
     }
 }
