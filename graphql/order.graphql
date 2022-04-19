@@ -7,7 +7,8 @@ type Order @guard {
   quantity: Int
   price: Float
   delivery_date: Date
-  production_date: Date
+  print_date: Date
+  seam_date: Date
   discount: Float
   payments: [Payment]
     @hasMany
@@ -39,7 +40,7 @@ type Order @guard {
 enum QueryOrdersOrderByColumn {
   CREATED_AT @enum(value: "created_at")
   DELIVERY_DATE @enum(value: "delivery_date")
-  PRODUCTION_DATE @enum(value: "production_date")
+  SEAM_DATE @enum(value: "seam_date")
 }
 
 enum QueryOrdersWhereConditionsColumn {
@@ -64,7 +65,8 @@ input OrderInput {
   discount: String
   down_payment: String
   payment_via_id: ID
-  production_date: String
+  seam_date: String
+  print_date: String
   delivery_date: String
   clothing_types: [ClothingTypesInput]
   status_id: ID
@@ -94,13 +96,14 @@ input OrdersReportInput {
   state: OrderReportInputState!
 }
 
-input OrdersReportProductionDateInput {
+input OrdersReportPrintDateInput {
   date: String!
   state: OrderReportInputState!
 }
 
-input OrdersWeeklyProductionReport {
-  production_date: String!
+input OrdersWeeklyCalendarReport {
+  field: QueryFromDateColumns!
+  date: String!
   status_id: ID
 }
 
@@ -126,10 +129,10 @@ extend type Query {
   ordersReport (input: OrdersReportInput! @spread): String
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  ordersReportProductionDate (input: OrdersReportProductionDateInput! @spread): String
+  ordersReportPrintDate (input: OrdersReportPrintDateInput! @spread): String
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  ordersWeeklyProductionReport (input: OrdersWeeklyProductionReport! @spread): String
+  ordersWeeklyCalendarReport (input: OrdersWeeklyCalendarReport! @spread): String
     @canAccess(roles: ["gerencia", "atendimento", "design", "costura", "estampa"])
 }
 

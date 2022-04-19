@@ -26,7 +26,9 @@ class OrderCreatePreRegistered
         $order = Order::create(Arr::only($data, [
             'status_id',
             'art_paths',
-            'production_date'
+            'print_date',
+            'seam_date',
+            'delivery_date',
         ]));
 
         if (Helper::filled($data, 'reminder')) {
@@ -42,7 +44,7 @@ class OrderCreatePreRegistered
     public function getFormattedData($data)
     {
         return (new Formatter($data))
-            ->date('production_date')
+            ->date(['print_date', 'delivery_date', 'seam_date'])
             ->base64ToUploadedFile('art_paths.*')
             ->get();
     }
@@ -64,7 +66,10 @@ class OrderCreatePreRegistered
             'art_paths' => ['array', 'min:1'],
             'art_paths.*' => ['file', 'max:1024'],
             'status_id' => ['nullable', 'exists:status,id'],
-            'reminder' => ['nullable']
+            'reminder' => ['nullable'],
+            'print_date' => ['nullable', 'date'],
+            'seam_date' => ['nullable', 'date'],
+            'delivery_date' => ['nullable', 'date'],
         ]);
     }
 }

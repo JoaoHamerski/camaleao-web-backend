@@ -42,8 +42,9 @@ trait OrderTrait
                 'clothing_types.*.value'
             ])
             ->date([
+                'seam_date',
+                'print_date',
                 'delivery_date',
-                'production_date'
             ])
             ->base64ToUploadedFile([
                 'art_paths.*',
@@ -155,8 +156,9 @@ trait OrderTrait
                 'numeric',
                 'required_with:discount'
             ],
+            'seam_date' => ['nullable', 'date_format:Y-m-d'],
+            'print_date' => ['nullable', 'date_format:Y-m-d'],
             'delivery_date' => ['nullable', 'date_format:Y-m-d'],
-            'production_date' => ['nullable', 'date_format:Y-m-d'],
             'down_payment' => [
                 'sometimes',
                 $this->getDownPaymentRule($data['price'] ?? null)

@@ -4,7 +4,7 @@ namespace App\GraphQL\Queries;
 
 use Illuminate\Support\Facades\URL;
 
-class OrdersWeeklyProductionReport
+class OrdersWeeklyCalendarReport
 {
     /**
      * @param  null  $_
@@ -13,7 +13,7 @@ class OrdersWeeklyProductionReport
     public function __invoke($_, array $args)
     {
         return URL::temporarySignedRoute(
-            'pdf.orders-weekly-production',
+            'pdf.orders-weekly-calendar',
             now()->addMinutes(10),
             $args
         );

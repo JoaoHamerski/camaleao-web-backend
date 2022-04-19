@@ -20,20 +20,20 @@ Route::prefix('pdf')->name('pdf.')->group(function () {
         'ordersReport'
     ])->name('orders-report');
 
-    Route::get('orders/report/production-date', [
+    Route::get('orders/report/print-date', [
         PDFsController::class,
-        'ordersReportProductionDate'
-    ])->name('orders-report-production-date');
+        'ordersReportPrintDate'
+    ])->name('orders-report-print-date');
 
     Route::get('orders/report/{order}', [
         PDFsController::class,
         'orderReport'
     ])->name('order-report');
 
-    Route::get('weekly-production', [
+    Route::get('weekly-calendar', [
         PDFsController::class,
-        'ordersWeeklyProduction'
-    ])->name('orders-weekly-production');
+        'ordersWeeklyCalendar'
+    ])->name('orders-weekly-calendar');
 
     Route::get('expenses/report', [
         PDFsController::class,

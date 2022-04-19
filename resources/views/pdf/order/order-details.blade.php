@@ -50,15 +50,22 @@
     </tr>
 
     <tr>
-      <td class="fw-bold bg-secondary">ENTREGA</td>
-      <td class="bg-secondary-light">
-        {{ $order->delivery_date ? Mask::date($order->delivery_date) : 'N/A' }}
-      </td>
+        <td class="fw-bold bg-secondary">ESTAMPA</td>
+        <td class="bg-secondary-light">
+            {{ $order->print_date ? Mask::date($order->print_date) : 'N/A' }}
+        </td>
 
-      <td class="fw-bold bg-secondary">PRODUÇÃO</td>
-      <td class="bg-secondary-light">
-        {{ $order->production_date ? Mask::date($order->production_date) : 'N/A' }}
-      </td>
+        <td class="fw-bold bg-secondary">COSTURA</td>
+        <td class="bg-secondary-light">
+            {{ $order->seam_date ? Mask::date($order->seam_date) : 'N/A' }}
+        </td>
+    </tr>
+
+    <tr>
+        <td class="fw-bold bg-secondary">ENTREGA</td>
+        <td class="bg-secondary-light" colspan="3">
+            {{ $order->delivery_date ? Mask::date($order->delivery_date) : 'N/A' }}
+        </td>
     </tr>
 
     <tr>
