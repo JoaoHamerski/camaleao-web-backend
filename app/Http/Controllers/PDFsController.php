@@ -13,18 +13,22 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class PDFsController extends Controller
 {
     protected $generatedAt = '';
+    protected static $FIELD_TYPES = [
+        'seam_date' => 'Costuras',
+        'print_date' => 'Estampas',
+        'delivery_date' => 'Entregas',
+    ];
 
     public function __construct(Request $request)
     {
         if (!$request->hasValidSignature()) {
             abort(401);
         }
-
-        $this->generatedAt = now()->format('d-m-Y-H-i-s');
     }
 
     public function expensesReport(Request $request)
@@ -105,36 +109,35 @@ class PDFsController extends Controller
         return $pdf->stream("pedidos-geral-$this->generatedAt.pdf");
     }
 
-    public function ordersReportProductionDate(Request $request)
+    public function ordersReportPrintDate(Request $request)
     {
         $orders = Order::query();
         $date = Carbon::createFromFormat('Y-m-d', $request->date);
 
-        $request->merge(['production_date' => $date->toDateString()]);
+        $request->merge(['print_date' => $date->toDateString()]);
         $request->query->remove('date');
 
         $orders = $this->queryOrders($orders, $request->all(), $request);
         $quantity = $orders->sum('quantity');
 
-        $pdf = PDF::loadView('pdf.orders-production-date.index', [
+        $pdf = PDF::loadView('pdf.orders-print-date.index', [
             'orders' => $orders->get(),
-            'title' => "Produção do dia - " . $date->format('d/m/Y'),
-            'subtitle' => $quantity
-                ? "$quantity PEÇAS PRODUZIDAS"
-                : ''
+            'title' => 'Relatório de estampa',
+            'subtitle' => Str::upper(Helper::plural($quantity, 'F', 'peça'))
         ]);
 
-        return $pdf->stream("relatorio-de-producao-" . $date->format('d-m-Y') . '.pdf');
+        return $pdf->stream('relatorio-estampa-' . $date->format('d-m-Y') . '.pdf');
     }
 
-    private function getTitleForOrdersWeeklyProduction(Carbon $date)
+    private function getTitleForOrdersWeeklyCalendar(Carbon $date, $field)
     {
         $date = $date->isoFormat('DD [de] MMMM');
+        $type = static::$FIELD_TYPES[$field];
 
-        return "Produção de $date";
+        return  "$type - $date";
     }
 
-    private function getSubtitleForOrdersWeeklyProduction($orders, $request)
+    private function getSubtitleForOrdersWeeklyCalendar($orders, $request)
     {
         $status = null;
         $shirtPiecesText = Str::upper(
@@ -150,26 +153,44 @@ class PDFsController extends Controller
         return $shirtPiecesText;
     }
 
-    public function ordersWeeklyProduction(Request $request)
+    private function getFilenameForOrdersWeeklyCalendar(Carbon $date, $field)
+    {
+        $type = Str::lower(static::$FIELD_TYPES[$field]);
+        $date = $date->format('d-m-Y');
+
+        return "calendario-semanal-$type-$date.pdf";
+    }
+
+    public function ordersWeeklyCalendar(Request $request)
     {
         Validator::make($request->all(), [
+            'field' => ['required', Rule::in([
+                'seam_date',
+                'print_date',
+                'delivery_date'
+            ])],
             'status_id' => ['nullable', 'exists:status,id'],
-            'production_date' => ['required', 'date']
+            'date' => ['required', 'date']
         ])->validate();
 
-        $date = $request->production_date;
-        $carbonDate = Carbon::createFromFormat('Y-m-d', $date);
+        $request->merge([$request->field => $request->date]);
+        $date = Carbon::createFromFormat('Y-m-d', $request->date);
 
         $orders = Order::query();
         $orders = $this->queryOrders($orders, $request->all(), $request);
 
-        $pdf = PDF::loadView('pdf.weekly-production.index', [
-            'title' =>  $this->getTitleForOrdersWeeklyProduction($carbonDate),
-            'subtitle' => $this->getSubtitleForOrdersWeeklyProduction($orders, $request),
+        $pdf = PDF::loadView('pdf.weekly-calendar.index', [
+            'title' =>  $this->getTitleForOrdersWeeklyCalendar($date, $request->field),
+            'subtitle' => $this->getSubtitleForOrdersWeeklyCalendar($orders, $request),
             'orders' => $orders->get(),
         ]);
 
-        return $pdf->stream('producao-semanal-' . $carbonDate->format('d-m-Y') . '.pdf');
+        return $pdf->stream(
+            $this->getFilenameForOrdersWeeklyCalendar(
+                $date,
+                $request->field
+            )
+        );
     }
 
     public function queryOrders($orders, $data, Request $request)
@@ -192,8 +213,12 @@ class PDFsController extends Controller
             $orders->whereDate('delivery_date', $data['delivery_date']);
         }
 
-        if ($request->filled('production_date')) {
-            $orders->whereDate('production_date', $data['production_date']);
+        if ($request->filled('print_date')) {
+            $orders->whereDate('print_date', $data['print_date']);
+        }
+
+        if ($request->filled('seam_date')) {
+            $orders->whereDate('seam_date', $data['seam_date']);
         }
 
         if ($request->filled('order')) {
