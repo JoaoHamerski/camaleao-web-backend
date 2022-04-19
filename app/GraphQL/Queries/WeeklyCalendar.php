@@ -6,8 +6,9 @@ use App\Models\Order;
 use App\Util\Formatter;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
-class WeeklyProduction
+class WeeklyCalendar
 {
     /**
      * @param  null  $_
@@ -22,20 +23,19 @@ class WeeklyProduction
         $startOfWeek = $date->clone()->startOf('week');
         $endOfWeek = $date->clone()->endOf('week');
 
-        $orders = $this->getOrdersBetweenDates($startOfWeek, $endOfWeek);
+        $orders = $this->getOrdersBetweenDates($startOfWeek, $endOfWeek, $data['field']);
 
         return $this->getPopulatedWeekDays($orders, $startOfWeek);
     }
 
-    public function getOrdersBetweenDates($startOfWeek, $endOfWeek)
+    public function getOrdersBetweenDates($startOfWeek, $endOfWeek, $field)
     {
-        return Order::whereBetween('production_date', [
+        return Order::whereBetween($field, [
             $startOfWeek->toDateString(),
             $endOfWeek->toDateString()
-        ])
-            ->orderBy('created_at', 'desc')
+        ])->orderBy('created_at', 'desc')
             ->get()
-            ->groupBy('production_date');
+            ->groupBy($field);
     }
 
     public function getPopulatedWeekDays($orders, $startOfWeek)
@@ -66,7 +66,12 @@ class WeeklyProduction
     public function validator(array $data)
     {
         return Validator::make($data, [
-            'date' => ['required', 'date']
+            'date' => ['required', 'date'],
+            'field' => ['required', Rule::in([
+                'print_date',
+                'seam_date',
+                'delivery_date'
+            ])]
         ]);
     }
 }

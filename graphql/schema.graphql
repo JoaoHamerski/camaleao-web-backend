@@ -20,5 +20,5 @@
 #import commission_user.graphql
 #import production.graphql
 #import note.graphql
-#import weekly-production.graphql
+#import weekly-calendar.graphql
 #import activity.graphql

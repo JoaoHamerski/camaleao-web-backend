@@ -1,0 +1,30 @@
+type WeeklyCalendar @guard {
+  date: Date
+  orders: [Order]
+  total_quantity: Int
+}
+
+input OrderPreRegisteredInput {
+  reminder: String
+  status_id: ID
+  art_paths: [String]
+  print_date: String
+  seam_date: String
+  delivery_date: String
+}
+
+enum QueryFromDateColumns {
+  PRINT_DATE @enum(value: "print_date")
+  SEAM_DATE @enum(value: "seam_date")
+  DELIVERY_DATE @enum(value: "delivery_date")
+}
+
+extend type Query {
+  weeklyCalendar (date: String! field: QueryFromDateColumns!): [WeeklyCalendar]
+    @canAccess(roles: ["gerencia", "atendimento", "design", "costura", "estampa"])
+}
+
+extend type Mutation {
+  orderCreatePreRegistered (input: OrderPreRegisteredInput! @spread): Order
+    @canAccess(roles: ["gerencia", "atendimento", "design"])
+}

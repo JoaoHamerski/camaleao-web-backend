@@ -1,6 +1,6 @@
 @extends('pdf.layout')
 
-@section('title', $title)
+@section('title', $title ?? '')
 
 @section('content')
 @forelse ($orders as $order)
@@ -22,7 +22,7 @@
     </tbody>
   </table>
 
-  @include('pdf.orders-production-date.order-images')
+  @include('pdf.orders-print-date.order-images')
 </div>
 @empty
   @include('pdf.empty')

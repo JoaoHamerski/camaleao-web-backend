@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class OrdersReportProductionDate
+class OrdersReportPrintDate
 {
     /**
      * @param  null  $_
@@ -25,7 +25,7 @@ class OrdersReportProductionDate
         ])->validate();
 
         return URL::temporarySignedRoute(
-            'pdf.orders-report-production-date',
+            'pdf.orders-report-print-date',
             now()->addMinutes(10),
             array_filter($data, fn ($item) => $item !== '')
         );
