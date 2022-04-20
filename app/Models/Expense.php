@@ -93,6 +93,12 @@ class Expense extends Model
 
     public function getReceiptPathAttribute($value)
     {
-        return FileHelper::getFilesURL($value, 'receipt_path');
+        $path = FileHelper::getFilesURL($value, 'receipt_path');
+
+        if (is_array($path)) {
+            return null;
+        }
+
+        return $path;
     }
 }
