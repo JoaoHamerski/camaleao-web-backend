@@ -16,7 +16,7 @@ type CashFlowEntry @guard {
   user: User @field(
     resolver: "App\\GraphQL\\Resolvers\\CashFlowFieldResolver@user"
   )
-  via: Via! @field(
+  via: Via @field(
     resolver: "App\\GraphQL\\Resolvers\\CashFlowFieldResolver@via"
   )
   type: ExpenseType @field(
