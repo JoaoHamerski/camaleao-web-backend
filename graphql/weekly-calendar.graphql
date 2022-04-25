@@ -13,6 +13,25 @@ input OrderPreRegisteredInput {
   delivery_date: String
 }
 
+input OrderDatesFieldsConcludeStatus {
+  print_date: [ID]
+  seam_date: [ID]
+  delivery_date: [ID]
+}
+
+input OrderDatesFieldsUpdatableField {
+  status: [ID]
+  update_to: ID
+}
+
+input OrderDatesFieldsUpdatableStatus {
+  print_date: OrderDatesFieldsUpdatableField!
+  seam_date: OrderDatesFieldsUpdatableField!
+  delivery_date: OrderDatesFieldsUpdatableField!
+}
+
+input OrderDatesF
+
 enum QueryFromDateColumns {
   PRINT_DATE @enum(value: "print_date")
   SEAM_DATE @enum(value: "seam_date")
@@ -27,4 +46,13 @@ extend type Query {
 extend type Mutation {
   orderCreatePreRegistered (input: OrderPreRegisteredInput! @spread): Order
     @canAccess(roles: ["gerencia", "atendimento", "design"])
+
+  orderConcludeStatus (id: ID! field: QueryFromDateColumns!): Order
+    @canAccess(roles: ["gerencia", "atendimento", "costura", "estampa", "design"])
+
+  statusUpdateConcludeWeeklyCalendar (input: OrderDatesFieldsConcludeStatus! @spread): String
+    @canAccess(roles: ["gerencia"])
+
+  statusUpdateUpdatableWeeklyCalendar (input: OrderDatesFieldsUpdatableStatus! @spread): String
+    @canAccess(roles: ["gerencia"])
 }
