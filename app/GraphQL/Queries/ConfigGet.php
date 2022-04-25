@@ -22,13 +22,25 @@ class ConfigGet
         $this->validator($data)->validate();
 
         $config = AppConfig::where('name', $data['name'])->first();
-        $decodedConfig = collect(json_decode($config->json));
+        $decodedConfig = collect(json_decode($config->json, true));
 
         if (!Helper::filled($data, 'key')) {
-            return $decodedConfig ?? null;
+            if (!$decodedConfig) {
+                return null;
+            }
+
+            return $args['encoded']
+                ? json_encode($decodedConfig)
+                : $decodedConfig;
         }
 
-        return $decodedConfig[$data['key']] ?? null;
+        if (!isset($decodedConfig[$data['key']])) {
+            return null;
+        }
+
+        return $args['encoded']
+            ? json_encode($decodedConfig[$data['key']])
+            : $decodedConfig[$data['key']];
     }
 
     public function validator($data)

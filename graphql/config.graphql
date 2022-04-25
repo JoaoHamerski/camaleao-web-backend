@@ -4,7 +4,7 @@ type AppConfig @guard {
 }
 
 extend type Query {
-  configGet(name: String! key: String): String
+  configGet(name: String! key: String, encoded: Boolean!): String
 }
 
 extend type Mutation {

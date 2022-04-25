@@ -20,9 +20,9 @@ class AppConfig extends Model
         'json'
     ];
 
-    public static function get($name, $key = null)
+    public static function get($name, $key = null, $encoded = false)
     {
-        return (new ConfigGet)->__invoke(null, compact('name', 'key'));
+        return (new ConfigGet)->__invoke(null, compact('name', 'key', 'encoded'));
     }
 
     public static function set($name, $key, $value)
