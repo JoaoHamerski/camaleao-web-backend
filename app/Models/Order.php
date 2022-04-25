@@ -261,6 +261,30 @@ class Order extends Model
         return $this->quantity === null || $this->client_id === null;
     }
 
+    public function isConcluded($statusConcluded, $field = null)
+    {
+        if ($field) {
+            $collection = collect(AppConfig::get('status', 'conclude_status_map'));
+            $statusConcluded = $collection->firstWhere('field', '==', $field)['status'];
+        }
+
+        $this->is_concluded = in_array($this->status->id, $statusConcluded);
+
+        return $this;
+    }
+
+    public function canBeConcluded($statusCanBeConcluded, $field = null)
+    {
+        if ($field) {
+            $collection = collect(AppConfig::get('status', 'update_status_map'));
+            $statusCanBeConcluded = $collection->firstWhere('field', '==', $field)['status_is'];
+        }
+
+        $this->can_be_concluded = in_array($this->status->id, $statusCanBeConcluded);
+
+        return $this;
+    }
+
     public function getStatesAttribute()
     {
         $states = [];

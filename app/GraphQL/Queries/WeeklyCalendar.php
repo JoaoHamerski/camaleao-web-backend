@@ -2,11 +2,12 @@
 
 namespace App\GraphQL\Queries;
 
+use Carbon\Carbon;
 use App\Models\Order;
 use App\Util\Formatter;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
+use App\Models\AppConfig;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class WeeklyCalendar
 {
@@ -30,12 +31,27 @@ class WeeklyCalendar
 
     public function getOrdersBetweenDates($startOfWeek, $endOfWeek, $field)
     {
-        return Order::whereBetween($field, [
+        $UPDATE_STATUS_MAP = collect(AppConfig::get('status', 'update_status_map'));
+        $CONCLUDE_STATUS_MAP = collect(AppConfig::get('status', 'conclude_status_map'));
+
+        $STATUS_IS_CONCLUDED_FROM_FIELD = $CONCLUDE_STATUS_MAP
+            ->firstWhere('field', '==', $field)['status'];
+
+        $STATUS_CAN_BE_CONCLUDED_FROM_FIELD =  $UPDATE_STATUS_MAP
+            ->firstWhere('field', '==', $field)['status_is'] ?? [];
+
+        $query = Order::whereBetween($field, [
             $startOfWeek->toDateString(),
             $endOfWeek->toDateString()
-        ])->orderBy('created_at', 'desc')
-            ->get()
-            ->groupBy($field);
+        ])->orderBy('created_at', 'desc');
+
+        $orders = $query->get()->map(
+            fn (Order $order) => $order
+                ->isConcluded($STATUS_IS_CONCLUDED_FROM_FIELD)
+                ->canBeConcluded($STATUS_CAN_BE_CONCLUDED_FROM_FIELD)
+        );
+
+        return $orders->groupBy($field);
     }
 
     public function getPopulatedWeekDays($orders, $startOfWeek)

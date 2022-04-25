@@ -35,6 +35,8 @@ type Order @guard {
   created_at: DateTime
   updated_at: DateTime
   closed_at: Date
+  is_concluded: Boolean
+  can_be_concluded: Boolean
 }
 
 enum QueryOrdersOrderByColumn {
