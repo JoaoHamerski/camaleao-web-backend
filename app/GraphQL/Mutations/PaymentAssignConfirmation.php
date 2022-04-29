@@ -5,7 +5,7 @@ namespace App\GraphQL\Mutations;
 use App\Models\Payment;
 use Illuminate\Support\Facades\Validator;
 
-class PaymentConfirm
+class PaymentAssignConfirmation
 {
     /**
      * @param  null  $_

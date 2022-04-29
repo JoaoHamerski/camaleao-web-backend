@@ -8,7 +8,7 @@ use App\Models\Order;
 use App\Util\FileHelper;
 use App\Models\ExpenseType;
 
-class CashFlowFieldResolver
+class PaymentExpenseFieldsResolver
 {
 
     /**
@@ -77,12 +77,22 @@ class CashFlowFieldResolver
 
     public function receiptPath($rootValue)
     {
-        $receipt_path = $rootValue->receipt_path;
+        $receiptPath = $rootValue->receipt_path;
 
-        if (!$receipt_path) {
+        if (!$receiptPath) {
             return null;
         }
 
-        return FileHelper::getFilesURL($receipt_path, 'receipt_path');
+        return FileHelper::getFilesURL($receiptPath, 'receipt_path');
+    }
+    public function paymentVoucherPaths($rootValue)
+    {
+        $paymentVoucherPaths = $rootValue->payment_voucher_paths;
+
+        if (!$paymentVoucherPaths) {
+            return null;
+        }
+
+        return FileHelper::getFilesURL($paymentVoucherPaths, 'payment_voucher_paths');
     }
 }

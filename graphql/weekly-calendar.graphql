@@ -30,8 +30,6 @@ input OrderDatesFieldsUpdatableStatus {
   delivery_date: OrderDatesFieldsUpdatableField!
 }
 
-input OrderDatesF
-
 enum QueryFromDateColumns {
   PRINT_DATE @enum(value: "print_date")
   SEAM_DATE @enum(value: "seam_date")

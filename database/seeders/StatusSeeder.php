@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\AppConfig;
+
 class StatusSeeder extends BaseSeeder
 {
     /**
@@ -11,8 +13,53 @@ class StatusSeeder extends BaseSeeder
      */
     public function run()
     {
-        // Os status são inseridos no migrations "create_status_table",
-        // e alterados conforme a necessidade em produção.
-        // Inicialmente não era previsto a alteração desses dados.
+        AppConfig::set('app', 'status_available', [8, 10]);
+        AppConfig::set('status', 'conclude_status_map', [
+            [
+                "field" => "print_date",
+                "status" => [
+                    "5",
+                    "7",
+                    "9",
+                    "10",
+                ],
+            ],
+            [
+                "field" => "seam_date",
+                "status" => [
+                    "7",
+                    "10",
+                    "9",
+                ],
+            ],
+            [
+                "field" => "delivery_date",
+                "status" => [
+                    "10",
+                ],
+            ],
+        ]);
+
+        AppConfig::set('status', 'update_status_map', [
+            [
+                "field" => "print_date",
+                "status_is" => [
+                    "4",
+                ],
+                "update_to" => "5",
+            ],
+            [
+                "field" => "seam_date",
+                "status_is" => [
+                    "5",
+                ],
+                "update_to" => "10",
+            ],
+            [
+                "field" => "delivery_date",
+                "status_is" => [],
+                "update_to" => null,
+            ],
+        ]);
     }
 }

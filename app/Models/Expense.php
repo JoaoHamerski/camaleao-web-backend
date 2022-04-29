@@ -25,7 +25,9 @@ class Expense extends Model
         'expense_type_id',
         'expense_via_id',
         'receipt_path',
-        'value'
+        'value',
+        'is_confirmed',
+        'confirmed_at'
     ];
 
     protected $appends = ['receipt_path'];
@@ -100,5 +102,15 @@ class Expense extends Model
         }
 
         return $path;
+    }
+
+    public function confirm()
+    {
+        activity()->withoutLogs(function () {
+            $this->update([
+                'is_confirmed' => true,
+                'confirmed_at' => now()
+            ]);
+        });
     }
 }
