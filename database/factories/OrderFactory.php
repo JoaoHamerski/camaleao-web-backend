@@ -148,11 +148,11 @@ class OrderFactory extends Factory
             ->faker
             ->dateTimeBetween('-1 month', 'now');
 
-        $productionDate = null;
+        $printDate = null;
         $deliveryDate = null;
 
-        if ($hasProductionDate = $this->faker->boolean(70)) {
-            $productionDate = (new Carbon($date));
+        if ($hasPrintDate = $this->faker->boolean(70)) {
+            $printDate = (new Carbon($date));
 
             if ($hasDeliveryDate = $this->faker->boolean(85)) {
                 $deliveryDate = (new Carbon($date))
@@ -161,7 +161,7 @@ class OrderFactory extends Factory
         }
 
         $order->update([
-            'production_date' => $productionDate,
+            'print_date' => $printDate,
             'delivery_date' => $deliveryDate
         ]);
     }

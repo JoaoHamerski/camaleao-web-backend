@@ -15,12 +15,12 @@ class WhereCashFlowHandler extends WhereConditionsHandler
         ?Model $model = null,
         string $boolean = 'and'
     ): void {
-        if ($this->isQueringAnyDate($whereConditions)) {
+        if ($this->isQueryingAnyDate($whereConditions)) {
             $whereConditions = $this->getFormattedData($whereConditions);
             $this->validator($whereConditions)->validate();
         }
 
-        if ($this->isQueringBetweenDates($whereConditions)) {
+        if ($this->isQueryingBetweenDates($whereConditions)) {
             @list($start, $final) = $whereConditions['value'];
 
             $builder->whereBetween('date', [$start, $final]);
@@ -60,7 +60,7 @@ class WhereCashFlowHandler extends WhereConditionsHandler
     {
         $newData = [];
 
-        if (!$this->isQueringBetweenDates($data)) {
+        if (!$this->isQueryingBetweenDates($data)) {
             $newData = ['start_date' => $data['value']];
         } else {
             $newData = [
@@ -89,13 +89,13 @@ class WhereCashFlowHandler extends WhereConditionsHandler
         ];
     }
 
-    public function isQueringAnyDate($data)
+    public function isQueryingAnyDate($data)
     {
         return isset($data['column'])
             && $data['column'] === 'date';
     }
 
-    public function isQueringBetweenDates($data)
+    public function isQueryingBetweenDates($data)
     {
         return isset($data['column'])
             && $data['column'] === 'date'

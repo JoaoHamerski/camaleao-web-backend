@@ -71,7 +71,7 @@ extend type Mutation {
     @can(ability: "update" query: true injectArgs: true)
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  paymentConfirm (
+  paymentAssignConfirmation (
     id: ID! @eq
     confirmation: Boolean!
   ): Payment

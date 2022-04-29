@@ -42,4 +42,7 @@ extend type Mutation {
 
   expenseUpdate(id: ID! input: ExpenseInput @spread): Expense
     @canAccess(roles: ["gerencia", "atendimento"])
+
+  expenseAssignConfirmation (id: ID! confirmation: Boolean): Expense
+    @canAccess(roles: ["gerencia"])
 }

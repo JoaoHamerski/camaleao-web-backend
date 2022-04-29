@@ -20,8 +20,15 @@ class ExpenseCreate
         $this->validator($data)->validate();
 
         $data = $this->handleFilesUpload($data);
+
         $data['employee_name'] = Auth::user()->name;
 
-        return Auth::user()->expenses()->create($data);
+        $expense = Auth::user()->expenses()->create($data);
+
+        if (Auth::user()->hasRole('gerencia')) {
+            $expense->confirm();
+        }
+
+        return $expense;
     }
 }

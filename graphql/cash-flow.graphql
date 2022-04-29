@@ -8,22 +8,22 @@ type CashFlowEntry @guard {
   created_at: DateTime
   employee_name: String
   receipt_path: String @field(
-    resolver: "App\\GraphQL\\Resolvers\\CashFlowFieldResolver@receiptPath"
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@receiptPath"
   )
   order: Order @field(
-    resolver: "App\\GraphQL\\Resolvers\\CashFlowFieldResolver@order"
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@order"
   )
   user: User @field(
-    resolver: "App\\GraphQL\\Resolvers\\CashFlowFieldResolver@user"
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@user"
   )
   via: Via @field(
-    resolver: "App\\GraphQL\\Resolvers\\CashFlowFieldResolver@via"
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@via"
   )
   type: ExpenseType @field(
-    resolver: "App\\GraphQL\\Resolvers\\CashFlowFieldResolver@type"
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@type"
   )
   is_expense: Boolean @field(
-    resolver: "App\\GraphQL\\Resolvers\\CashFlowFieldResolver@isExpense"
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@isExpense"
   )
 }
 
@@ -61,8 +61,7 @@ extend type Query {
     where: _ @whereConditions(
       columnsEnum: "QueryCashFlowEntriesWhereConditionsColumn"
       handler: "App\\GraphQL\\Handlers\\WhereCashFlowHandler"
-    ) @canAccess(roles: ["gerencia"])
-
+    )
     orderBy: _ @orderBy(columnsEnum: "QueryCashFlowEntriesOrderByColumn")
   ): [CashFlowEntry]
     @paginate(builder: "App\\GraphQL\\Builders\\CashFlowEntriesBuilder")

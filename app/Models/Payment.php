@@ -27,7 +27,8 @@ class Payment extends Model
         'payment_via_id',
         'value',
         'is_confirmed',
-        'confirmed_at'
+        'confirmed_at',
+        'created_at'
     ];
 
     public function getCreatedLog(): string
