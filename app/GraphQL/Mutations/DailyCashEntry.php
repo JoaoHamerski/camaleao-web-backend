@@ -107,7 +107,8 @@ class DailyCashEntry
     {
         $rules = [
             'via_id' => ['required', 'exists:vias,id'],
-            'value' => ['required', 'numeric']
+            'value' => ['required', 'numeric'],
+            'date' => ['required', 'date']
         ];
 
         if (!$order && !empty($data['order']['price'])) {
@@ -156,6 +157,7 @@ class DailyCashEntry
     private function errorMessages($isNewOrder)
     {
         return [
+            'date.required' => 'Por favor, informe uma data.',
             'client.name.required' => 'Por favor, informe o nome do cliente.',
             'client.id.required_without' => 'Por favor, selecione um cliente.',
             'order.code.required' => 'Por favor, informe o código do pedido.',
