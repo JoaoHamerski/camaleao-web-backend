@@ -40,7 +40,7 @@ class DailyCashEntry
         return $order->payments()->create([
             'value' => $data['value'],
             'payment_via_id' => $data['via_id'],
-            'date' => now(),
+            'date' => $data['date'],
             'is_confirmed' => Auth::user()->hasRole('gerencia') ?: null
         ]);
     }
@@ -68,6 +68,7 @@ class DailyCashEntry
                 'value'
             ])
             ->name('client.name')
+            ->date('date')
             ->get();
     }
 
