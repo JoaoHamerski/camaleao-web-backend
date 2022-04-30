@@ -41,6 +41,7 @@ input DailyCashInput {
   order: DailyCashOrderInput!
   value: String!
   via_id: ID!
+  date: String!
 }
 
 enum QueryPaymentsOrderByColumn {
