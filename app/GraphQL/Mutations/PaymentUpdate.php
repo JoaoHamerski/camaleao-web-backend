@@ -28,7 +28,7 @@ class PaymentUpdate
 
         $payment->update(Arr::only(
             $data,
-            ['note', 'payment_via_id']
+            ['note', 'payment_via_id', 'date']
         ));
 
         return $payment;

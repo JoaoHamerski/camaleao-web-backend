@@ -12,6 +12,8 @@ class DailyCashBalance
 {
     use PaymentsExpensesQueryTrait;
 
+    protected static $DATE_FIELD = 'date';
+
     /**
      * @param  null  $_
      * @param  array<string, mixed>  $args
@@ -43,10 +45,10 @@ class DailyCashBalance
     public function getBalanceBetweenDates(Builder $payments, Builder $expenses, $startDate, $endDate)
     {
         $paymentsBetweenDates = $payments
-            ->whereBetween('created_at', [$startDate, $endDate]);
+            ->whereBetween(self::$DATE_FIELD, [$startDate, $endDate]);
 
         $expensesBetweenDates = $expenses
-            ->whereBetween('created_at', [$startDate, $endDate]);
+            ->whereBetween(self::$DATE_FIELD, [$startDate, $endDate]);
 
         return $this->getBalance($paymentsBetweenDates, $expensesBetweenDates);
     }
@@ -55,11 +57,11 @@ class DailyCashBalance
     {
         $paymentsOfDay = $payments
             ->clone()
-            ->whereDate('created_at', Carbon::now()->toDateString());
+            ->whereDate(self::$DATE_FIELD, Carbon::now()->toDateString());
 
         $expensesOfDay = $expenses
             ->clone()
-            ->whereDate('created_at', Carbon::now()->toDateString());
+            ->whereDate(self::$DATE_FIELD, Carbon::now()->toDateString());
 
         return $this->getBalance($paymentsOfDay, $expensesOfDay);
     }
