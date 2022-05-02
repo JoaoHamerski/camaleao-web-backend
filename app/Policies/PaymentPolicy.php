@@ -53,9 +53,9 @@ class PaymentPolicy
      * @param   array     $injected
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(?User $user, Payment $payment, array $injected)
+    public function update(User $user, Payment $payment, array $injected)
     {
-        if ($payment->is_confirmed !== null) {
+        if ($payment->is_confirmed !== null && !$user->hasRole('gerencia')) {
             return false;
         }
 

@@ -53,11 +53,16 @@ class ExpensePolicy
      */
     public function update(User $user, Expense $expense)
     {
-        if ($expense->is_confirmed !== null) {
+        if ($expense->is_confirmed !== null && !$user->hasRole('gerencia')) {
             return false;
         }
 
         return $user->hasRole('gerencia') || $user->id == $expense->user->id;
+    }
+
+    public function confirm(User $user)
+    {
+        return $user->hasRole('gerencia');
     }
 
     /**

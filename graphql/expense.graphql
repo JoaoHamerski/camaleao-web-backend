@@ -8,6 +8,8 @@ type Expense @guard {
   user: User
   type: ExpenseType
   via: Via
+  is_confirmed: Boolean
+  confirmed_at: Date
 }
 
 input ExpenseInput {
@@ -41,8 +43,10 @@ extend type Mutation {
     @canAccess(roles: ["gerencia", "atendimento"])
 
   expenseUpdate(id: ID! input: ExpenseInput @spread): Expense
+    @can(ability: "update" query: true)
     @canAccess(roles: ["gerencia", "atendimento"])
 
   expenseAssignConfirmation (id: ID! confirmation: Boolean): Expense
+    @can(ability: "confirm")
     @canAccess(roles: ["gerencia"])
 }
