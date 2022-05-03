@@ -70,8 +70,13 @@ class CashFlowStatistics
 
     public function evaluateBalance($data)
     {
-        $totalExpensesValue = $this->expensesQuery($data)->sum('value');
-        $totalPaymentsValue = $this->paymentsQuery($data)->sum('value');
+        $totalExpensesValue = $this->expensesQuery($data)
+            ->where('is_confirmed', true)
+            ->sum('value');
+
+        $totalPaymentsValue = $this->paymentsQuery($data)
+            ->where('is_confirmed', true)
+            ->sum('value');
 
         return bcsub($totalPaymentsValue, $totalExpensesValue, 2);
     }
