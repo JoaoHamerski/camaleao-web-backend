@@ -1,0 +1,37 @@
+type DailyCashReminder @guard {
+  id: ID!
+  description: String
+  date: Date
+  value: Float
+  type: String
+  user: User
+  created_at: DateTime
+}
+
+enum DailyCashReminderTypes {
+  EXPENSE @enum(value: "expense")
+  PAYMENT @enum(value: "payment")
+}
+
+input DailyCashReminderInput {
+  description: String
+  date: String
+  value: String
+  type: DailyCashReminderTypes
+}
+
+type DailyCashReminderDates {
+  date: Date!
+  total: Int!
+}
+
+extend type Query {
+  dailyCashReminders (date: String @where(clause: "whereDate")): [DailyCashReminder] @all
+  dailyCashReminderDates: [DailyCashReminderDates]
+}
+
+extend type Mutation {
+  dailyCashReminderCreate (input: DailyCashReminderInput! @spread): DailyCashReminder!
+  dailyCashReminderUpdate (id: ID! input: DailyCashReminderInput! @spread): DailyCashReminder!
+  dailyCashReminderDelete (id: ID!): DailyCashReminder!
+}

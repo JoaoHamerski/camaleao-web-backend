@@ -23,3 +23,4 @@
 #import weekly-calendar.graphql
 #import activity.graphql
 #import daily-cash.graphql
+#import daily-cash-reminder.graphql

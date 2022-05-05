@@ -150,6 +150,11 @@ class User extends Authenticatable
             ]);
     }
 
+    public function dailyCashReminders()
+    {
+        return $this->hasMany(DailyCashReminder::class);
+    }
+
     public function secrets()
     {
         return $this->hasMany(Secret::class);
