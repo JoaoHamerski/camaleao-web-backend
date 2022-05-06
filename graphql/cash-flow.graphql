@@ -5,6 +5,7 @@ type CashFlowEntry @guard {
   description: String
   note: String
   confirmed_at: Date
+  is_confirmed: Boolean
   created_at: DateTime
   employee_name: String
   receipt_path: String @field(
@@ -27,16 +28,6 @@ type CashFlowEntry @guard {
   )
 }
 
-type CashFlowStatistics @guard {
-  created_orders: Int
-  created_shirts: Int
-  closed_orders: Int
-  closed_shirts: Int
-  no_payments_orders: Int
-  no_payments_shirts: Int
-  balance: Float
-}
-
 input CashFlowFilterDatesInput {
   start_date: String!
   final_date: String
@@ -53,9 +44,10 @@ enum QueryCashFlowEntriesOrderByColumn {
 }
 
 extend type Query {
-  cashFlowStatistics (
+  cashFlowBalance (
     input: CashFlowFilterDatesInput! @spread
-  ): CashFlowStatistics @canAccess(roles: ["gerencia"])
+  ): Float
+    @canAccess(roles: ["gerencia"])
 
   cashFlowEntries (
     where: _ @whereConditions(

@@ -2,14 +2,13 @@
 
 namespace App\GraphQL\Queries;
 
-use App\Models\Order;
 use App\Models\Expense;
 use App\Util\Formatter;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Payment;
 use App\Util\Helper;
 
-class CashFlowStatistics
+class CashFlowBalance
 {
     /**
      * @param  null  $_
@@ -20,20 +19,9 @@ class CashFlowStatistics
         $data = $this->getFormattedData($args);
         $this->validator($data)->validate();
 
-        $ordersCreatedQuery = $this->getOrdersCreatedQuery($data);
-        $ordersClosedQuery = $this->getOrdersClosedQuery($ordersCreatedQuery->clone());
-        $ordersWithNoPaymentsQuery = $this->getOrdersWithNoPaymentsQuery($ordersCreatedQuery->clone());
         $balance = $this->evaluateBalance($data);
 
-        return [
-            'created_orders' => $ordersCreatedQuery->count(),
-            'created_shirts' => $ordersCreatedQuery->sum('quantity'),
-            'closed_orders' => $ordersClosedQuery->count(),
-            'closed_shirts' => $ordersClosedQuery->sum('quantity'),
-            'no_payments_orders' => $ordersWithNoPaymentsQuery->count(),
-            'no_payments_shirts' => $ordersWithNoPaymentsQuery->sum('quantity'),
-            'balance' => $balance
-        ];
+        return $balance;
     }
 
     public function expensesQuery($data)
@@ -79,31 +67,6 @@ class CashFlowStatistics
             ->sum('value');
 
         return bcsub($totalPaymentsValue, $totalExpensesValue, 2);
-    }
-
-    public function getOrdersCreatedQuery($data)
-    {
-        if (Helper::filledAll($data, ['start_date', 'final_date'])) {
-            return Order::whereBetween('created_at', [
-                [$data['start_date'], $data['final_date']]
-            ]);
-        }
-
-        if (Helper::filled($data, 'start_date')) {
-            return Order::whereDate('created_at', $data['start_date']);
-        }
-
-        return Order::query();
-    }
-
-    public function getOrdersClosedQuery($ordersQuery)
-    {
-        return $ordersQuery->whereNotNull('closed_at');
-    }
-
-    public function getOrdersWithNoPaymentsQuery($ordersQuery)
-    {
-        return $ordersQuery->has('payments', '=', 0);
     }
 
     public function validator($data)
