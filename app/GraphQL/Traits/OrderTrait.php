@@ -156,9 +156,9 @@ trait OrderTrait
                 'numeric',
                 'required_with:discount'
             ],
-            'seam_date' => ['nullable', 'date_format:Y-m-d'],
-            'print_date' => ['nullable', 'date_format:Y-m-d'],
-            'delivery_date' => ['nullable', 'date_format:Y-m-d'],
+            'seam_date' => ['required', 'date_format:Y-m-d'],
+            'print_date' => ['required', 'date_format:Y-m-d'],
+            'delivery_date' => ['required', 'date_format:Y-m-d'],
             'down_payment' => [
                 'sometimes',
                 $this->getDownPaymentRule($data['price'] ?? null)
@@ -249,6 +249,9 @@ trait OrderTrait
             'payment_voucher_paths.*.max' => __('general.validation.file_min', ['max' => '1MB']),
             'price.min_currency' => __('general.validation.orders.price_min_currency'),
             'price.required' => __('general.validation.orders.price_required'),
+            'print_date.required' => 'Por favor, informe a data de estampa',
+            'seam_date.required' => 'Por favor, informe a data de costura',
+            'delivery_date.required' => 'Por favor, informe a data de entrega',
         ];
     }
 
