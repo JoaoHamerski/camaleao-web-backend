@@ -24,7 +24,7 @@ class PaymentUpdate
         Validator::make($data, [
             'note' => ['nullable', 'max:191'],
             'payment_via_id' => ['required', 'exists:vias,id']
-        ])->validate();
+        ], $this->errorMessages())->validate();
 
         $payment->update(Arr::only(
             $data,

@@ -50,9 +50,9 @@ class PaymentCreate
                 'payment_via_id' => ['required', 'exists:vias,id'],
                 'value' => ['required', 'min_currency:0.01', 'max_currency:' . $order->total_owing],
                 'date' => ['required', 'date_format:Y-m-d'],
-                'note' => ['max:255']
+                'note' => ['nullable', 'max:255']
             ],
-            $this->errorMessages(false)
+            $this->errorMessages()
         );
     }
 }

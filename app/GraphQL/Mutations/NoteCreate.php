@@ -27,7 +27,7 @@ class NoteCreate
     public function errorMessages()
     {
         return [
-            'text.required' => __('general.validation.text_required')
+            'text.required' => __('validation.rules.required')
         ];
     }
 }

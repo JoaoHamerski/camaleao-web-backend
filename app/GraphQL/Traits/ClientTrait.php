@@ -24,6 +24,13 @@ trait ClientTrait
             'branch_id' => ['nullable', 'exists:branches,id'],
             'city_id' => ['nullable', 'exists:cities,id'],
             'shipping_company_id' => ['nullable', 'exists:shipping_companies,id']
-        ]);
+        ], $this->errorMessages());
+    }
+
+    private function errorMessages()
+    {
+        return [
+            'name.required' => __('validation.rules.required')
+        ];
     }
 }

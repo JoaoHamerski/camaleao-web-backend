@@ -120,6 +120,32 @@ return [
     'url'                  => 'O campo :attribute tem um formato inválido.',
     'uuid' => 'O campo :attribute deve ser um UUID válido.',
 
+
+    'rules' => [
+        'required_list' => 'Por favor, selecione :pronoun :attribute.',
+        'required' => 'Por favor, informe o campo :attribute.',
+        'max_file' => 'O arquivo deve ser menor que :max.',
+        'lt' => 'O campo :attribute deve ser menor que :subject.',
+        'gt' => 'O campo :attribute deve ser maior que :subject.',
+        'max' => 'O campo :attribute deve ser menor ou igual :subject.',
+        'unique' => ':pronoun :attribute já está em uso, por favor, escolha outro.',
+        'date' => 'Por favor, informe uma data válida.',
+        'date_format' => 'Por favor, informe uma data válida.',
+        'max_currency' => 'O campo :attribute não pode ser maior que :subject (:max)'
+    ],
+
+    'custom' => [
+        'orders' => [
+            'payment_via_id|required_with' => 'Você deve selecionar uma via caso vá registrar uma entrada.',
+            'price|min_currency' => 'O valor do pedido não pode ser menor que o total já pago (:min).',
+            'price|required' => 'Por favor, preencha algum item para o pedido ter um preço final.'
+        ],
+        'payments' => [
+            'payment_via_id|required' => 'Por favor, selecione uma via.',
+            'client|id|required' => 'Por favor, selecione um cliente.',
+        ]
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
@@ -130,103 +156,103 @@ return [
     | specify a specific custom language line for a given attribute rule.
     |
     */
-    'custom' => [
-        'art_paths.*' => [
-            'image' => 'Os arquivos devem conter apenas imagens.',
-        ],
-        'client_id' => [
-            'required' => 'Por favor, informe o cliente.'
-        ],
-        'cidade' => [
-            'in' => 'A cidade digitada não está presente em nenhum pedido.',
-        ],
-        'code' => [
-            'required' => 'Por favor, informe um código.',
-            'unique' => 'Este código já está sendo utilizado por outro pedido.',
-        ],
-        'data_de_producao' => [
-            'required' => 'Por favor, informe uma data de produção.',
-            'date' => 'Por favor, informe uma data de produção válida.',
-        ],
-        'data_de_fechamento' => [
-            'date_format' => __('general.validation.date_valid'),
-        ],
-        'date' => [
-            'required' => __('general.validation.date_required'),
-            'date_format' => __('general.validation.date_valid'),
-        ],
-        'date.*' => [
-            'required' => __('general.validation.date_required'),
-            'date' => __('general.validation.date_valid'),
-        ],
-        'description.*' => [
-            'required' => 'Por favor, informe uma descrição.',
-        ],
-        'dia*' => [
-            'required' => __('general.validation.date_required'),
-            'date' => __('general.validation.date_valid'),
-        ],
-        'dia_final' => [
-            'after' => 'A segunda data deve ser posterior a primeira data..',
-        ],
-        'down_payment' => [
-            'max_currency' => 'O valor não pode ser maior que o valor total (:max).',
-        ],
-        'delivery_date' => [
-            'date_format' => __('general.validation.date_valid'),
-        ],
-        'email' => [
-            'required' => 'Por favor, informe um e-mail.',
-            'unique' => 'Este e-mail já está sendo utilizado por outro usuário.',
-        ],
-        'expense_type.*' => [
-            'required' => 'Por favor, informe o tipo de despesa.',
-        ],
-        'expense_via.*' => [
-            'required' => 'Por favor, informe a via.',
-        ],
-        'name' => [
-            'required' => 'Por favor, informe um nome.',
-        ],
-        'order_note' => [
-            'required' => 'Por favor, informe uma anotação.',
-        ],
-        'password' => [
-            'required' => 'Por favor, informe uma senha.',
-            'confirmed' => 'As senhas digitadas não conferem.',
-            'min' => 'A senha deve conter no mínimo :min caracteres.',
-        ],
-        'payment_via_id' => [
-            'required' => 'Por favor, informe a via.',
-            'exists' => 'Por favor, selecione uma via válida.',
-        ],
-        'price' => [
-            'required' => 'Por favor, informe um preço.'
-        ],
-        'production_date' => [
-            'date_format' => 'Por favor, informe uma data válida.',
-        ],
-        'quantity' => [
-            'required' => 'Por favor, informe uma quantidade.',
-        ],
-        'role_id' => [
-            'required' => 'Por favor, selecione um nível de autenticação.',
-            'exists' => 'O nível de autenticação selecionado não existe.',
-        ],
-        'size_paths.*' => [
-            'image' => 'Os arquivos devem conter apenas imagens.',
-        ],
-        'type.*' => [
-            'required' => 'Por favor, informe um tipo.',
-            'exists' => 'O tipo informado não existe.',
-        ],
-        'value' => [
-            'required' => __('general.validation.value_required'),
-        ],
-        'value.*' => [
-            'required' => __('general.validation.value_required'),
-        ],
-    ],
+    // 'custom' => [
+    //     'art_paths.*' => [
+    //         'image' => 'Os arquivos devem conter apenas imagens.',
+    //     ],
+    //     'client_id' => [
+    //         'required' => 'Por favor, informe o cliente.'
+    //     ],
+    //     'cidade' => [
+    //         'in' => 'A cidade digitada não está presente em nenhum pedido.',
+    //     ],
+    //     'code' => [
+    //         'required' => 'Por favor, informe um código.',
+    //         'unique' => 'Este código já está sendo utilizado por outro pedido.',
+    //     ],
+    //     'data_de_producao' => [
+    //         'required' => 'Por favor, informe uma data de produção.',
+    //         'date' => 'Por favor, informe uma data de produção válida.',
+    //     ],
+    //     'data_de_fechamento' => [
+    //         'date_format' => __('general.validation.date_valid'),
+    //     ],
+    //     'date' => [
+    //         'required' => __('general.validation.date_required'),
+    //         'date_format' => __('general.validation.date_valid'),
+    //     ],
+    //     'date.*' => [
+    //         'required' => __('general.validation.date_required'),
+    //         'date' => __('general.validation.date_valid'),
+    //     ],
+    //     'description.*' => [
+    //         'required' => 'Por favor, informe uma descrição.',
+    //     ],
+    //     'dia*' => [
+    //         'required' => __('general.validation.date_required'),
+    //         'date' => __('general.validation.date_valid'),
+    //     ],
+    //     'dia_final' => [
+    //         'after' => 'A segunda data deve ser posterior a primeira data..',
+    //     ],
+    //     'down_payment' => [
+    //         'max_currency' => 'O valor não pode ser maior que o valor total (:max).',
+    //     ],
+    //     'delivery_date' => [
+    //         'date_format' => __('general.validation.date_valid'),
+    //     ],
+    //     'email' => [
+    //         'required' => 'Por favor, informe um e-mail.',
+    //         'unique' => 'Este e-mail já está sendo utilizado por outro usuário.',
+    //     ],
+    //     'expense_type.*' => [
+    //         'required' => 'Por favor, informe o tipo de despesa.',
+    //     ],
+    //     'expense_via.*' => [
+    //         'required' => 'Por favor, informe a via.',
+    //     ],
+    //     'name' => [
+    //         'required' => 'Por favor, informe um nome.',
+    //     ],
+    //     'order_note' => [
+    //         'required' => 'Por favor, informe uma anotação.',
+    //     ],
+    //     'password' => [
+    //         'required' => 'Por favor, informe uma senha.',
+    //         'confirmed' => 'As senhas digitadas não conferem.',
+    //         'min' => 'A senha deve conter no mínimo :min caracteres.',
+    //     ],
+    //     'payment_via_id' => [
+    //         'required' => 'Por favor, informe a via.',
+    //         'exists' => 'Por favor, selecione uma via válida.',
+    //     ],
+    //     'price' => [
+    //         'required' => 'Por favor, informe um preço.'
+    //     ],
+    //     'production_date' => [
+    //         'date_format' => 'Por favor, informe uma data válida.',
+    //     ],
+    //     'quantity' => [
+    //         'required' => 'Por favor, informe uma quantidade.',
+    //     ],
+    //     'role_id' => [
+    //         'required' => 'Por favor, selecione um nível de autenticação.',
+    //         'exists' => 'O nível de autenticação selecionado não existe.',
+    //     ],
+    //     'size_paths.*' => [
+    //         'image' => 'Os arquivos devem conter apenas imagens.',
+    //     ],
+    //     'type.*' => [
+    //         'required' => 'Por favor, informe um tipo.',
+    //         'exists' => 'O tipo informado não existe.',
+    //     ],
+    //     'value' => [
+    //         'required' => __('general.validation.value_required'),
+    //     ],
+    //     'value.*' => [
+    //         'required' => __('general.validation.value_required'),
+    //     ],
+    // ],
 
     /*
     |--------------------------------------------------------------------------
@@ -275,7 +301,14 @@ return [
         'description' => 'descrição',
         'password_confirmation' => 'confirmação da senha',
         'discount' => 'desconto',
-        'start_date' => 'data inicial'
+        'start_date' => 'data inicial',
+        'down_payment' => 'entrada',
+        'print_date' => 'data de estampa',
+        'seam_date' => 'data de costura',
+        'delivery_date' => 'data de entrega',
+        'code' => 'código',
+        'value' => 'valor',
+        'payment_via_id' => 'via'
     ],
 
 ];

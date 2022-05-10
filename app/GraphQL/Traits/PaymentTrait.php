@@ -14,20 +14,14 @@ trait PaymentTrait
             ->get();
     }
 
-    private function errorMessages($isNewOrder = true)
+    private function errorMessages()
     {
         return [
-            'client.required' => 'Por favor, informe o nome do cliente.',
-            'client.id.required' => 'Por favor, selecione um cliente.',
-            'order.required' => 'Por favor, informe o código do pedido.',
-            'order.unique' => 'Este código já está sendo utilizado por outro pedido.',
-            'order.id.required' => 'Por favor, selecione um pedido.',
-            'order.id.required_with' => 'Por favor, selecione um pedido.',
-            'order_value.required' => 'Por favor, informe o valor.',
-            'via_id.required' => 'Por favor, selecione uma via.',
-            'value.max_currency' => $isNewOrder
-                ? 'O pagamento não pode ser maior que o valor do pedido (:max).'
-                : 'O pagamento não pode ser maior que o total restante (:max).',
+            'value.required' => __('validation.rules.required'),
+            'payment_via_id.required' => __('validation.rules.required_list', ['pronoun' => 'uma']),
+            'date.required' => __('validation.rules.required', ['attribute' => 'data de pagamento']),
+            'date.date_format' => __('validation.rules.date_format'),
+            'value.max_currency' => __('validation.rules.max_currency', ['subject' => 'o total restante do pedido'])
         ];
     }
 }

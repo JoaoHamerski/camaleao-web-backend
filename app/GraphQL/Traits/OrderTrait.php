@@ -99,7 +99,7 @@ trait OrderTrait
     private function getDownPaymentRule($price)
     {
         return $price
-            ? "max_currency:$price"
+            ? "max:$price"
             : null;
     }
 
@@ -234,24 +234,29 @@ trait OrderTrait
         $price = isset($data['price']) ? $data['price'] : null;
 
         return [
-            'art_paths.*.max.file' => __('general.validation.file_min', ['max' => '1MB']),
+            'code.required' => __('validation.rules.required'),
+            'code.unique' => __('validation.rules.unique', ['pronoun' => 'Este']),
             'discount.lt' => __(
-                'general.validation.orders.discount_lt',
-                ['total_price' => Mask::currencyBRL($originalPrice)]
-            ),
-            'discount.gt' => __('general.validation.orders.discount_gt'),
-            'down_payment.max_currency' => __(
-                'general.validation.orders.down_payment_max_currency',
-                ['final_value' => Mask::currencyBRL($price)]
-            ),
-            'size_paths.*.max' => __('general.validation.file_min', ['max' => '1MB']),
-            'payment_via_id.required_with' => __('general.validation.orders.payment_via_id_required_with'),
-            'payment_voucher_paths.*.max' => __('general.validation.file_min', ['max' => '1MB']),
-            'price.min_currency' => __('general.validation.orders.price_min_currency'),
-            'price.required' => __('general.validation.orders.price_required'),
-            'print_date.required' => 'Por favor, informe a data de estampa',
-            'seam_date.required' => 'Por favor, informe a data de costura',
-            'delivery_date.required' => 'Por favor, informe a data de entrega',
+                'validation.rules.lt',
+                ['subject' => 'o preço final']
+            ) . ' (' . Mask::currencyBRL($originalPrice) . ')',
+            'discount.gt' => __('validation.rules.gt', ['subject' => 'R$ 0,00']),
+            'down_payment.max' => __(
+                'validation.rules.max',
+                ['subject' => 'ao valor total']
+            ) . ' (' . Mask::currencyBRL($price) . ')',
+            'art_paths.*.max' => __('validation.rules.max_file', ['max' => '1MB']),
+            'size_paths.*.max' => __('validation.rules.max_file', ['max' => '1MB']),
+            'payment_voucher_paths.*.max' => __('validation.rules.max_file', ['max' => '1MB']),
+            'payment_via_id.required_with' => __('validation.custom.orders.payment_via_id|required_with'),
+            'price.min_currency' => __('validation.custom.orders.price|min_currency'),
+            'price.required' => __('validation.custom.orders.price|required'),
+            'print_date.required' => __('validation.rules.required'),
+            'print_date.date_format' =>  __('validation.rules.date'),
+            'seam_date.required' => __('validation.rules.required'),
+            'seam_date.date_format' =>  __('validation.rules.date'),
+            'delivery_date.required' => __('validation.rules.required'),
+            'delivery_date.date_format' =>  __('validation.rules.date'),
         ];
     }
 
