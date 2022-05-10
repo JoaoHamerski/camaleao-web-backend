@@ -22,12 +22,20 @@ class OrdersReportPrintDate
         Validator::make($data, [
             'state' => ['required', Rule::in(['all', 'open'])],
             'date' => ['required', 'date']
-        ])->validate();
+        ], $this->errorMessages())->validate();
 
         return URL::temporarySignedRoute(
             'pdf.orders-report-print-date',
             now()->addMinutes(10),
             array_filter($data, fn ($item) => $item !== '')
         );
+    }
+
+    public function errorMessages()
+    {
+        return [
+            'date.required' => __('validation.rules.required', ['attribute' => 'data de estampa']),
+            'date.date' => __('validation.rules.date')
+        ];
     }
 }

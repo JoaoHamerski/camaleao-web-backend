@@ -33,7 +33,7 @@ class CityMassUpdateState
     public function errorMessages()
     {
         return [
-            'state_id.required' => __('general.validation.state_id_required')
+            'state_id.required' => __('validation.rules.required_list', ['pronoun' => 'um'])
         ];
     }
 }

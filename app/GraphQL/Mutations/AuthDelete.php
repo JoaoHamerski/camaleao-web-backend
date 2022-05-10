@@ -26,7 +26,8 @@ class AuthDelete
     public function errorMessages()
     {
         return [
-            'password.current_password' => __('general.validation.current_password')
+            'password.required' => __('validation.rules.required'),
+            'password.current_password' => __('validation.rules.current_password')
         ];
     }
 }

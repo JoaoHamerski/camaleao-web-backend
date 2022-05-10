@@ -20,9 +20,15 @@ trait BranchTrait
     public function errorMessages()
     {
         return [
-            'city_id.required' => __('general.validation.shipping_companies.city_id_required'),
-            'shipping_company_id.required' => __('general.validation.shipping_companies.shipping_company_id_required'),
-            'cities_id.required' => __('general.validation.shipping_companies.cities_id_required')
+            'city_id.required' => __('validation.rules.required_list', [
+                'pronoun' => 'uma'
+            ]),
+            'shipping_company_id.required' => __('validation.rules.required_list', [
+                'pronoun' => 'uma'
+            ]),
+            'cities_id.required' => __('validation.rules.required_list', [
+                'pronoun' => 'alguma'
+            ])
         ];
     }
 }

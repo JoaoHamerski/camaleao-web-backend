@@ -157,19 +157,30 @@ class DailyCashEntry
     private function errorMessages($isNewOrder)
     {
         return [
-            'date.required' => 'Por favor, informe uma data.',
-            'client.name.required' => 'Por favor, informe o nome do cliente.',
-            'client.id.required_without' => 'Por favor, selecione um cliente.',
-            'order.code.required' => 'Por favor, informe o código do pedido.',
-            'order.unique' => 'Este código já está sendo utilizado por outro pedido.',
-            'order.id.required_without' => 'Por favor, selecione um pedido.',
-            'order.id.required_with' => 'Por favor, selecione um pedido.',
-            'order.value.required' => 'Por favor, informe o valor.',
-            'order.price.required' => 'Por favor, informe o valor do pedido',
-            'via_id.required' => 'Por favor, selecione uma via.',
+            'date.required' => __('validation.rules.required'),
+            'client.name.required' => __('validation.rules.required'),
+            'client.id.required_without' => __('validation.rules.required_list', [
+                'pronoun' => 'um',
+                'attribute' => 'cliente'
+            ]),
+            'order.code.required' => __('validation.rules.required'),
+            'order.code.unique' => __('validation.rules.unique', ['pronoun' => 'O']),
+            'order.id.required_without' => __('validation.rules.required_list', [
+                'pronoun' => 'um',
+                'attribute' => 'pedido'
+            ]),
+            'order.price.required' => __('validation.rules.required'),
+            'via_id.required' => __('validation.rules.required_list', ['pronoun' => 'a']),
+            'value.required' => __('validation.rules.required'),
             'value.max_currency' => $isNewOrder
-                ? 'O pagamento não pode ser maior que o valor do pedido (:max).'
-                : 'O pagamento não pode ser maior que o total restante (:max).',
+                ? __('validation.rules.max_currency', [
+                    'attribute' => 'pagamento',
+                    'subject' => 'valor do pedido'
+                ])
+                : __('validation.rules.max_currency', [
+                    'attribute' => 'pagamento',
+                    'subject' => 'total restante'
+                ])
         ];
     }
 }

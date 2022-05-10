@@ -121,6 +121,16 @@ return [
     'uuid' => 'O campo :attribute deve ser um UUID válido.',
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Regras de validação utilizadas no sistema
+    |--------------------------------------------------------------------------
+    |
+    | Essas são as strings de regras de validação chamadas manualmente
+    | para validar os formulários, as regras padrões do Laravel são usadas
+    | apenas como fallback.
+    |
+    */
     'rules' => [
         'required_list' => 'Por favor, selecione :pronoun :attribute.',
         'required' => 'Por favor, informe o campo :attribute.',
@@ -131,8 +141,22 @@ return [
         'unique' => ':pronoun :attribute já está em uso, por favor, escolha outro.',
         'date' => 'Por favor, informe uma data válida.',
         'date_format' => 'Por favor, informe uma data válida.',
-        'max_currency' => 'O campo :attribute não pode ser maior que :subject (:max)'
+        'max_currency' => 'O campo :attribute não pode ser maior que :subject (:max).',
+        'after' => 'A data informada deve ser posterior a :date.',
+        'email' => 'Por favor, informe um email válido.',
+        'password_confirmed' => 'A senha digitada não confere com a confirmação de senha.',
+        'current_password' => 'A senha digitada não confere.'
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Regras customizadas para formulários
+    |--------------------------------------------------------------------------
+    |
+    | Aqui são adicionadas as regras customizadas para quando nenhuma regra de validação
+    | serve para algum determinado campo.
+    |
+    */
 
     'custom' => [
         'orders' => [
@@ -143,116 +167,14 @@ return [
         'payments' => [
             'payment_via_id|required' => 'Por favor, selecione uma via.',
             'client|id|required' => 'Por favor, selecione um cliente.',
+        ],
+        'clothing_types' => [
+            'key|unique' => 'Este tipo de roupa já foi registrado.'
+        ],
+        'cities' => [
+            'city_id|required_if' => 'Por favor, informe uma cidade caso deseje substituir a cidade deletada, ou desmarque as opções "substituir".'
         ]
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Custom Validation Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | Here you may specify custom validation messages for attributes using the
-    | convention "attribute.rule" to name the lines. This makes it quick to
-    | specify a specific custom language line for a given attribute rule.
-    |
-    */
-    // 'custom' => [
-    //     'art_paths.*' => [
-    //         'image' => 'Os arquivos devem conter apenas imagens.',
-    //     ],
-    //     'client_id' => [
-    //         'required' => 'Por favor, informe o cliente.'
-    //     ],
-    //     'cidade' => [
-    //         'in' => 'A cidade digitada não está presente em nenhum pedido.',
-    //     ],
-    //     'code' => [
-    //         'required' => 'Por favor, informe um código.',
-    //         'unique' => 'Este código já está sendo utilizado por outro pedido.',
-    //     ],
-    //     'data_de_producao' => [
-    //         'required' => 'Por favor, informe uma data de produção.',
-    //         'date' => 'Por favor, informe uma data de produção válida.',
-    //     ],
-    //     'data_de_fechamento' => [
-    //         'date_format' => __('general.validation.date_valid'),
-    //     ],
-    //     'date' => [
-    //         'required' => __('general.validation.date_required'),
-    //         'date_format' => __('general.validation.date_valid'),
-    //     ],
-    //     'date.*' => [
-    //         'required' => __('general.validation.date_required'),
-    //         'date' => __('general.validation.date_valid'),
-    //     ],
-    //     'description.*' => [
-    //         'required' => 'Por favor, informe uma descrição.',
-    //     ],
-    //     'dia*' => [
-    //         'required' => __('general.validation.date_required'),
-    //         'date' => __('general.validation.date_valid'),
-    //     ],
-    //     'dia_final' => [
-    //         'after' => 'A segunda data deve ser posterior a primeira data..',
-    //     ],
-    //     'down_payment' => [
-    //         'max_currency' => 'O valor não pode ser maior que o valor total (:max).',
-    //     ],
-    //     'delivery_date' => [
-    //         'date_format' => __('general.validation.date_valid'),
-    //     ],
-    //     'email' => [
-    //         'required' => 'Por favor, informe um e-mail.',
-    //         'unique' => 'Este e-mail já está sendo utilizado por outro usuário.',
-    //     ],
-    //     'expense_type.*' => [
-    //         'required' => 'Por favor, informe o tipo de despesa.',
-    //     ],
-    //     'expense_via.*' => [
-    //         'required' => 'Por favor, informe a via.',
-    //     ],
-    //     'name' => [
-    //         'required' => 'Por favor, informe um nome.',
-    //     ],
-    //     'order_note' => [
-    //         'required' => 'Por favor, informe uma anotação.',
-    //     ],
-    //     'password' => [
-    //         'required' => 'Por favor, informe uma senha.',
-    //         'confirmed' => 'As senhas digitadas não conferem.',
-    //         'min' => 'A senha deve conter no mínimo :min caracteres.',
-    //     ],
-    //     'payment_via_id' => [
-    //         'required' => 'Por favor, informe a via.',
-    //         'exists' => 'Por favor, selecione uma via válida.',
-    //     ],
-    //     'price' => [
-    //         'required' => 'Por favor, informe um preço.'
-    //     ],
-    //     'production_date' => [
-    //         'date_format' => 'Por favor, informe uma data válida.',
-    //     ],
-    //     'quantity' => [
-    //         'required' => 'Por favor, informe uma quantidade.',
-    //     ],
-    //     'role_id' => [
-    //         'required' => 'Por favor, selecione um nível de autenticação.',
-    //         'exists' => 'O nível de autenticação selecionado não existe.',
-    //     ],
-    //     'size_paths.*' => [
-    //         'image' => 'Os arquivos devem conter apenas imagens.',
-    //     ],
-    //     'type.*' => [
-    //         'required' => 'Por favor, informe um tipo.',
-    //         'exists' => 'O tipo informado não existe.',
-    //     ],
-    //     'value' => [
-    //         'required' => __('general.validation.value_required'),
-    //     ],
-    //     'value.*' => [
-    //         'required' => __('general.validation.value_required'),
-    //     ],
-    // ],
 
     /*
     |--------------------------------------------------------------------------
@@ -270,11 +192,22 @@ return [
         'age'       => 'idade',
         'body'      => 'conteúdo',
         'cell'      => 'celular',
+        'cities_id' => 'cidade',
+        'city_id' => 'cidade',
         'city'      => 'cidade',
+        'client.name' => 'nome do cliente',
+        'code' => 'código',
+        'commission' => 'comissão',
         'country'   => 'país',
         'date'      => 'data',
         'day'       => 'dia',
+        'delivery_date' => 'data de entrega',
+        'description' => 'descrição',
+        'discount' => 'desconto',
+        'down_payment' => 'entrada',
         'excerpt'   => 'resumo',
+        'expense_type_id' => 'tipo de despesa',
+        'expense_via_id' => 'via',
         'first_name' => 'primeiro nome',
         'gender'    => 'gênero',
         'hour'      => 'hora',
@@ -286,10 +219,19 @@ return [
         'name'      => 'nome',
         'neighborhood' => 'bairro',
         'number'    => 'número',
+        'order.code' => 'código do pedido',
+        'order.price' => 'valor do pedido',
+        'password_confirmation' => 'confirmação da senha',
         'password'  => 'senha',
+        'payment_via_id' => 'via',
         'phone'     => 'telefone',
+        'print_date' => 'data de estampa',
+        'seam_date' => 'data de costura',
         'second'    => 'segundo',
         'sex'       => 'sexo',
+        'shipping_company_id' => 'transportadora',
+        'start_date' => 'data inicial',
+        'state_id' => 'estado',
         'state'     => 'estado',
         'street'    => 'rua',
         'subject'   => 'assunto',
@@ -297,18 +239,9 @@ return [
         'time'      => 'hora',
         'title'     => 'título',
         'username'  => 'usuário',
-        'year'      => 'ano',
-        'description' => 'descrição',
-        'password_confirmation' => 'confirmação da senha',
-        'discount' => 'desconto',
-        'start_date' => 'data inicial',
-        'down_payment' => 'entrada',
-        'print_date' => 'data de estampa',
-        'seam_date' => 'data de costura',
-        'delivery_date' => 'data de entrega',
-        'code' => 'código',
         'value' => 'valor',
-        'payment_via_id' => 'via'
+        'via_id' => 'via',
+        'year'      => 'ano',
     ],
 
 ];

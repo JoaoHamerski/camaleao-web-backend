@@ -16,8 +16,15 @@ class ShippingCompanyCreate
     {
         Validator::make($args, [
             'name' => ['required', 'max:191']
-        ])->validate();
+        ], $this->errorMessages())->validate();
 
         return ShippingCompany::create($args);
+    }
+
+    public function errorMessages()
+    {
+        return [
+            'name.required' => __('validation.rules.required')
+        ];
     }
 }

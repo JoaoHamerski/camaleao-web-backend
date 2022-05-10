@@ -48,8 +48,9 @@ trait ClothingTypeTrait
     public function errorMessages()
     {
         return [
-            'commission.required' => __('general.validation.commission_required'),
-            'key.unique' => __('general.validation.clothing_types.key_unique')
+            'name.required' => __('validation.rules.required'),
+            'commission.required' => __('validation.rules.required'),
+            'key.unique' => __('validation.custom.clothing_types.key|unique')
         ];
     }
 }

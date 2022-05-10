@@ -23,7 +23,6 @@ class CashFlowEntriesBuilder
         $payments = $this->paymentsQuery();
         $expenses = $this->expensesQuery();
 
-
         return $this->mergePaymentsExpensesQueries($payments, $expenses);
     }
 }

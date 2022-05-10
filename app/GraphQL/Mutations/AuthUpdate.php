@@ -51,6 +51,16 @@ class AuthUpdate
             'email' => ['sometimes', 'required', 'email', 'max:191'],
             'password' => ['nullable', 'min:5', 'confirmed'],
             'password_confirmation' => ['nullable', 'required_with:password']
-        ]);
+        ], $this->errorMessages());
+    }
+
+    public function errorMessages()
+    {
+        return [
+            'name.required' => __('validation.rules.required'),
+            'email.required' => __('validation.rules.required'),
+            'email.email' => __('validation.rules.email'),
+            'password.confirmed' => __('validation.rules.password_confirmed')
+        ];
     }
 }

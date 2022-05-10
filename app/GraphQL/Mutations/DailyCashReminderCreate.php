@@ -19,7 +19,6 @@ class DailyCashReminderCreate
         $data = $this->getFormattedData($args);
         $this->validator($data)->validate();
 
-        // dd($data);
         $reminder = Auth::user()->dailyCashReminders()->create($data);
 
         return $reminder;
@@ -40,6 +39,15 @@ class DailyCashReminderCreate
             'date' => ['required', 'date'],
             'value' => ['required'],
             'type' => ['required', Rule::in(['expense', 'payment'])]
-        ]);
+        ], $this->errorMessages());
+    }
+
+    public function errorMessages()
+    {
+        return [
+            'value.required' => __('validation.rules.required'),
+            'date.required' => __('validation.rules.required'),
+            'date.date' => __('validation.rules.date')
+        ];
     }
 }

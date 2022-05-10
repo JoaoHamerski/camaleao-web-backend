@@ -91,11 +91,14 @@ trait ExpenseTrait
     public function errorMessages($MAX_RECEIPT_SIZE)
     {
         return [
-            'expense_type_id.required' => __('general.validation.type_required'),
-            'expense_via_id.required' => __('general.validation.via_required'),
-            'description.required' => __('general.validation.expenses.description'),
-            'receipt_path.max' => __('general.validation.expenses.receipt_path_file_max', [
-                'size' => Helper::formatKBytes($MAX_RECEIPT_SIZE)
+            'expense_type_id.required' => __('validation.rules.required_list', ['pronoun' => 'um']),
+            'expense_via_id.required' => __('validation.rules.required_list', ['pronoun' => 'uma']),
+            'description.required' => __('validation.rules.required'),
+            'value.required' => __('validation.rules.required'),
+            'date.required' => __('validation.rules.required'),
+            'date.date_format' => __('validation.rules.date_format'),
+            'receipt_path.max' => __('validation.rules.max_file', [
+                'max' => Helper::formatKBytes($MAX_RECEIPT_SIZE)
             ])
         ];
     }

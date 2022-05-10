@@ -27,8 +27,8 @@ class UserDelete
     public function errorMessages()
     {
         return [
-            'auth_password.required' => __('general.validation.password_required'),
-            'auth_password.current_password' => __('general.validation.current_password')
+            'auth_password.required' => __('validation.rules.required', ['attribute' => 'sua senha']),
+            'auth_password.current_password' => __('validation.rules.current_password')
         ];
     }
 }

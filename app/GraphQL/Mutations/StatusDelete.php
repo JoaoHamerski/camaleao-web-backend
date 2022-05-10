@@ -36,9 +36,12 @@ class StatusDelete
     private function errorMessages()
     {
         return [
-            'password.required' => 'Por favor, informe sua senha.',
-            'password.current_password' => 'A sua senha não confere.',
-            'replace_status_id.required' => 'Por favor, selecione um status para substituir.'
+            'password.required' => __('validation.rules.required'),
+            'password.current_password' => __('validation.rules.current_password'),
+            'replace_status_id.required' => __('validation.rules.required_list', [
+                'pronoun' => 'um',
+                'attribute' => 'status para substituir'
+            ])
         ];
     }
 }

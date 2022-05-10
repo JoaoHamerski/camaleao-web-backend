@@ -15,8 +15,15 @@ class ExpenseTypesCreate
     {
         Validator::make($args, [
             'name' => ['required', 'max:50']
-        ])->validate();
+        ], $this->errorMessages())->validate();
 
         return ExpenseType::create($args);
+    }
+
+    public function errorMessages()
+    {
+        return [
+            'name.required' => __('validation.rules.required', ['attribute' => 'tipo de despesa'])
+        ];
     }
 }

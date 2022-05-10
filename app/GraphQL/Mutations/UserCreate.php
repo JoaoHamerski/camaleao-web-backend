@@ -37,7 +37,15 @@ class UserCreate
     public function errorMessages()
     {
         return [
-            'email.email' => __('general.validation.email')
+            'name.required' => __('validation.rules.required'),
+            'email.required' => __('validation.rules.required'),
+            'email.email' => __('validation.rules.email'),
+            'password.required' => __('validation.rules.required'),
+            'password.confirmed' => __('validation.rules.password_confirmed'),
+            'role_id.required' => __('validation.rules.required_list', [
+                'pronoun' => 'um',
+                'attribute' => 'privilégio'
+            ])
         ];
     }
 

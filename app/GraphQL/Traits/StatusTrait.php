@@ -6,13 +6,6 @@ use Illuminate\Support\Facades\Validator;
 
 trait StatusTrait
 {
-    private function errorMessages()
-    {
-        return [
-            'text.required' => 'Por favor, informe um texto'
-        ];
-    }
-
     public function validator($data, $isUpdate = false)
     {
         $rules = [
@@ -24,5 +17,12 @@ trait StatusTrait
         }
 
         return Validator::make($data, $rules, $this->errorMessages());
+    }
+
+    private function errorMessages()
+    {
+        return [
+            'text.required' => __('validation.rules.required', ['attribute' => 'nome do status'])
+        ];
     }
 }

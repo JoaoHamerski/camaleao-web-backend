@@ -48,7 +48,7 @@ class CityDelete
     public function errorMessages()
     {
         return [
-            'city_id.required_if' => __('general.validation.cities.city_id_required_if')
+            'city_id.required_if' => __('validation.custom.cities.city_id|required_if')
         ];
     }
 }

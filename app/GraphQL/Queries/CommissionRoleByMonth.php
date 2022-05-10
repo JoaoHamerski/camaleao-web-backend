@@ -40,7 +40,7 @@ class CommissionRoleByMonth
     /**
      * Se a query for feito por alguém da gerencia,
      * buscar comissões da regra informada, senão
-     * do usuário informado.
+     * apenas do usuário autenticado.
      */
     public function getCommissionsQuery($data)
     {
@@ -77,9 +77,12 @@ class CommissionRoleByMonth
     public function errorMessages()
     {
         return [
-            'role_id.required' => __('general.validation.commissions.role_id_required'),
-            'month.required' => __('general.validation.commissions.month_required'),
-            'month.date_format' => __('general.validation.commissions.month_date_format')
+            'role_id.required' => __('validation.rules.required_list', [
+                'pronoun' => 'um',
+                'attribute' => 'tipo de usuário'
+            ]),
+            'month.required' => __('validation.rules.required_list', ['pronoun' => 'um']),
+            'month.date_format' => __('validation.rules.date_format')
         ];
     }
 }

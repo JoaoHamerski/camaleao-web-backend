@@ -82,10 +82,10 @@ class WhereCashFlowHandler extends WhereConditionsHandler
     public function errorMessages()
     {
         return [
-            'start_date.required' => __('general.validation.date_required'),
-            'start_date.date' => __('general.validation.date_valid'),
-            'final_date.date' => __('general.validation.date_valid'),
-            'final_date.after' => __('general.validation.date_after')
+            'start_date.required' => __('validation.rules.required', ['attribute' => 'data']),
+            'start_date.date' => __('validation.rules.date'),
+            'final_date.date' => __('validation.rules.date'),
+            'final_date.after' => __('validation.rules.after')
         ];
     }
 
