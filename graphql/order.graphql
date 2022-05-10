@@ -146,6 +146,10 @@ extend type Mutation {
     @can(ability: "update" query: true)
     @canAccess(roles: ["gerencia", "atendimento"])
 
+  orderUpdateStatus (id: ID! @eq status_id: ID!): Order
+    @can(ability: "update" query: true)
+    @canAccess(roles: ["gerencia", "atendimento"])
+
   orderToggle (id: ID! @eq): Order
     @can(ability: "toggle" query: true)
     @canAccess(roles: ["gerencia", "atendimento"])
