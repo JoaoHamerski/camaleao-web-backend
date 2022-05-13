@@ -55,10 +55,6 @@ trait OrderTrait
 
         $data = $this->evaluateOrderAttributes($data, $order);
 
-        if ($order && $order->client_id) {
-            unset($data['client_id']);
-        }
-
         return $data;
     }
 
@@ -136,7 +132,6 @@ trait OrderTrait
         $rules = [
             'client_id' => [
                 'nullable',
-                Rule::requiredIf(fn () => $order && !$order->client_id),
                 'exists:clients,id'
             ],
             'name' => ['nullable', 'max:90'],

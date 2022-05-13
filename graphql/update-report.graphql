@@ -1,0 +1,17 @@
+type UpdateReport @guard {
+  id: ID!
+  description: String!
+  read_by_user_ids: String
+  created_at: DateTime!
+}
+
+extend type Query {
+  updateReports: [UpdateReport] @paginate @orderBy(column: "created_at" direction: DESC)
+}
+
+extend type Mutation {
+  updateReportReadByUser: UpdateReport
+    @canAccess(roles: ["gerencia"])
+  updateReportCreate (description: String!): UpdateReport
+    @canAccess(roles: ["gerencia"])
+}
