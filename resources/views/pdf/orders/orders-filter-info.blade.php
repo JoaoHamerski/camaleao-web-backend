@@ -46,7 +46,7 @@
       <tr>
         <td class="fw-bold w-25">STATUS:</td>
         <td>
-          {{ App\Models\Status::find($filters['status_id'])->text }}
+          {{ App\Models\Status::whereIn('id', $filters['status_id'])->pluck('text')->join(' | ') }}
         </td>
       </tr>
       @endif
