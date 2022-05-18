@@ -48,6 +48,7 @@ enum QueryOrdersOrderByColumn {
 enum QueryOrdersWhereConditionsColumn {
   PRICE @enum(value: "price")
   CODE @enum(value: "code")
+  STATUS_ID @enum(value: "status_id")
   CLOSED_AT @enum(value: "closed_at")
   DELIVERY_DATE @enum(value: "delivery_date")
   QUANTITY @enum(value: "quantity")
@@ -88,12 +89,23 @@ enum OrderReportInputState {
   ALL @enum(value: "all")
 }
 
+enum OrdersHasClientColumns {
+  CITY_ID @enum(value: "city_id")
+}
+
+enum OrderHasPaymentsColumns {
+  IS_CONFIRMED @enum(value: "is_confirmed")
+  VALUE @enum(value: "value")
+}
+
 input OrdersReportInput {
   city_id: ID
-  status_id: ID
+  status_id: [ID]
   closed_at: String
   delivery_date: String
   display_filter_info: Boolean
+  payment_pending: Boolean
+  payment_paid: Boolean
   order: OrderReportInputOrder!
   state: OrderReportInputState!
 }
@@ -119,6 +131,8 @@ extend type Query {
     @canAccess(roles: ["gerencia", "atendimento"])
 
   orders(
+    hasClient: _ @whereHasConditions(columnsEnum: "OrdersHasClientColumns")
+    hasPayments: _ @whereHasConditions(columnsEnum: "OrderHasPaymentsColumns")
     orderBy: _ @orderBy(columnsEnum: "QueryOrdersOrderByColumn")
     where: _ @whereConditions(columnsEnum: "QueryOrdersWhereConditionsColumn")
   ): [Order!]

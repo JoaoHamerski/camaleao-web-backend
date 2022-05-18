@@ -202,7 +202,11 @@ class PDFsController extends Controller
         }
 
         if ($request->filled('status_id')) {
-            $orders->where('status_id', $data['status_id']);
+            if (is_array($data['status_id'])) {
+                $orders->whereIn('status_id', $data['status_id']);
+            } else {
+                $orders->where('status_id', $data['status_id']);
+            }
         }
 
         if ($request->filled('closed_at')) {

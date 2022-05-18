@@ -37,7 +37,7 @@ class OrdersReport
     {
         return Validator::make($data, [
             'city_id' => ['nullable', 'exists:cities,id'],
-            'status_id' => ['nullable', 'exists:status,id'],
+            'status_id.*' => ['nullable', 'exists:status,id'],
             'closed_at' => ['nullable', 'date'],
             'delivery_date' => ['nullable', 'date']
         ]);
