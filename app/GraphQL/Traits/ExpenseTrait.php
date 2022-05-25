@@ -66,25 +66,19 @@ trait ExpenseTrait
             : ['nullable'];
     }
 
-    public function getRequiredRule($expense)
-    {
-        return $expense
-            ? 'nullable'
-            : 'required';
-    }
-
     public function validator(array $data, Expense $expense = null)
     {
         $MAX_RECEIPT_SIZE = 1024;
 
         return Validator::make($data, [
             'id' => ['sometimes', 'exists:expenses,id'],
-            'description'  => [$this->getRequiredRule($expense)],
-            'value' => [$this->getRequiredRule($expense)],
-            'expense_type_id' => [$this->getRequiredRule($expense), 'exists:expense_types,id'],
-            'expense_via_id' => [$this->getRequiredRule($expense), 'exists:vias,id'],
+            'description'  => ['required'],
+            'value' => ['required'],
+            'product_type_id' => ['required', 'exists:product_types,id'],
+            'expense_type_id' => ['required', 'exists:expense_types,id'],
+            'expense_via_id' => ['required', 'exists:vias,id'],
             'receipt_path' => $this->getReceiptPathRules($data, $MAX_RECEIPT_SIZE),
-            'date' => [$this->getRequiredRule($expense), 'date_format:Y-m-d'],
+            'date' => ['required', 'date_format:Y-m-d'],
         ], $this->errorMessages($MAX_RECEIPT_SIZE));
     }
 
@@ -94,6 +88,7 @@ trait ExpenseTrait
             'expense_type_id.required' => __('validation.rules.required_list', ['pronoun' => 'um']),
             'expense_via_id.required' => __('validation.rules.required_list', ['pronoun' => 'uma']),
             'description.required' => __('validation.rules.required'),
+            'product_type_id.required' => __('validation.rules.required_list', ['pronoun' => 'um']),
             'value.required' => __('validation.rules.required'),
             'date.required' => __('validation.rules.required'),
             'date.date_format' => __('validation.rules.date_format'),

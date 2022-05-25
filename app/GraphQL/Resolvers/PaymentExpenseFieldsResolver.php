@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Order;
 use App\Util\FileHelper;
 use App\Models\ExpenseType;
+use App\Models\ProductType;
 
 class PaymentExpenseFieldsResolver
 {
@@ -85,6 +86,7 @@ class PaymentExpenseFieldsResolver
 
         return FileHelper::getFilesURL($receiptPath, 'receipt_path');
     }
+
     public function paymentVoucherPaths($rootValue)
     {
         $paymentVoucherPaths = $rootValue->payment_voucher_paths;
@@ -94,5 +96,16 @@ class PaymentExpenseFieldsResolver
         }
 
         return FileHelper::getFilesURL($paymentVoucherPaths, 'payment_voucher_paths');
+    }
+
+    public function productType($rootValue)
+    {
+        $productTypeId = $rootValue->product_type_id;
+
+        if ($productTypeId) {
+            return ProductType::find($productTypeId);
+        }
+
+        return null;
     }
 }

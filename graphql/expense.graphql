@@ -7,6 +7,7 @@ type Expense @guard {
   receipt_path: String
   user: User
   type: ExpenseType
+  product_type: ProductType @rename(attribute: "productType")
   via: Via
   is_confirmed: Boolean
   confirmed_at: Date
@@ -15,6 +16,7 @@ type Expense @guard {
 input ExpenseInput {
   description: String
   expense_type_id: ID
+  product_type_id: ID
   value: String
   expense_via_id: ID
   receipt_path: String
@@ -23,6 +25,11 @@ input ExpenseInput {
 
 enum QueryExpensesOrderByColumn {
   CREATED_AT @enum(value: "created_at")
+}
+
+type ProductTypeExpense {
+  name: String!
+  expense: Float!
 }
 
 extend type Query {
@@ -35,6 +42,9 @@ extend type Query {
     @canAccess(roles: ["gerencia", "atendimento"])
 
   expensesReport (start_date: String! final_date: String): String
+    @canAccess(roles: ["gerencia"])
+
+  productTypesExpensesByMonth: [ProductTypeExpense]
     @canAccess(roles: ["gerencia"])
 }
 

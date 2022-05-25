@@ -13,7 +13,8 @@ class Expense extends Model
 
     protected static $logAlways = [
         'type.name',
-        'via.name'
+        'via.name',
+        'product_type.name',
     ];
     protected static $logFillable = true;
     protected static $logOnlyDirty = true;
@@ -24,6 +25,7 @@ class Expense extends Model
         'date',
         'expense_type_id',
         'expense_via_id',
+        'product_type_id',
         'receipt_path',
         'value',
         'is_confirmed',
@@ -91,6 +93,11 @@ class Expense extends Model
     public function via()
     {
         return $this->belongsTo(Via::class, 'expense_via_id');
+    }
+
+    public function productType()
+    {
+        return $this->belongsTo(ProductType::class);
     }
 
     public function getReceiptPathAttribute($value)

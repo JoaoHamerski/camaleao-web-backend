@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Via;
 use App\Models\User;
 use App\Models\Expense;
 use App\Models\ExpenseType;
-use App\Models\Via;
+use App\Models\ProductType;
 
 class ExpenseSeeder extends BaseSeeder
 {
@@ -25,7 +26,8 @@ class ExpenseSeeder extends BaseSeeder
                 $expense->update([
                     'user_id' => User::inRandomOrder()->first()->id,
                     'expense_via_id' => Via::inRandomOrder()->first()->id,
-                    'expense_type_id' => ExpenseType::inRandomOrder()->first()->id
+                    'expense_type_id' => ExpenseType::inRandomOrder()->first()->id,
+                    'product_type_id' => ProductType::inRandomOrder()->first()->id
                 ]);
             });
     }

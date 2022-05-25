@@ -1,0 +1,32 @@
+type PaymentExpense @guard {
+  id: ID
+  value: Float
+  date: Date
+  description: String
+  note: String
+  confirmed_at: Date
+  is_confirmed: Boolean
+  created_at: DateTime
+  employee_name: String
+  receipt_path: String @field(
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@receiptPath"
+  )
+  order: Order @field(
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@order"
+  )
+  user: User @field(
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@user"
+  )
+  via: Via @field(
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@via"
+  )
+  type: ExpenseType @field(
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@type"
+  )
+  is_expense: Boolean @field(
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@isExpense"
+  )
+  product_type: ProductType @field(
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@productType"
+  )
+}

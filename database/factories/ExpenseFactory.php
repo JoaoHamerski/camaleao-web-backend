@@ -24,7 +24,7 @@ class ExpenseFactory extends Factory
         $createdAt = new Carbon($this->faker->dateTimeBetween('-1 month', 'now'));
 
         return [
-            'description' => $this->faker->sentence(10),
+            'description' => $this->faker->sentence(5),
             'value' => $this->faker->randomFloat(2, 800, 2000),
             'date' => $createdAt,
             'created_at' => $createdAt,

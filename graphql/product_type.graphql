@@ -1,0 +1,21 @@
+type ProductType @guard {
+  id: ID!
+  name: String
+}
+
+input ProductTypeInput {
+  name: String
+}
+
+extend type Query {
+  productTypes: [ProductType] @all
+    @canAccess(roles: ["gerencia"])
+}
+
+extend type Mutation {
+  productTypeCreate (input: ProductTypeInput @spread): ProductType!
+    @canAccess(roles: ["gerencia"])
+
+  productTypeUpdate (id: ID! input: ProductTypeInput @spread): ProductType!
+    @canAccess(roles: ["gerencia"])
+}

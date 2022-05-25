@@ -4,7 +4,6 @@ namespace App\GraphQL\Mutations;
 
 use App\GraphQL\Traits\ExpenseTrait;
 use App\Models\Expense;
-use App\Util\Helper;
 
 class ExpenseUpdate
 {

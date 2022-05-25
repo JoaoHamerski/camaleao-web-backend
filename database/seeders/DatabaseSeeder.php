@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
                 BranchSeeder::class,
                 ClothingTypeSeeder::class,
                 ExpenseTypeSeeder::class,
+                ProductTypeSeeder::class,
                 ExpenseSeeder::class,
                 ClientSeeder::class,
                 OrdersSeeder::class,
