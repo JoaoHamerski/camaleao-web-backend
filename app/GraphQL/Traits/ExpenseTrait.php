@@ -2,12 +2,14 @@
 
 namespace App\GraphQL\Traits;
 
+use App\Models\AppConfig;
 use App\Util\Helper;
 use App\Models\Expense;
 use App\Util\Formatter;
 use App\Util\FileHelper;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Validation\Rule;
 
 trait ExpenseTrait
 {
@@ -47,11 +49,16 @@ trait ExpenseTrait
 
     public function getFormattedData(array $data, Expense $expense = null)
     {
+        $product_type_expense_id = AppConfig::get('app', 'product_types_expense');
         $data = (new Formatter($data))
             ->date('date')
             ->base64ToUploadedFile('receipt_path')
             ->currencyBRL('value')
             ->get();
+
+        if ($product_type_expense_id !== $data['expense_type_id']) {
+            unset($data['product_type_id']);
+        }
 
         return $data;
     }
@@ -69,12 +76,19 @@ trait ExpenseTrait
     public function validator(array $data, Expense $expense = null)
     {
         $MAX_RECEIPT_SIZE = 1024;
+        $product_type_expense_id = AppConfig::get('app', 'product_types_expense');
 
         return Validator::make($data, [
             'id' => ['sometimes', 'exists:expenses,id'],
             'description'  => ['required'],
             'value' => ['required'],
-            'product_type_id' => ['required', 'exists:product_types,id'],
+            'product_type_id' => [
+                'nullable',
+                Rule::requiredIf(
+                    $data['expense_type_id'] === $product_type_expense_id
+                ),
+                'exists:product_types,id'
+            ],
             'expense_type_id' => ['required', 'exists:expense_types,id'],
             'expense_via_id' => ['required', 'exists:vias,id'],
             'receipt_path' => $this->getReceiptPathRules($data, $MAX_RECEIPT_SIZE),
