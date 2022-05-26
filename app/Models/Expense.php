@@ -15,6 +15,7 @@ class Expense extends Model
         'type.name',
         'via.name',
         'product_type.name',
+        'employee.name'
     ];
     protected static $logFillable = true;
     protected static $logOnlyDirty = true;
@@ -25,6 +26,7 @@ class Expense extends Model
         'date',
         'expense_type_id',
         'expense_via_id',
+        'employee_id',
         'product_type_id',
         'receipt_path',
         'value',
@@ -98,6 +100,11 @@ class Expense extends Model
     public function productType()
     {
         return $this->belongsTo(ProductType::class);
+    }
+
+    public function employee()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function getReceiptPathAttribute($value)

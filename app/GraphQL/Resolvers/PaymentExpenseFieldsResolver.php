@@ -108,4 +108,15 @@ class PaymentExpenseFieldsResolver
 
         return null;
     }
+
+    public function employee($rootValue)
+    {
+        $employeeId = $rootValue->employee_id;
+
+        if ($employeeId) {
+            return User::find($employeeId);
+        }
+
+        return null;
+    }
 }

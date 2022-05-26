@@ -29,4 +29,7 @@ type PaymentExpense @guard {
   product_type: ProductType @field(
     resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@productType"
   )
+  employee: User @field(
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@employee"
+  )
 }

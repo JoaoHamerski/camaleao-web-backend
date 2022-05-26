@@ -50,6 +50,8 @@ trait ExpenseTrait
     public function getFormattedData(array $data, Expense $expense = null)
     {
         $product_type_expense_id = AppConfig::get('app', 'product_types_expense');
+        $employee_expense_id = AppConfig::get('app', 'employee_expense');
+
         $data = (new Formatter($data))
             ->date('date')
             ->base64ToUploadedFile('receipt_path')
@@ -58,6 +60,10 @@ trait ExpenseTrait
 
         if ($product_type_expense_id !== $data['expense_type_id']) {
             unset($data['product_type_id']);
+        }
+
+        if ($employee_expense_id !== $data['expense_type_id']) {
+            unset($data['employee_id']);
         }
 
         return $data;
@@ -77,6 +83,7 @@ trait ExpenseTrait
     {
         $MAX_RECEIPT_SIZE = 1024;
         $product_type_expense_id = AppConfig::get('app', 'product_types_expense');
+        $employee_expense_id = AppConfig::get('app', 'employee_expense');
 
         return Validator::make($data, [
             'id' => ['sometimes', 'exists:expenses,id'],
@@ -88,6 +95,13 @@ trait ExpenseTrait
                     $data['expense_type_id'] === $product_type_expense_id
                 ),
                 'exists:product_types,id'
+            ],
+            'employee_id' => [
+                'nullable',
+                Rule::requiredIf(
+                    $data['expense_type_id'] === $employee_expense_id
+                ),
+                'exists:users,id'
             ],
             'expense_type_id' => ['required', 'exists:expense_types,id'],
             'expense_via_id' => ['required', 'exists:vias,id'],
@@ -103,6 +117,7 @@ trait ExpenseTrait
             'expense_via_id.required' => __('validation.rules.required_list', ['pronoun' => 'uma']),
             'description.required' => __('validation.rules.required'),
             'product_type_id.required' => __('validation.rules.required_list', ['pronoun' => 'um']),
+            'employee_id.required' => __('validation.rules.required_list', ['pronoun' => 'um']),
             'value.required' => __('validation.rules.required'),
             'date.required' => __('validation.rules.required'),
             'date.date_format' => __('validation.rules.date_format'),

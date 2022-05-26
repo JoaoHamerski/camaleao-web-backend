@@ -242,7 +242,8 @@ return [
         'value' => 'valor',
         'via_id' => 'via',
         'year'      => 'ano',
-        'product_type_id' => 'produto'
+        'product_type_id' => 'produto',
+        'employee_id' => 'funcionário'
     ],
 
 ];

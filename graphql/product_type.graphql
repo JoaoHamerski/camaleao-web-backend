@@ -18,6 +18,4 @@ extend type Mutation {
 
   productTypeUpdate (id: ID! input: ProductTypeInput @spread): ProductType!
     @canAccess(roles: ["gerencia"])
-
-  changeProductTypesExpenseField (id: ID!): ExpenseType
 }
