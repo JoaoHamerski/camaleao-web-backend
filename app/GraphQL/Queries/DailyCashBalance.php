@@ -7,6 +7,8 @@ use App\Models\Expense;
 use App\Models\Payment;
 use Illuminate\Database\Eloquent\Builder;
 use App\GraphQL\Traits\PaymentsExpensesQueryTrait;
+use App\Models\Order;
+use Illuminate\Support\Facades\DB;
 
 class DailyCashBalance
 {
@@ -26,8 +28,65 @@ class DailyCashBalance
         return [
             'balance_of_day' => $this->getBalanceOfDay($payments, $expenses),
             'balance_of_week' => $this->getBalanceOfWeek($payments, $expenses),
-            'balance_of_month' => $this->getBalanceOfMonth($payments, $expenses)
+            'balance_of_month' => $this->getBalanceOfMonth($payments, $expenses),
+            'pendency' => $this->getPendency()
         ];
+    }
+
+    public function getPendency()
+    {
+        $date = Carbon::now();
+
+        $totalShirtsOnMonth = $this->getShirtsOnMonth(
+            $date->clone(),
+            'print_date'
+        );
+
+        $totalShirtsLastMonth = $this->getShirtsOnMonth(
+            $date->clone()->subMonth(),
+            'print_date'
+        );
+
+        $totalOwingOnMonth = $this->getTotalOwingOnMonth();
+
+        return [
+            'total_owing_on_month' => $totalOwingOnMonth,
+            'total_shirts_on_month' => $totalShirtsOnMonth,
+            'total_shirts_last_month' => $totalShirtsLastMonth
+        ];
+    }
+
+    public function getShirtsOnMonth(Carbon $month, string $field)
+    {
+        return Order::query()
+            ->whereBetween($field, [
+                $month->startOf('month')->toDateString(),
+                $month->endOf('month')->toDateString()
+            ])
+            ->sum('quantity');
+    }
+
+    public function getTotalOwingOnMonth()
+    {
+        $date = Carbon::now();
+
+        $totalOwing = DB::table('orders')
+            ->whereBetween('print_date', [
+                $date->clone()->startOf('month')->toDateString(),
+                $date->clone()->endOf('month')->toDateString()
+            ])
+            ->sum('price');
+
+        $totalPaid = DB::table('payments')
+            ->join('orders', 'payments.order_id', '=', 'orders.id')
+            ->whereBetween('print_date', [
+                $date->clone()->startOf('month')->toDateString(),
+                $date->clone()->endOf('month')->toDateString()
+            ])
+            ->whereNotNUll('payments.is_confirmed')
+            ->sum('value');
+
+        return bcsub($totalOwing, $totalPaid, 2);
     }
 
     public function getBalance(Builder $payments, Builder $expenses)

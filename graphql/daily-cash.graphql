@@ -9,10 +9,17 @@ type BalanceData @guard {
   balance: Float!
 }
 
+type DailyCashPendency {
+  total_owing_on_month: Float
+  total_shirts_on_month: Float
+  total_shirts_last_month: Float
+}
+
 type DailyCashBalance @guard {
   balance_of_day: BalanceData!
   balance_of_week: BalanceData!
   balance_of_month: BalanceData!
+  pendency: DailyCashPendency!
 }
 
 enum QueryDailyCashOrderByColumn {
