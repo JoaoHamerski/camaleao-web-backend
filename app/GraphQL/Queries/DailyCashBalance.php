@@ -47,10 +47,19 @@ class DailyCashBalance
             'print_date'
         );
 
-        $totalOwingOnMonth = $this->getTotalOwingOnMonth();
+        $totalOwingOnMonth = $this->getTotalOwingOnMonth(
+            $date->clone(),
+            'print_date'
+        );
+
+        $totalOwingLastMonth = $this->getTotalOwingOnMonth(
+            $date->clone()->subMonthNoOverflow(),
+            'print_date'
+        );
 
         return [
             'total_owing_on_month' => $totalOwingOnMonth,
+            'total_owing_last_month' => $totalOwingLastMonth,
             'total_shirts_on_month' => $totalShirtsOnMonth,
             'total_shirts_last_month' => $totalShirtsLastMonth
         ];
@@ -66,22 +75,20 @@ class DailyCashBalance
             ->sum('quantity');
     }
 
-    public function getTotalOwingOnMonth()
+    public function getTotalOwingOnMonth(Carbon $month, string $field)
     {
-        $date = Carbon::now();
-
         $totalOwing = DB::table('orders')
             ->whereBetween('print_date', [
-                $date->clone()->startOf('month')->toDateString(),
-                $date->clone()->endOf('month')->toDateString()
+                $month->clone()->startOf('month')->toDateString(),
+                $month->clone()->endOf('month')->toDateString()
             ])
             ->sum('price');
 
         $totalPaid = DB::table('payments')
             ->join('orders', 'payments.order_id', '=', 'orders.id')
             ->whereBetween('print_date', [
-                $date->clone()->startOf('month')->toDateString(),
-                $date->clone()->endOf('month')->toDateString()
+                $month->clone()->startOf('month')->toDateString(),
+                $month->clone()->endOf('month')->toDateString()
             ])
             ->whereNotNUll('payments.is_confirmed')
             ->sum('value');

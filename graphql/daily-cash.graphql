@@ -11,6 +11,7 @@ type BalanceData @guard {
 
 type DailyCashPendency {
   total_owing_on_month: Float
+  total_owing_last_month: Float
   total_shirts_on_month: Float
   total_shirts_last_month: Float
 }
