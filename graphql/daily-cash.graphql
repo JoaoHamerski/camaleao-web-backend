@@ -35,6 +35,10 @@ enum DailyCashBalanceMonthsEnum {
   LAST @enum(value: "last")
 }
 
+enum DailyCashBalancePendenciesOrderByColumns {
+  PRINT_DATE @enum(value: "print_date")
+}
+
 extend type Query {
   dailyCash (
     where: _ @whereConditions(columnsEnum: "QueryDailyCashWhereColumn")
@@ -50,8 +54,10 @@ extend type Query {
   dailyCashBalance: DailyCashBalance!
     @canAccess(roles: ["gerencia"])
 
-  dailyCashBalancePendenciesOrders (month: DailyCashBalanceMonthsEnum!): [Order]
+  dailyCashBalancePendenciesOrders (
+    month: DailyCashBalanceMonthsEnum!
+    orderBy: _ @orderBy(columnsEnum: "DailyCashBalancePendenciesOrderByColumns")
+  ): [Order]
     @paginate(builder: "App\\GraphQL\\Builders\\DailyCashBalancePendenciesOrdersBuilder")
     @canAccess(roles: ["gerencia"])
-
 }
