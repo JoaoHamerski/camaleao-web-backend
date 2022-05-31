@@ -71,29 +71,41 @@ class DailyCashBalance
             ->whereBetween($field, [
                 $month->startOf('month')->toDateString(),
                 $month->endOf('month')->toDateString()
-            ])
-            ->sum('quantity');
+            ])->sum('quantity');
     }
 
     public function getTotalOwingOnMonth(Carbon $month, string $field)
     {
-        $totalOwing = DB::table('orders')
-            ->whereBetween('print_date', [
-                $month->clone()->startOf('month')->toDateString(),
-                $month->clone()->endOf('month')->toDateString()
-            ])
-            ->sum('price');
+        $totalOwing = self::getTotalOwingOnMonthQuery(
+            $month,
+            $field
+        )->sum('price');
 
-        $totalPaid = DB::table('payments')
-            ->join('orders', 'payments.order_id', '=', 'orders.id')
-            ->whereBetween('print_date', [
-                $month->clone()->startOf('month')->toDateString(),
-                $month->clone()->endOf('month')->toDateString()
-            ])
-            ->whereNotNUll('payments.is_confirmed')
-            ->sum('value');
+        $totalPaid = self::getTotalPaidOnMonthQuery(
+            $month,
+            $field
+        )->sum('value');
 
         return bcsub($totalOwing, $totalPaid, 2);
+    }
+
+    public static function getTotalOwingOnMonthQuery(Carbon $month, string $field)
+    {
+        return Order::whereBetween($field, [
+            $month->clone()->startOf('month')->toDateString(),
+            $month->clone()->endOf('month')->toDateString()
+        ]);
+    }
+
+    public static function getTotalPaidOnMonthQuery(Carbon $month, string $field)
+    {
+        return Payment::whereNotNull('is_confirmed')
+            ->whereHas('order', function ($query) use ($month, $field) {
+                $query->whereBetween($field, [
+                    $month->clone()->startOf('month')->toDateString(),
+                    $month->clone()->endOf('month')->toDateString()
+                ]);
+            });
     }
 
     public function getBalance(Builder $payments, Builder $expenses)

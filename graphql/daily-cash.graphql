@@ -30,6 +30,10 @@ enum QueryDailyCashOrderByColumn {
 enum QueryDailyCashWhereColumn {
   IS_CONFIRMED @enum(value: "is_confirmed")
 }
+enum DailyCashBalanceMonthsEnum {
+  CURRENT @enum(value: "current")
+  LAST @enum(value: "last")
+}
 
 extend type Query {
   dailyCash (
@@ -45,4 +49,9 @@ extend type Query {
 
   dailyCashBalance: DailyCashBalance!
     @canAccess(roles: ["gerencia"])
+
+  dailyCashBalancePendenciesOrders (month: DailyCashBalanceMonthsEnum!): [Order]
+    @paginate(builder: "App\\GraphQL\\Builders\\DailyCashBalancePendenciesOrdersBuilder")
+    @canAccess(roles: ["gerencia"])
+
 }
