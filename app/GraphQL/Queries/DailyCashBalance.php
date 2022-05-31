@@ -43,7 +43,7 @@ class DailyCashBalance
         );
 
         $totalShirtsLastMonth = $this->getShirtsOnMonth(
-            $date->clone()->subMonth(),
+            $date->clone()->subMonthNoOverflow(),
             'print_date'
         );
 
