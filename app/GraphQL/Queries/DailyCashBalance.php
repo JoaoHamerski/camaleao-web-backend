@@ -37,29 +37,29 @@ class DailyCashBalance
     {
         $date = Carbon::now();
 
-        $totalShirtsOnMonth = $this->getShirtsOnMonth(
-            $date->clone(),
-            'print_date'
-        );
-
         $totalShirtsLastMonth = $this->getShirtsOnMonth(
             $date->clone()->subMonthNoOverflow(),
             'print_date'
         );
 
-        $totalOwingOnMonth = $this->getTotalOwingOnMonth(
+        $totalShirtsOnMonth = $this->getShirtsOnMonth(
             $date->clone(),
             'print_date'
         );
 
-        $totalOwingLastMonth = $this->getTotalOwingOnMonth(
+        $totalOwingOnMonth = $this->getTotalOwingOnMonthQuery(
+            $date->clone(),
+            'print_date'
+        )->sum('total_order_owing');
+
+        $totalOwingLastMonth = $this->getTotalOwingOnMonthQuery(
             $date->clone()->subMonthNoOverflow(),
             'print_date'
-        );
+        )->sum('total_order_owing');
 
         return [
-            'total_owing_on_month' => $totalOwingOnMonth,
-            'total_owing_last_month' => $totalOwingLastMonth,
+            'total_owing_on_month' => number_format($totalOwingOnMonth, 2, '.', ''),
+            'total_owing_last_month' => number_format($totalOwingLastMonth, 2, '.', ''),
             'total_shirts_on_month' => $totalShirtsOnMonth,
             'total_shirts_last_month' => $totalShirtsLastMonth
         ];
@@ -74,38 +74,31 @@ class DailyCashBalance
             ])->sum('quantity');
     }
 
-    public function getTotalOwingOnMonth(Carbon $month, string $field)
-    {
-        $totalOwing = self::getTotalOwingOnMonthQuery(
-            $month,
-            $field
-        )->sum('price');
-
-        $totalPaid = self::getTotalPaidOnMonthQuery(
-            $month,
-            $field
-        )->sum('value');
-
-        return bcsub($totalOwing, $totalPaid, 2);
-    }
-
     public static function getTotalOwingOnMonthQuery(Carbon $month, string $field)
     {
-        return Order::whereBetween($field, [
-            $month->clone()->startOf('month')->toDateString(),
-            $month->clone()->endOf('month')->toDateString()
-        ]);
-    }
+        $confirmedPaymentsSubQuery = <<<STR
+            SELECT SUM(`value`)
+                FROM `payments`
+                WHERE `is_confirmed` = 1
+                AND orders.id = payments.order_id
+        STR;
 
-    public static function getTotalPaidOnMonthQuery(Carbon $month, string $field)
-    {
-        return Payment::where('is_confirmed', '=', true)
-            ->whereHas('order', function ($query) use ($month, $field) {
-                $query->whereBetween($field, [
-                    $month->clone()->startOf('month')->toDateString(),
-                    $month->clone()->endOf('month')->toDateString()
-                ]);
-            });
+        return Order::leftJoin('payments', 'orders.id', '=', 'payments.order_id')
+            ->whereBetween($field, [
+                $month->startOf('month')->toDateString(),
+                $month->endOf('month')->toDateString()
+            ])
+            ->groupBy('orders.id')
+            ->havingRaw('total_payments_order <> orders.price')
+            ->select([
+                'orders.*',
+                DB::raw("
+                    IFNULL(($confirmedPaymentsSubQuery), 0) AS total_payments_order
+                "),
+                DB::raw("
+                    IFNULL(orders.price, 0) - IFNULL(($confirmedPaymentsSubQuery), 0) AS total_order_owing
+                ")
+            ]);
     }
 
     public function getBalance(Builder $payments, Builder $expenses)

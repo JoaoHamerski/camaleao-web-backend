@@ -19,6 +19,7 @@
         "Authenticatable",
         "csrf",
         "Csrf",
+        "IFNULL",
         "laravel",
         "Laravel",
         "Nuwave",

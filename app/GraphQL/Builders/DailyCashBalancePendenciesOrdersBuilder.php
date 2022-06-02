@@ -15,15 +15,7 @@ class DailyCashBalancePendenciesOrdersBuilder
             ? Carbon::now()
             : Carbon::now()->subMonthNoOverflow();
 
-        $orders = Order::join('payments', 'orders.id', '=', 'payments.order_id')
-            ->whereBetween('orders.print_date', [
-                $date->clone()->startOf('month')->toDateString(),
-                $date->clone()->endOf('month')->toDateString()
-            ])
-            ->where('payments.is_confirmed', '=', true)
-            ->groupBy('payments.order_id')
-            ->havingRaw('total_payments_order <> orders.price')
-            ->select(['orders.*', DB::raw('SUM(payments.value) AS total_payments_order')]);
+        $orders = DailyCashBalance::getTotalOwingOnMonthQuery($date, 'print_date');
 
         return $orders;
     }
