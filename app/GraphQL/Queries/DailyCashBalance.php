@@ -99,7 +99,7 @@ class DailyCashBalance
 
     public static function getTotalPaidOnMonthQuery(Carbon $month, string $field)
     {
-        return Payment::whereNotNull('is_confirmed')
+        return Payment::where('is_confirmed', '=', true)
             ->whereHas('order', function ($query) use ($month, $field) {
                 $query->whereBetween($field, [
                     $month->clone()->startOf('month')->toDateString(),
