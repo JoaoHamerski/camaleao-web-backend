@@ -24,7 +24,7 @@ class CashFlowBalance
         return $balance;
     }
 
-    public function expensesQuery($data)
+    public static function expensesQuery($data)
     {
         if (Helper::filledAll($data, ['start_date', 'final_date'])) {
             return Expense::whereBetween('date', [
@@ -40,7 +40,7 @@ class CashFlowBalance
         return Expense::query();
     }
 
-    public function paymentsQuery($data)
+    public static function paymentsQuery($data)
     {
         if (Helper::filledAll($data, ['start_date', 'final_date'])) {
             return Payment::whereBetween('date', [

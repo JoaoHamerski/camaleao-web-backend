@@ -37,35 +37,35 @@ class DailyCashBalance
     {
         $date = Carbon::now();
 
-        $totalShirtsLastMonth = $this->getShirtsOnMonth(
+        $totalShirtsLastMonth = $this->getShirtsOfMonth(
             $date->clone()->subMonthNoOverflow(),
             'print_date'
         );
 
-        $totalShirtsOnMonth = $this->getShirtsOnMonth(
+        $totalShirtsOnMonth = $this->getShirtsOfMonth(
             $date->clone(),
             'print_date'
         );
 
-        $totalOwingOnMonth = $this->getTotalOwingOnMonthQuery(
+        $totalOwingOfMonth = $this->getTotalOwingOfMonthQuery(
             $date->clone(),
             'print_date'
         )->sum('total_order_owing');
 
-        $totalOwingLastMonth = $this->getTotalOwingOnMonthQuery(
+        $totalOwingLastMonth = $this->getTotalOwingOfMonthQuery(
             $date->clone()->subMonthNoOverflow(),
             'print_date'
         )->sum('total_order_owing');
 
         return [
-            'total_owing_on_month' => number_format($totalOwingOnMonth, 2, '.', ''),
+            'total_owing_on_month' => number_format($totalOwingOfMonth, 2, '.', ''),
             'total_owing_last_month' => number_format($totalOwingLastMonth, 2, '.', ''),
             'total_shirts_on_month' => $totalShirtsOnMonth,
             'total_shirts_last_month' => $totalShirtsLastMonth
         ];
     }
 
-    public function getShirtsOnMonth(Carbon $month, string $field)
+    public static function getShirtsOfMonth(Carbon $month, string $field)
     {
         return Order::query()
             ->whereBetween($field, [
@@ -74,7 +74,7 @@ class DailyCashBalance
             ])->sum('quantity');
     }
 
-    public static function getTotalOwingOnMonthQuery(Carbon $month, string $field)
+    public static function getTotalOwingOfMonthQuery(Carbon $month, string $field)
     {
         $confirmedPaymentsSubQuery = <<<STR
             SELECT SUM(`value`)

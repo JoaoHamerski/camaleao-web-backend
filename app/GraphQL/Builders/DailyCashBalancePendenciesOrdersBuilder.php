@@ -3,9 +3,7 @@
 namespace App\GraphQL\Builders;
 
 use Carbon\Carbon;
-use App\Models\Order;
 use App\GraphQL\Queries\DailyCashBalance;
-use Illuminate\Support\Facades\DB;
 
 class DailyCashBalancePendenciesOrdersBuilder
 {
@@ -15,7 +13,7 @@ class DailyCashBalancePendenciesOrdersBuilder
             ? Carbon::now()
             : Carbon::now()->subMonthNoOverflow();
 
-        $orders = DailyCashBalance::getTotalOwingOnMonthQuery($date, 'print_date');
+        $orders = DailyCashBalance::getTotalOwingOfMonthQuery($date, 'print_date');
 
         return $orders;
     }

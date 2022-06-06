@@ -9,7 +9,7 @@ type BalanceData @guard {
   balance: Float!
 }
 
-type DailyCashPendency {
+type DailyCashPendency @guard {
   total_owing_on_month: Float
   total_owing_last_month: Float
   total_shirts_on_month: Float
@@ -21,6 +21,24 @@ type DailyCashBalance @guard {
   balance_of_week: BalanceData!
   balance_of_month: BalanceData!
   pendency: DailyCashPendency!
+}
+
+type DailyCashFlowEntry @guard {
+    value: Float
+    orders_price_avg: Float
+    unities_avg: Float
+}
+
+type DailyCashFlowOut @guard {
+    value: Float
+}
+
+type DailyCashFlow @guard {
+  date: Date,
+  shirts_quantity: Int,
+  entry: DailyCashFlowEntry
+  out: DailyCashFlowOut
+  pendency: Float
 }
 
 enum QueryDailyCashOrderByColumn {
@@ -59,5 +77,8 @@ extend type Query {
     orderBy: _ @orderBy(columnsEnum: "DailyCashBalancePendenciesOrderByColumns")
   ): [Order]
     @paginate(builder: "App\\GraphQL\\Builders\\DailyCashBalancePendenciesOrdersBuilder")
+    @canAccess(roles: ["gerencia"])
+
+  dailyCashDetailedFlow (page: Int! date: String): [DailyCashFlow]
     @canAccess(roles: ["gerencia"])
 }
