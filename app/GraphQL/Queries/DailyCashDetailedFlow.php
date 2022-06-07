@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Expense;
 use Illuminate\Support\Facades\DB;
 use App\GraphQL\Queries\DailyCashBalance;
+use App\Util\Helper;
 use Illuminate\Support\Facades\Validator;
 
 class DailyCashDetailedFlow
@@ -19,7 +20,7 @@ class DailyCashDetailedFlow
     {
         Validator::make($args, [
             'page' => ['required', 'numeric'],
-            'date' => ['nullable', 'date_format:d/m/Y']
+            'date' => ['nullable', 'date_format:m/Y']
         ])->validate();
 
         $dates = $this->getDate($args);
@@ -54,19 +55,19 @@ class DailyCashDetailedFlow
         ])->where('is_confirmed', true)->sum('value');
 
         $ordersPriceAvg = Order::whereBetween($dateField, [
-            $date->startOf('month')->toDateString(),
-            $date->endOf('month')->toDateString()
+            $date->startOfMonth()->toDateString(),
+            $date->endOfMonth()->toDateString(),
         ])->avg('price');
 
         $unitiesAvg = Order::whereBetween($dateField, [
-            $date->startOf('month')->toDateString(),
-            $date->endOf('month')->toDateString()
+            $date->startOfMonth()->toDateString(),
+            $date->endOfMonth()->toDateString()
         ])->selectRaw(
             'round(sum(price) / sum(quantity), 2) AS unities_avg'
         )->first()->unities_avg;
 
         return [
-            'value' => number_format($value, 2, '.', ''),
+            'total' => number_format($value, 2, '.', ''),
             'orders_price_avg' => number_format($ordersPriceAvg, 2, '.', ''),
             'unities_avg' => number_format($unitiesAvg, 2, '.', '')
         ];
@@ -74,24 +75,41 @@ class DailyCashDetailedFlow
 
     public function getOutData($date)
     {
-        $value = CashFlowBalance::expensesQuery([
+        $IDS_TO_SHOW_INDIVIDUALLY = [1, 2];
+
+        $total = CashFlowBalance::expensesQuery([
             'start_date' => $date->startOf('month')->toDateString(),
             'final_date' => $date->endOf('month')->toDateString()
         ])->where('is_confirmed', true)->sum('value');
 
-        $data = DB::table('expense_types')
+        $expensesByGroup = DB::table('expense_types')
             ->leftJoin('expenses', 'expenses.expense_type_id', '=', 'expense_types.id')
+            ->whereBetween('expenses.date', [
+                $date->startOfMonth()->toDateString(),
+                $date->endOfMonth()->toDateString()
+            ])
             ->select([
                 'expense_types.id',
-                'name',
-                DB::raw("IFNULL(SUM(value), 0) AS total")
+                'expense_types.name',
+                DB::raw("IFNULL(ROUND(SUM(expenses.value), 2), 0) AS total")
             ])
-            ->groupBy('expense_types.name')
+            ->groupBy('expense_types.id')
             ->get();
 
-        dd($data);
+        $expenses = $expensesByGroup->filter(
+            fn ($item) => in_array($item->id, $IDS_TO_SHOW_INDIVIDUALLY)
+        );
+
+        $otherExpenses = [[
+            'name' => 'Outros',
+            'total' => number_format($expensesByGroup->filter(
+                fn ($item) => !in_array($item->id, $IDS_TO_SHOW_INDIVIDUALLY)
+            )->sum('total'), 2, '.', '')
+        ]];
+
         return [
-            'value' => number_format($value, 2, '.', '')
+            'total' => number_format($total, 2, '.', ''),
+            'expense_types' => $expenses->merge($otherExpenses)
         ];
     }
 
@@ -99,8 +117,8 @@ class DailyCashDetailedFlow
     {
         $dates = [];
 
-        if (isset($args['date'])) {
-            return [Carbon::createFromFormat('d/m/Y', $args['date'])];
+        if (Helper::filled($args, 'date')) {
+            return [Carbon::createFromFormat('m/Y', $args['date'])];
         }
 
         $date =  Carbon::now()->subMonths(($args['page'] - 1) * 6);

@@ -42,7 +42,7 @@ class DailyCashBalance
             'print_date'
         );
 
-        $totalShirtsOnMonth = $this->getShirtsOfMonth(
+        $totalShirtsOfMonth = $this->getShirtsOfMonth(
             $date->clone(),
             'print_date'
         );
@@ -60,21 +60,22 @@ class DailyCashBalance
         return [
             'total_owing_on_month' => number_format($totalOwingOfMonth, 2, '.', ''),
             'total_owing_last_month' => number_format($totalOwingLastMonth, 2, '.', ''),
-            'total_shirts_on_month' => $totalShirtsOnMonth,
+            'total_shirts_on_month' => $totalShirtsOfMonth,
             'total_shirts_last_month' => $totalShirtsLastMonth
         ];
     }
 
-    public static function getShirtsOfMonth(Carbon $month, string $field)
+    public static function getShirtsOfMonth(Carbon $date, string $field)
     {
         return Order::query()
             ->whereBetween($field, [
-                $month->startOf('month')->toDateString(),
-                $month->endOf('month')->toDateString()
-            ])->sum('quantity');
+                $date->startOfMonth()->toDateString(),
+                $date->endOfMonth()->toDateString(),
+            ])
+            ->sum('quantity');
     }
 
-    public static function getTotalOwingOfMonthQuery(Carbon $month, string $field)
+    public static function getTotalOwingOfMonthQuery(Carbon $date, string $field)
     {
         $confirmedPaymentsSubQuery = <<<STR
             SELECT SUM(`value`)
@@ -85,8 +86,8 @@ class DailyCashBalance
 
         return Order::leftJoin('payments', 'orders.id', '=', 'payments.order_id')
             ->whereBetween($field, [
-                $month->startOf('month')->toDateString(),
-                $month->endOf('month')->toDateString()
+                $date->startOfMonth()->toDateString(),
+                $date->endOfMonth()->toDateString()
             ])
             ->groupBy('orders.id')
             ->havingRaw('total_payments_order <> orders.price')

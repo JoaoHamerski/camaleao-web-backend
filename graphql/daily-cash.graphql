@@ -24,13 +24,19 @@ type DailyCashBalance @guard {
 }
 
 type DailyCashFlowEntry @guard {
-    value: Float
-    orders_price_avg: Float
-    unities_avg: Float
+  total: Float
+  orders_price_avg: Float
+  unities_avg: Float
 }
 
 type DailyCashFlowOut @guard {
-    value: Float
+  total: Float
+  expense_types: [DailyCashFlowOutExpenses]
+}
+
+type DailyCashFlowOutExpenses {
+  name: String
+  total: Float
 }
 
 type DailyCashFlow @guard {
@@ -47,10 +53,6 @@ enum QueryDailyCashOrderByColumn {
 
 enum QueryDailyCashWhereColumn {
   IS_CONFIRMED @enum(value: "is_confirmed")
-}
-enum DailyCashBalanceMonthsEnum {
-  CURRENT @enum(value: "current")
-  LAST @enum(value: "last")
 }
 
 enum DailyCashBalancePendenciesOrderByColumns {
@@ -73,7 +75,7 @@ extend type Query {
     @canAccess(roles: ["gerencia"])
 
   dailyCashBalancePendenciesOrders (
-    month: DailyCashBalanceMonthsEnum!
+    date: String!
     orderBy: _ @orderBy(columnsEnum: "DailyCashBalancePendenciesOrderByColumns")
   ): [Order]
     @paginate(builder: "App\\GraphQL\\Builders\\DailyCashBalancePendenciesOrdersBuilder")
