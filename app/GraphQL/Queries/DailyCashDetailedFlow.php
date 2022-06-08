@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Expense;
 use Illuminate\Support\Facades\DB;
 use App\GraphQL\Queries\DailyCashBalance;
+use App\Models\AppConfig;
 use App\Util\Helper;
 use Illuminate\Support\Facades\Validator;
 
@@ -75,7 +76,7 @@ class DailyCashDetailedFlow
 
     public function getOutData($date)
     {
-        $IDS_TO_SHOW_INDIVIDUALLY = [1, 2];
+        $IDS_TO_SHOW_INDIVIDUALLY = AppConfig::get('app', 'expense_types_ids_to_show');
 
         $total = CashFlowBalance::expensesQuery([
             'start_date' => $date->startOf('month')->toDateString(),
