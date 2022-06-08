@@ -89,6 +89,7 @@ class DailyCashDetailedFlow
                 $date->startOfMonth()->toDateString(),
                 $date->endOfMonth()->toDateString()
             ])
+            ->where('expenses.is_confirmed', true)
             ->select([
                 'expense_types.id',
                 'expense_types.name',
