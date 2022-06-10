@@ -7,11 +7,7 @@
     <div>
     @forelse ($orders as $order)
         @if ($order->size_paths)
-            <div @class([
-                    'page-break-after-always' => !$loop->last,
-                    'page-break-before-always' => !$loop->first
-                ])
-            >
+            <div>
                 @foreach($order->size_paths as $imageUrl)
                 <img class="img-fluid img-thumbnail w-100 mb-2" src="{{
                     FileHelper::imageToBase64(
