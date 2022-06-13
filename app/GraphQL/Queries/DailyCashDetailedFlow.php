@@ -8,6 +8,7 @@ use App\Models\Expense;
 use Illuminate\Support\Facades\DB;
 use App\GraphQL\Queries\DailyCashBalance;
 use App\Models\AppConfig;
+use App\Models\Payment;
 use App\Util\Helper;
 use Illuminate\Support\Facades\Validator;
 
@@ -37,6 +38,7 @@ class DailyCashDetailedFlow
         foreach ($dates as $date) {
             $data[] = [
                 'date' => $date->startOf('month')->toDateString(),
+                'total_price' => $this->getTotalPriceOfMonth($date, $DATE_FIELD),
                 'shirts_quantity' => DailyCashBalance::getShirtsOfMonth($date, $DATE_FIELD),
                 'entry' => $this->getEntryData($date, $DATE_FIELD),
                 'out' => $this->getOutData($date),
@@ -48,12 +50,29 @@ class DailyCashDetailedFlow
         return $data;
     }
 
+    public function getTotalPriceOfMonth($date, $dateField)
+    {
+        $total = Order::query()->whereBetween($dateField, [
+            $date->startOfMonth()->toDateString(),
+            $date->endOfMonth()->toDateString(),
+        ])->sum('price');
+
+        return number_format($total, 2, '.', '');
+    }
+
     public function getEntryData($date, $dateField)
     {
-        $value = CashFlowBalance::paymentsQuery([
-            'start_date' => $date->startOf('month')->toDateString(),
-            'final_date' => $date->endOf('month')->toDateString()
-        ])->where('is_confirmed', true)->sum('value');
+        $value = Payment::query()
+            ->where('is_confirmed', true)
+            ->whereHas(
+                'order',
+                function ($query) use ($dateField, $date) {
+                    $query->whereBetween($dateField, [
+                        $date->startOfMonth()->toDateString(),
+                        $date->endOfMonth()->toDateString()
+                    ]);
+                }
+            )->sum('value');
 
         $ordersPriceAvg = Order::whereBetween($dateField, [
             $date->startOfMonth()->toDateString(),

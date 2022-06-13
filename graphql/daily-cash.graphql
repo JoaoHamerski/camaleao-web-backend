@@ -41,6 +41,7 @@ type DailyCashFlowOutExpenses {
 
 type DailyCashFlow @guard {
   date: Date,
+  total_price: Float,
   shirts_quantity: Int,
   entry: DailyCashFlowEntry
   out: DailyCashFlowOut
