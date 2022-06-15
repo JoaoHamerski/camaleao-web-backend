@@ -78,7 +78,7 @@ class DailyCashBalance
     public static function getTotalOwingOfMonthQuery(Carbon $date, string $field)
     {
         $confirmedPaymentsSubQuery = <<<STR
-            SELECT SUM(`value`)
+            SELECT IFNULL(SUM(`value`), 0)
                 FROM `payments`
                 WHERE `is_confirmed` = 1
                 AND orders.id = payments.order_id
@@ -95,10 +95,10 @@ class DailyCashBalance
                 DB::raw("(price - ($confirmedPaymentsSubQuery)) AS total_owing"),
                 'orders.*',
                 DB::raw("
-                    IFNULL(($confirmedPaymentsSubQuery), 0) AS total_payments_order
+                    ($confirmedPaymentsSubQuery) AS total_payments_order
                 "),
                 DB::raw("
-                    IFNULL(orders.price, 0) - IFNULL(($confirmedPaymentsSubQuery), 0) AS total_order_owing
+                    IFNULL(orders.price, 0) - ($confirmedPaymentsSubQuery) AS total_order_owing
                 ")
             ])
             ->orderBy('total_owing', 'DESC');
