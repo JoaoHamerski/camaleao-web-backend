@@ -37,6 +37,10 @@ class OrderUpdate
             }
         }
 
+        if ($order->isDirty('print_date')) {
+            $order->order = null;
+        }
+
         $order->save();
 
         return $order;
