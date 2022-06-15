@@ -37,7 +37,8 @@ class Order extends Model
         'art_paths',
         'size_paths',
         'payment_voucher_paths',
-        'closed_at'
+        'closed_at',
+        'order'
     ];
 
     protected $appends = [

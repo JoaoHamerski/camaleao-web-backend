@@ -179,6 +179,11 @@ class PDFsController extends Controller
         $orders = Order::query();
         $orders = $this->queryOrders($orders, $request->all(), $request);
 
+        if ($request->field === 'print_date') {
+            $orders->orderBy('order', 'ASC');
+            $orders->orderBy('created_at', 'DESC');
+        }
+
         $pdf = PDF::loadView('pdf.weekly-calendar.index', [
             'title' =>  $this->getTitleForOrdersWeeklyCalendar($date, $request->field),
             'subtitle' => $this->getSubtitleForOrdersWeeklyCalendar($orders, $request),

@@ -43,7 +43,13 @@ class WeeklyCalendar
         $query = Order::whereBetween($field, [
             $startOfWeek->toDateString(),
             $endOfWeek->toDateString()
-        ])->orderBy('created_at', 'desc');
+        ]);
+
+        if ($field === 'print_date') {
+            $query->orderByRaw('ISNULL(`order`), `order` ASC');
+        }
+
+        $query->orderBy('created_at', 'DESC');
 
         $orders = $query->get()->map(
             fn (Order $order) => $order

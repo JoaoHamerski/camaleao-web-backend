@@ -10,6 +10,7 @@ type Order @guard {
   print_date: Date
   seam_date: Date
   discount: Float
+  order: Int
   payments: [Payment]
     @hasMany
     @orderBy(column: "date" direction: DESC)

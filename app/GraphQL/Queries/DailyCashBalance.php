@@ -92,6 +92,7 @@ class DailyCashBalance
             ->groupBy('orders.id')
             ->havingRaw('total_payments_order <> orders.price')
             ->select([
+                DB::raw("(price - ($confirmedPaymentsSubQuery)) AS total_owing"),
                 'orders.*',
                 DB::raw("
                     IFNULL(($confirmedPaymentsSubQuery), 0) AS total_payments_order
@@ -99,7 +100,8 @@ class DailyCashBalance
                 DB::raw("
                     IFNULL(orders.price, 0) - IFNULL(($confirmedPaymentsSubQuery), 0) AS total_order_owing
                 ")
-            ]);
+            ])
+            ->orderBy('total_owing', 'DESC');
     }
 
     public function getBalance(Builder $payments, Builder $expenses)

@@ -30,6 +30,11 @@ input OrderDatesFieldsUpdatableStatus {
   delivery_date: OrderDatesFieldsUpdatableField!
 }
 
+input ReorderWeeklyCalendarOrdersInput {
+  id: ID
+  order: Int
+}
+
 enum QueryFromDateColumns {
   PRINT_DATE @enum(value: "print_date")
   SEAM_DATE @enum(value: "seam_date")
@@ -53,4 +58,6 @@ extend type Mutation {
 
   statusUpdateUpdatableWeeklyCalendar (input: OrderDatesFieldsUpdatableStatus! @spread): String
     @canAccess(roles: ["gerencia"])
+
+  weeklyCalendarReorder (input: [ReorderWeeklyCalendarOrdersInput]): [Order]
 }
