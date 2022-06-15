@@ -60,4 +60,5 @@ extend type Mutation {
     @canAccess(roles: ["gerencia"])
 
   weeklyCalendarReorder (input: [ReorderWeeklyCalendarOrdersInput]): [Order]
+    @canAccess(roles: ["gerencia", "atendimento", "estampa"])
 }
