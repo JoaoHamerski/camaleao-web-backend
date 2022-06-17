@@ -15,6 +15,12 @@ use Illuminate\Support\Facades\Validator;
 class DailyCashDetailedFlow
 {
     /**
+     * @var
+     * Data para ser baseado todo o fluxo de dados buscado.
+     */
+    protected static $DATE_FIELD = 'print_date';
+
+    /**
      * @param  null  $_
      * @param  array<string, mixed>  $args
      */
@@ -32,22 +38,40 @@ class DailyCashDetailedFlow
 
     public function getDataOfMonths($dates)
     {
-        $DATE_FIELD = 'print_date';
         $data = [];
 
         foreach ($dates as $date) {
             $data[] = [
                 'date' => $date->startOf('month')->toDateString(),
-                'total_price' => $this->getTotalPriceOfMonth($date, $DATE_FIELD),
-                'shirts_quantity' => DailyCashBalance::getShirtsOfMonth($date, $DATE_FIELD),
-                'entry' => $this->getEntryData($date, $DATE_FIELD),
+                'total_price' => $this->getTotalPriceOfMonth($date, self::$DATE_FIELD),
+                'shirts_total' => DailyCashBalance::getShirtsOfMonth($date, self::$DATE_FIELD),
+                'entry' => $this->getEntryData($date, self::$DATE_FIELD),
                 'out' => $this->getOutData($date),
-                'pendency' => DailyCashBalance::getTotalOwingOfMonthQuery($date, $DATE_FIELD)
-                    ->sum('total_order_owing')
+                'pendency' => DailyCashBalance::getTotalOwingOfMonthQuery($date, self::$DATE_FIELD)
+                    ->sum('total_order_owing'),
+                'shirts_quantity' => $this->getShirtsQuantitiesOfMonth($date, self::$DATE_FIELD)
             ];
         }
 
         return $data;
+    }
+
+    public function getShirtsQuantitiesOfMonth($date, $dateField)
+    {
+        $orderQuery = Order::whereBetween($dateField, [
+            $date->startOfMonth()->toDateString(),
+            $date->endOfMonth()->toDateString()
+        ]);
+
+        $lessThanFive = $orderQuery->clone()->where('quantity', '<', 5)->count();
+        $betweenFiveAndTen = $orderQuery->clone()->whereBetween('quantity', [5, 10])->count();
+        $moreThanTen = $orderQuery->clone()->where('quantity', '>', 10)->count();
+
+        return [
+            'less_than_five' => $lessThanFive,
+            'between_five_and_ten' => $betweenFiveAndTen,
+            'more_than_ten' => $moreThanTen
+        ];
     }
 
     public function getTotalPriceOfMonth($date, $dateField)

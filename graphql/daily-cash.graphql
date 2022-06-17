@@ -34,18 +34,25 @@ type DailyCashFlowOut @guard {
   expense_types: [DailyCashFlowOutExpenses]
 }
 
-type DailyCashFlowOutExpenses {
+type DailyCashFlowOutExpenses @guard {
   name: String
   total: Float
+}
+
+type DailyCashFlowShirtsQuantity {
+  less_than_five: Int
+  between_five_and_ten: Int
+  more_than_ten: Int
 }
 
 type DailyCashFlow @guard {
   date: Date,
   total_price: Float,
-  shirts_quantity: Int,
+  shirts_total: Int,
   entry: DailyCashFlowEntry
   out: DailyCashFlowOut
   pendency: Float
+  shirts_quantity: DailyCashFlowShirtsQuantity
 }
 
 enum QueryDailyCashOrderByColumn {
