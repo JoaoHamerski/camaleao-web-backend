@@ -39,15 +39,16 @@ type DailyCashFlowOutExpenses @guard {
   total: Float
 }
 
-type DailyCashValueAndQuantity {
+type DailyCashShirtsDetails {
   value: Float
+  count: Int
   quantity: Int
 }
 
 type DailyCashFlowShirts {
-  less_than_five: DailyCashValueAndQuantity
-  between_five_and_ten: DailyCashValueAndQuantity
-  more_than_ten: DailyCashValueAndQuantity
+  less_than_five: DailyCashShirtsDetails
+  between_five_and_ten: DailyCashShirtsDetails
+  more_than_ten: DailyCashShirtsDetails
 }
 
 type DailyCashFlow @guard {

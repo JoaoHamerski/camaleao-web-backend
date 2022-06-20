@@ -56,10 +56,11 @@ class DailyCashDetailedFlow
         return $data;
     }
 
-    public function getShirtsQuantityAndValue($query)
+    public function getShirtsDetails($query)
     {
         return [
-            'quantity' => $query->count(),
+            'count' => $query->count(),
+            'quantity' => $query->sum('quantity'),
             'value' => $query->sum(DB::raw('ROUND(price, 2)'))
         ];
     }
@@ -76,9 +77,9 @@ class DailyCashDetailedFlow
         $moreThanTenQuery = $orderQuery->clone()->where('quantity', '>', 10);
 
         return [
-            'less_than_five' => $this->getShirtsQuantityAndValue($lessThanFiveQuery),
-            'between_five_and_ten' => $this->getShirtsQuantityAndValue($betweenFiveAndTenQuery),
-            'more_than_ten' => $this->getShirtsQuantityAndValue($moreThanTenQuery)
+            'less_than_five' => $this->getShirtsDetails($lessThanFiveQuery),
+            'between_five_and_ten' => $this->getShirtsDetails($betweenFiveAndTenQuery),
+            'more_than_ten' => $this->getShirtsDetails($moreThanTenQuery)
         ];
     }
 
