@@ -49,28 +49,36 @@ class DailyCashDetailedFlow
                 'out' => $this->getOutData($date),
                 'pendency' => DailyCashBalance::getTotalOwingOfMonthQuery($date, self::$DATE_FIELD)
                     ->sum('total_order_owing'),
-                'shirts_quantity' => $this->getShirtsQuantitiesOfMonth($date, self::$DATE_FIELD)
+                'shirts_details' => $this->getShirtsDetailsOfMonth($date, self::$DATE_FIELD)
             ];
         }
 
         return $data;
     }
 
-    public function getShirtsQuantitiesOfMonth($date, $dateField)
+    public function getShirtsQuantityAndValue($query)
+    {
+        return [
+            'quantity' => $query->count(),
+            'value' => $query->sum(DB::raw('ROUND(price, 2)'))
+        ];
+    }
+
+    public function getShirtsDetailsOfMonth($date, $dateField)
     {
         $orderQuery = Order::whereBetween($dateField, [
             $date->startOfMonth()->toDateString(),
             $date->endOfMonth()->toDateString()
         ]);
 
-        $lessThanFive = $orderQuery->clone()->where('quantity', '<', 5)->count();
-        $betweenFiveAndTen = $orderQuery->clone()->whereBetween('quantity', [5, 10])->count();
-        $moreThanTen = $orderQuery->clone()->where('quantity', '>', 10)->count();
+        $lessThanFiveQuery = $orderQuery->clone()->where('quantity', '<', 5);
+        $betweenFiveAndTenQuery = $orderQuery->clone()->whereBetween('quantity', [5, 10]);
+        $moreThanTenQuery = $orderQuery->clone()->where('quantity', '>', 10);
 
         return [
-            'less_than_five' => $lessThanFive,
-            'between_five_and_ten' => $betweenFiveAndTen,
-            'more_than_ten' => $moreThanTen
+            'less_than_five' => $this->getShirtsQuantityAndValue($lessThanFiveQuery),
+            'between_five_and_ten' => $this->getShirtsQuantityAndValue($betweenFiveAndTenQuery),
+            'more_than_ten' => $this->getShirtsQuantityAndValue($moreThanTenQuery)
         ];
     }
 
