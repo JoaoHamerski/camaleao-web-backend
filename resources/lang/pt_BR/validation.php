@@ -145,7 +145,8 @@ return [
         'after' => 'A data informada deve ser posterior a :date.',
         'email' => 'Por favor, informe um email válido.',
         'password_confirmed' => 'A senha digitada não confere com a confirmação de senha.',
-        'current_password' => 'A senha digitada não confere.'
+        'current_password' => 'A senha digitada não confere.',
+        'required_if' => 'Por favor, informe um :attribute quando o campo :subject está selecionado.'
     ],
 
     /*
@@ -167,6 +168,7 @@ return [
         'payments' => [
             'payment_via_id|required' => 'Por favor, selecione uma via.',
             'client|id|required' => 'Por favor, selecione um cliente.',
+            'sponsorship_client_id|not_in' => 'O patrocinador não pode ser o dono do pedido.'
         ],
         'clothing_types' => [
             'key|unique' => 'Este tipo de roupa já foi registrado.'
@@ -243,7 +245,8 @@ return [
         'via_id' => 'via',
         'year'      => 'ano',
         'product_type_id' => 'produto',
-        'employee_id' => 'funcionário'
+        'employee_id' => 'funcionário',
+        'sponsorship_client_id' => 'cliente patrocinador'
     ],
 
 ];

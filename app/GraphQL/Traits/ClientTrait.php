@@ -23,7 +23,8 @@ trait ClientTrait
             'phone' => ['nullable', 'min:8', 'max:11'],
             'branch_id' => ['nullable', 'exists:branches,id'],
             'city_id' => ['nullable', 'exists:cities,id'],
-            'shipping_company_id' => ['nullable', 'exists:shipping_companies,id']
+            'shipping_company_id' => ['nullable', 'exists:shipping_companies,id'],
+            'is_sponsor' => ['required', 'boolean']
         ], $this->errorMessages());
     }
 

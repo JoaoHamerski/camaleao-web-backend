@@ -10,6 +10,9 @@ type Order @guard {
   print_date: Date
   seam_date: Date
   discount: Float
+  total_paid_sponsor: Float
+  total_paid_non_sponsor: Float
+  has_sponsor: Boolean
   order: Int
   payments: [Payment]
     @hasMany

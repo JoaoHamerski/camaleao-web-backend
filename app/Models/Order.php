@@ -205,6 +205,26 @@ class Order extends Model
         return $total;
     }
 
+    public function getHasSponsorAttribute()
+    {
+        return $this->payments()
+            ->whereNotNull('sponsorship_client_id')
+            ->exists();
+    }
+
+    public function getTotalPaidNonSponsorAttribute()
+    {
+        return bcsub($this->total_paid, $this->total_paid_sponsor, 2);
+    }
+
+    public function getTotalPaidSponsorAttribute()
+    {
+        return $this->payments()
+            ->where('is_confirmed', true)
+            ->whereNotNull('sponsorship_client_id')
+            ->sum('value');
+    }
+
     public function getTotalPaidAttribute()
     {
         return $this->payments()

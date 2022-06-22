@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\GraphQL\Exceptions\UnprocessableException;
 use App\GraphQL\Traits\PaymentTrait;
+use Illuminate\Validation\Rule;
 
 class PaymentCreate
 {
@@ -25,7 +26,7 @@ class PaymentCreate
 
         $payment = $order->payments()->create($data);
 
-        if (Auth::user()->hasRole('gerencia')) {
+        if (Auth::user()->hasRole('gerencia') && !$payment->is_sponsor) {
             activity()->withoutLogs(function () use ($payment) {
                 $payment->confirm();
             });
@@ -50,7 +51,13 @@ class PaymentCreate
                 'payment_via_id' => ['required', 'exists:vias,id'],
                 'value' => ['required', 'min_currency:0.01', 'max_currency:' . $order->total_owing],
                 'date' => ['required', 'date_format:Y-m-d'],
-                'note' => ['nullable', 'max:255']
+                'note' => ['nullable', 'max:255'],
+                'sponsorship_client_id' => [
+                    'nullable',
+                    'exists:clients,id',
+                    Rule::notIn($order->client->id),
+                    Rule::requiredIf($data['is_sponsor'])
+                ]
             ],
             $this->errorMessages()
         );

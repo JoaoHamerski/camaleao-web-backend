@@ -28,7 +28,12 @@ class Payment extends Model
         'value',
         'is_confirmed',
         'confirmed_at',
-        'created_at'
+        'created_at',
+        'sponsorship_client_id'
+    ];
+
+    protected $appends = [
+        'is_sponsor'
     ];
 
     public function getCreatedLog(): string
@@ -80,6 +85,16 @@ class Payment extends Model
             'confirmed_at' => Carbon::now(),
             'is_confirmed' => true
         ]);
+    }
+
+    public function sponsorshipClient()
+    {
+        return $this->belongsTo(Client::class);
+    }
+
+    public function getIsSponsorAttribute()
+    {
+        return !!$this->sponsorship_client_id;
     }
 
     public function scopePendencies(Builder $builder = null, bool $pendencies = true)

@@ -26,7 +26,8 @@ class Client extends Model
         'phone',
         'branch_id',
         'city_id',
-        'shipping_company_id'
+        'shipping_company_id',
+        'is_sponsor'
     ];
 
     protected $cascadeDeletes = ['orders', 'payments'];
@@ -63,11 +64,6 @@ class Client extends Model
         );
     }
 
-    /**
-     * Método booted do model
-     *
-     * @return void
-     */
     public static function booted()
     {
         static::deleting(function ($client) {
@@ -91,53 +87,34 @@ class Client extends Model
         }
     }
 
-    /**
-     * Um cliente tem muitos pedidos
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function orders()
     {
         return $this->hasMany(Order::class);
     }
 
-    /**
-     * Um cliente tem muitos pagamentos de muitos pedidos
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
-     */
     public function payments()
     {
         return $this->hasManyThrough(Payment::class, Order::class);
     }
 
-    /**
-     * Retorna o total que o cliente está devendo
-     *
-     * @return double
-     */
+    public function sponsorPayments()
+    {
+        return $this->hasMany(Payment::class, 'sponsorship_client_id', 'id');
+    }
+
     public function getTotalOwingAttribute()
     {
         return bcsub($this->getTotalBought(), $this->getTotalPaid(), 2);
     }
 
-    /**
-     * Retorna o total pago pelo cliente
-     *
-     * @return double
-     */
     public function getTotalPaid()
     {
         return $this->payments()
             ->where('is_confirmed', true)
+            ->whereNull('sponsorship_client_id')
             ->sum('value');
     }
 
-    /**
-     * Retorna o total comprado pelo cliente
-     *
-     * @return double
-     */
     public function getTotalBought()
     {
         return $this->orders()->sum('price');
@@ -171,13 +148,4 @@ class Client extends Model
 
         return $this->branch->city();
     }
-
-    // public function branchCity()
-    // {
-    //     if (!$this->branch) {
-    //         return $this->branch();
-    //     }
-
-    //     return $this->branch->city();
-    // }
 }

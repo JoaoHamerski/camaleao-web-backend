@@ -21,7 +21,9 @@ trait PaymentTrait
             'payment_via_id.required' => __('validation.rules.required_list', ['pronoun' => 'uma']),
             'date.required' => __('validation.rules.required', ['attribute' => 'data de pagamento']),
             'date.date_format' => __('validation.rules.date_format'),
-            'value.max_currency' => __('validation.rules.max_currency', ['subject' => 'o total restante do pedido'])
+            'value.max_currency' => __('validation.rules.max_currency', ['subject' => 'o total restante do pedido']),
+            'sponsorship_client_id.not_in' => __('validation.custom.payments.sponsorship_client_id|not_in'),
+            'sponsorship_client_id.required' => __('validation.rules.required')
         ];
     }
 }

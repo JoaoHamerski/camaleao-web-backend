@@ -7,6 +7,8 @@ type Payment @guard {
   via: Via @belongsTo
   confirmed_at: Date
   is_confirmed: Boolean
+  is_sponsor: Boolean
+  sponsorship_client: Client @rename(attribute: "sponsorshipClient")
   created_at: DateTime
   updated_at: DateTime
 }
@@ -22,6 +24,8 @@ input PaymentInput {
   value: String
   date: String
   note: String
+  sponsorship_client_id: ID
+  is_sponsor: Boolean
 }
 
 input DailyCashClientInput {
