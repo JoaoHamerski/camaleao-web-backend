@@ -6,7 +6,7 @@ use App\Models\Order;
 use App\Models\Client;
 use App\Util\Formatter;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
 class DailyCashEntry
@@ -37,12 +37,26 @@ class DailyCashEntry
             $isNew['order']
         );
 
-        return $order->payments()->create([
-            'value' => $data['value'],
-            'payment_via_id' => $data['via_id'],
-            'date' => $data['date'],
-            'is_confirmed' => Auth::user()->hasRole('gerencia') ?: null
-        ]);
+        return $this->createPayment($data, $order);
+    }
+
+    public function createPayment(array $data, Order $order)
+    {
+        $payment = $order->payments()->make(Arr::only($data, [
+            'value',
+            'date',
+            'sponsorship_client_id'
+        ]));
+
+        $payment->payment_via_id = $data['via_id'];
+
+        if ($payment->isConfirmable()) {
+            $payment->makeConfirm();
+        }
+
+        $payment->save();
+
+        return $payment;
     }
 
     public function getRules(array $isNew, array $data): array
@@ -63,10 +77,7 @@ class DailyCashEntry
         $data['order']['id'] = isset($data['order']['id']) ? $data['order']['id'] : '';
 
         return (new Formatter($data))
-            ->currencyBRL([
-                'order.price',
-                'value'
-            ])
+            ->currencyBRL(['order.price', 'value'])
             ->name('client.name')
             ->date('date')
             ->get();
@@ -108,7 +119,12 @@ class DailyCashEntry
         $rules = [
             'via_id' => ['required', 'exists:vias,id'],
             'value' => ['required', 'numeric'],
-            'date' => ['required', 'date']
+            'date' => ['required', 'date'],
+            'sponsorship_client_id' => [
+                'nullable',
+                'exists:clients,id',
+                Rule::requiredIf($data['is_sponsor'])
+            ]
         ];
 
         if (!$order && !empty($data['order']['price'])) {
@@ -116,6 +132,7 @@ class DailyCashEntry
         }
 
         if ($order) {
+            $rules['sponsorship_client_id'][] = Rule::notIn($order->client->id);
             $rules['value'][] = 'max_currency:' . $order->total_owing;
         }
 
@@ -180,7 +197,9 @@ class DailyCashEntry
                 : __('validation.rules.max_currency', [
                     'attribute' => 'pagamento',
                     'subject' => 'total restante'
-                ])
+                ]),
+            'sponsorship_client_id.not_in' => __('validation.custom.payments.sponsorship_client_id|not_in'),
+            'sponsorship_client_id.required' => __('validation.rules.required')
         ];
     }
 }
