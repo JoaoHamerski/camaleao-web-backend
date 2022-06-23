@@ -79,6 +79,12 @@ extend type Mutation {
     @can(ability: "update" query: true injectArgs: true)
     @canAccess(roles: ["gerencia", "atendimento"])
 
+  paymentDelete (
+    id: ID!
+    password: String!
+  ): Payment
+    @canAccess(roles: ["gerencia"])
+
   paymentAssignConfirmation (
     id: ID! @eq
     confirmation: Boolean!

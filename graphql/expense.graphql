@@ -12,6 +12,7 @@ type Expense @guard {
   via: Via
   is_confirmed: Boolean
   confirmed_at: Date
+  created_at: DateTime
 }
 
 input ExpenseInput {
@@ -65,6 +66,9 @@ extend type Mutation {
   expenseUpdate(id: ID! input: ExpenseInput @spread): Expense
     @can(ability: "update" query: true)
     @canAccess(roles: ["gerencia", "atendimento"])
+
+  expenseDelete (id:ID! password: String!): Expense
+    @canAccess(roles: ["gerencia"])
 
   expenseAssignConfirmation (id: ID! confirmation: Boolean): Expense
     @can(ability: "confirm")
