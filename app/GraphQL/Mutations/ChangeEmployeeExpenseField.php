@@ -15,7 +15,7 @@ class ChangeEmployeeExpenseField
     public function __invoke($_, array $args)
     {
         Validator::make($args, [
-            'id' => ['required', 'exists:users,id']
+            'id' => ['required', 'exists:expense_types,id']
         ])->validate();
 
         AppConfig::set('app', 'employee_expense', $args['id']);

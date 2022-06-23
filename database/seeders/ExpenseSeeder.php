@@ -21,14 +21,26 @@ class ExpenseSeeder extends BaseSeeder
 
         Expense::factory()
             ->count($EXPENSES_QUANTITY)
-            ->create()
+            ->make()
             ->each(function ($expense) {
-                $expense->update([
-                    'user_id' => User::inRandomOrder()->first()->id,
-                    'expense_via_id' => Via::inRandomOrder()->first()->id,
-                    'expense_type_id' => ExpenseType::inRandomOrder()->first()->id,
-                    'product_type_id' => ProductType::inRandomOrder()->first()->id
-                ]);
+                $this->makeExpense($expense);
             });
+    }
+
+    public function makeExpense(Expense $expense)
+    {
+        $expense->fill([
+            'user_id' => User::inRandomOrder()->first()->id,
+            'expense_via_id' => Via::inRandomOrder()->first()->id,
+            'expense_type_id' => ExpenseType::inRandomOrder()->first()->id,
+            'product_type_id' => ProductType::inRandomOrder()->first()->id,
+            'is_confirmed' => $this->faker->optional(.8)->boolean(80)
+        ]);
+
+        if ($expense->is_confirmed) {
+            $expense->confirmed_at = now();
+        }
+
+        $expense->save();
     }
 }

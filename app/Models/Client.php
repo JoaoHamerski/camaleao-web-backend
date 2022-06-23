@@ -31,8 +31,6 @@ class Client extends Model
 
     protected $cascadeDeletes = ['orders', 'payments'];
 
-    protected $appends = ['total_owing'];
-
     public function getCreatedLog(): string
     {
         return $this->getDescriptionLog(
@@ -115,18 +113,12 @@ class Client extends Model
     {
         return $this->payments()
             ->where('is_confirmed', true)
-            ->whereNull('sponsorship_client_id')
             ->sum('value');
     }
 
     public function getTotalBought()
     {
         return $this->orders()->sum('price');
-    }
-
-    public function getNewOrderCode()
-    {
-        return substr($this->phone, -4);
     }
 
     public function city()

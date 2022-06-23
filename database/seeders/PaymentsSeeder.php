@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Client;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Via;
@@ -59,6 +60,9 @@ class PaymentsSeeder extends BaseSeeder
             ->for($order)
             ->count($payments->count())
             ->state(new Sequence(fn ($sequence) => [
+                'sponsorship_client_id' => $this->faker->boolean(35)
+                    ? Client::inRandomOrder()->first()->id
+                    : null,
                 'value' => $payments->get($sequence->index),
                 'payment_via_id' => Via::inRandomOrder()->first()->id,
                 'date' => $this->faker->dateTimeBetween(

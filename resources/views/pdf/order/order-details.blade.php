@@ -101,9 +101,22 @@
     @endif
 
     @if (! $order->isPaid())
-    <tr class="text-success fw-bold">
-      <td class="fw-bold w-25 bg-secondary">TOTAL PAGO</td>
-      <td colspan="3" class="bg-secondary-light">{{ Mask::currencyBRL($order->total_paid) }}</td>
+    <tr class="fw-bold">
+      <td class="fw-bold w-25 bg-secondary text-success">TOTAL PAGO</td>
+      <td
+        class="text-success"
+        @if (!$order->has_sponsor)
+          colspan="3"
+        @endif
+        class="bg-secondary-light"
+      >{{ Mask::currencyBRL($order->total_paid) }}</td>
+
+      @if ($order->has_sponsor)
+        <td class="fw-bold w-25 bg-secondary text-primary">PATROCÍNIO</td>
+        <td class="bg-secondary-light text-primary">
+            {{ Mask::currencyBRL($order->total_paid_sponsor) }}
+        </td>
+      @endif
     </tr>
 
     <tr class="text-danger fw-bold">

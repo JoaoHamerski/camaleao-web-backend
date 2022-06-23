@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AppConfig;
 use App\Models\Client;
 use App\Models\Order;
 
@@ -24,5 +25,11 @@ class OrdersSeeder extends BaseSeeder
                 ->for($client)
                 ->create();
         });
+
+        AppConfig::set(
+            'orders',
+            'print_commission',
+            $this->faker->randomFloat(2, 1, 5)
+        );
     }
 }
