@@ -56,11 +56,12 @@ enum QueryPaymentsOrderByColumn {
 
 extend type Query {
   payments (
+    sponsorship_client_id: ID! @where
     created_at: Date @where(clause: "whereDate")
     orderBy: _ @orderBy(columnsEnum: "QueryPaymentsOrderByColumn")
     pendencies: Boolean @scope
   ): [Payment]
-    @all
+    @paginate
     @canAccess(roles: ["gerencia", "atendimento"])
 
   paymentsPendencies: [PaymentPendency]

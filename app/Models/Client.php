@@ -96,6 +96,11 @@ class Client extends Model
         return $this->hasManyThrough(Payment::class, Order::class);
     }
 
+    public function getIsSponsorAttribute()
+    {
+        return $this->sponsorPayments()->exists();
+    }
+
     public function sponsorPayments()
     {
         return $this->hasMany(Payment::class, 'sponsorship_client_id', 'id');
