@@ -208,6 +208,7 @@ class Order extends Model
     public function getHasSponsorAttribute()
     {
         return $this->payments()
+            ->where('is_confirmed', true)
             ->whereNotNull('sponsorship_client_id')
             ->exists();
     }

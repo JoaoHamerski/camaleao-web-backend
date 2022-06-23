@@ -31,5 +31,8 @@ type PaymentExpense @guard {
   )
   employee: User @field(
     resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@employee"
+  ),
+  sponsorship_client: Client @field (
+    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@client"
   )
 }

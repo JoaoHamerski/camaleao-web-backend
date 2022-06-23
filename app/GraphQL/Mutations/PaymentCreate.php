@@ -3,7 +3,6 @@
 namespace App\GraphQL\Mutations;
 
 use App\Models\Order;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\GraphQL\Exceptions\UnprocessableException;
 use App\GraphQL\Traits\PaymentTrait;
@@ -24,13 +23,18 @@ class PaymentCreate
 
         $this->validator($data, $order)->validate();
 
-        $payment = $order->payments()->create($data);
+        return $this->createPayment($data, $order);
+    }
 
-        if (Auth::user()->hasRole('gerencia') && !$payment->is_sponsor) {
-            activity()->withoutLogs(function () use ($payment) {
-                $payment->confirm();
-            });
+    public function createPayment(array $data, Order $order)
+    {
+        $payment = $order->payments()->make($data);
+
+        if ($payment->isConfirmable()) {
+            $payment->makeConfirm();
         }
+
+        $payment->save();
 
         return $payment;
     }

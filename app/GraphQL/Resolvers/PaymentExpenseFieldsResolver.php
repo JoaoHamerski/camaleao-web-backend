@@ -5,6 +5,7 @@ namespace App\GraphQL\Resolvers;
 use App\Models\Via;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Client;
 use App\Util\FileHelper;
 use App\Models\ExpenseType;
 use App\Models\ProductType;
@@ -115,6 +116,17 @@ class PaymentExpenseFieldsResolver
 
         if ($employeeId) {
             return User::find($employeeId);
+        }
+
+        return null;
+    }
+
+    public function client($rootValue)
+    {
+        $clientId = $rootValue->sponsorship_client_id;
+
+        if ($clientId) {
+            return Client::find($clientId);
         }
 
         return null;

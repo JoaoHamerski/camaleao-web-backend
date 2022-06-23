@@ -2,7 +2,6 @@ type Client @guard {
   id: ID!
   name: String!
   phone: String
-  is_sponsor: Boolean!
   orders (
     orderBy: _ @orderBy(columnsEnum: "QueryOrdersOrderByColumn")
     where: _ @whereConditions(columnsEnum: "QueryOrdersWhereConditionsColumn")
@@ -36,7 +35,6 @@ input ClientInput {
   city_id: ID
   branch_id: ID
   shipping_company_id: ID
-  is_sponsor: Boolean
 }
 
 extend type Query {
