@@ -34,6 +34,10 @@ class PaymentCreate
             $payment->makeConfirm();
         }
 
+        if ($payment->sponsorship_client_id) {
+            $payment->date = null;
+        }
+
         $payment->save();
 
         return $payment;
@@ -51,10 +55,11 @@ class PaymentCreate
         return Validator::make(
             $data,
             [
+                'is_sponsor' => ['required', 'boolean'],
                 'order_id' => ['required', 'exists:orders,id'],
                 'payment_via_id' => ['required', 'exists:vias,id'],
                 'value' => ['required', 'min_currency:0.01', 'max_currency:' . $order->total_owing],
-                'date' => ['required', 'date_format:Y-m-d'],
+                'date' => ['nullable', 'required_if:is_sponsor,false', 'date'],
                 'note' => ['nullable', 'max:255'],
                 'sponsorship_client_id' => [
                     'nullable',

@@ -19,6 +19,7 @@ trait PaymentsExpensesQueryTrait
     {
         return DB::table('payments')
             ->join('orders', 'payments.order_id', '=', 'orders.id')
+            ->whereNotNull('payments.date')
             ->select([
                 'payments.id',
                 DB::raw('null AS user_id'),

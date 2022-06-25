@@ -3,6 +3,7 @@
 namespace App\GraphQL\Mutations;
 
 use App\Models\Payment;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 
 class PaymentAssignConfirmation
@@ -29,10 +30,17 @@ class PaymentAssignConfirmation
             ])->validate();
         }
 
-        $payment->update([
+        $payment->fill([
             'is_confirmed' => $args['confirmation'],
             'confirmed_at' => now()
+
         ]);
+
+        if ($payment->sponsorshipClient) {
+            $payment->date = Carbon::now()->toDateString();
+        }
+
+        $payment->save();
 
         return $payment;
     }

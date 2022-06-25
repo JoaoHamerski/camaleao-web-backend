@@ -54,6 +54,10 @@ class DailyCashEntry
             $payment->makeConfirm();
         }
 
+        if ($payment->sponsorship_client_id) {
+            $payment->date = null;
+        }
+
         $payment->save();
 
         return $payment;
@@ -119,11 +123,11 @@ class DailyCashEntry
         $rules = [
             'via_id' => ['required', 'exists:vias,id'],
             'value' => ['required', 'numeric'],
-            'date' => ['required', 'date'],
+            'date' => ['nullable', 'required_if:is_sponsor,false', 'date'],
             'sponsorship_client_id' => [
                 'nullable',
                 'exists:clients,id',
-                Rule::requiredIf($data['is_sponsor'])
+                Rule::requiredIf($data['is_sponsor']),
             ]
         ];
 
@@ -174,7 +178,7 @@ class DailyCashEntry
     private function errorMessages($isNewOrder)
     {
         return [
-            'date.required' => __('validation.rules.required'),
+            'date.required_if' => __('validation.rules.required'),
             'client.name.required' => __('validation.rules.required'),
             'client.id.required_without' => __('validation.rules.required_list', [
                 'pronoun' => 'um',
