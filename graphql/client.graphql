@@ -9,7 +9,8 @@ type Client @guard {
   city: City @belongsTo
   branch: Branch @belongsTo
   shipping_company: ShippingCompany @rename(attribute: "shippingCompany")
-  total_owing: String
+  total_owing: Float
+  total_owing_as_sponsorship: Float
   is_sponsor: Boolean
   created_at: DateTime
   updated_at: DateTime

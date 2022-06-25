@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Util\FileHelper;
 use App\Traits\LogsActivity;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -107,6 +108,13 @@ class Client extends Model
     public function getTotalOwingAttribute()
     {
         return bcsub($this->getTotalBought(), $this->getTotalPaid(), 2);
+    }
+
+    public function getTotalOwingAsSponsorshipAttribute()
+    {
+        return $this->sponsorPayments()
+            ->whereNull('is_confirmed')
+            ->sum(DB::raw('ROUND(value, 2)'));
     }
 
     public function getTotalPaid()
