@@ -329,16 +329,16 @@ class Order extends Model
 
     public function getArtPathsAttribute($value)
     {
-        return FileHelper::getSecureFilesURL($value, 'art_paths');
+        return FileHelper::getFilesURL($value, 'art_paths');
     }
 
     public function getSizePathsAttribute($value)
     {
-        return FileHelper::getSecureFilesURL($value, 'size_paths');
+        return FileHelper::getFilesURL($value, 'size_paths');
     }
 
     public function getPaymentVoucherPathsAttribute($value)
     {
-        return FileHelper::getSecureFilesURL($value, 'payment_voucher_paths');
+        return FileHelper::getFilesURL($value, 'payment_voucher_paths');
     }
 }
