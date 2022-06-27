@@ -103,7 +103,7 @@ class FileHelper
 
     public static function getSecureFilesURL($files, $field)
     {
-        $artPaths = json_decode($files);
+        $decodedFiles = json_decode($files);
 
         if (empty($files)) {
             return [];
@@ -115,10 +115,10 @@ class FileHelper
                 now()->addSeconds(10),
                 [
                     'filename' => $item,
-                    'field' => 'art_paths'
+                    'field' => $field
                 ]
             ),
-            $artPaths
+            $decodedFiles
         );
     }
 
