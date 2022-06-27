@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ImagesController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PDFsController;
 
@@ -13,6 +14,13 @@ use App\Http\Controllers\PDFsController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::prefix('images')->name('images.')->group(function () {
+    Route::get('/view', [
+        ImagesController::class,
+        'show'
+    ])->name('show');
+});
 
 Route::prefix('pdf')->name('pdf.')->group(function () {
     Route::get('orders/report', [

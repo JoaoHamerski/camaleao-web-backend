@@ -101,6 +101,27 @@ class FileHelper
         return $baseFileURL . '/' . $files;
     }
 
+    public static function getSecureFilesURL($files, $field)
+    {
+        $artPaths = json_decode($files);
+
+        if (empty($files)) {
+            return [];
+        }
+
+        return array_map(
+            fn ($item) => URL::temporarySignedRoute(
+                'images.show',
+                now()->addSeconds(10),
+                [
+                    'filename' => $item,
+                    'field' => 'art_paths'
+                ]
+            ),
+            $artPaths
+        );
+    }
+
     public static function isBase64($data)
     {
         @list(, $base64) = explode(',', $data);

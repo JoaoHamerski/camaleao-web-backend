@@ -4,8 +4,9 @@ namespace App\Models;
 
 use App\Util\FileHelper;
 use App\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
@@ -328,16 +329,16 @@ class Order extends Model
 
     public function getArtPathsAttribute($value)
     {
-        return FileHelper::getFilesURL($value, 'art_paths');
+        return FileHelper::getSecureFilesURL($value, 'art_paths');
     }
 
     public function getSizePathsAttribute($value)
     {
-        return FileHelper::getFilesURL($value, 'size_paths');
+        return FileHelper::getSecureFilesURL($value, 'size_paths');
     }
 
     public function getPaymentVoucherPathsAttribute($value)
     {
-        return FileHelper::getFilesURL($value, 'payment_voucher_paths');
+        return FileHelper::getSecureFilesURL($value, 'payment_voucher_paths');
     }
 }
