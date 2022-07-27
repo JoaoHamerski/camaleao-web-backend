@@ -97,15 +97,10 @@ class DailyCashDetailedFlow
     {
         $value = Payment::query()
             ->where('is_confirmed', true)
-            ->whereHas(
-                'order',
-                function ($query) use ($dateField, $date) {
-                    $query->whereBetween($dateField, [
-                        $date->startOfMonth()->toDateString(),
-                        $date->endOfMonth()->toDateString()
-                    ]);
-                }
-            )->sum('value');
+            ->whereBetween('date', [
+                $date->startOfMonth()->toDateString(),
+                $date->endOfMonth()->toDateString()
+            ])->sum('value');
 
         $ordersPriceAvg = Order::whereBetween($dateField, [
             $date->startOfMonth()->toDateString(),

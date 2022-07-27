@@ -147,7 +147,8 @@ return [
         'email' => 'Por favor, informe um email válido.',
         'password_confirmed' => 'A senha digitada não confere com a confirmação de senha.',
         'current_password' => 'A senha digitada não confere.',
-        'required_if' => 'Por favor, informe um :attribute quando o campo :subject está selecionado.'
+        'required_if' => 'Por favor, informe um :attribute quando o campo :subject está selecionado.',
+        'before_or_equal_today' => 'A data deve ser hoje ou anterior a hoje.'
     ],
 
     /*

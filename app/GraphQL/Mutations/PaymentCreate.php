@@ -6,6 +6,7 @@ use App\Models\Order;
 use Illuminate\Support\Facades\Validator;
 use App\GraphQL\Exceptions\UnprocessableException;
 use App\GraphQL\Traits\PaymentTrait;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 
 class PaymentCreate
@@ -59,7 +60,12 @@ class PaymentCreate
                 'order_id' => ['required', 'exists:orders,id'],
                 'payment_via_id' => ['required', 'exists:vias,id'],
                 'value' => ['required', 'min_currency:0.01', 'max_currency:' . $order->total_owing],
-                'date' => ['nullable', 'required_if:is_sponsor,false', 'date'],
+                'date' => [
+                    'nullable',
+                    'required_if:is_sponsor,false',
+                    'date',
+                    'before_or_equal:' . Carbon::now()->toDateString()
+                ],
                 'note' => ['nullable', 'max:255'],
                 'sponsorship_client_id' => [
                     'nullable',

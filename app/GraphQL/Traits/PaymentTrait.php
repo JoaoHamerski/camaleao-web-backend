@@ -17,6 +17,7 @@ trait PaymentTrait
     private function errorMessages()
     {
         return [
+            'before_or_equal' => __('validation.rules.before_or_equal_today'),
             'value.required' => __('validation.rules.required'),
             'payment_via_id.required' => __('validation.rules.required_list', ['pronoun' => 'uma']),
             'date.required' => __('validation.rules.required', ['attribute' => 'data de pagamento']),
