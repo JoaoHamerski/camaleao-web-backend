@@ -3,13 +3,14 @@
 namespace App\GraphQL\Queries;
 
 use Carbon\Carbon;
+use App\Util\Helper;
 use App\Models\Order;
 use App\Models\Expense;
-use Illuminate\Support\Facades\DB;
-use App\GraphQL\Queries\DailyCashBalance;
-use App\Models\AppConfig;
 use App\Models\Payment;
-use App\Util\Helper;
+use App\Models\AppConfig;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use App\GraphQL\Queries\DailyCashBalance;
 use Illuminate\Support\Facades\Validator;
 
 class DailyCashDetailedFlow
@@ -41,15 +42,29 @@ class DailyCashDetailedFlow
         $data = [];
 
         foreach ($dates as $date) {
+            if (Auth::user()->hasRole('GERENCIA')) {
+                $data[] = [
+                    'date' => $date->startOf('month')->toDateString(),
+                    'total_price' => $this->getTotalPriceOfMonth($date, self::$DATE_FIELD),
+                    'shirts_total' => DailyCashBalance::getShirtsOfMonth($date, self::$DATE_FIELD),
+                    'entry' => $this->getEntryData($date, self::$DATE_FIELD),
+                    'out' => $this->getOutData($date),
+                    'pendency' => DailyCashBalance::getTotalOwingOfMonthQuery($date, self::$DATE_FIELD)
+                        ->sum('total_order_owing'),
+                    'shirts_details' => $this->getShirtsDetailsOfMonth($date, self::$DATE_FIELD)
+                ];
+
+                continue;
+            }
+
             $data[] = [
                 'date' => $date->startOf('month')->toDateString(),
-                'total_price' => $this->getTotalPriceOfMonth($date, self::$DATE_FIELD),
-                'shirts_total' => DailyCashBalance::getShirtsOfMonth($date, self::$DATE_FIELD),
-                'entry' => $this->getEntryData($date, self::$DATE_FIELD),
-                'out' => $this->getOutData($date),
-                'pendency' => DailyCashBalance::getTotalOwingOfMonthQuery($date, self::$DATE_FIELD)
-                    ->sum('total_order_owing'),
-                'shirts_details' => $this->getShirtsDetailsOfMonth($date, self::$DATE_FIELD)
+                'total_price' => 0,
+                'shirts_total' => 0,
+                'entry' => 0,
+                'out' => 0,
+                'pendency' => 0,
+                'shirts_details' => 0
             ];
         }
 

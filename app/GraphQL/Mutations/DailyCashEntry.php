@@ -2,6 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
+use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\Client;
 use App\Util\Formatter;
@@ -123,7 +124,12 @@ class DailyCashEntry
         $rules = [
             'via_id' => ['required', 'exists:vias,id'],
             'value' => ['required', 'numeric'],
-            'date' => ['nullable', 'required_if:is_sponsor,false', 'date'],
+            'date' => [
+                'nullable',
+                'required_if:is_sponsor,false',
+                'date',
+                'before_or_equal:' . Carbon::now()->toDateString()
+            ],
             'sponsorship_client_id' => [
                 'nullable',
                 'exists:clients,id',
@@ -203,7 +209,8 @@ class DailyCashEntry
                     'subject' => 'total restante'
                 ]),
             'sponsorship_client_id.not_in' => __('validation.custom.payments.sponsorship_client_id|not_in'),
-            'sponsorship_client_id.required' => __('validation.rules.required')
+            'sponsorship_client_id.required' => __('validation.rules.required'),
+            'before_or_equal' => __('validation.rules.before_or_equal_today')
         ];
     }
 }

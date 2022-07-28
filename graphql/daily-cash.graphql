@@ -77,7 +77,7 @@ extend type Query {
   dailyCash (
     where: _ @whereConditions(columnsEnum: "QueryDailyCashWhereColumn")
     orderBy: _ @orderBy(columnsEnum: "QueryDailyCashOrderByColumn")
-    created_at: String @where(clause: "whereDate")
+    created_at: String
   ): [PaymentExpense]
     @paginate(builder: "App\\GraphQL\\Builders\\DailyCashEntriesBuilder")
     @canAccess(roles: ["gerencia", "atendimento"])
@@ -93,8 +93,8 @@ extend type Query {
     orderBy: _ @orderBy(columnsEnum: "DailyCashBalancePendenciesOrderByColumns")
   ): [Order]
     @paginate(builder: "App\\GraphQL\\Builders\\DailyCashBalancePendenciesOrdersBuilder")
-    @canAccess(roles: ["gerencia"])
+    @canAccess(roles: ["gerencia", "atendimento"])
 
   dailyCashDetailedFlow (page: Int! date: String): [DailyCashFlow]
-    @canAccess(roles: ["gerencia"])
+    @canAccess(roles: ["gerencia", "atendimento"])
 }
