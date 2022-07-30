@@ -21,12 +21,9 @@ class DailyCashEntriesBuilder
         if (Helper::filled($args, 'created_at')) {
             $date = Carbon::createFromFormat('Y-m-d', $args['created_at']);
             $currentDate = $date->clone()->toDateString();
-            $nextDate = $date->clone()->addDay()->toDateString();
 
-            $query->whereRaw("date BETWEEN '$currentDate 00:00:00' AND '$currentDate 23:59:59'");
+            $query->whereRaw("created_at BETWEEN '$currentDate 00:00:00' AND '$currentDate 23:59:59'");
         }
-
-        return $query;
 
         if (!Auth::user()->hasRole('gerencia')) {
             return $query
