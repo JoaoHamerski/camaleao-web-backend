@@ -2,9 +2,9 @@
 
 namespace App\GraphQL\Queries;
 
-use App\Models\Expense;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class ProductTypesExpensesByMonth
 {
@@ -14,7 +14,11 @@ class ProductTypesExpensesByMonth
      */
     public function __invoke($_, array $args)
     {
-        $date = Carbon::now();
+        Validator::make($args, [
+            'date' => 'date'
+        ])->validate();
+
+        $date = Carbon::createFromFormat('Y-m-d', $args['date']);
 
         $expenses = DB::table('product_types')
             ->join('expenses', 'product_types.id', '=', 'expenses.product_type_id')

@@ -52,10 +52,10 @@ extend type Query {
   expensesReport (start_date: String! final_date: String): String
     @canAccess(roles: ["gerencia"])
 
-  productTypesExpensesByMonth: ExpenseTypesTotal
+  productTypesExpensesByMonth (date: String!): ExpenseTypesTotal
     @canAccess(roles: ["gerencia"])
 
-  employeeExpensesByMonth: ExpenseTypesTotal
+  employeeExpensesByMonth (date: String!): ExpenseTypesTotal
     @canAccess(roles: ["gerencia"])
 }
 

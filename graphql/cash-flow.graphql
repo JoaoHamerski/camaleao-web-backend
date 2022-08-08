@@ -6,6 +6,7 @@ input CashFlowFilterDatesInput {
 enum QueryCashFlowEntriesWhereConditionsColumn {
   DATE @enum(value: "date")
   DESCRIPTION @enum(value: "description")
+  VALUE @enum(value: "value")
 }
 
 enum QueryCashFlowEntriesOrderByColumn {

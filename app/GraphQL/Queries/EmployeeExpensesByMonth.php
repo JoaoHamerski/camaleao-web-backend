@@ -4,6 +4,7 @@ namespace App\GraphQL\Queries;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class EmployeeExpensesByMonth
 {
@@ -13,7 +14,11 @@ class EmployeeExpensesByMonth
      */
     public function __invoke($_, array $args)
     {
-        $date = Carbon::now();
+        Validator::make($args, [
+            'date' => 'date'
+        ])->validate();
+
+        $date = Carbon::createFromFormat('Y-m-d', $args['date']);
 
         $expenses = DB::table('users')
             ->join('expenses', 'users.id', '=', 'expenses.employee_id')

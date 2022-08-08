@@ -25,9 +25,15 @@ type DailyCashReminderDates {
   total: Int!
 }
 
+type DailyCashRemindersInfo {
+  has_near_reminder: Boolean!
+  has_expired_reminder: Boolean!
+}
+
 extend type Query {
   dailyCashReminders (date: String @where(clause: "whereDate")): [DailyCashReminder] @all
   dailyCashReminderDates: [DailyCashReminderDates]
+  dailyCashRemindersInfo: DailyCashRemindersInfo
 }
 
 extend type Mutation {
