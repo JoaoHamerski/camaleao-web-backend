@@ -25,12 +25,6 @@ class DailyCashEntriesBuilder
             $query->whereRaw("created_at BETWEEN '$currentDate 00:00:00' AND '$currentDate 23:59:59'");
         }
 
-        if (!Auth::user()->hasRole('gerencia')) {
-            return $query
-                ->where('user_id', Auth::id())
-                ->whereNull('user_id');
-        }
-
         return $query;
     }
 }
