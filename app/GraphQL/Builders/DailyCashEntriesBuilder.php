@@ -18,13 +18,25 @@ class DailyCashEntriesBuilder
 
         $query = $this->mergePaymentsExpensesQueries($payments, $expenses);
 
-        if (Helper::filled($args, 'created_at')) {
-            $date = Carbon::createFromFormat('Y-m-d', $args['created_at']);
-            $currentDate = $date->clone()->toDateString();
+        $date = $this->getCurrentDate($args);
 
-            $query->whereRaw("created_at BETWEEN '$currentDate 00:00:00' AND '$currentDate 23:59:59'");
-        }
+        $query->whereRaw("created_at BETWEEN '$date 00:00:00' AND '$date 23:59:59'")
+            ->where(function ($query) {
+                if (!Auth::user()->hasRole('GERENCIA')) {
+                    $query->where('user_id', '=', Auth::id())
+                        ->orWhereNull('user_id');
+                }
+            });
 
         return $query;
+    }
+
+    public function getCurrentDate(array $args)
+    {
+        $date = Helper::filled($args, 'created_at')
+            ? Carbon::createFromFormat('Y-m-d', $args['created_at'])
+            : Carbon::now();
+
+        return $date->toDateString();
     }
 }
