@@ -3,6 +3,7 @@ type User @guard {
   name: String!
   email: String!
   email_verified_at: DateTime
+  sectors: [Sector]
   created_at: DateTime!
   updated_at: DateTime!
   role: Role!
@@ -28,14 +29,18 @@ extend type Query {
     @all
     @canAccess(roles: ["gerencia"])
 }
+input UserEditInput {
+  role: ID
+  password: String
+}
 
 extend type Mutation {
   userCreate (input: UserInput! @spread): User
     @can(ability: "create")
     @canAccess(roles: ["gerencia"])
 
-  userChangeRole (id: ID! @eq new_role_id: Int): User
-    @can(ability: "changeRole" query: true)
+  userEdit (id: ID! @eq input: UserEditInput! @spread): User
+    @can(ability: "update" query: true)
     @canAccess(roles: ["gerencia"])
 
   userDelete(id: ID! @eq auth_password: String!): User

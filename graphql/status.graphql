@@ -2,6 +2,17 @@ type Status @guard {
   id: ID!
   text: String!
   is_available: Boolean!
+  sector: Sector
+  pivot: OrderStatusPivot
+  order: Int!
+}
+
+type OrderStatusPivot {
+  order: Order
+  status: Status
+  user: User
+  is_auto_concluded: Boolean
+  created_at: DateTime
 }
 
 input StatusInput {
@@ -13,8 +24,13 @@ input StatusDeleteInput {
   password: String!
 }
 
+input StatusReorderInput {
+  id: ID!
+  order: Int!
+}
+
 extend type Query {
-  status: [Status!]! @all
+  status: [Status!]! @all @orderBy(column: "order")
 }
 
 extend type Mutation {
@@ -28,5 +44,11 @@ extend type Mutation {
     @canAccess(roles: ["gerencia"])
 
   statusSetAvailable(ids: [ID]): [Status]
+    @canAccess(roles: ["gerencia"])
+
+  statusReorder(input: [StatusReorderInput] @spread): [Status]
+    @canAccess(roles: ["gerencia"])
+
+  statusSync: Boolean
     @canAccess(roles: ["gerencia"])
 }

@@ -50,9 +50,10 @@ class UserPolicy
      * @param  \App\Models\User  $model
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, User $model)
+    public function update(User $user, User $userInput)
     {
-        //
+        return $user->hasRole('gerencia')
+            && ($userInput->id !== $user->id);
     }
 
     /**
@@ -63,11 +64,6 @@ class UserPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function delete(User $user, User $model)
-    {
-        return $user->hasRole('gerencia') && ($model->id !== $user->id);
-    }
-
-    public function changeRole(User $user, User $model)
     {
         return $user->hasRole('gerencia') && ($model->id !== $user->id);
     }

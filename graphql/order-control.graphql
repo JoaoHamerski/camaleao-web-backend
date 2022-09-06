@@ -1,0 +1,26 @@
+type AuthUserSectorsInfo {
+  orders_count: String
+  sector: Sector
+}
+
+enum OrdersBySectorOrderByColumns {
+  CREATED_AT @enum(value: "created_at")
+}
+
+extend type Query {
+  authUserSectors: [AuthUserSectorsInfo]
+  ordersBySector(
+    sector_id: ID!
+    order_by: _ @orderBy(columnsEnum: "OrdersBySectorOrderByColumns")
+  ): [Order]
+    @paginate(builder: "App\\GraphQL\\Builders\\OrdersBySectorBuilder")
+    @can(ability: "viewSector" injectArgs: true)
+}
+
+extend type Mutation {
+  stepToStatus (
+    order_id: ID!
+    status_id: ID!
+  ): Order
+    @can(ability: "stepOrderStatus" injectArgs: true)
+}

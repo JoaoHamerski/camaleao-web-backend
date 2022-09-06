@@ -4,14 +4,14 @@ namespace App\Models;
 
 use App\Util\FileHelper;
 use App\Traits\LogsActivity;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 
 class Order extends Model
 {
-    use HasFactory, LogsActivity;
+    use  HasFactory, LogsActivity;
 
     protected static $logAlways = [
         'client.name'
@@ -39,7 +39,8 @@ class Order extends Model
         'size_paths',
         'payment_voucher_paths',
         'closed_at',
-        'order'
+        'order',
+        'final_status'
     ];
 
     protected $appends = [
@@ -109,6 +110,14 @@ class Order extends Model
             }
         });
 
+        static::created(function (Order $order) {
+            $order->syncStatus();
+        });
+
+        static::updated(function (Order $order) {
+            $order->syncStatus();
+        });
+
         static::deleting(function (Order $order) use ($FILE_FIELDS) {
             foreach ($FILE_FIELDS as $field) {
                 $files = FileHelper::getFilesFromField($order->{$field});
@@ -138,9 +147,113 @@ class Order extends Model
         return $this->hasMany(Commission::class);
     }
 
+    public function getHasOrderControlAttribute()
+    {
+        return !!$this->concludedStatus()->count();
+    }
+
+    public function concludedStatus()
+    {
+        return $this->belongsToMany(Status::class)
+            ->using(OrderStatus::class)
+            ->withPivot(['is_auto_concluded', 'user_id'])
+            ->withTimestamps()
+            ->orderBy('order');
+    }
+
+    public static function getBySector($sector): Builder
+    {
+        if (!($sector instanceof Sector)) {
+            $sector = Sector::find($sector);
+        }
+
+        return static::whereIn(
+            'status_id',
+            Status::getStatusIdsToMatch($sector)
+        )->whereNull('closed_at');
+    }
+
     public function status()
     {
         return $this->belongsTo(Status::class);
+    }
+
+    public function syncStatus()
+    {
+        $this->refresh();
+        $this->attachStatusIfNeeded();
+        $this->refresh();
+
+        $this->concludeSkippedStatus();
+        $this->cancelConcludedStatus();
+    }
+
+    private function attachStatusIfNeeded()
+    {
+        if (!$this->isStatusConcluded($this->status)) {
+            $this->concludedStatus()
+                ->syncWithPivotValues($this->status, [
+                    'user_id' => Auth::id()
+                ], false);
+        }
+    }
+
+    private function concludeSkippedStatus()
+    {
+        $status = Status::ordered()->get();
+        $lastConcludedStatus = $this->concludedStatus->last();
+
+        $index = $status->search(
+            fn ($item) => $item->id === $lastConcludedStatus->id
+        );
+
+        for ($i = $index; $i >= 0; $i--) {
+            if (!$this->isStatusConcluded($status[$i])) {
+                $this->concludedStatus()
+                    ->syncWithPivotValues($status[$i], [
+                        'user_id' => Auth::id(),
+                        'is_auto_concluded' => true
+                    ], false);
+            }
+        }
+    }
+
+    private function cancelConcludedStatus()
+    {
+        $status = Status::ordered()->get();
+        $index = $status->search(
+            fn ($_status) => $_status->id === $this->status->id
+        );
+
+        $status = $status->splice($index);
+        $status->shift();
+
+        $status->each(function ($_status) {
+            $this->concludedStatus()
+                ->detach($_status->id);
+        });
+    }
+
+    private function isStatusConcluded(Status $status): bool
+    {
+        $concludedStatusIds = $this->concludedStatus
+            ->pluck('id')
+            ->toArray();
+
+        return in_array(
+            $status->id,
+            $concludedStatusIds
+        );
+    }
+
+    public function getSectorWithRematchedStatus()
+    {
+        return $this->status->getSectorWithRematchedStatus();
+    }
+
+    public function sector()
+    {
+        return $this->status->sector();
     }
 
     public function commission()

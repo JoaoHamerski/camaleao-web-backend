@@ -1,0 +1,22 @@
+type Sector @guard {
+  id: ID!
+  name: String!
+  status: [Status]
+  users: [User]
+}
+
+input SectorInput {
+  name: String!
+  users: [ID!]!
+  status: [ID!]!
+}
+
+extend type Query {
+  sectors: [Sector] @all
+}
+
+extend type Mutation {
+  sectorCreate(input: SectorInput @spread): Sector
+  sectorUpdate(id: ID! input: SectorInput @spread): Sector
+  sectorDelete(id: ID!): Sector
+}

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddEmployeeIdToExpensesTable extends Migration
+class AddSectorIdToStatusTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class AddEmployeeIdToExpensesTable extends Migration
      */
     public function up()
     {
-        Schema::table('expenses', function (Blueprint $table) {
-            $table->foreignId('employee_id')->nullable();
+        Schema::table('status', function (Blueprint $table) {
+            $table->foreignId('sector_id')->nullable();
 
-            $table->foreign('employee_id')
+            $table->foreign('sector_id')
                 ->references('id')
-                ->on('users')
+                ->on('sectors')
                 ->onDelete('set null');
         });
     }
@@ -30,8 +30,9 @@ class AddEmployeeIdToExpensesTable extends Migration
      */
     public function down()
     {
-        Schema::table('expenses', function (Blueprint $table) {
-            $table->dropColumn('employee_id');
+        Schema::table('status', function (Blueprint $table) {
+            $table->dropForeign(['sector_id']);
+            $table->dropColumn('sector_id');
         });
     }
 }

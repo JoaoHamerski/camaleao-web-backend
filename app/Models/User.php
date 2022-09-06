@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use Error;
+use App\Models\Sector;
 use Illuminate\Support\Arr;
 use App\Traits\LogsActivity;
-use Error;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Activitylog\Traits\CausesActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Support\Facades\Validator;
 
 class User extends Authenticatable
 {
@@ -158,6 +159,11 @@ class User extends Authenticatable
     public function secrets()
     {
         return $this->hasMany(Secret::class);
+    }
+
+    public function sectors()
+    {
+        return $this->belongsToMany(Sector::class);
     }
 
     public function scopeProduction()
