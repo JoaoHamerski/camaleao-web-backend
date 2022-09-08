@@ -67,11 +67,6 @@ class OrderPolicy
         return strval($order->client->id) === strval($injected['client_id']);
     }
 
-    public function toggle(?User $user, Order $order)
-    {
-        return +$order->total_owing === 0.0 || $order->isClosed();
-    }
-
     /**
      * Determine whether the user can create models.
      *

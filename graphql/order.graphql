@@ -172,7 +172,6 @@ extend type Mutation {
     @canAccess(roles: ["gerencia", "atendimento"])
 
   orderToggle (id: ID! @eq): Order
-    @can(ability: "toggle" query: true)
     @canAccess(roles: ["gerencia", "atendimento"])
 
   orderDelete (id: ID! @eq): Order

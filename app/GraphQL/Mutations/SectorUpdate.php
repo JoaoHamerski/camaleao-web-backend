@@ -19,11 +19,18 @@ class SectorUpdate
 
         $sector = Sector::find($args['id']);
         $sector->update(['name' => $args['name']]);
-        $sector->users()->sync($data['users']);
 
-        Status::whereIn('id', $data['status'])
-            ->update(['sector_id' => $sector->id]);
+        if (isset($data['users'])) {
+            $sector->users()->sync($data['users']);
+        }
 
-        return $sector;
+        Status::whereIn('id', $sector->status->pluck('id')->toArray())
+            ->update(['sector_id' => null]);
+
+        $sector->status()->saveMany(
+            Status::whereIn('id', $data['status'])->get()
+        );
+
+        return $sector->fresh();
     }
 }

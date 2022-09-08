@@ -10,7 +10,7 @@ class Status extends Model
     use HasFactory;
 
     protected $table = 'status';
-    protected $fillable = ['text', 'order'];
+    protected $fillable = ['sector_id', 'text', 'order'];
 
     public function orders()
     {

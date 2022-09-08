@@ -15,6 +15,13 @@ class OrderToggle
     {
         $order = Order::find($args['id']);
 
+        if (+$order->total_owing !== 0.0) {
+            throw new UnprocessableException(
+                'Pendência financeira',
+                'O pedido possui pendência financeira'
+            );
+        }
+
         $order->update([
             'closed_at' => $order->closed_at ? null : now()
         ]);

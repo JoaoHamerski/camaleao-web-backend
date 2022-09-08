@@ -33,6 +33,17 @@ class Sector extends Model
             ->groupBy('status.sector_id');
     }
 
+    public function isLastSector()
+    {
+        $sectors = $this->ordered()->get();
+
+        return $sectors->last()->id === $this->id;
+    }
+
+    public function getCanCloseSectorOrdersAttribute()
+    {
+        return $this->isLastSector();
+    }
     public function status()
     {
         return $this->hasMany(Status::class)->orderBy('order');

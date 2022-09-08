@@ -1,13 +1,14 @@
 type Sector @guard {
   id: ID!
   name: String!
+  can_close_sector_orders: Boolean
   status: [Status]
   users: [User]
 }
 
 input SectorInput {
   name: String!
-  users: [ID!]!
+  users: [ID]
   status: [ID!]!
 }
 
