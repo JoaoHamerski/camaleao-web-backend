@@ -17,11 +17,7 @@ class AuthUserSectors
     {
         return Auth::user()
             ->sectors()
-            ->join('status', 'sectors.id', '=', 'status.sector_id')
-            ->select('sectors.*')
-            ->orderBy('status.order')
-            ->groupBy('status.sector_id')
-            ->get()
+            ->ordered()
             ->map(fn ($sector) => [
                 'orders_count' => Order::getBySector($sector)->count(),
                 'sector' => $sector

@@ -49,6 +49,7 @@ class Sector extends Model
     {
         return $this->isLastSector();
     }
+
     public function status()
     {
         return $this->hasMany(Status::class)
