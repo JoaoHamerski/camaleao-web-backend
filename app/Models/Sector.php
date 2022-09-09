@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\User;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -25,15 +26,15 @@ class Sector extends Model
             ->orderByPivot('users.name');
     }
 
-    public function scopeOrdered($query)
+    public function scopeOrdered(Builder $query)
     {
 
         return $query
             ->join('status', 'sectors.id', '=', 'status.sector_id')
             ->select(['sectors.*', 'status.order'])
-            ->groupBy('status.sector_id')
+            ->orderBy('status.order')
             ->get()
-            ->sortBy('order');
+            ->unique('id');
     }
 
     public function isLastSector()
