@@ -30,7 +30,7 @@ class Sector extends Model
         return $query
             ->join('status', 'sectors.id', '=', 'status.sector_id')
             ->select(['sectors.*', 'status.order'])
-            ->orderBy('status.order')
+            ->orderBy('status.order', 'ASC')
             ->groupBy('status.sector_id');
     }
 
