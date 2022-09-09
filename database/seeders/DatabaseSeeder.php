@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Database\Seeders\SectorsSeeder;
 use Spatie\Activitylog\ActivityLogStatus;
 
 class DatabaseSeeder extends Seeder
@@ -25,10 +26,11 @@ class DatabaseSeeder extends Seeder
                 ProductTypeSeeder::class,
                 ExpenseSeeder::class,
                 ClientSeeder::class,
+                SectorsSeeder::class,
+                StatusSeeder::class,
                 OrdersSeeder::class,
                 PaymentsSeeder::class,
                 NotesSeeder::class,
-                StatusSeeder::class,
             ]);
         });
     }

@@ -19,17 +19,6 @@ class CreateStatusTable extends Migration
             $table->string('text');
             $table->timestamps();
         });
-
-        DB::table('status')->insert([
-            ['id' => 1, 'text' => 'Arte pendente'],
-            ['id' => 3, 'text' => 'Pagamento pendente'],
-            ['id' => 4, 'text' => 'Produção'],
-            ['id' => 5, 'text' => 'Costura'],
-            ['id' => 7, 'text' => 'Problemas na produção'],
-            ['id' => 8, 'text' => 'Disponível para retirada'],
-            ['id' => 9, 'text' => 'Entregue com pagamento pendente'],
-            ['id' => 10, 'text' => 'Entregue'],
-        ]);
     }
 
     /**
