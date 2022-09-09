@@ -27,16 +27,18 @@ class Sector extends Model
 
     public function scopeOrdered($query)
     {
+
         return $query
             ->join('status', 'sectors.id', '=', 'status.sector_id')
             ->select(['sectors.*', 'status.order'])
             ->groupBy('status.sector_id')
-            ->orderBy('status.order');
+            ->get()
+            ->sortBy('order');
     }
 
     public function isLastSector()
     {
-        $sectors = $this->ordered()->get();
+        $sectors = $this->ordered();
 
         return $sectors->last()->id === $this->id;
     }

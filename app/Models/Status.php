@@ -29,7 +29,7 @@ class Status extends Model
 
     public function getSectorWithRematchedStatus()
     {
-        $sectors = Sector::ordered()->get();
+        $sectors = Sector::ordered();
 
         $index = $sectors->search(function ($sector) use ($sectors) {
             $ids = static::getStatusIdsToMatch($sector, $sectors);
@@ -44,7 +44,7 @@ class Status extends Model
 
     public static function getStatusIdsToMatch($sector, $sectors = null): array
     {
-        $sectors = $sectors ? $sectors : Sector::ordered()->get();
+        $sectors = $sectors ? $sectors : Sector::ordered();
         $ids = collect();
         $status = static::getAllStatusExceptLast($sector);
         $index = $sectors->search(
