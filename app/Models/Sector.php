@@ -34,7 +34,8 @@ class Sector extends Model
             ->select(['sectors.*', 'status.order'])
             ->orderBy('status.order')
             ->get()
-            ->unique('id');
+            ->unique('id')
+            ->values();
     }
 
     public function isLastSector()
