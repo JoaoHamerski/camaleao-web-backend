@@ -21,7 +21,8 @@ class Sector extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)
+            ->orderByPivot('users.name');
     }
 
     public function scopeOrdered($query)
@@ -46,6 +47,7 @@ class Sector extends Model
     }
     public function status()
     {
-        return $this->hasMany(Status::class)->orderBy('order');
+        return $this->hasMany(Status::class)
+            ->orderBy('order');
     }
 }
