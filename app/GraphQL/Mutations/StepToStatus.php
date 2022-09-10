@@ -45,7 +45,11 @@ class StepToStatus
     public function attachStatusToOrder(Order $order, Status $status)
     {
         $order->concludedStatus()
-            ->syncWithPivotValues($status, ['user_id' => Auth::id()], false);
+            ->syncWithPivotValues(
+                $status,
+                ['user_id' => Auth::id()],
+                false
+            );
 
         $order->update(['status_id' => $status->id]);
 
