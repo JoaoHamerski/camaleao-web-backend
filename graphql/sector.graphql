@@ -13,7 +13,7 @@ input SectorInput {
 }
 
 extend type Query {
-  sectors: [Sector] @all
+  sectors: [Sector]
 }
 
 extend type Mutation {
