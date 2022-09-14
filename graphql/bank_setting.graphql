@@ -1,0 +1,10 @@
+type BankSetting @guard {
+  id: ID!
+  name: String!
+  settings: String
+}
+
+extend type Query {
+  bankSettings: [BankSetting] @all
+}
+

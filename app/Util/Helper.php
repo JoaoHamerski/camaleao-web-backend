@@ -181,27 +181,6 @@ class Helper
         return $attr;
     }
 
-    private static function getRoutePrefixName($route)
-    {
-        $routeName = $route['name'] ?? $route;
-
-        return "$routeName.";
-    }
-
-    private static function getRouteFilename($route)
-    {
-        $filename = $route['filename'] ?? $route;
-
-        return "$filename.php";
-    }
-
-    private static function getRouteFilepath($route, $routesPath)
-    {
-        $basePath = base_path();
-
-        return $basePath . $routesPath . self::getRouteFilename($route);
-    }
-
     public static function getLastArrayEl(array $arr)
     {
         return array_values(array_slice($arr, -1))[0];
