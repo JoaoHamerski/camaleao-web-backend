@@ -23,6 +23,7 @@ class Payment extends Model
     protected static $logName = 'payments';
 
     protected $fillable = [
+        'bank_uid',
         'note',
         'date',
         'payment_via_id',

@@ -48,6 +48,8 @@ input DailyCashInput {
   date: String!
   sponsorship_client_id: ID
   is_sponsor: Boolean!
+  note: String
+  bank_uid: String
 }
 
 enum QueryPaymentsOrderByColumn {

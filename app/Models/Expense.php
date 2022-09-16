@@ -22,6 +22,7 @@ class Expense extends Model
     protected static $submitEmptyLogs = false;
     protected static $logName = 'expenses';
     protected $fillable = [
+        'bank_uid',
         'description',
         'date',
         'expense_type_id',

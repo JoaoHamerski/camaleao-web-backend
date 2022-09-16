@@ -170,7 +170,8 @@ return [
         'payments' => [
             'payment_via_id|required' => 'Por favor, selecione uma via.',
             'client|id|required' => 'Por favor, selecione um cliente.',
-            'sponsorship_client_id|not_in' => 'O patrocinador não pode ser o dono do pedido.'
+            'sponsorship_client_id|not_in' => 'O patrocinador não pode ser o dono do pedido.',
+            'unique' => 'Pagamento detectado como duplicado.'
         ],
         'clothing_types' => [
             'key|unique' => 'Este tipo de roupa já foi registrado.'

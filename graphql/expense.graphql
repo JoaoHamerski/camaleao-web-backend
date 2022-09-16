@@ -24,6 +24,7 @@ input ExpenseInput {
   expense_via_id: ID
   receipt_path: String
   date: String
+  bank_uid: String
 }
 
 enum QueryExpensesOrderByColumn {

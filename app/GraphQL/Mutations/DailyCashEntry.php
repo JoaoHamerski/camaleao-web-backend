@@ -46,6 +46,8 @@ class DailyCashEntry
         $payment = $order->payments()->make(Arr::only($data, [
             'value',
             'date',
+            'note',
+            'bank_uid',
             'sponsorship_client_id'
         ]));
 
@@ -122,6 +124,7 @@ class DailyCashEntry
     public function paymentValidationRules($data, $order = null)
     {
         $rules = [
+            'bank_uid' => ['nullable', 'unique:payments'],
             'via_id' => ['required', 'exists:vias,id'],
             'value' => ['required', 'numeric'],
             'date' => [
@@ -210,7 +213,8 @@ class DailyCashEntry
                 ]),
             'sponsorship_client_id.not_in' => __('validation.custom.payments.sponsorship_client_id|not_in'),
             'sponsorship_client_id.required' => __('validation.rules.required'),
-            'before_or_equal' => __('validation.rules.before_or_equal_today')
+            'before_or_equal' => __('validation.rules.before_or_equal_today'),
+            'bank_uid.unique' => __('validation.custom.payments.unique')
         ];
     }
 }
