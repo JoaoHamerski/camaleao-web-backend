@@ -133,7 +133,7 @@ return [
     |
     */
     'rules' => [
-        'required_list' => 'Por favor, selecione :pronoun :attribute.',
+        'required_list' => 'Por favor, selecione o campo :attribute.',
         'required' => 'Por favor, informe o campo :attribute.',
         'max_file' => 'O arquivo deve ser menor que :max.',
         'lt' => 'O campo :attribute deve ser menor que :subject.',
@@ -173,6 +173,9 @@ return [
             'sponsorship_client_id|not_in' => 'O patrocinador não pode ser o dono do pedido.',
             'unique' => 'Pagamento detectado como duplicado.'
         ],
+        'expenses' => [
+            'unique' => 'Despesa detectada como duplicada.'
+        ],
         'clothing_types' => [
             'key|unique' => 'Este tipo de roupa já foi registrado.'
         ],
@@ -193,6 +196,10 @@ return [
     */
 
     'attributes' => [
+        'fields.description' => 'descrição',
+        'fields.date' => 'data',
+        'fields.bank_uid' => 'identificador único',
+        'fields.value' => 'valor',
         'address'   => 'endereço',
         'age'       => 'idade',
         'body'      => 'conteúdo',

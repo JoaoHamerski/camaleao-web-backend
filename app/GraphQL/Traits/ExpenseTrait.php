@@ -89,6 +89,7 @@ trait ExpenseTrait
             'id' => ['sometimes', 'exists:expenses,id'],
             'description'  => ['required'],
             'value' => ['required'],
+            'bank_uid' => ['nullable', 'unique:expenses'],
             'product_type_id' => [
                 'nullable',
                 Rule::requiredIf(
@@ -113,6 +114,7 @@ trait ExpenseTrait
     public function errorMessages($MAX_RECEIPT_SIZE)
     {
         return [
+            'bank_uid.unique' => __('validation.custom.expenses.unique'),
             'expense_type_id.required' => __('validation.rules.required_list', ['pronoun' => 'um']),
             'expense_via_id.required' => __('validation.rules.required_list', ['pronoun' => 'uma']),
             'description.required' => __('validation.rules.required'),

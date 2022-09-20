@@ -22,6 +22,7 @@ trait PaymentsExpensesQueryTrait
             ->whereNotNull('payments.date')
             ->select([
                 'payments.id',
+                'bank_uid',
                 DB::raw('null AS user_id'),
                 'order_id',
                 'payment_via_id AS via_id',
@@ -46,6 +47,7 @@ trait PaymentsExpensesQueryTrait
     {
         return DB::table('expenses')->select([
             'id',
+            'bank_uid',
             'user_id',
             DB::raw('null AS order_id'),
             'expense_via_id AS via_id',

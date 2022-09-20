@@ -18,6 +18,9 @@ extend type Query {
 }
 
 extend type Mutation {
+  bankCheckDuplicatedEntries (bank_uid: [String!]!): [String!]
+    @canAccess(roles: ["gerencia"])
+
   stepToStatus (
     order_id: ID!
     status_id: ID!

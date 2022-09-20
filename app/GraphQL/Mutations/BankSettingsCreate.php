@@ -4,6 +4,7 @@ namespace App\GraphQL\Mutations;
 
 use App\Models\BankSetting;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class BankSettingsCreate
 {
@@ -13,13 +14,7 @@ class BankSettingsCreate
      */
     public function __invoke($_, array $args)
     {
-        Validator::make($args, [
-            'name' => ['required'],
-            'date_format' => ['required'],
-            'fields.*' => ['required', 'string'],
-            'bank_fields' => ['required', 'array'],
-            'bank_fields.*' => ['required', 'string']
-        ])->validate();
+        $this->validator($args)->validate();
 
         $settings = [
             'fields' => $args['fields'],
@@ -31,5 +26,31 @@ class BankSettingsCreate
             'name' => $args['name'],
             'settings' => json_encode($settings)
         ]);
+    }
+
+    private function validator(array $data)
+    {
+        $validDateFormats = [
+            'dd/mm/yyyy',
+            'mm/dd/yyyy',
+            'yyyy/dd/mm',
+            'yyyy/mm/dd'
+        ];
+
+        return Validator::make($data, [
+            'name' => ['required'],
+            'date_format' => ['required', Rule::in($validDateFormats)],
+            'fields.*' => ['required', 'string'],
+            'bank_fields' => ['required', 'array'],
+            'bank_fields.*' => ['required', 'string']
+        ], $this->errorMessages());
+    }
+
+    private function errorMessages()
+    {
+        return [
+            'name.required' => __('validation.rules.required'),
+            'fields.*.required' => __('validation.rules.required_list')
+        ];
     }
 }
