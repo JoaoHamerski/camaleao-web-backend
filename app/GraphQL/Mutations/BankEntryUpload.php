@@ -2,7 +2,9 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\Entry;
 use App\Models\BankEntry;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -17,12 +19,28 @@ class BankEntryUpload
         $data = $this->validator($args)->validate();
         $filepath = '/bank-entries/' . $data['filename'] . '.json';
 
+        $this->insertEntries($data['json_file']);
         Storage::put($filepath, $data['json_file']);
 
         return BankEntry::updateOrCreate([
             'filename' => $data['filename'],
             'path' => $filepath
         ]);
+    }
+
+    private function insertEntries($file)
+    {
+        $fields = ['bank_uid', 'value', 'description', 'date'];
+        $entries = collect(json_decode($file, true));
+        $entries = $entries->map(
+            fn ($entry) => Arr::only($entry, $fields)
+        )->toArray();
+
+        Entry::upsert(
+            $entries,
+            'bank_uid',
+            $fields
+        );
     }
 
     public function validator(array $data)

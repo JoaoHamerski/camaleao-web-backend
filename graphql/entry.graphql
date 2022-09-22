@@ -1,0 +1,18 @@
+type Entry @guard {
+  id: ID!
+  bank_uid: String!
+  value: Float!
+  date: String!
+  description: String
+}
+
+enum QueryWhereEntriesColumns {
+  VALUE @enum(value: "value")
+  DESCRIPTION @enum(value: "description")
+}
+
+extend type Query {
+  entries(
+    where: _ @whereConditions(columnsEnum: "QueryWhereEntriesColumns")
+  ): [Entry] @paginate
+}

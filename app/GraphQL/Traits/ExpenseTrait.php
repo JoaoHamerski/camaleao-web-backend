@@ -86,10 +86,14 @@ trait ExpenseTrait
         $employee_expense_id = AppConfig::get('app', 'employee_expense');
 
         return Validator::make($data, [
+            'bank_uid' => [
+                'nullable',
+                'unique:expenses',
+                'exists:entries,bank_uid'
+            ],
             'id' => ['sometimes', 'exists:expenses,id'],
             'description'  => ['required'],
             'value' => ['required'],
-            'bank_uid' => ['nullable', 'unique:expenses'],
             'product_type_id' => [
                 'nullable',
                 Rule::requiredIf(

@@ -17,6 +17,7 @@ trait PaymentTrait
     private function errorMessages()
     {
         return [
+            'bank_uid.unique' => __('validation.custom.payments.unique'),
             'before_or_equal' => __('validation.rules.before_or_equal_today'),
             'value.required' => __('validation.rules.required'),
             'payment_via_id.required' => __('validation.rules.required_list', ['pronoun' => 'uma']),

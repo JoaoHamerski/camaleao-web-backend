@@ -19,6 +19,7 @@ type PaymentPendency @guard {
 }
 
 input PaymentInput {
+  bank_uid: String
   order_id: ID!
   payment_via_id: ID
   value: String

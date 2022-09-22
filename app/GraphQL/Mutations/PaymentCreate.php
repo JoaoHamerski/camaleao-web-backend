@@ -2,16 +2,18 @@
 
 namespace App\GraphQL\Mutations;
 
+use Carbon\Carbon;
+use App\Models\Entry;
 use App\Models\Order;
+use Illuminate\Validation\Rule;
+use App\GraphQL\Traits\PaymentTrait;
 use Illuminate\Support\Facades\Validator;
 use App\GraphQL\Exceptions\UnprocessableException;
-use App\GraphQL\Traits\PaymentTrait;
-use Carbon\Carbon;
-use Illuminate\Validation\Rule;
+use App\Traits\EntriesTrait;
 
 class PaymentCreate
 {
-    use PaymentTrait;
+    use EntriesTrait, PaymentTrait;
 
     /**
      * @param  null  $_
@@ -31,7 +33,14 @@ class PaymentCreate
     {
         $payment = $order->payments()->make($data);
 
-        if ($payment->isConfirmable()) {
+        if ($this->isFromEntries($data) && !$this->isValidEntry($data)) {
+            throw new UnprocessableException(
+                'Dados inválidos.',
+                'Os dados informados diferem da entrada bancária.'
+            );
+        }
+
+        if ($payment->isConfirmable($data)) {
             $payment->makeConfirm();
         }
 
@@ -56,6 +65,11 @@ class PaymentCreate
         return Validator::make(
             $data,
             [
+                'bank_uid' => [
+                    'nullable',
+                    'unique:payments',
+                    'exists:entries,bank_uid'
+                ],
                 'is_sponsor' => ['required', 'boolean'],
                 'order_id' => ['required', 'exists:orders,id'],
                 'payment_via_id' => ['required', 'exists:vias,id'],

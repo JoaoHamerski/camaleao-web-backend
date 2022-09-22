@@ -137,7 +137,7 @@ extend type Query {
     @can(ability: "view" injectArgs: true query: true)
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  orders(
+  orders (
     hasClient: _ @whereHasConditions(columnsEnum: "OrdersHasClientColumns")
     hasPayments: _ @whereHasConditions(columnsEnum: "OrderHasPaymentsColumns")
     orderBy: _ @orderBy(columnsEnum: "QueryOrdersOrderByColumn")

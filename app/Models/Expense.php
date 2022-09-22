@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\EntriesTrait;
 use App\Util\FileHelper;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Expense extends Model
 {
-    use HasFactory, LogsActivity;
+    use EntriesTrait, HasFactory, LogsActivity;
 
     protected static $logAlways = [
         'type.name',
@@ -72,6 +73,12 @@ class Expense extends Model
     public static function booted()
     {
         $FILE_FIELD = 'receipt_path';
+
+        static::created(function ($expense) {
+            if (!empty($expense->bank_uid)) {
+                Entry::where('bank_uid', $expense->bank_uid)->delete();
+            }
+        });
 
         static::deleting(function ($expense) use ($FILE_FIELD) {
             if (!empty($expense->{$FILE_FIELD})) {

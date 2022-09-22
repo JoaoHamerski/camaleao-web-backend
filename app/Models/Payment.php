@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Traits\EntriesTrait;
 use Carbon\Carbon;
 use App\Traits\LogsActivity;
+use App\Util\Helper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,7 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Payment extends Model
 {
-    use HasFactory, LogsActivity;
+    use EntriesTrait, HasFactory, LogsActivity;
 
     protected static $logAlways = [
         'via.name',
@@ -37,6 +39,15 @@ class Payment extends Model
     protected $appends = [
         'is_sponsor'
     ];
+
+    protected static function booted()
+    {
+        static::created(function ($payment) {
+            if (!empty($payment->bank_uid)) {
+                Entry::where('bank_uid', $payment->bank_uid)->delete();
+            }
+        });
+    }
 
     public function getCreatedLog(): string
     {
@@ -79,11 +90,6 @@ class Payment extends Model
     public function order()
     {
         return $this->belongsTo(Order::class);
-    }
-
-    public function isConfirmable()
-    {
-        return Auth::user()->hasRole('gerencia') && !$this->is_sponsor;
     }
 
     public function makeConfirm()
