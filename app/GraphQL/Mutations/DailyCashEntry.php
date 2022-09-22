@@ -2,11 +2,14 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\BankEntry;
 use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\Client;
+use App\Models\Payment;
 use App\Util\Formatter;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
@@ -53,7 +56,7 @@ class DailyCashEntry
 
         $payment->payment_via_id = $data['via_id'];
 
-        if ($payment->isConfirmable()) {
+        if ($payment->isConfirmable() || static::isEntryFromBankEntries($data)) {
             $payment->makeConfirm();
         }
 
@@ -64,6 +67,26 @@ class DailyCashEntry
         $payment->save();
 
         return $payment;
+    }
+
+    public static function isEntryFromBankEntries($data)
+    {
+        if (empty($data['filename_entry_from'])) {
+            return false;
+        }
+
+        $bankEntry = BankEntry::where('filename', $data['filename_entry_from'])->first();
+
+        if (!$bankEntry) {
+            return false;
+        }
+
+        $file = Storage::get($bankEntry->path);
+        $entries = collect(json_decode($file));
+
+        return $entries->contains(
+            fn ($entry) => $entry->bank_uid === $data['bank_uid']
+        );
     }
 
     public function getRules(array $isNew, array $data): array

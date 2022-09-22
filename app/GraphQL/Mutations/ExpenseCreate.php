@@ -25,7 +25,7 @@ class ExpenseCreate
 
         $expense = Auth::user()->expenses()->create($data);
 
-        if (Auth::user()->hasRole('gerencia')) {
+        if (Auth::user()->hasRole('gerencia') || DailyCashEntry::isEntryFromBankEntries($data)) {
             $expense->confirm();
         }
 

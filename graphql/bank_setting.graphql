@@ -24,4 +24,5 @@ extend type Query {
 
 extend type Mutation {
   bankSettingsCreate (input: BankSettingsInput! @spread): BankSetting
+  bankSettingDelete(id: ID!): BankSetting
 }

@@ -12,7 +12,7 @@ class BankCheckDuplicatedEntries
      */
     public function __invoke($_, array $args)
     {
-        $entriesQuery = $this->getEntriesQuery();
+        $entriesQuery = static::getEntriesQuery();
 
         $ids = collect($args['bank_uid']);
 
@@ -23,7 +23,7 @@ class BankCheckDuplicatedEntries
         return $duplicatedIds;
     }
 
-    public function getEntriesQuery()
+    public static function getEntriesQuery()
     {
         $payments = DB::table('payments')
             ->whereNotNull('bank_uid')

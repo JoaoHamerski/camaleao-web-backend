@@ -30,3 +30,4 @@
 #import sector.graphql
 #import order-control.graphql
 #import bank_setting.graphql
+#import bank_entry.graphql
