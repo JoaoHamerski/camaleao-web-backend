@@ -13,6 +13,7 @@ class Entry extends Model
         'bank_uid',
         'value',
         'date',
-        'description'
+        'description',
+        'via_id'
     ];
 }

@@ -2,9 +2,10 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Util\Helper;
 use App\Models\BankSetting;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class BankSettingsCreate
 {
@@ -19,7 +20,10 @@ class BankSettingsCreate
         $settings = [
             'fields' => $args['fields'],
             'bank_fields' => $args['bank_fields'],
-            'date_format' => $args['date_format']
+            'date_format' => $args['date_format'],
+            'via_id' => Helper::filled($args, 'via_id')
+                ? $args['via_id']
+                : null
         ];
 
         return BankSetting::create([
@@ -42,7 +46,8 @@ class BankSettingsCreate
             'date_format' => ['required', Rule::in($validDateFormats)],
             'fields.*' => ['required', 'string'],
             'bank_fields' => ['required', 'array'],
-            'bank_fields.*' => ['required', 'string']
+            'bank_fields.*' => ['required', 'string'],
+            'via_id' => ['nullable', 'exists:vias,id']
         ], $this->errorMessages());
     }
 

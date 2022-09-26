@@ -30,7 +30,7 @@ class BankEntryUpload
 
     private function insertEntries($file)
     {
-        $fields = ['bank_uid', 'value', 'description', 'date'];
+        $fields = ['bank_uid', 'value', 'description', 'date', 'via_id'];
         $entries = collect(json_decode($file, true));
         $entries = $entries->map(
             fn ($entry) => Arr::only($entry, $fields)

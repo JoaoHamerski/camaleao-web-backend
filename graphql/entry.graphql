@@ -4,6 +4,7 @@ type Entry @guard {
   value: Float!
   date: String!
   description: String
+  via_id: ID
 }
 
 enum QueryWhereEntriesColumns {

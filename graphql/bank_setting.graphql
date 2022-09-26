@@ -16,6 +16,7 @@ input BankSettingsInput {
   fields: PaymentExpensesFields!
   date_format: String!
   bank_fields: [String]!
+  via_id: ID!
 }
 
 extend type Query {
