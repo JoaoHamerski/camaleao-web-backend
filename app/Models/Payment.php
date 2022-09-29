@@ -47,6 +47,14 @@ class Payment extends Model
                 Entry::where('bank_uid', $payment->bank_uid)->delete();
             }
         });
+
+        static::updated(function ($payment) {
+            if ($payment->clientBalances->count()) {
+                $payment->clientBalances()->update([
+                    'is_confirmed' => $payment->is_confirmed
+                ]);
+            }
+        });
     }
 
     public function getCreatedLog(): string
@@ -124,5 +132,10 @@ class Payment extends Model
 
             $query->whereDate('created_at', '<', Carbon::now()->toDateString());
         });
+    }
+
+    public function clientBalances()
+    {
+        return $this->hasMany(ClientBalance::class);
     }
 }

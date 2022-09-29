@@ -27,7 +27,8 @@ class Client extends Model
         'phone',
         'branch_id',
         'city_id',
-        'shipping_company_id'
+        'shipping_company_id',
+        'balance'
     ];
 
     protected $cascadeDeletes = ['orders', 'payments'];
@@ -95,9 +96,26 @@ class Client extends Model
         return $this->hasManyThrough(Payment::class, Order::class);
     }
 
+    public function balances()
+    {
+        return $this->hasMany(ClientBalance::class);
+    }
+
     public function getIsSponsorAttribute()
     {
         return $this->sponsorPayments()->exists();
+    }
+
+    public function getHasBalanceAttribute()
+    {
+        return ClientBalance::where('client_id', $this->id)->exists();
+    }
+
+    public function getBalanceAttribute()
+    {
+        return ClientBalance::where('client_id', $this->id)
+            ->where('is_confirmed', true)
+            ->sum('value');
     }
 
     public function sponsorPayments()

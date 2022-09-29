@@ -9,7 +9,7 @@ trait PaymentTrait
     public function getFormattedData(array $data)
     {
         return (new Formatter($data))
-            ->currencyBRL(['value', 'price'])
+            ->currencyBRL(['value', 'price', 'credit'])
             ->date('date')
             ->get();
     }
@@ -17,6 +17,7 @@ trait PaymentTrait
     private function errorMessages()
     {
         return [
+            'credit.required_if' => __('validation.rules.required'),
             'bank_uid.unique' => __('validation.custom.payments.unique'),
             'before_or_equal' => __('validation.rules.before_or_equal_today'),
             'value.required' => __('validation.rules.required'),
@@ -26,7 +27,7 @@ trait PaymentTrait
             'date.required_if' => __('validation.rules.required'),
             'value.max_currency' => __('validation.rules.max_currency', ['subject' => 'o total restante do pedido']),
             'sponsorship_client_id.not_in' => __('validation.custom.payments.sponsorship_client_id|not_in'),
-            'sponsorship_client_id.required' => __('validation.rules.required')
+            'sponsorship_client_id.required_if' => __('validation.rules.required_list')
         ];
     }
 }

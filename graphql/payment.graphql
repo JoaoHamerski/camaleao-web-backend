@@ -11,6 +11,7 @@ type Payment @guard {
   sponsorship_client: Client @rename(attribute: "sponsorshipClient")
   created_at: DateTime
   updated_at: DateTime
+  clientBalances: [ClientBalance]
 }
 
 type PaymentPendency @guard {
@@ -23,10 +24,13 @@ input PaymentInput {
   order_id: ID!
   payment_via_id: ID
   value: String
+  use_client_balance: Boolean
+  credit: String
   date: String
   note: String
   sponsorship_client_id: ID
   is_sponsor: Boolean
+  add_rest_to_credits: Boolean!
 }
 
 input DailyCashClientInput {

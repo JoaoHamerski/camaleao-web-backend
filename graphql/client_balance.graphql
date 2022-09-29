@@ -1,0 +1,16 @@
+type ClientBalance @guard {
+  id: ID!
+  value: Float!
+  is_confirmed: Boolean
+  client: Client
+  payment: Payment
+  created_at: DateTime
+}
+
+extend type Query {
+  clientBalances (
+    client_id: ID! @where
+    is_confirmed: Boolean! @where
+  ): [ClientBalance]
+    @paginate @orderBy(column: "CREATED_AT" direction: DESC)
+}

@@ -12,6 +12,8 @@ type Client @guard {
   total_owing: Float
   total_owing_as_sponsorship: Float
   is_sponsor: Boolean
+  balance: Float
+  has_balance: Boolean
   created_at: DateTime
   updated_at: DateTime
 }
