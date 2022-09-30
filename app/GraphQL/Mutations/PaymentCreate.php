@@ -38,6 +38,13 @@ class PaymentCreate
 
     public function createPayment(array $data, Order $order)
     {
+        if ($this->isFromEntries($data) && !$this->isValidEntry($data)) {
+            throw new UnprocessableException(
+                'Dados inválidos.',
+                'Os dados informados diferem da entrada bancária.'
+            );
+        }
+
         $data['total_owing'] = $order->total_owing;
         $data['total_value'] = bcadd($data['value'], $data['credit'], 2);
         $data['original_value'] = $data['value'];
@@ -47,13 +54,6 @@ class PaymentCreate
         );
 
         $payment = $order->payments()->make($data);
-
-        if ($this->isFromEntries($data) && !$this->isValidEntry($data)) {
-            throw new UnprocessableException(
-                'Dados inválidos.',
-                'Os dados informados diferem da entrada bancária.'
-            );
-        }
 
         if ($payment->isConfirmable($data)) {
             $payment->makeConfirm();
