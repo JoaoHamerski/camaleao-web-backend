@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AppConfig;
 use App\Util\Mask;
 use Carbon\Carbon;
 use App\Util\Helper;
 use App\Models\Order;
 use App\Models\Status;
 use App\Models\Expense;
+use App\Models\Receipt;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -29,6 +32,24 @@ class PDFsController extends Controller
         if (!$request->hasValidSignature()) {
             abort(401);
         }
+    }
+
+    public function previewReceipt()
+    {
+        $settings = Receipt::getReceiptSettings();
+
+        return PDF::loadView(
+            'pdf.receipts.template',
+            [
+                'settings' => $settings,
+                'preview' => true
+            ]
+        )->stream('pre-visualizacao.pdf');
+    }
+
+    public function showReceipt(Receipt $receipt)
+    {
+        return response()->file($receipt->filepath);
     }
 
     public function expensesReport(Request $request)

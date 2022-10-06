@@ -33,3 +33,4 @@
 #import bank_entry.graphql
 #import entry.graphql
 #import client_balance.graphql
+#import receipt.graphql

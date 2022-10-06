@@ -23,6 +23,16 @@ Route::prefix('images')->name('images.')->group(function () {
 });
 
 Route::prefix('pdf')->name('pdf.')->group(function () {
+    Route::get('receipt/preview', [
+        PDFsController::class,
+        'previewReceipt'
+    ])->name('receipt-preview');
+
+    Route::get('receipt/{receipt}', [
+        PDFsController::class,
+        'showReceipt'
+    ])->name('receipt');
+
     Route::get('orders/report', [
         PDFsController::class,
         'ordersReport'

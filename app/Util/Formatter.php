@@ -2,6 +2,7 @@
 
 namespace App\Util;
 
+use App\GraphQL\Exceptions\UnprocessableException;
 use Exception;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
@@ -108,7 +109,7 @@ class Formatter
 
     /**
      * Verifica se o path passado possui wildcards,
-     * caso tenha constroi um array para ser analisado por
+     * caso tenha constrói um array para ser analisado por
      * PropertyAccess class, senão apenas o campo
      *
      * @param string $field Campo a ser analisado
@@ -250,8 +251,15 @@ class Formatter
             return Helper::getFilenameFromURL($value);
         }
 
+        if (empty($value)) {
+            return $value;
+        }
+
         if (!FileHelper::isBase64($value)) {
-            throw new Exception("O arquivo enviado não é válido.");
+            throw new UnprocessableException(
+                "O arquivo enviado não é válido",
+                "Apenas arquivo em base64 devem ser enviados na requisição."
+            );
         }
 
         @list(, $fileData) = explode(';', $value);
@@ -283,6 +291,10 @@ class Formatter
      */
     public function base64ToUploadedFile($fields): Formatter
     {
+        if (is_array($fields) && empty($fields)) {
+            return $this;
+        }
+
         return $this->applyParse($fields, __FUNCTION__);
     }
 

@@ -1,4 +1,5 @@
 type AppConfig @guard {
+  id: ID
   name: String
   json: String
 }

@@ -2,12 +2,8 @@
 
 namespace App\Util;
 
-use GraphQL\Experimental\Executor\Collector;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Route;
 
 class Helper
 {

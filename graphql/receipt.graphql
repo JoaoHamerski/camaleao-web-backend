@@ -1,0 +1,37 @@
+type Receipt @guard {
+  id: ID!
+  client: String
+  product: String
+  date: Date
+  value: Float!
+  filepath: String
+  user: User
+}
+
+input ReceiptSettingsInput {
+  logo: String!
+  header: String!
+  content: String!
+  date: String!
+  signature_image: String!
+  signature_name: String!
+}
+
+input ReceiptCreateInput {
+  client: String!
+  product: String!
+  date: String!
+  value: String!
+  has_signature: Boolean!
+}
+
+extend type Query {
+  receipts (max: Int): [Receipt] @paginate @orderBy(column: "created_at" direction: DESC)
+  receiptProductSuggestions: [String]
+}
+
+extend type Mutation {
+  receiptUrl (id: ID preview: Boolean): String!
+  receiptCreate (input: ReceiptCreateInput! @spread): Receipt!
+  receiptGeneratorSettingsUpload(input: ReceiptSettingsInput @spread): AppConfig
+}

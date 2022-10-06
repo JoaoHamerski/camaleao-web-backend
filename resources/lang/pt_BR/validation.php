@@ -197,6 +197,8 @@ return [
 
     'attributes' => [
         'credit' => 'saldo',
+        'product' => 'produto',
+        'client' => 'cliente',
         'fields.description' => 'descrição',
         'fields.date' => 'data',
         'fields.bank_uid' => 'identificador único',
