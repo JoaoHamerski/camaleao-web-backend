@@ -30,8 +30,8 @@ class ReceiptCreate
     public function generateReceiptPDF(array $data)
     {
         $settings = Receipt::getReceiptSettings();
-        var_dump('algo aqui');
         @list($data, $settings) = $this->formatData($data, $settings);
+        var_dump('algo aqui');
 
         $pdf = PDF::loadView(
             'pdf.receipts.template',
