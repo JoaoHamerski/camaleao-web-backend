@@ -36,9 +36,9 @@ class ReceiptCreate
             'pdf.receipts.template',
             compact('data', 'settings')
         );
-        var_dump('algo aqui');
 
         $filename = Str::random(40) . '.pdf';
+        var_dump('algo aqui');
         $pdf->save(storage_path("app/receipts/$filename"));
 
         return $filename;
