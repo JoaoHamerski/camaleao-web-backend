@@ -39,7 +39,7 @@ class ReceiptCreate
 
         $filename = 'test.pdf';
         $pdf->save(storage_path("app/receipts/$filename"));
-        var_dump('algo aqui');
+        // var_dump('algo aqui');
 
         return $filename;
     }
