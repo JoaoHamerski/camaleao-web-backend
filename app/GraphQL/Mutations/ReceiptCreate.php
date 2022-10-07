@@ -21,9 +21,9 @@ class ReceiptCreate
     {
         $data = $this->getFormattedData($args);
         $this->validator($data)->validate();
-        var_dump('algo aqui');
 
         $data['filename'] = $this->generateReceiptPDF($data);
+        var_dump('algo aqui');
 
         return Receipt::create($data);
     }
