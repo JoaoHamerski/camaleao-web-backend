@@ -69,7 +69,7 @@
     <div class="header">
         @if (isset($settings->logo))
         <div class="float-l w-25 image">
-            <img class="img-fluid" src="{{ FileHelper::imageToBase64(storage_path($settings->logo)) }}" alt="">
+            <img class="img-fluid" src="{{ FileHelper::imageToBase64($settings->logo) }}" alt="">
         </div>
         @endif
         <div class="float-r">
@@ -96,7 +96,7 @@
             (isset($data['has_signature']) && $data['has_signature']) || isset($preview) ?: false
         )
             <div class="signature-image mx-auto">
-                <img class="img-fluid" src="{{ FileHelper::imageToBase64(storage_path($settings->signature_image)) }}" alt="">
+                <img class="img-fluid" src="{{ FileHelper::imageToBase64($settings->signature_image) }}" alt="">
             </div>
         @endif
         <hr class="signature-rubric">

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Receipt extends Model
 {
@@ -15,8 +15,16 @@ class Receipt extends Model
         'date',
         'value',
         'filename',
-        'has_signature'
+        'has_signature',
+        'settings'
     ];
+
+    protected static function booted()
+    {
+        static::deleting(function ($receipt) {
+            @unlink(storage_path('app/receipts/' . $receipt->filename));
+        });
+    }
 
     public static function getReceiptSettings()
     {
@@ -27,18 +35,6 @@ class Receipt extends Model
         if (!$receiptSettings) {
             return $receiptSettings;
         }
-
-        $receiptSettings->logo = str_replace(
-            'public/',
-            'app/public/',
-            $receiptSettings->logo
-        );
-
-        $receiptSettings->signature_image = str_replace(
-            'public/',
-            'app/public/',
-            $receiptSettings->signature_image
-        );
 
         return $receiptSettings;
     }

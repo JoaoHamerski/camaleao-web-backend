@@ -41,10 +41,18 @@ class ReceiptGeneratorSettingsUpload
     {
         foreach (static::$FILE_FIELDS as $field) {
             if ($data[$field] instanceof UploadedFile) {
-                $data[$field] = $data[$field]->storeAs(
-                    'public/receipt',
-                    Str::slug($field) . '.' . $data[$field]->extension()
+                $filename = Str::slug($field)
+                    . '-'
+                    . Str::random(20)
+                    . '.'
+                    . $data[$field]->extension();
+
+                $data[$field]->storeAs(
+                    'public/receipt_settings',
+                    $filename
                 );
+
+                $data[$field] = $filename;
             }
         }
 
@@ -72,12 +80,6 @@ class ReceiptGeneratorSettingsUpload
         $formatted = (new Formatter($data))
             ->base64ToUploadedFile(['logo', 'signature_image'])
             ->get();
-
-        foreach (static::$FILE_FIELDS as $field) {
-            if (!FileHelper::isBase64($data[$field]) && !empty($data[$field])) {
-                $formatted[$field] = "public/receipt/" . $formatted[$field];
-            }
-        }
 
         return $formatted;
     }
