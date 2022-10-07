@@ -38,8 +38,8 @@ class ReceiptCreate
         );
 
         $filename = Str::random(40) . '.pdf';
-        var_dump('algo aqui');
         $pdf->save(storage_path("app/receipts/$filename"));
+        var_dump('algo aqui');
 
         return $filename;
     }
