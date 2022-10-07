@@ -20,8 +20,8 @@ class ReceiptCreate
     public function __invoke($_, array $args)
     {
         $data = $this->getFormattedData($args);
-        var_dump('algo aqui');
         $this->validator($data)->validate();
+        var_dump('algo aqui');
 
         $data['filename'] = $this->generateReceiptPDF($data);
 
