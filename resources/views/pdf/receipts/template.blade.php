@@ -47,8 +47,9 @@
             margin-bottom: 4rem;
         }
 
-        .date {
-            margin-bottom: 14rem;
+        .signature {
+            position: absolute;
+            bottom: 1rem;
         }
 
         .signature .signature-image {

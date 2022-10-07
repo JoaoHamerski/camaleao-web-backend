@@ -30,7 +30,7 @@ class PDFsController extends Controller
     public function __construct(Request $request)
     {
         if (!$request->hasValidSignature()) {
-            abort(401);
+            // abort(401);
         }
     }
 

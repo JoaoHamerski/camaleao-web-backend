@@ -34,4 +34,5 @@ extend type Mutation {
   receiptUrl (id: ID preview: Boolean): String!
   receiptCreate (input: ReceiptCreateInput! @spread): Receipt!
   receiptGeneratorSettingsUpload(input: ReceiptSettingsInput @spread): AppConfig
+    @canAccess(roles: ["gerencia"])
 }
