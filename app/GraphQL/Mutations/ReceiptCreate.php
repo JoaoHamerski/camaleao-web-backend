@@ -38,7 +38,7 @@ class ReceiptCreate
         );
 
         $filename = 'test.pdf';
-        $pdf->save(storage_path("app/receipts/$filename"));
+        $pdf->save('file.pdf');
         // var_dump('algo aqui');
 
         return $filename;
