@@ -31,12 +31,12 @@ class ReceiptCreate
     {
         $settings = Receipt::getReceiptSettings();
         @list($data, $settings) = $this->formatData($data, $settings);
-        var_dump('algo aqui');
 
         $pdf = PDF::loadView(
             'pdf.receipts.template',
             compact('data', 'settings')
         );
+        var_dump('algo aqui');
 
         $filename = Str::random(40) . '.pdf';
         $pdf->save(storage_path("app/receipts/$filename"));
