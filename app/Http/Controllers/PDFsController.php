@@ -49,7 +49,14 @@ class PDFsController extends Controller
 
     public function showReceipt(Receipt $receipt)
     {
-        return response()->file($receipt->filepath);
+        $clientName = Str::slug(explode(' ', $receipt->client)[0]);
+        $date = Carbon::createFromFormat('Y-m-d', $receipt->date);
+        $date = $date->format('d-m-Y');
+        $filename = "recibo-$clientName-$date.pdf";
+
+        return response()->file($receipt->filepath, [
+            'Content-disposition' => 'inline; filename="' . $filename . '"'
+        ]);
     }
 
     public function expensesReport(Request $request)
