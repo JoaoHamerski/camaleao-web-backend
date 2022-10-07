@@ -46,7 +46,7 @@ class ReceiptCreate
     public function formatData($data, $settings)
     {
         $data['value'] = Mask::currencyBRL($data['value']);
-        $data['value'] = Str::replace('R$' . chr(194), '', $data['value']);
+        // $data['value'] = Str::replace('R$' . chr(194), '', $data['value']);
         $data['value'] = Str::substr($data['value'], 1);
 
         $settings->content = Str::replace('%cliente%', '<b>' . $data['client'] . '</b>', $settings->content);
