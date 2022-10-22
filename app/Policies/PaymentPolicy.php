@@ -62,8 +62,13 @@ class PaymentPolicy
         return strval($payment->order_id) === strval($injected['order_id']);
     }
 
-    public function confirm(User $user)
+    public function assign(User $user, array $injected)
     {
+        $confirmation = $injected['confirmation'];
+        if ($confirmation === false) {
+            return $user->hasRole(['gerencia', 'atendimento']);
+        }
+
         return $user->hasRole('gerencia');
     }
 

@@ -63,43 +63,32 @@ enum QueryPaymentsOrderByColumn {
 }
 
 extend type Query {
-  payments (
+  payments(
     sponsorship_client_id: ID! @where
     created_at: Date @where(clause: "whereDate")
     orderBy: _ @orderBy(columnsEnum: "QueryPaymentsOrderByColumn")
     pendencies: Boolean @scope
-  ): [Payment]
-    @paginate
-    @canAccess(roles: ["gerencia", "atendimento"])
+  ): [Payment] @paginate @canAccess(roles: ["gerencia", "atendimento"])
 
   paymentsPendencies: [PaymentPendency]
     @canAccess(roles: ["gerencia", "atendimento"])
 }
 
 extend type Mutation {
-  paymentCreate (input: PaymentInput! @spread): Payment
+  paymentCreate(input: PaymentInput! @spread): Payment
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  paymentUpdate (
-    id: ID! @eq
-    input: PaymentInput! @spread
-  ): Payment
-    @can(ability: "update" query: true injectArgs: true)
+  paymentUpdate(id: ID! @eq, input: PaymentInput! @spread): Payment
+    @can(ability: "update", query: true, injectArgs: true)
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  paymentDelete (
-    id: ID!
-    password: String!
-  ): Payment
+  paymentDelete(id: ID!, password: String!): Payment
     @canAccess(roles: ["gerencia"])
 
-  paymentAssignConfirmation (
-    id: ID! @eq
-    confirmation: Boolean!
-  ): Payment
-    @can(ability: "confirm")
+  paymentAssignConfirmation(id: ID! @eq, confirmation: Boolean!): Payment
+    @can(ability: "assign", injectArgs: true)
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  dailyCashEntry (input: DailyCashInput! @spread): Payment
+  dailyCashEntry(input: DailyCashInput! @spread): Payment
     @canAccess(roles: ["gerencia", "atendimento"])
 }

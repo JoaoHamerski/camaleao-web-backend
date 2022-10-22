@@ -16,11 +16,10 @@ type Order @guard {
   order: Int
   payments: [Payment]
     @hasMany
-    @orderBy(column: "date" direction: DESC)
-    @orderBy(column: "created_at" direction: DESC)
+    @orderBy(column: "date", direction: DESC)
+    @orderBy(column: "created_at", direction: DESC)
 
-  clothing_types: [ClothingType]
-    @rename(attribute: "clothingTypes")
+  clothing_types: [ClothingType] @rename(attribute: "clothingTypes")
 
   art_paths: [String]
   size_paths: [String]
@@ -30,7 +29,7 @@ type Order @guard {
   total_owing: Float
   notes: [Note]
     @hasMany
-    @orderBy(column: "created_at" direction: DESC)
+    @orderBy(column: "created_at", direction: DESC)
     @builder(method: "\\App\\GraphQL\\Builders\\NotesOrderBuilder")
 
   reminder: String
@@ -129,51 +128,49 @@ input OrdersWeeklyCalendarReport {
 }
 
 extend type Query {
-  order (
-    id: ID! @eq
-    client_id: ID
-  ): Order
+  order(id: ID! @eq, client_id: ID): Order
     @find
-    @can(ability: "view" injectArgs: true query: true)
+    @can(ability: "view", injectArgs: true, query: true)
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  orders (
+  orders(
     hasClient: _ @whereHasConditions(columnsEnum: "OrdersHasClientColumns")
     hasPayments: _ @whereHasConditions(columnsEnum: "OrderHasPaymentsColumns")
     orderBy: _ @orderBy(columnsEnum: "QueryOrdersOrderByColumn")
     where: _ @whereConditions(columnsEnum: "QueryOrdersWhereConditionsColumn")
-  ): [Order!]
-    @paginate
+  ): [Order!] @paginate @canAccess(roles: ["gerencia", "atendimento"])
+
+  orderReport(id: ID!): String @canAccess(roles: ["gerencia", "atendimento"])
+
+  ordersReport(input: OrdersReportInput! @spread): String
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  orderReport (id: ID!): String
+  ordersReportPrintDate(input: OrdersReportPrintDateInput! @spread): String
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  ordersReport (input: OrdersReportInput! @spread): String
-    @canAccess(roles: ["gerencia", "atendimento"])
+  ordersWeeklyCalendarReport(
+    input: OrdersWeeklyCalendarReport! @spread
+  ): String
+    @canAccess(
+      roles: ["gerencia", "atendimento", "design", "costura", "estampa"]
+    )
 
-  ordersReportPrintDate (input: OrdersReportPrintDateInput! @spread): String
-    @canAccess(roles: ["gerencia", "atendimento"])
-
-  ordersWeeklyCalendarReport (input: OrdersWeeklyCalendarReport! @spread): String
-    @canAccess(roles: ["gerencia", "atendimento", "design", "costura", "estampa"])
+  ordersActivities(id: ID!): [Activity] @canAccess(roles: ["gerencia"])
 }
 
 extend type Mutation {
-  orderCreate (client_id: ID! input: OrderInput! @spread): Order
+  orderCreate(client_id: ID!, input: OrderInput! @spread): Order
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  orderUpdate (id: ID! @eq input: OrderInput! @spread): Order
-    @can(ability: "update" query: true)
+  orderUpdate(id: ID! @eq, input: OrderInput! @spread): Order
+    @can(ability: "update", query: true)
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  orderUpdateStatus (id: ID! @eq status_id: ID!): Order
-    @can(ability: "update" query: true)
+  orderUpdateStatus(id: ID! @eq, status_id: ID!): Order
+    @can(ability: "update", query: true)
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  orderToggle (id: ID! @eq): Order
-    @canAccess(roles: ["gerencia", "atendimento"])
+  orderToggle(id: ID! @eq): Order @canAccess(roles: ["gerencia", "atendimento"])
 
-  orderDelete (id: ID! @eq): Order
-    @canAccess(roles: ["gerencia", "atendimento"])
+  orderDelete(id: ID! @eq): Order @canAccess(roles: ["gerencia", "atendimento"])
 }
