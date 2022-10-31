@@ -186,7 +186,7 @@ class DailyCashDetailedFlow
             return [Carbon::createFromFormat('m/Y', $args['date'])];
         }
 
-        $date =  Carbon::now()->subMonths(($args['page'] - 1) * 6);
+        $date =  Carbon::now()->subMonthsNoOverflow(($args['page'] - 1) * 6);
 
         for ($i = 0; $i < 6; $i++) {
             $dates[] = $date->clone()->subMonthsNoOverflow($i);
