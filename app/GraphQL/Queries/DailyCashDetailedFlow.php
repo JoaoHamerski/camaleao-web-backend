@@ -34,6 +34,7 @@ class DailyCashDetailedFlow
 
         $dates = $this->getDate($args);
 
+        // dd($dates);
         return $this->getDataOfMonths($dates);
     }
 
@@ -188,7 +189,7 @@ class DailyCashDetailedFlow
         $date =  Carbon::now()->subMonths(($args['page'] - 1) * 6);
 
         for ($i = 0; $i < 6; $i++) {
-            $dates[] = $date->clone()->subMonth($i);
+            $dates[] = $date->clone()->subMonthsNoOverflow($i);
         }
 
         return $dates;
