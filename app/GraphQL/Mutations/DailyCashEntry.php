@@ -138,7 +138,7 @@ class DailyCashEntry
             'bank_uid' => [
                 'nullable',
                 'unique:payments',
-                'exists:payments,bank_uid'
+                'exists:entries'
             ],
             'via_id' => ['required', 'exists:vias,id'],
             'value' => ['required', 'numeric'],
