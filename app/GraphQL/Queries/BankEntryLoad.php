@@ -4,6 +4,7 @@ namespace App\GraphQL\Queries;
 
 use App\GraphQL\Mutations\BankCheckDuplicatedEntries;
 use App\Models\BankEntry;
+use App\Models\Entry;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -27,18 +28,14 @@ class BankEntryLoad
 
     public function getFormattedFile($filepath)
     {
-        $entriesQuery = BankCheckDuplicatedEntries::getEntriesQuery();
-
         $file = Storage::get($filepath);
         $entries = collect(json_decode($file));
-        $entries = $entries->filter(fn ($entry) => $entry->isVisible);
-        $entries->each(function ($entry) use ($entriesQuery) {
-            $isDuplicated = $entriesQuery
-                ->clone()
-                ->where('bank_uid', $entry->bank_uid)
-                ->exists();
+        $entries = $entries->filter(fn ($fileEntry) => $fileEntry->isVisible);
+        $entries->each(function ($fileEntry) {
+            $entry = Entry::where('bank_uid', $fileEntry->bank_uid)->first();
 
-            $entry->isDuplicated = $isDuplicated;
+            $fileEntry->isDuplicated = !$entry;
+            $fileEntry->isCanceled = $entry ? $entry->is_canceled : false;
         });
 
         return $entries;

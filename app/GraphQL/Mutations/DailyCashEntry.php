@@ -5,17 +5,17 @@ namespace App\GraphQL\Mutations;
 use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\Client;
-use App\Models\Payment;
 use App\Util\Formatter;
-use App\Models\BankEntry;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\GraphQL\Exceptions\UnprocessableException;
+use App\Traits\EntriesTrait;
 
 class DailyCashEntry
 {
+    use EntriesTrait;
+
     /**
      * @param  null  $_
      * @param  array<string, mixed>  $args

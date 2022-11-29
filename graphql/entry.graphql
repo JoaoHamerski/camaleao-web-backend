@@ -4,6 +4,7 @@ type Entry @guard {
   value: Float!
   date: String!
   description: String
+  is_canceled: Boolean
   via_id: ID
 }
 
@@ -16,4 +17,10 @@ extend type Query {
   entries(
     where: _ @whereConditions(columnsEnum: "QueryWhereEntriesColumns")
   ): [Entry] @paginate
+
+  entriesMonthlyBalance: Float
+}
+
+extend type Mutation {
+  entryCancel(uid: ID!): Entry!
 }

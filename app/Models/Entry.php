@@ -14,6 +14,11 @@ class Entry extends Model
         'value',
         'date',
         'description',
-        'via_id'
+        'via_id',
+        'is_canceled'
+    ];
+
+    protected $casts = [
+        'is_canceled' => 'boolean'
     ];
 }

@@ -62,7 +62,15 @@ enum QueryPaymentsOrderByColumn {
   CREATED_AT @enum(value: "created_at")
 }
 
+enum QueryPaymentsWhere {
+  BANK_UID @enum(value: "bank_uid")
+}
+
 extend type Query {
+  payment(
+    where: _ @whereConditions(columnsEnum: "QueryPaymentsWhere")
+  ): Payment @find
+
   payments(
     sponsorship_client_id: ID! @where
     created_at: Date @where(clause: "whereDate")
