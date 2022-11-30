@@ -16,11 +16,11 @@ enum QueryWhereEntriesColumns {
 extend type Query {
   entries(
     where: _ @whereConditions(columnsEnum: "QueryWhereEntriesColumns")
-  ): [Entry] @paginate
+  ): [Entry] @paginate @canAccess(roles: ["gerencia", "atendimento"])
 
-  entriesMonthlyBalance: Float
+  entriesMonthlyBalance: Float @canAccess(roles: ["gerencia", "atendimento"])
 }
 
 extend type Mutation {
-  entryCancel(uid: ID!): Entry!
+  entryCancel(uid: ID!): Entry! @canAccess(roles: ["gerencia", "atendimento"])
 }
