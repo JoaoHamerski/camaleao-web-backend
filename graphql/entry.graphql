@@ -8,6 +8,11 @@ type Entry @guard {
   via_id: ID
 }
 
+type EntriesMonthlyBalance {
+  current: Float
+  previous: Float
+}
+
 enum QueryWhereEntriesColumns {
   VALUE @enum(value: "value")
   DESCRIPTION @enum(value: "description")
@@ -18,7 +23,8 @@ extend type Query {
     where: _ @whereConditions(columnsEnum: "QueryWhereEntriesColumns")
   ): [Entry] @paginate @canAccess(roles: ["gerencia", "atendimento"])
 
-  entriesMonthlyBalance: Float @canAccess(roles: ["gerencia", "atendimento"])
+  entriesMonthlyBalance: EntriesMonthlyBalance
+    @canAccess(roles: ["gerencia", "atendimento"])
 }
 
 extend type Mutation {

@@ -14,11 +14,19 @@ class EntriesMonthlyBalance
      */
     public function __invoke($_, array $args)
     {
-        // TODO implement the resolver
         $now = Carbon::now();
+        $previous = $now->clone()->subMonth();
 
-        return Entry::whereMonth(DB::raw('STR_TO_DATE(date, "%d/%m/%Y")'), $now->month)
-            ->whereYear(DB::raw('STR_TO_DATE(date, "%d/%m/%Y")'), $now->year)
+        return [
+            'current' => $this->getBalance($now),
+            'previous' => $this->getBalance($previous)
+        ];
+    }
+
+    private function getBalance(Carbon $date)
+    {
+        return Entry::whereMonth(DB::raw('STR_TO_DATE(date, "%d/%m/%Y")'), $date->month)
+            ->whereYear(DB::raw('STR_TO_DATE(date, "%d/%m/%Y")'), $date->year)
             ->where('value', '>', '0')
             ->where('is_canceled', false)
             ->sum('value');
