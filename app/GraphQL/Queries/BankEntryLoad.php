@@ -2,11 +2,12 @@
 
 namespace App\GraphQL\Queries;
 
-use App\GraphQL\Mutations\BankCheckDuplicatedEntries;
-use App\Models\BankEntry;
 use App\Models\Entry;
+use App\Models\Payment;
+use App\Models\BankEntry;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\GraphQL\Mutations\BankCheckDuplicatedEntries;
 
 class BankEntryLoad
 {
@@ -34,10 +35,15 @@ class BankEntryLoad
         $entries->each(function ($fileEntry) {
             $entry = Entry::where('bank_uid', $fileEntry->bank_uid)->first();
 
-            $fileEntry->isDuplicated = !$entry;
+            $fileEntry->isDuplicated = $this->isEntryDuplicated($fileEntry);
             $fileEntry->isCanceled = $entry ? $entry->is_canceled : false;
         });
 
         return $entries;
+    }
+
+    public function isEntryDuplicated($entry)
+    {
+        return Payment::where('bank_uid', $entry->bank_uid)->exists();
     }
 }
