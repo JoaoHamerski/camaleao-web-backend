@@ -3,6 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\Entry;
+use App\Models\Expense;
 use App\Models\Payment;
 use App\Models\BankEntry;
 use Illuminate\Support\Facades\Storage;
@@ -44,6 +45,7 @@ class BankEntryLoad
 
     public function isEntryDuplicated($entry)
     {
-        return Payment::where('bank_uid', $entry->bank_uid)->exists();
+        return Payment::where('bank_uid', $entry->bank_uid)->exists()
+            || Expense::where('bank_uid', $entry->bank_uid)->exists();
     }
 }
