@@ -16,9 +16,11 @@ class Order extends Model
     protected static $logAlways = [
         'client.name'
     ];
+
     protected static $logAttributes = [
         'status.text'
     ];
+
     protected static $logFillable = true;
     protected static $logOnlyDirty = true;
     protected static $submitEmptyLogs = false;
@@ -40,7 +42,8 @@ class Order extends Model
         'payment_voucher_paths',
         'closed_at',
         'order',
-        'final_status'
+        'final_status',
+        'shipping_value'
     ];
 
     protected $appends = [

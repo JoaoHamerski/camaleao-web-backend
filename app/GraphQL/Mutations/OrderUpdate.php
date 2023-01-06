@@ -17,6 +17,7 @@ class OrderUpdate
     {
         $order = Order::find($args['id']);
         $data = $this->getFormattedData($args, $order);
+        $data = $this->evaluateOrderAttributes($data, $order);
 
         $this->validator($data, $order)->validate();
 

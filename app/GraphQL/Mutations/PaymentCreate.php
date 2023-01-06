@@ -4,12 +4,12 @@ namespace App\GraphQL\Mutations;
 
 use Carbon\Carbon;
 use App\Models\Order;
+use App\Models\Payment;
+use App\Traits\EntriesTrait;
 use Illuminate\Validation\Rule;
 use App\GraphQL\Traits\PaymentTrait;
 use Illuminate\Support\Facades\Validator;
 use App\GraphQL\Exceptions\UnprocessableException;
-use App\Models\ClientBalance;
-use App\Traits\EntriesTrait;
 
 class PaymentCreate
 {
@@ -45,13 +45,7 @@ class PaymentCreate
             );
         }
 
-        $data['total_owing'] = $order->total_owing;
-        $data['total_value'] = bcadd($data['value'], $data['credit'], 2);
-        $data['original_value'] = $data['value'];
-        $data['value'] = $this->getPaymentValue(
-            $data['total_value'],
-            $data['total_owing']
-        );
+        $data = $this->getComputedValues($order, $data);
 
         $payment = $order->payments()->make($data);
 
@@ -65,9 +59,25 @@ class PaymentCreate
 
         $payment->save();
 
-        $this->createClientBalances($data, $payment);
+        if (!$payment->is_shipping) {
+            $this->createClientBalances($data, $payment);
+        }
 
         return $payment;
+    }
+
+    public function getComputedValues(Order $order, $data)
+    {
+        $data['total_owing'] = $order->total_owing;
+        $data['total_value'] = bcadd($data['value'], $data['credit'], 2);
+        $data['original_value'] = $data['value'];
+
+        $data['value'] = $this->getPaymentValue(
+            $data['total_value'],
+            $data['total_owing']
+        );
+
+        return $data;
     }
 
     public function createClientBalances($data, $payment)
@@ -124,6 +134,7 @@ class PaymentCreate
                 'credit' => $this->getCreditRules($order),
                 'value' => $this->getValueRules($data, $order),
                 'is_sponsor' => ['required', 'boolean'],
+                'is_shipping' => ['required', 'boolean'],
                 'sponsorship_client_id' => [
                     'nullable',
                     'exists:clients,id',
@@ -150,7 +161,7 @@ class PaymentCreate
             $rules[] = 'min_currency:0.01';
         }
 
-        if (!$data['add_rest_to_credits']) {
+        if (!$data['add_rest_to_credits'] && !$data['is_shipping']) {
             $rules[] = 'max_currency:' . $order->total_owing;
         }
 

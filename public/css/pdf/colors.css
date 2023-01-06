@@ -3,7 +3,7 @@
 }
 
 .text-primary {
-  color: #0088f0 !important;
+  color: #0060aa !important;
 }
 
 .text-warning {
@@ -11,11 +11,11 @@
 }
 
 .text-success {
-  color: #12a13d !important;
+  color: #008628 !important;
 }
 
 .text-danger {
-  color: #c93d2a !important;
+  color: #9c1200 !important;
 }
 
 .text-secondary {
@@ -28,7 +28,6 @@
 
 .bg-secondary-dark {
   background-color: #6c757d56 !important;
-
 }
 
 .bg-secondary {

@@ -52,7 +52,8 @@ class DailyCashEntry
             'date',
             'note',
             'bank_uid',
-            'sponsorship_client_id'
+            'sponsorship_client_id',
+            'is_shipping'
         ]));
 
         $payment->payment_via_id = $data['via_id'];
@@ -161,7 +162,10 @@ class DailyCashEntry
 
         if ($order) {
             $rules['sponsorship_client_id'][] = Rule::notIn($order->client->id);
-            $rules['value'][] = 'max_currency:' . $order->total_owing;
+
+            if (!$data['is_shipping']) {
+                $rules['value'][] = 'max_currency:' . $order->total_owing;
+            }
         }
 
         return $rules;

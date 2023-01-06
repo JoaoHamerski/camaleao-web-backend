@@ -39,7 +39,8 @@ trait OrderTrait
             ->currencyBRL([
                 'down_payment',
                 'discount',
-                'clothing_types.*.value'
+                'clothing_types.*.value',
+                'shipping_value'
             ])
             ->date([
                 'seam_date',
@@ -53,7 +54,7 @@ trait OrderTrait
             ])
             ->get();
 
-        $data = $this->evaluateOrderAttributes($data, $order);
+        // $data = $this->evaluateOrderAttributes($data, $order);
 
         return $data;
     }
@@ -359,7 +360,9 @@ trait OrderTrait
             return null;
         }
 
-        return bcsub($clothingTypesValue, $data['discount'] ?? 0, 2);
+        $price = bcsub($clothingTypesValue, $data['discount'] ?? 0, 2);
+
+        return bcadd($price, $data['shipping_value'] ?? 0, 2);
     }
 
     /**

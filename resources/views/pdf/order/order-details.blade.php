@@ -40,13 +40,18 @@
 
     <tr>
       <td class="fw-bold w-25 bg-secondary">FRETE</td>
-      <td colspan="3" class="bg-secondary-light">
+      <td colspan="{{ $order->shipping_value ? 1 : 3 }}" class="bg-secondary-light">
       @if ($order->client->shippingCompany)
-      {{ $order->client->shippingCompany->name }}
+        {{ $order->client->shippingCompany->name }}
       @else
-      N/A
+        N/A
       @endif
       </td>
+
+      @if ($order->shipping_value)
+        <td class="fw-bold w-25 bg-secondary">VALOR</td>
+        <td class="bg-secondary-light">{{ Mask::currencyBRL($order->shipping_value) }}</td>
+      @endif
     </tr>
 
     <tr>
@@ -104,7 +109,7 @@
     <tr class="fw-bold">
       <td class="fw-bold w-25 bg-secondary text-success">TOTAL PAGO</td>
       <td
-        class="text-success"
+        class="bg-secondary-light text-success"
         @if (!$order->has_sponsor)
           colspan="3"
         @endif

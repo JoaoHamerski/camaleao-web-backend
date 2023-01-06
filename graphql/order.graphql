@@ -10,6 +10,7 @@ type Order @guard {
   print_date: Date
   seam_date: Date
   discount: Float
+  shipping_value: Float
   total_paid_sponsor: Float
   total_paid_non_sponsor: Float
   has_sponsor: Boolean
@@ -72,6 +73,7 @@ input OrderInput {
   name: String
   code: ID
   discount: String
+  shipping_value: String
   down_payment: String
   payment_via_id: ID
   seam_date: String

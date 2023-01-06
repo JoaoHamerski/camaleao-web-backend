@@ -8,6 +8,7 @@ type Payment @guard {
   confirmed_at: Date
   is_confirmed: Boolean
   is_sponsor: Boolean
+  is_shipping: Boolean
   sponsorship_client: Client @rename(attribute: "sponsorshipClient")
   created_at: DateTime
   updated_at: DateTime
@@ -29,7 +30,8 @@ input PaymentInput {
   date: String
   note: String
   sponsorship_client_id: ID
-  is_sponsor: Boolean
+  is_sponsor: Boolean!
+  is_shipping: Boolean!
   add_rest_to_credits: Boolean!
 }
 
@@ -53,6 +55,7 @@ input DailyCashInput {
   date: String!
   sponsorship_client_id: ID
   is_sponsor: Boolean!
+  is_shipping: Boolean!
   note: String
   bank_uid: String
   filename_entry_from: String
