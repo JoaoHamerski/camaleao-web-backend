@@ -50,7 +50,7 @@ class PaymentCreate
         $payment = $order->payments()->make($data);
 
         if ($payment->isConfirmable($data)) {
-            $payment->makeConfirm();
+            $payment->fillConfirmation();
         }
 
         if ($payment->sponsorship_client_id) {

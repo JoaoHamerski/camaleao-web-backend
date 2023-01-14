@@ -66,7 +66,7 @@ class DailyCashEntry
         }
 
         if ($payment->isConfirmable($data)) {
-            $payment->makeConfirm();
+            $payment->fillConfirmation();
         }
 
         if ($payment->sponsorship_client_id) {

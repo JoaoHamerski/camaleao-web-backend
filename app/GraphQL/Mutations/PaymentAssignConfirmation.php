@@ -30,7 +30,7 @@ class PaymentAssignConfirmation
             ])->validate();
         }
 
-        $payment->makeConfirm();
+        $payment->fillConfirmation($args['confirmation']);
 
         if ($payment->sponsorshipClient) {
             $payment->date = Carbon::now()->toDateString();

@@ -155,14 +155,14 @@ class Payment extends Model
         return $this->belongsTo(Order::class);
     }
 
-    public function makeConfirm()
+    public function fillConfirmation(bool $confirmation = true)
     {
         $this->fill([
             'confirmed_at' => Carbon::now(),
-            'is_confirmed' => true
+            'is_confirmed' => $confirmation
         ]);
 
-        if ($this->is_shipping) {
+        if ($this->is_shipping && $confirmation) {
             $this->sumPaymentToOrderPrice();
         }
     }
