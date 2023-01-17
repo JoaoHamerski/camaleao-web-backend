@@ -173,7 +173,9 @@ class Order extends Model
         return static::whereIn(
             'status_id',
             $sector->status->pluck('id')
-        )->whereNull('closed_at');
+        )
+            ->whereNull('closed_at')
+            ->orderBy('created_at', 'ASC');
     }
 
     public function status()

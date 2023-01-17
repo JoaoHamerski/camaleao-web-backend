@@ -17,7 +17,6 @@ class StepToStatus
     public function __invoke($_, array $args)
     {
         $order = null;
-        $sector = null;
         $status = null;
 
         Validator::make($args, [
@@ -25,13 +24,11 @@ class StepToStatus
         ])->validate();
 
         $order = Order::find($args['order_id']);
-        $sector = $order->getSectorWithRematchedStatus();
 
         Validator::make($args, [
             'status_id' => [
                 'required',
-                'exists:status,id',
-                Rule::in($sector->status->pluck('id')->toArray())
+                'exists:status,id'
             ]
         ])->validate();
 
