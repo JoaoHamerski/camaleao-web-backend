@@ -1,6 +1,7 @@
 type AuthUserSectorsInfo {
   orders_count: String
   sector: Sector
+  next_status: Status
 }
 
 enum OrdersBySectorOrderByColumns {
@@ -14,16 +15,13 @@ extend type Query {
     order_by: _ @orderBy(columnsEnum: "OrdersBySectorOrderByColumns")
   ): [Order]
     @paginate(builder: "App\\GraphQL\\Builders\\OrdersBySectorBuilder")
-    @can(ability: "viewSector" injectArgs: true)
+    @can(ability: "viewSector", injectArgs: true)
 }
 
 extend type Mutation {
-  bankCheckDuplicatedEntries (bank_uid: [String!]!): [String!]
+  bankCheckDuplicatedEntries(bank_uid: [String!]!): [String!]
     @canAccess(roles: ["gerencia"])
 
-  stepToStatus (
-    order_id: ID!
-    status_id: ID!
-  ): Order
-    @can(ability: "stepOrderStatus" injectArgs: true)
+  stepToStatus(order_id: ID!, status_id: ID!): Order
+    @can(ability: "stepOrderStatus", injectArgs: true)
 }

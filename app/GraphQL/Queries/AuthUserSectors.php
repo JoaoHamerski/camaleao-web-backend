@@ -3,7 +3,6 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\Order;
-use App\Models\Sector;
 use App\Models\Status;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,7 +19,8 @@ class AuthUserSectors
             ->ordered()
             ->map(fn ($sector) => [
                 'orders_count' => Order::getBySector($sector)->count(),
-                'sector' => $sector
+                'sector' => $sector,
+                'next_status' => Status::getNextStatus($sector->status->last())
             ]);
     }
 }

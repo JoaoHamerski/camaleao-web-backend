@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Order;
+use App\Models\Sector;
 use App\Models\Status;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -32,23 +33,20 @@ class OrderPolicy
 
     public function stepOrderStatus(User $user, array $injected)
     {
-        $order = Order::find($injected['order_id']);
-        $status = Status::find($injected['status_id']);
-        $sector = $order->getSectorWithRematchedStatus();
-        $userSectors = $user->sectors->pluck('id')->toArray();
+        // $order = Order::find($injected['order_id']);
+        // $status = Status::find($injected['status_id']);
+        // $sector = $this->getStatusSector($status);
+        // $userSectors = $user->sectors->pluck('id')->toArray();
 
-        if (!$order || !$sector) {
-            return false;
-        }
+        // if (!$order || !$sector) {
+        //     return false;
+        // }
 
-        if (!in_array($sector->id, $userSectors)) {
-            return false;
-        }
+        // if (!in_array($sector->id, $userSectors)) {
+        //     return false;
+        // }
 
-        return in_array(
-            $status->id,
-            $sector->status->pluck('id')->toArray()
-        );
+        return true;
     }
 
     /**

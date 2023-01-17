@@ -42,6 +42,13 @@ class Status extends Model
         return $sectors[$index];
     }
 
+    public static function getNextStatus($status)
+    {
+        $nextStatusOrder = $status->order + 1;
+
+        return Status::where('order', $nextStatusOrder)->first();
+    }
+
     public static function getStatusIdsToMatch($sector, $sectors = null): array
     {
         $sectors = $sectors ? $sectors : Sector::ordered();

@@ -172,7 +172,7 @@ class Order extends Model
 
         return static::whereIn(
             'status_id',
-            Status::getStatusIdsToMatch($sector)
+            $sector->status->pluck('id')
         )->whereNull('closed_at');
     }
 
