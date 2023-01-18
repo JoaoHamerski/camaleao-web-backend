@@ -49,6 +49,13 @@ class Status extends Model
         return Status::where('order', $nextStatusOrder)->first();
     }
 
+    public static function getPreviousStatus($status)
+    {
+        $nextStatusOrder = $status->order - 1;
+
+        return Status::where('order', $nextStatusOrder)->first();
+    }
+
     public static function getStatusIdsToMatch($sector, $sectors = null): array
     {
         $sectors = $sectors ? $sectors : Sector::ordered();

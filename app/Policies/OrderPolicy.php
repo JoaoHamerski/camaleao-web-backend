@@ -33,20 +33,31 @@ class OrderPolicy
 
     public function stepOrderStatus(User $user, array $injected)
     {
-        // $order = Order::find($injected['order_id']);
-        // $status = Status::find($injected['status_id']);
-        // $sector = $this->getStatusSector($status);
-        // $userSectors = $user->sectors->pluck('id')->toArray();
+        $status = Status::find($injected['status_id']);
 
-        // if (!$order || !$sector) {
-        //     return false;
-        // }
+        if (!$status) {
+            return false;
+        }
 
-        // if (!in_array($sector->id, $userSectors)) {
-        //     return false;
-        // }
+        if (!$this->isUserAllowedToStepStatus($user, $status)) {
+            return false;
+        }
 
         return true;
+    }
+
+    private function isUserAllowedToStepStatus($user, $status): bool
+    {
+        $sector = $status->sector;
+        $sectorUsers = $sector ? $sector->users->pluck('id')->toArray() : [];
+
+        $allowedUserIds = [
+            ...$sectorUsers,
+            ...Status::getPreviousStatus($status)->sector->users->pluck('id')->toArray()
+        ];
+
+        return in_array($user->id, $allowedUserIds)
+            || $status->id === Status::getNextStatus($sector->status->last());
     }
 
     /**
