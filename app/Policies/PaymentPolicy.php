@@ -3,6 +3,8 @@
 namespace App\Policies;
 
 use App\Models\User;
+use App\Util\Helper;
+use App\Models\Entry;
 use App\Models\Order;
 use App\Models\Payment;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -55,16 +57,41 @@ class PaymentPolicy
      */
     public function update(User $user, Payment $payment, array $injected)
     {
-        if ($payment->is_confirmed !== null && !$user->hasRole('gerencia')) {
+        if (
+            $payment->is_confirmed !== null
+            && !$user->hasRole('gerencia')
+        ) {
+            return false;
+        }
+
+        if (!$this->allowUpdateFromEntry($payment, $injected['bank_uid'])) {
             return false;
         }
 
         return strval($payment->order_id) === strval($injected['order_id']);
     }
 
+    private function allowUpdateFromEntry($payment, $bankUid)
+    {
+        $entry = null;
+
+        if (empty($bankUid)) {
+            return true;
+        }
+
+        $entry = Entry::where('bank_uid', $bankUid)->first();
+
+        if (!$entry) {
+            return false;
+        }
+
+        return +$entry->value === +$payment->value;
+    }
+
     public function assign(User $user, array $injected)
     {
         $confirmation = $injected['confirmation'];
+
         if ($confirmation === false) {
             return $user->hasRole(['gerencia', 'atendimento']);
         }

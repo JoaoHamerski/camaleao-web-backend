@@ -78,6 +78,10 @@ class Payment extends Model
 
     public static function onUpdated(Payment $payment)
     {
+        if (!empty($payment->bank_uid)) {
+            Entry::where('bank_uid', $payment->bank_uid)->delete();
+        }
+
         if ($payment->clientBalances->count()) {
             $payment->clientBalances()->update([
                 'is_confirmed' => $payment->is_confirmed

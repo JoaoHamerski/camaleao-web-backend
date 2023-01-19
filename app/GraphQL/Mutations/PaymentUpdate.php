@@ -21,16 +21,37 @@ class PaymentUpdate
         $data = $this->getFormattedData($args);
         $payment = Payment::find($data['id']);
 
-        Validator::make($data, [
-            'note' => ['nullable', 'max:191'],
-            'payment_via_id' => ['required', 'exists:vias,id']
-        ], $this->errorMessages())->validate();
+        $this->validator($data)->validate();
 
         $payment->update(Arr::only(
             $data,
-            ['note', 'payment_via_id', 'date']
+            [
+                'bank_uid',
+                'note',
+                'payment_via_id',
+                'date'
+            ]
         ));
 
         return $payment;
+    }
+
+    public function validator($data)
+    {
+        return Validator::make($data, [
+            'note' => [
+                'nullable',
+                'max:191'
+            ],
+            'payment_via_id' => [
+                'required',
+                'exists:vias,id'
+            ],
+            'bank_uid' => [
+                'nullable',
+                'unique:payments',
+                'exists:entries'
+            ],
+        ], $this->errorMessages());
     }
 }
