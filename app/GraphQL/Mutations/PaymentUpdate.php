@@ -23,7 +23,7 @@ class PaymentUpdate
 
         $this->validator($data)->validate();
 
-        $payment->update(Arr::only(
+        $payment->fill(Arr::only(
             $data,
             [
                 'bank_uid',
@@ -33,7 +33,18 @@ class PaymentUpdate
             ]
         ));
 
+        if ($this->isPaymentFromEntries($data)) {
+            $payment->fillConfirmation();
+        }
+
+        $payment->save();
+
         return $payment;
+    }
+
+    private function isPaymentFromEntries($data)
+    {
+        return !empty($data['bank_uid']);
     }
 
     public function validator($data)
