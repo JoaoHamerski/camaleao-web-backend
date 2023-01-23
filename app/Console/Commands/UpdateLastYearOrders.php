@@ -39,8 +39,9 @@ class UpdateLastYearOrders extends Command
      */
     public function handle()
     {
-        $status = Status::find('21');
+        $status = Status::find('18');
         $ordersQuantity = Order::whereYear('created_at', '2022')->count();
+        $bar = $this->output->createProgressBar($ordersQuantity);
 
         $this->info($status);
         $this->info('QUANTIDADE DE PEDIDOS: ' . $ordersQuantity);
@@ -50,8 +51,16 @@ class UpdateLastYearOrders extends Command
             return;
         }
 
-        Order::whereYear('created_at', '2022')
-            ->update(['status_id' => $status->id]);
+        $orders = Order::whereYear('created_at', '2022');
+
+        $bar->start();
+
+        $orders->each(function ($order) use ($status, $bar) {
+            $order->update(['status_id' => $status->id]);
+            $bar->advance();
+        });
+
+        $bar->finish();
 
         return 0;
     }
