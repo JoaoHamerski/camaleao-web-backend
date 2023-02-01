@@ -26,21 +26,18 @@ class Sector extends Model
             ->orderByPivot('users.name');
     }
 
-    public function scopeOrdered(Builder $query)
+    public function scopeOrdered($query)
     {
-
         return $query
             ->join('status', 'sectors.id', '=', 'status.sector_id')
-            ->select(['sectors.*', 'status.order'])
+            ->select('sectors.*')
             ->orderBy('status.order')
-            ->get()
-            ->unique('id')
-            ->values();
+            ->distinct();
     }
 
     public function isLastSector()
     {
-        $sectors = $this->ordered();
+        $sectors = $this->ordered()->get();
 
         return $sectors->last()->id === $this->id;
     }

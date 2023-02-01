@@ -17,6 +17,7 @@ class AuthUserSectors
         return Auth::user()
             ->sectors()
             ->ordered()
+            ->get()
             ->map(fn ($sector) => [
                 'orders_count' => Order::getBySector($sector)->count(),
                 'sector' => $sector,

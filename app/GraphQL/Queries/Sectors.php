@@ -12,6 +12,6 @@ class Sectors
      */
     public function __invoke($_, array $args)
     {
-        return Sector::ordered();
+        return Sector::ordered()->get();
     }
 }

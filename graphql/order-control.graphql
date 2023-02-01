@@ -4,6 +4,24 @@ type AuthUserSectorsInfo {
   next_status: Status
 }
 
+type SectorPiecesCurrentPrevious {
+  current_orders: [Order]
+    @paginate(builder: "App\\GraphQL\\Builders\\SectorPiecesOrdersBuilder")
+  current: Int
+  previous: Int
+}
+
+type SectorPiecesDays {
+  day: SectorPiecesCurrentPrevious
+  week: SectorPiecesCurrentPrevious
+  month: SectorPiecesCurrentPrevious
+}
+
+type SectorPieces {
+  sector: Sector!
+  pieces: SectorPiecesDays
+}
+
 enum OrdersBySectorOrderByColumns {
   CREATED_AT @enum(value: "created_at")
 }
@@ -16,6 +34,8 @@ extend type Query {
   ): [Order]
     @paginate(builder: "App\\GraphQL\\Builders\\OrdersBySectorBuilder")
     @can(ability: "viewSector", injectArgs: true)
+
+  sectorsPieces: [SectorPieces]
 }
 
 extend type Mutation {
