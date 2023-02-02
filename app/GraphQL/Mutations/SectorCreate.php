@@ -17,7 +17,10 @@ class SectorCreate
     {
         $data = $this->validator($args)->validate();
 
-        $sector = Sector::create(['name' => $data['name']]);
+        $sector = Sector::create([
+            'name' => $data['name'],
+            'alias' => $data['alias']
+        ]);
 
         $sector->users()->attach($data['users']);
 

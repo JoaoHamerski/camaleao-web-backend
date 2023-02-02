@@ -18,7 +18,11 @@ class SectorUpdate
         $data = $this->validator($args)->validate();
 
         $sector = Sector::find($args['id']);
-        $sector->update(['name' => $args['name']]);
+
+        $sector->update([
+            'name' => $args['name'],
+            'alias' => $args['alias']
+        ]);
 
         if (isset($data['users'])) {
             $sector->users()->sync($data['users']);

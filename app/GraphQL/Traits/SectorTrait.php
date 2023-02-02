@@ -11,6 +11,7 @@ trait SectorTrait
         return Validator::make($data, [
             'id' => ['sometimes', 'required', 'exists:sectors,id'],
             'name' => ['required'],
+            'alias' => ['nullable'],
             'users' => ['nullable', 'array'],
             'users.*' => ['required', 'exists:users,id'],
             'status' => ['required', 'array'],

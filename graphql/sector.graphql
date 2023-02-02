@@ -1,6 +1,7 @@
 type Sector @guard {
   id: ID!
   name: String!
+  alias: String
   can_close_sector_orders: Boolean
   status: [Status]
   users: [User]
@@ -8,6 +9,7 @@ type Sector @guard {
 
 input SectorInput {
   name: String!
+  alias: String
   users: [ID]
   status: [ID!]!
 }
@@ -18,6 +20,6 @@ extend type Query {
 
 extend type Mutation {
   sectorCreate(input: SectorInput @spread): Sector
-  sectorUpdate(id: ID! input: SectorInput @spread): Sector
+  sectorUpdate(id: ID!, input: SectorInput @spread): Sector
   sectorDelete(id: ID!): Sector
 }
