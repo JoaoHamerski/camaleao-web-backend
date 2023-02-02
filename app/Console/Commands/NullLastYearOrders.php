@@ -14,7 +14,7 @@ class NullLastYearOrders extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'null:last-year-orders';
 
     /**
      * The console command description.
