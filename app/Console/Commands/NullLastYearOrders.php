@@ -45,7 +45,7 @@ class NullLastYearOrders extends Command
                 '2023-01-23 09:20:00', '2023-01-23 09:30:00'
             ])
             ->select('order_status.*')
-            ->update(['created_at' => null]);
+            ->update(['order_status.created_at' => null]);
 
         return 0;
     }
