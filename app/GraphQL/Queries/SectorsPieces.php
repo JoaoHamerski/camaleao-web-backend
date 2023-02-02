@@ -50,16 +50,17 @@ class SectorsPieces
             'current_orders' => $ordersQuery
                 ->clone()
                 ->$whereMethod('order_status.created_at', $this->getWhereParams($date))
+                ->orderBy('orders.created_at', 'desc')
                 ->distinct(['orders.id']),
             'current' => $ordersQuery
                 ->clone()
                 ->$whereMethod('order_status.created_at', $this->getWhereParams($date))
-                ->distinct()
+                ->distinct(['orders.id'])
                 ->sum('quantity'),
             'previous' => $ordersQuery
                 ->clone()
                 ->$whereMethod('order_status.created_at', $this->getWhereParamsPrevious($date))
-                ->distinct()
+                ->distinct(['orders.id'])
                 ->sum('quantity')
         ];
     }
