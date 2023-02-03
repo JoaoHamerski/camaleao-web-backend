@@ -70,11 +70,11 @@ class SectorsPieces
         return Order::whereHas(
             'concludedStatus',
             function ($query) use ($whereMethod, $whereParams, $status) {
-                $query->whereIn('order_status.status_id', $status->pluck('id'))
-                    ->$whereMethod('order_status.created_at', $whereParams);
+                $query
+                    ->$whereMethod('order_status.created_at', $whereParams)
+                    ->whereIn('order_status.status_id', $status->pluck('id'));
             }
-        )
-            ->sum('quantity');
+        )->sum('quantity');
     }
 
     private function getWhereMethod($date)
