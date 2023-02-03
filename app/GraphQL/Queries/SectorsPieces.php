@@ -71,7 +71,7 @@ class SectorsPieces
             'concludedStatus',
             function ($query) use ($whereMethod, $whereParams, $status) {
                 $query->whereIn('order_status.status_id', $status->pluck('id'))
-                    ->$whereMethod('created_at', $whereParams);
+                    ->$whereMethod('order_status.created_at', $whereParams);
             }
         )
             ->sum('quantity');
