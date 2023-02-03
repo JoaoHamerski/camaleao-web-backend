@@ -23,25 +23,17 @@ class StatusSeeder extends BaseSeeder
     private function populateStatusTable()
     {
         $status = [
-            ['text' => 'Atendimento inicial', 'sector_id' => 1],
-            ['text' => 'Arte pendente', 'sector_id' => 2],
-            ['text' => 'Arte em análise', 'sector_id' => 1],
-            ['text' => 'Atendimento em espera', 'sector_id' => 1],
-            ['text' => 'Tamanhos pendentes', 'sector_id' => 3],
-            ['text' => 'Pagamento pendente', 'sector_id' => 3],
-            ['text' => 'Exportação pendente', 'sector_id' => 4],
-            ['text' => 'Impressão', 'sector_id' => 5],
-            ['text' => 'Corte', 'sector_id' => 5],
-            ['text' => 'Estampa', 'sector_id' => 5],
-            ['text' => 'Em análise na gerencia', 'sector_id' => 8],
-            ['text' => 'Costura', 'sector_id' => 6],
-            ['text' => 'Estampa incompleta', 'sector_id' => 6],
-            ['text' => 'Disponível para retirada', 'sector_id' => 7],
-            ['text' => 'Entregue com pagamento pendente', 'sector_id' => 7],
-            ['text' => 'Entregue', 'sector_id' => 7],
-            ['text' => 'Prontas c/ pendencia', 'sector_id' => 7],
-            ['text' => 'Enviado', 'sector_id' => 7],
-            ['text' => 'Pedido cancelado', 'sector_id' => null],
+            ['text' => 'Cadastrado', 'sector_id' => 1],
+            ['text' => 'Analisado', 'sector_id' => 2],
+            ['text' => 'Exportado', 'sector_id' => 3],
+            ['text' => 'Impresso', 'sector_id' => 4],
+            ['text' => 'Estampado', 'sector_id' => 5],
+            ['text' => 'Costurado e Embalado', 'sector_id' => 6],
+            ['text' => 'Disponível para retirada', 'sector_id' => null],
+            ['text' => 'Entregue com pagamento pendente', 'sector_id' => null],
+            ['text' => 'Entregue', 'sector_id' => null],
+            ['text' => 'Enviado', 'sector_id' => null],
+            ['text' => 'Concluído pelo sistema', 'sector_id' => null],
         ];
 
         Status::factory()

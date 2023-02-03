@@ -16,14 +16,12 @@ class SectorsSeeder extends Seeder
     public function run()
     {
         $sectors = [
-            ['name' => 'Atendimento'],
-            ['name' => 'Design'],
-            ['name' => 'Análise'],
-            ['name' => 'Exportação'],
-            ['name' => 'Produção'],
-            ['name' => 'Costura'],
-            ['name' => 'Conferência, entrega e envio'],
-            ['name' => 'Gerencia'],
+            ['name' => 'Pedidos para Analisar', 'alias' => 'Pedidos Cadastrados'],
+            ['name' => 'Pedidos para Exportar', 'alias' => 'Pedidos Analisados'],
+            ['name' => 'Pedidos para Imprimir', 'alias' => 'Pedidos Exportados'],
+            ['name' => 'Pedidos para Cortar e Estampar', 'alias' => 'Pedidos Impressos'],
+            ['name' => 'Pedidos para Costurar e Embalar', 'alias' => 'Pedidos Estampados'],
+            ['name' => 'Pedidos no Estoque', 'alias' => 'Pedidos Costurados'],
         ];
 
         Sector::factory()->createMany($sectors);
