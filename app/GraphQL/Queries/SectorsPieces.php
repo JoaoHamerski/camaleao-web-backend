@@ -45,7 +45,6 @@ class SectorsPieces
             ->whereIn('order_status.status_id', $status->pluck('id')->toArray());
 
         $whereMethod = $this->getWhereMethod($date);
-        $whereParams = $this->getWhereParamsPrevious($date);
 
         return [
             'current_orders' => $ordersQuery
@@ -53,8 +52,16 @@ class SectorsPieces
                 ->$whereMethod('order_status.created_at', $this->getWhereParams($date))
                 ->orderBy('orders.created_at', 'desc')
                 ->distinct(['orders.id']),
-            'current' => $this->ordersQuantityBuilder($whereMethod, $whereParams, $status),
-            'previous' => $this->ordersQuantityBuilder($whereMethod, $whereParams, $status)
+            'current' => $this->ordersQuantityBuilder(
+                $whereMethod,
+                $this->getWhereParams($date),
+                $status
+            ),
+            'previous' => $this->ordersQuantityBuilder(
+                $whereMethod,
+                $this->getWhereParamsPrevious($date),
+                $status
+            )
         ];
     }
 
