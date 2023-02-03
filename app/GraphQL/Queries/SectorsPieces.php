@@ -52,29 +52,17 @@ class SectorsPieces
                 ->$whereMethod('order_status.created_at', $this->getWhereParams($date))
                 ->orderBy('orders.created_at', 'desc')
                 ->distinct(['orders.id']),
-            'current' => $this->ordersQuantityBuilder(
-                $whereMethod,
-                $this->getWhereParams($date),
-                $status
-            ),
-            'previous' => $this->ordersQuantityBuilder(
-                $whereMethod,
-                $this->getWhereParamsPrevious($date),
-                $status
-            )
+            'current' => $ordersQuery
+                ->clone()
+                ->$whereMethod('order_status.created_at', $this->getWhereParams($date))
+                ->distinct()
+                ->sum('quantity'),
+            'previous' => $ordersQuery
+                ->clone()
+                ->$whereMethod('order_status.created_at', $this->getWhereParamsPrevious($date))
+                ->distinct()
+                ->sum('quantity')
         ];
-    }
-
-    private function ordersQuantityBuilder($whereMethod, $whereParams, $status)
-    {
-        return Order::whereHas(
-            'concludedStatus',
-            function ($query) use ($whereMethod, $whereParams, $status) {
-                $query
-                    ->$whereMethod('order_status.created_at', $whereParams)
-                    ->whereIn('order_status.status_id', $status->pluck('id')->toArray());
-            }
-        )->sum('quantity');
     }
 
     private function getWhereMethod($date)
