@@ -14,8 +14,6 @@ class ChangeStatusIdFromOrderStatus extends Migration
     public function up()
     {
         Schema::table('order_status', function (Blueprint $table) {
-            $table->foreignId('status_id')->nullable()->change();
-
             $table->dropForeign(['status_id']);
 
             $table->foreign('status_id')
