@@ -216,6 +216,8 @@ class Order extends Model
             if (!$this->isStatusConcluded($status[$i])) {
                 $this->concludedStatus()
                     ->syncWithPivotValues($status[$i], [
+                        'created_at' => null,
+                        'updated_at' => null,
                         'user_id' => Auth::id(),
                         'is_auto_concluded' => true
                     ], false);
@@ -231,7 +233,16 @@ class Order extends Model
         );
 
         $status = $status->splice($index);
-        $status->shift();
+        $s = $status->shift();
+
+        // Atualiza a data quando for um status anterior ao atual selecionado
+        $this->concludedStatus()->updateExistingPivot(
+            $s->id,
+            [
+                'is_auto_concluded' => true,
+                'created_at' => now()
+            ]
+        );
 
         $status->each(function ($_status) {
             $this->concludedStatus()
