@@ -3,7 +3,7 @@
 namespace App\GraphQL\Mutations;
 
 use Exception;
-use Illuminate\Support\Facades\Artisan;
+use App\Models\Order;
 
 class StatusSync
 {
@@ -14,12 +14,24 @@ class StatusSync
     public function __invoke($_, array $args)
     {
         try {
-            Artisan::call('sync:status');
+            $this->syncOrders();
+
             return true;
         } catch (Exception $e) {
             return false;
         }
 
         return true;
+    }
+
+    private function syncOrders()
+    {
+        activity()->withoutLogs(function () {
+            $orders = Order::whereNull('closed_at')->get();
+
+            $orders->each(function ($order) {
+                $order->syncStatus();
+            });
+        });
     }
 }

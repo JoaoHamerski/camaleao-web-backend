@@ -11,7 +11,7 @@ class OrderStatus extends Pivot
     use HasFactory;
 
     protected $table = 'order_status';
-    protected $fillable = ['user_id'];
+    protected $fillable = ['user_id', 'status_id', 'created_at'];
 
     public function user()
     {

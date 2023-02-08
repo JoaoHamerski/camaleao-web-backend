@@ -2,24 +2,24 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Order;
+use App\Models\OrderStatus;
 use Illuminate\Console\Command;
 
-class SyncOrderStatus extends Command
+class FixOrderStatus extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'sync:status';
+    protected $signature = 'fix:order-status';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Sync order status for order control';
+    protected $description = 'Command description';
 
     /**
      * Create a new command instance.
@@ -38,12 +38,8 @@ class SyncOrderStatus extends Command
      */
     public function handle()
     {
-        activity()->withoutLogs(function () {
-            $orders = Order::whereNull('closed_at')->get();
+        OrderStatus::query()->update(['created_at' => null]);
 
-            $this->withProgressBar($orders, function (Order $order) {
-                $order->syncStatus();
-            });
-        });
+        return 0;
     }
 }

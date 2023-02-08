@@ -2,7 +2,10 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\Order;
 use App\Models\Status;
+use App\Models\OrderStatus;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class StatusDelete
@@ -23,6 +26,15 @@ class StatusDelete
         $statusToReplace = Status::find($args['replace_status_id']);
 
         activity()->withoutLogs(function () use ($status, $statusToReplace) {
+            Order::all()->each(function ($order) use ($status, $statusToReplace) {
+                if ($order->concludedStatus()->where('order_status.status_id', '=', $statusToReplace->id)->exists()) {
+                    $order->concludedStatus()->where('order_status.status_id', '=', $status->id)->detach();
+                    return;
+                }
+
+                $order->concludedStatus()->where('order_status.status_id', '=', $status->id)->update(['order_status.status_id' => $statusToReplace->id]);
+            });
+
             $status->orders()->update([
                 'status_id' => $statusToReplace->id
             ]);
