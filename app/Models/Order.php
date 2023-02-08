@@ -114,11 +114,11 @@ class Order extends Model
         });
 
         static::created(function (Order $order) {
-            $order->syncStatus();
+            $order->syncStatus(true);
         });
 
         static::updated(function (Order $order) {
-            $order->syncStatus();
+            $order->syncStatus(true);
         });
 
         static::deleting(function (Order $order) use ($FILE_FIELDS) {
@@ -183,13 +183,11 @@ class Order extends Model
         return $this->belongsTo(Status::class);
     }
 
-    public function syncStatus()
+    public function syncStatus($withTimestamps = false)
     {
-        $this->refresh();
         $this->attachStatusIfNeeded();
         $this->refresh();
-
-        $this->concludeSkippedStatus();
+        $this->concludeSkippedStatus($withTimestamps);
         $this->cancelConcludedStatus();
     }
 
@@ -203,7 +201,7 @@ class Order extends Model
         }
     }
 
-    private function concludeSkippedStatus()
+    private function concludeSkippedStatus($withTimestamps = false)
     {
         $status = Status::ordered()->get();
         $lastConcludedStatus = $this->concludedStatus->last();
@@ -216,8 +214,8 @@ class Order extends Model
             if (!$this->isStatusConcluded($status[$i])) {
                 $this->concludedStatus()
                     ->syncWithPivotValues($status[$i], [
-                        'created_at' => null,
-                        'updated_at' => null,
+                        'created_at' => $withTimestamps ? now() : null,
+                        'updated_at' => $withTimestamps ? now() : null,
                         'user_id' => Auth::id(),
                         'is_auto_concluded' => true
                     ], false);

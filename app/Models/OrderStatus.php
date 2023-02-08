@@ -15,7 +15,8 @@ class OrderStatus extends Pivot
         'user_id',
         'status_id',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'is_auto_concluded'
     ];
 
     public function user()

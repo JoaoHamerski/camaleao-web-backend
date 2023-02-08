@@ -40,6 +40,7 @@ class StatusDelete
             ]);
         });
 
+        $statusToReplace->update(['order' => $status->order]);
         $status->delete();
 
         return $status;
