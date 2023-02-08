@@ -20,6 +20,7 @@ class OrderUpdateStatus
 
         $order = Order::find($args['id']);
         $order->update(['status_id' => $args['status_id']]);
+        $order->syncStatus();
 
         return $order;
     }

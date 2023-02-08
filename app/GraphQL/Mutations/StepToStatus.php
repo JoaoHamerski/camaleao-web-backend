@@ -49,7 +49,6 @@ class StepToStatus
             );
 
         $order->update(['status_id' => $status->id]);
-
         $order->syncStatus();
     }
 }

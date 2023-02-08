@@ -9,8 +9,9 @@ class Status extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
     protected $table = 'status';
-    protected $fillable = ['sector_id', 'text', 'order'];
+    protected $fillable = ['sector_id', 'text', 'order', 'created_at', 'updated_at'];
 
     public function orders()
     {

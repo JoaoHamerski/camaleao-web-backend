@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class Order extends Model
 {
-    use  HasFactory, LogsActivity;
+    use HasFactory, LogsActivity;
 
     protected static $logAlways = [
         'client.name'
@@ -117,10 +117,6 @@ class Order extends Model
             $order->syncStatus(true);
         });
 
-        static::updated(function (Order $order) {
-            $order->syncStatus(true);
-        });
-
         static::deleting(function (Order $order) use ($FILE_FIELDS) {
             foreach ($FILE_FIELDS as $field) {
                 $files = FileHelper::getFilesFromField($order->{$field});
@@ -185,18 +181,19 @@ class Order extends Model
 
     public function syncStatus($withTimestamps = false)
     {
-        $this->attachStatusIfNeeded();
+        $this->attachStatusIfNeeded($withTimestamps);
         $this->refresh();
         $this->concludeSkippedStatus($withTimestamps);
         $this->cancelConcludedStatus();
     }
 
-    private function attachStatusIfNeeded()
+    private function attachStatusIfNeeded($withTimestamps = false)
     {
         if (!$this->isStatusConcluded($this->status)) {
             $this->concludedStatus()
                 ->syncWithPivotValues($this->status, [
-                    'user_id' => Auth::id()
+                    'user_id' => Auth::id(),
+                    'timestamps ' => $withTimestamps,
                 ], false);
         }
     }
@@ -214,10 +211,9 @@ class Order extends Model
             if (!$this->isStatusConcluded($status[$i])) {
                 $this->concludedStatus()
                     ->syncWithPivotValues($status[$i], [
-                        'created_at' => $withTimestamps ? now() : null,
-                        'updated_at' => $withTimestamps ? now() : null,
                         'user_id' => Auth::id(),
-                        'is_auto_concluded' => true
+                        'is_auto_concluded' => true,
+                        'timestamps ' => $withTimestamps,
                     ], false);
             }
         }
@@ -233,14 +229,14 @@ class Order extends Model
         $status = $status->splice($index);
         $s = $status->shift();
 
-        // Atualiza a data quando for um status anterior ao atual selecionado
-        $this->concludedStatus()->updateExistingPivot(
-            $s->id,
-            [
-                'is_auto_concluded' => true,
-                'created_at' => now()
-            ]
-        );
+        if (!$this->isStatusConcluded($s)) {
+            $this->concludedStatus()->updateExistingPivot(
+                $s->id,
+                [
+                    'is_auto_concluded' => true,
+                ]
+            );
+        }
 
         $status->each(function ($_status) {
             $this->concludedStatus()
