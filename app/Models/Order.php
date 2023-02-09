@@ -193,7 +193,8 @@ class Order extends Model
             $this->concludedStatus()
                 ->syncWithPivotValues($this->status, [
                     'user_id' => Auth::id(),
-                    'timestamps ' => $withTimestamps,
+                    'created_at' => $withTimestamps ? now() : null,
+                    'updated_at' => $withTimestamps ? now() : null,
                 ], false);
         }
     }
@@ -213,7 +214,8 @@ class Order extends Model
                     ->syncWithPivotValues($status[$i], [
                         'user_id' => Auth::id(),
                         'is_auto_concluded' => true,
-                        'timestamps ' => $withTimestamps,
+                        'created_at' => $withTimestamps ? now() : null,
+                        'updated_at' => $withTimestamps ? now() : null,
                     ], false);
             }
         }
