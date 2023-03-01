@@ -23,7 +23,7 @@ class StatusSeeder extends BaseSeeder
     private function populateStatusTable()
     {
         $status = [
-            ['text' => 'Cadastrado', 'sector_id' => 1],
+            ['id' => 22, 'text' => 'Cadastrado', 'sector_id' => 1],
             ['text' => 'Analisado', 'sector_id' => 2],
             ['text' => 'Exportado', 'sector_id' => 3],
             ['text' => 'Impresso', 'sector_id' => 4],

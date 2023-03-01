@@ -152,8 +152,6 @@ trait OrderTrait
                 'numeric',
                 'required_with:discount'
             ],
-            'seam_date' => ['required', 'date_format:Y-m-d'],
-            'print_date' => ['required', 'date_format:Y-m-d'],
             'delivery_date' => ['required', 'date_format:Y-m-d'],
             'down_payment' => [
                 'sometimes',

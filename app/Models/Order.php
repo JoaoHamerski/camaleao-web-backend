@@ -109,7 +109,10 @@ class Order extends Model
 
         static::creating(function (Order $order) {
             if (!$order->status_id) {
-                $order->status_id = Status::find(22)->id;
+                $defaultStatus = Status::find(22);
+                $order->status_id = $defaultStatus
+                    ? $defaultStatus->id
+                    : Status::first()->id;
             }
         });
 
