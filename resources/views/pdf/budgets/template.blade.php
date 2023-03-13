@@ -111,7 +111,7 @@
                         <td class="text-center">{{ $productItem->quantity }}</td>
                         <td class="text-center">{{ strtoupper($productItem->unity) }}</td>
                         <td class="text-center">{{ $productItem->value }}</td>
-                        <td class="fw-bold">{{ Mask::currencyBRL(bcmul($productItem->quantity, $productItem->quantity, 2)) }}</td>
+                        <td class="fw-bold">{{ Mask::currencyBRL(bcmul($productItem->quantity, $productItem->value, 2)) }}</td>
                     </tr>
                 @endforeach
                 <tr>
