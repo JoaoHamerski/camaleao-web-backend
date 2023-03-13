@@ -3,7 +3,7 @@
 }
 
 .float-l {
-  float: left:
+  float: left;
 }
 
 .text-center {
@@ -78,6 +78,10 @@
 
 .text-end {
   text-align: right;
+}
+
+.text-center {
+  text-align: center;
 }
 
 .text-subtitle {

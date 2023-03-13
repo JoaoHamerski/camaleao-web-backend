@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AppConfig;
+use App\Models\Budget;
 use App\Util\Mask;
 use Carbon\Carbon;
 use App\Util\Helper;
@@ -14,7 +14,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade as PDF;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -30,7 +29,7 @@ class PDFsController extends Controller
     public function __construct(Request $request)
     {
         if (!$request->hasValidSignature()) {
-            // abort(401);
+            abort(401);
         }
     }
 
@@ -49,14 +48,36 @@ class PDFsController extends Controller
 
     public function showReceipt(Receipt $receipt)
     {
+        $date = Carbon::createFromFormat(
+            'Y-m-d',
+            $receipt->date
+        )->format('d-m-Y');
+
         $clientName = Str::slug(explode(' ', $receipt->client)[0]);
-        $date = Carbon::createFromFormat('Y-m-d', $receipt->date);
-        $date = $date->format('d-m-Y');
+
         $filename = "recibo-$clientName-$date.pdf";
 
         return response()->file($receipt->filepath, [
             'Content-disposition' => 'inline; filename="' . $filename . '"'
         ]);
+    }
+
+    public function showBudget(Budget $budget)
+    {
+        $filename = 'orcamento-' . Str::slug($budget->client) . '.pdf';
+        $budget = $budget->getFormattedToPDF($budget);
+        $settings = $budget->settings;
+
+        $total = array_reduce($budget->product_items, function ($sum, $productItem) {
+            return bcadd($sum, bcmul($productItem->quantity, $productItem->value));
+        }, 0);
+
+        $pdf = PDF::loadView(
+            'pdf.budgets.template',
+            compact(['budget', 'settings', 'total'])
+        );
+
+        return $pdf->stream($filename);
     }
 
     public function expensesReport(Request $request)

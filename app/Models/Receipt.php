@@ -36,6 +36,9 @@ class Receipt extends Model
             return $receiptSettings;
         }
 
+        $receiptSettings->logo = storage_path('app/public/receipt_settings/' . $receiptSettings->logo);
+        $receiptSettings->signature_image = storage_path('app/public/receipt_settings/' . $receiptSettings->signature_image);
+
         return $receiptSettings;
     }
 

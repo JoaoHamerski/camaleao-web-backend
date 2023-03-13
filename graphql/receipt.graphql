@@ -27,14 +27,17 @@ input ReceiptInput {
 }
 
 extend type Query {
-  receipts (max: Int): [Receipt] @paginate @orderBy(column: "created_at" direction: DESC)
+  receipts(max: Int): [Receipt]
+    @paginate
+    @orderBy(column: "created_at", direction: DESC)
   receiptProductSuggestions: [String]
 }
 
 extend type Mutation {
-  receiptUrl (id: ID preview: Boolean): String!
-  receiptCreate (input: ReceiptInput! @spread): Receipt!
-  receiptUpdate (id: ID! input: ReceiptInput! @spread): Receipt!
-  receiptGeneratorSettingsUpload(input: ReceiptSettingsInput @spread): AppConfig
-    @canAccess(roles: ["gerencia"])
+  receiptUrl(id: ID, preview: Boolean): String!
+  receiptCreate(input: ReceiptInput! @spread): Receipt!
+  receiptUpdate(id: ID!, input: ReceiptInput! @spread): Receipt!
+  receiptGeneratorSettingsUpload(
+    input: ReceiptSettingsInput @spread
+  ): AppConfig @canAccess(roles: ["gerencia"])
 }

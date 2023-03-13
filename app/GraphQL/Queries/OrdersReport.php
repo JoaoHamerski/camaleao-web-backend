@@ -2,10 +2,8 @@
 
 namespace App\GraphQL\Queries;
 
-use App\Util\Helper;
 use App\Util\Formatter;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 
 class OrdersReport

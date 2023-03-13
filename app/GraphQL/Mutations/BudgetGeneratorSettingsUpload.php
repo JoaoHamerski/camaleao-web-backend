@@ -9,11 +9,11 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class ReceiptGeneratorSettingsUpload
+class BudgetGeneratorSettingsUpload
 {
+
     static $FILE_FIELDS = [
-        'logo',
-        'signature_image'
+        'logo'
     ];
 
     /**
@@ -28,11 +28,11 @@ class ReceiptGeneratorSettingsUpload
 
         AppConfig::set(
             'app',
-            'receipt_generator_settings',
+            'budget_generator_settings',
             json_encode($data)
         );
 
-        return AppConfig::get('app', 'receipt_generator_settings', true);
+        return AppConfig::get('app', 'budget_generator_settings', true);
     }
 
     public function uploadFiles(array $data)
@@ -46,7 +46,7 @@ class ReceiptGeneratorSettingsUpload
                     . $data[$field]->extension();
 
                 $data[$field]->storeAs(
-                    'public/receipt_settings',
+                    'public/budget_settings',
                     $filename
                 );
 
@@ -66,19 +66,13 @@ class ReceiptGeneratorSettingsUpload
             'header' => ['required', 'string'],
             'content' => ['required', 'string'],
             'date' => ['required', 'string'],
-            'signature_image' => FileHelper::isBase64($data['signature_name']) || empty($data['signature_name'])
-                ? ['required', 'file', 'mimetypes:image/*']
-                : [],
-            'signature_name' => ['required', 'string']
         ]);
     }
 
     public function getFormattedData(array $data)
     {
-        $formatted = (new Formatter($data))
-            ->base64ToUploadedFile(['logo', 'signature_image'])
+        return (new Formatter($data))
+            ->base64ToUploadedFile('logo')
             ->get();
-
-        return $formatted;
     }
 }

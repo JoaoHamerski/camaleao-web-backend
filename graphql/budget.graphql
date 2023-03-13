@@ -1,0 +1,43 @@
+type Budget @guard {
+  id: ID!
+  client: String!
+  product: String!
+  settings: String!
+  product_items: String!
+  date: String!
+}
+
+input BudgetProductItems {
+  item: ID!
+  description: String!
+  quantity: String!
+  unity: String!
+  value: String!
+}
+
+input BudgetInput {
+  client: String!
+  product: String!
+  date: String!
+  product_items: [BudgetProductItems]!
+}
+
+input BudgetSettingsInput {
+  logo: String!
+  header: String!
+  content: String!
+  date: String!
+}
+
+extend type Query {
+  budgets: [Budget] @paginate @orderBy(column: "created_at", direction: DESC)
+  budgetGeneratePDF(id: ID!, preview: Boolean): String!
+}
+
+extend type Mutation {
+  budgetCreate(input: BudgetInput! @spread): Budget!
+  budgetUpdate(id: ID!, input: BudgetInput! @spread): Budget!
+  budgetDelete(id: ID!): Budget!
+  budgetGeneratorSettingsUpload(input: BudgetSettingsInput @spread): AppConfig
+    @canAccess(roles: ["gerencia"])
+}

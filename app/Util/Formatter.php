@@ -15,7 +15,7 @@ class Formatter
 {
     protected $data;
     protected $pathDelimiter;
-    protected $protertyAccessor;
+    protected $propertyAccessor;
 
     /**
      * @param array $data Dados a serem formatados.

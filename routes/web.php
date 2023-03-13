@@ -33,6 +33,11 @@ Route::prefix('pdf')->name('pdf.')->group(function () {
         'showReceipt'
     ])->name('receipt');
 
+    Route::get('budget/{budget}', [
+        PDFsController::class,
+        'showBudget'
+    ])->name('budget');
+
     Route::get('orders/report', [
         PDFsController::class,
         'ordersReport'

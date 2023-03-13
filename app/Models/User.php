@@ -166,6 +166,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Sector::class);
     }
 
+    public function budgets()
+    {
+        return $this->hasMany(Budget::class);
+    }
+
     public function scopeProduction()
     {
         $roles = Config::get('app.roles');
