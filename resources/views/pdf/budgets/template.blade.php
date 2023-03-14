@@ -82,7 +82,6 @@
 
         .signature .signature-image {
             width: 30%;
-            margin-bottom: -2rem;
         }
 
         .signature .signature-name {

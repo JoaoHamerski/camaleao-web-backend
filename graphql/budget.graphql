@@ -32,7 +32,7 @@ input BudgetSettingsInput {
 
 extend type Query {
   budgets: [Budget] @paginate @orderBy(column: "created_at", direction: DESC)
-  budgetGeneratePDF(id: ID!, preview: Boolean): String!
+  budgetUrl(id: ID!, preview: Boolean): String!
 }
 
 extend type Mutation {

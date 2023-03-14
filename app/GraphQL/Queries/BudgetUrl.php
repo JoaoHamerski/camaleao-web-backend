@@ -6,7 +6,7 @@ use App\Models\Budget;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 
-class BudgetGeneratePDF
+class BudgetUrl
 {
     /**
      * @param  null  $_

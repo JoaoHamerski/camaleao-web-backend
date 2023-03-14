@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GraphQL\Mutations;
+namespace App\GraphQL\Queries;
 
 use App\Models\Receipt;
 use Illuminate\Support\Facades\URL;
