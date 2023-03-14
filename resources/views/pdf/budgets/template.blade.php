@@ -48,10 +48,17 @@
             margin-bottom: 4rem;
         }
 
+        .table-wrapper {
+            margin-bottom: 3rem;
+        }
+
+        .text-sm {
+            font-size: .7.85rem;
+        }
+
         .table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 3rem;
         }
 
         .table tbody {
@@ -66,6 +73,24 @@
             padding: .3rem;
             border: 1px solid black;
             border-collapse: collapse;
+        }
+
+        .signature {
+            position: absolute;
+            bottom: 1rem;
+        }
+
+        .signature .signature-image {
+            width: 30%;
+            margin-bottom: -2rem;
+        }
+
+        .signature .signature-name {
+            font-style: italic;
+        }
+        .signature .signature-rubric {
+            width: 300px;
+            border-width: 1px;
         }
     </style>
 </head>
@@ -91,7 +116,7 @@
         </div>
     </div>
 
-    <div>
+    <div class="table-wrapper">
         <table class="table">
             <thead>
                 <tr>
@@ -120,10 +145,20 @@
                 </tr>
                 </tbody>
             </table>
+            <div class="text-sm">*ESTE ORÇAMENTO É VÁLIDO POR 10 DIAS.</div>
     </div>
 
     <div class="date text-right mt-4">
         {!! $settings->date !!}
     </div>
+
+    @if ($settings->signature_image)
+    <div class="signature text-center">
+        <div class="signature-image mx-auto">
+            <img class="img-fluid" src="{{ FileHelper::imageToBase64($settings->signature_image) }}" alt="">
+        </div>
+        <hr class="signature-rubric">
+    </div>
+    @endif
 </body>
 </html>

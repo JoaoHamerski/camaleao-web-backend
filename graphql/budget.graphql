@@ -27,6 +27,7 @@ input BudgetSettingsInput {
   header: String!
   content: String!
   date: String!
+  signature_image: String!
 }
 
 extend type Query {

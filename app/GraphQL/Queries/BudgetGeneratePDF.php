@@ -22,7 +22,7 @@ class BudgetGeneratePDF
 
         return URL::temporarySignedRoute(
             'pdf.budget',
-            now()->addMinutes(5),
+            now()->addMinutes(1),
             compact('budget')
         );
     }

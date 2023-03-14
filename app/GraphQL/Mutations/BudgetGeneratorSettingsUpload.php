@@ -13,7 +13,8 @@ class BudgetGeneratorSettingsUpload
 {
 
     static $FILE_FIELDS = [
-        'logo'
+        'logo',
+        'signature_image'
     ];
 
     /**
@@ -63,6 +64,9 @@ class BudgetGeneratorSettingsUpload
             'logo' => FileHelper::isBase64($data['logo']) || empty($data['logo'])
                 ? ['required', 'file', 'mimetypes:image/*']
                 : [],
+            'signature_image' => FileHelper::isBase64($data['signature_image']) || empty($data['signature_image'])
+                ? ['required', 'file', 'mimetypes:image/*']
+                : [],
             'header' => ['required', 'string'],
             'content' => ['required', 'string'],
             'date' => ['required', 'string'],
@@ -72,7 +76,7 @@ class BudgetGeneratorSettingsUpload
     public function getFormattedData(array $data)
     {
         return (new Formatter($data))
-            ->base64ToUploadedFile('logo')
+            ->base64ToUploadedFile(['logo', 'signature_image'])
             ->get();
     }
 }

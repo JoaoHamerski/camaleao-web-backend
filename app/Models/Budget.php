@@ -23,21 +23,6 @@ class Budget extends Model
         return $this->belongsTo(User::class);
     }
 
-    public static function getReceiptSettings()
-    {
-        $settings = json_decode(
-            AppConfig::get('app', 'receipt_generator_settings', false)
-        );
-
-        if (!$settings) {
-            return $settings;
-        }
-
-        $settings->logo = storage_path('app/public/budget_settings/' . $settings->logo);
-
-        return $settings;
-    }
-
     public static function getFormattedToPDF($budget)
     {
         $budget->product_items = json_decode($budget->product_items);
@@ -47,6 +32,7 @@ class Budget extends Model
 
         $budget->settings = json_decode($budget->settings);
         $budget->settings->logo = storage_path('app/public/budget_settings/' . $budget->settings->logo);
+        $budget->settings->signature_image = storage_path('app/public/budget_settings/' . $budget->settings->signature_image);
 
         $budget->settings->content = str_replace('%cliente%', $budget->client, $budget->settings->content);
         $budget->settings->content = str_replace('%produto%', $budget->product, $budget->settings->content);
