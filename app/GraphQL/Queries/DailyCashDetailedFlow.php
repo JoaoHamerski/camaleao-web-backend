@@ -19,7 +19,7 @@ class DailyCashDetailedFlow
      * @var
      * Data para ser baseado todo o fluxo de dados buscado.
      */
-    protected static $DATE_FIELD = 'print_date';
+    protected static $DATE_FIELD = 'orders.created_at';
 
     /**
      * @param  null  $_
@@ -34,7 +34,6 @@ class DailyCashDetailedFlow
 
         $dates = $this->getDate($args);
 
-        // dd($dates);
         return $this->getDataOfMonths($dates);
     }
 

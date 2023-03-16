@@ -39,22 +39,22 @@ class DailyCashBalance
 
         $totalShirtsLastMonth = $this->getShirtsOfMonth(
             $date->clone()->subMonthNoOverflow(),
-            'print_date'
+            'orders.created_at'
         );
 
         $totalShirtsOfMonth = $this->getShirtsOfMonth(
             $date->clone(),
-            'print_date'
+            'orders.created_at'
         );
 
         $totalOwingOfMonth = $this->getTotalOwingOfMonthQuery(
             $date->clone(),
-            'print_date'
+            'orders.created_at'
         )->sum('total_order_owing');
 
         $totalOwingLastMonth = $this->getTotalOwingOfMonthQuery(
             $date->clone()->subMonthNoOverflow(),
-            'print_date'
+            'orders.created_at'
         )->sum('total_order_owing');
 
         return [

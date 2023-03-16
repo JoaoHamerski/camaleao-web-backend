@@ -16,7 +16,7 @@ class DailyCashBalancePendenciesOrdersBuilder
 
         $date = Carbon::createFromFormat('Y-m-d', $args['date']);
 
-        $orders = DailyCashBalance::getTotalOwingOfMonthQuery($date, 'print_date');
+        $orders = DailyCashBalance::getTotalOwingOfMonthQuery($date, 'orders.created_at');
 
         return $orders;
     }
