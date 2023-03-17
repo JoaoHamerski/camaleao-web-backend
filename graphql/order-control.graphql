@@ -24,6 +24,7 @@ type SectorPieces {
 
 enum OrdersBySectorOrderByColumns {
   CREATED_AT @enum(value: "created_at")
+  DELIVERY_DATE @enum(value: "delivery_date")
 }
 
 extend type Query {
