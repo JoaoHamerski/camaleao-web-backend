@@ -45,6 +45,7 @@ class BankSettingsCreate
             'name' => ['required'],
             'date_format' => ['required', Rule::in($validDateFormats)],
             'fields.*' => ['required', 'string'],
+            'fields.description' => ['nullable', 'string'],
             'bank_fields' => ['required', 'array'],
             'bank_fields.*' => ['required', 'string'],
             'via_id' => ['nullable', 'exists:vias,id']
