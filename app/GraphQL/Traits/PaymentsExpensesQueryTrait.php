@@ -2,29 +2,21 @@
 
 namespace App\GraphQL\Traits;
 
+use App\Util\Helper;
 use Illuminate\Support\Facades\DB;
 
 trait PaymentsExpensesQueryTrait
 {
-    public function mergePaymentsExpensesQueries($payments, $expenses)
-    {
-        $merged = $payments->unionAll($expenses);
-
-        return DB::table(
-            DB::raw("({$merged->toSql()}) AS merged")
-        )->mergeBindings($merged);
-    }
-
     public function paymentsQuery()
     {
         return DB::table('payments')
-            ->join('orders', 'payments.order_id', '=', 'orders.id')
+            ->leftJoin('orders', 'payments.order_id', '=', 'orders.id')
             ->whereNotNull('payments.date')
             ->select([
                 'payments.id',
                 'bank_uid',
                 DB::raw('null AS user_id'),
-                'order_id',
+                'payments.order_id',
                 'payment_via_id AS via_id',
                 DB::raw('null AS type_id'),
                 DB::raw('null AS product_type_id'),
@@ -49,7 +41,7 @@ trait PaymentsExpensesQueryTrait
             'id',
             'bank_uid',
             'user_id',
-            DB::raw('null AS order_id'),
+            DB::raw("-1 AS order_id"),
             'expense_via_id AS via_id',
             'expense_type_id AS type_id',
             'product_type_id',

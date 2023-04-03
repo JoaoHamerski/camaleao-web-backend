@@ -166,7 +166,7 @@ class Payment extends Model
             'is_confirmed' => $confirmation
         ]);
 
-        if ($this->is_shipping && $confirmation) {
+        if ($this->is_shipping && $confirmation && $this->order_id) {
             $this->sumPaymentToOrderPrice();
         }
     }

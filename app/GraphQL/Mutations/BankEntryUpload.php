@@ -19,7 +19,7 @@ class BankEntryUpload
         $data = $this->validator($args)->validate();
         $filepath = '/bank-entries/' . $data['filename'] . '.json';
 
-        $this->insertEntries($data['json_file']);
+        $this->insertEntries($data['json_file'], $data['replace']);
         Storage::put($filepath, $data['json_file']);
 
         return BankEntry::updateOrCreate([
@@ -28,13 +28,30 @@ class BankEntryUpload
         ]);
     }
 
-    private function insertEntries($file)
+    public function shouldReplaceEntry($entry): bool
+    {
+        return !Entry::where('bank_uid', $entry['bank_uid'])->exists();
+    }
+
+    private function insertEntries($file, bool $isReplace)
     {
         $fields = ['bank_uid', 'value', 'description', 'date', 'via_id'];
         $entries = collect(json_decode($file, true));
         $entries = $entries->map(
             fn ($entry) => Arr::only($entry, $fields)
-        )->toArray();
+        );
+
+        if ($isReplace) {
+            $entries = $entries->filter(
+                fn ($entry) => $this->shouldReplaceEntry($entry)
+            );
+        }
+
+        $entries = $entries->toArray();
+
+        Validator::make($entries, [
+            '*.date' => 'date_format:d/m/Y'
+        ])->validate();
 
         Entry::upsert(
             $entries,

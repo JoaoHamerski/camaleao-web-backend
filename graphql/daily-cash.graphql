@@ -52,9 +52,9 @@ type DailyCashFlowShirts {
 }
 
 type DailyCashFlow @guard {
-  date: Date,
-  total_price: Float,
-  shirts_total: Int,
+  date: Date
+  total_price: Float
+  shirts_total: Int
   entry: DailyCashFlowEntry
   out: DailyCashFlowOut
   pendency: Float
@@ -74,7 +74,7 @@ enum DailyCashBalancePendenciesOrderByColumns {
 }
 
 extend type Query {
-  dailyCash (
+  dailyCash(
     where: _ @whereConditions(columnsEnum: "QueryDailyCashWhereColumn")
     orderBy: _ @orderBy(columnsEnum: "QueryDailyCashOrderByColumn")
     created_at: String
@@ -85,16 +85,17 @@ extend type Query {
   dailyCashPendencies: [DailyCashPendencies]
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  dailyCashBalance: DailyCashBalance!
-    @canAccess(roles: ["gerencia"])
+  dailyCashBalance: DailyCashBalance! @canAccess(roles: ["gerencia"])
 
-  dailyCashBalancePendenciesOrders (
+  dailyCashBalancePendenciesOrders(
     date: String!
     orderBy: _ @orderBy(columnsEnum: "DailyCashBalancePendenciesOrderByColumns")
   ): [Order]
-    @paginate(builder: "App\\GraphQL\\Builders\\DailyCashBalancePendenciesOrdersBuilder")
+    @paginate(
+      builder: "App\\GraphQL\\Builders\\DailyCashBalancePendenciesOrdersBuilder"
+    )
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  dailyCashDetailedFlow (page: Int! date: String): [DailyCashFlow]
-    @canAccess(roles: ["gerencia", "atendimento"])
+  dailyCashDetailedFlow(page: Int!, date: String): [DailyCashFlow]
+    @canAccess(roles: ["gerencia"])
 }

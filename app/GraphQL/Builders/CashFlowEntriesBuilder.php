@@ -3,6 +3,7 @@
 namespace App\GraphQL\Builders;
 
 use App\GraphQL\Traits\PaymentsExpensesQueryTrait;
+use App\Util\Helper;
 
 class CashFlowEntriesBuilder
 {
@@ -23,6 +24,6 @@ class CashFlowEntriesBuilder
         $payments = $this->paymentsQuery();
         $expenses = $this->expensesQuery();
 
-        return $this->mergePaymentsExpensesQueries($payments, $expenses);
+        return Helper::mergeQueries($expenses, $payments);
     }
 }

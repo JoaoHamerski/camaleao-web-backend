@@ -23,7 +23,7 @@ class PaymentExpenseFieldsResolver
     {
         $orderId = $rootValue->order_id;
 
-        if ($orderId) {
+        if (intval($orderId) !== -1) {
             return Order::find($orderId);
         }
 
@@ -74,7 +74,7 @@ class PaymentExpenseFieldsResolver
      */
     public function isExpense($rootValue)
     {
-        return !(!!$rootValue->order_id);
+        return intval($rootValue->order_id) === -1;
     }
 
     public function receiptPath($rootValue)

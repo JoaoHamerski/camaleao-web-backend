@@ -88,7 +88,7 @@ trait ExpenseTrait
         return Validator::make($data, [
             'bank_uid' => [
                 'nullable',
-                'unique:expenses',
+                Rule::unique('expenses')->ignore($expense->bank_uid ?? null, 'bank_uid'),
                 'exists:entries,bank_uid'
             ],
             'id' => ['sometimes', 'exists:expenses,id'],

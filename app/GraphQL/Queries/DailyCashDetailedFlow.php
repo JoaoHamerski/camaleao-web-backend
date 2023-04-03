@@ -5,7 +5,6 @@ namespace App\GraphQL\Queries;
 use Carbon\Carbon;
 use App\Util\Helper;
 use App\Models\Order;
-use App\Models\Expense;
 use App\Models\Payment;
 use App\Models\AppConfig;
 use Illuminate\Support\Facades\DB;
@@ -40,9 +39,10 @@ class DailyCashDetailedFlow
     public function getDataOfMonths($dates)
     {
         $data = [];
+        $isGerencia = Auth::user()->hasRole('GERENCIA');
 
         foreach ($dates as $date) {
-            if (Auth::user()->hasRole('GERENCIA')) {
+            if ($isGerencia) {
                 $data[] = [
                     'date' => $date->startOf('month')->toDateString(),
                     'total_price' => $this->getTotalPriceOfMonth($date, self::$DATE_FIELD),
@@ -53,19 +53,7 @@ class DailyCashDetailedFlow
                         ->sum('total_order_owing'),
                     'shirts_details' => $this->getShirtsDetailsOfMonth($date, self::$DATE_FIELD)
                 ];
-
-                continue;
             }
-
-            $data[] = [
-                'date' => $date->startOf('month')->toDateString(),
-                'total_price' => 0,
-                'shirts_total' => 0,
-                'entry' => 0,
-                'out' => 0,
-                'pendency' => 0,
-                'shirts_details' => 0
-            ];
         }
 
         return $data;
@@ -180,9 +168,10 @@ class DailyCashDetailedFlow
     public function getDate($args)
     {
         $dates = [];
+        $date = '01/' . $args['date'];
 
         if (Helper::filled($args, 'date')) {
-            return [Carbon::createFromFormat('m/Y', $args['date'])];
+            return [Carbon::createFromFormat('d/m/Y', $date)];
         }
 
         $date =  Carbon::now()->subMonthsNoOverflow(($args['page'] - 1) * 6);

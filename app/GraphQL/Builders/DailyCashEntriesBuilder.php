@@ -2,10 +2,12 @@
 
 namespace App\GraphQL\Builders;
 
-use App\Util\Helper;
-use Illuminate\Support\Facades\Auth;
-use App\GraphQL\Traits\PaymentsExpensesQueryTrait;
 use Carbon\Carbon;
+use App\Util\Helper;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Query\Builder;
+use App\GraphQL\Traits\PaymentsExpensesQueryTrait;
 
 class DailyCashEntriesBuilder
 {
@@ -16,22 +18,21 @@ class DailyCashEntriesBuilder
         $payments = $this->paymentsQuery();
         $expenses = $this->expensesQuery();
 
-        $query = $this->mergePaymentsExpensesQueries($payments, $expenses);
+        $query = Helper::mergeQueries($expenses, $payments);
 
-        $date = $this->getCurrentDate($args);
+        $date = $this->getDate($args);
 
-        $query->whereRaw("created_at BETWEEN '$date 00:00:00' AND '$date 23:59:59'")
+        $query->whereDate('created_at', $date)
             ->where(function ($query) {
                 if (!Auth::user()->hasRole('GERENCIA')) {
-                    $query->where('user_id', '=', Auth::id())
-                        ->orWhereNull('user_id');
+                    $query->where('user_id', Auth::id());
                 }
             });
 
         return $query;
     }
 
-    public function getCurrentDate(array $args)
+    public function getDate(array $args)
     {
         $date = Helper::filled($args, 'created_at')
             ? Carbon::createFromFormat('Y-m-d', $args['created_at'])

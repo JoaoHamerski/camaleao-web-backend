@@ -1,3 +1,5 @@
+union PaymentEntry = Payment | Entry
+
 type Payment @guard {
   id: ID!
   value: Float!
@@ -58,6 +60,7 @@ input DailyCashInput {
   is_shipping: Boolean!
   note: String
   bank_uid: String
+  untied: Boolean!
   filename_entry_from: String
 }
 
@@ -100,6 +103,6 @@ extend type Mutation {
     @can(ability: "assign", injectArgs: true)
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  dailyCashEntry(input: DailyCashInput! @spread): Payment
+  dailyCashEntry(input: DailyCashInput! @spread): PaymentEntry
     @canAccess(roles: ["gerencia", "atendimento"])
 }

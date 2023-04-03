@@ -1,3 +1,5 @@
+union ExpensePayment = Payment | Expense
+
 type Entry @guard {
   id: ID!
   bank_uid: String!
@@ -6,6 +8,9 @@ type Entry @guard {
   description: String
   is_canceled: Boolean
   via_id: ID
+  created_at: DateTime!
+  is_confirmed: Boolean
+  is_tied: Boolean
 }
 
 type EntriesMonthlyBalance {
@@ -16,6 +21,11 @@ type EntriesMonthlyBalance {
 enum QueryWhereEntriesColumns {
   VALUE @enum(value: "value")
   DESCRIPTION @enum(value: "description")
+  VIA_ID @enum(value: "via_id")
+}
+
+enum QueryWhereBankEntriesColumns {
+  VIA_ID @enum(value: "via_id")
 }
 
 extend type Query {
@@ -25,8 +35,23 @@ extend type Query {
 
   entriesMonthlyBalance: EntriesMonthlyBalance
     @canAccess(roles: ["gerencia", "atendimento"])
+
+  entriesBankMirror(
+    where: _ @whereConditions(columnsEnum: "QueryWhereBankEntriesColumns")
+  ): [Entry]
+    @paginate(builder: "\\App\\GraphQL\\Builders\\EntriesBankMirrorBuilder")
+    @orderBy(column: "date", direction: DESC)
+    @canAccess(roles: ["gerencia"])
 }
 
 extend type Mutation {
-  entryCancel(uid: ID!): Entry! @canAccess(roles: ["gerencia", "atendimento"])
+  bankMirrorEntryConfirm(id: ID!): Entry! @canAccess(roles: ["gerencia"])
+
+  bankMirrorTiePayment(input: DailyCashInput! @spread): Entry!
+    @canAccess(roles: ["gerencia"])
+
+  bankMirrorTieExpense(input: ExpenseInput! @spread): Entry!
+    @canAccess(roles: ["gerencia"])
+
+  entryCancel(uid: ID!): Entry! @canAccess(roles: ["gerencia"])
 }

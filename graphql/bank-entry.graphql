@@ -12,9 +12,12 @@ input BankEntryInput {
 
 extend type Query {
   bankEntryLoad(id: ID!): String!
-  bankEntries: BankEntry @paginate @orderBy(column: "created_at" direction: DESC)
+  bankEntries: BankEntry
+    @paginate
+    @orderBy(column: "created_at", direction: DESC)
 }
 
 extend type Mutation {
-  bankEntryUpload (input: BankEntryInput! @spread): BankEntry
+  bankEntryUpload(input: BankEntryInput! @spread): BankEntry
+    @canAccess(roles: ["gerencia"])
 }

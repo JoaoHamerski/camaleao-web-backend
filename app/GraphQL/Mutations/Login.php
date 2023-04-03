@@ -5,6 +5,7 @@ namespace App\GraphQL\Mutations;
 use Error;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class Login
 {
@@ -19,7 +20,9 @@ class Login
         $this->validator($args)->validate();
 
         if (!$guard->attempt($args, $args['remember'] ?? false)) {
-            throw new Error('Invalid credentials.');
+            throw ValidationException::withMessages([
+                'email' => 'E-mail ou senha incorretos.'
+            ]);
         }
 
         $user = $guard->user();

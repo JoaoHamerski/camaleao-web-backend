@@ -3,6 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use App\GraphQL\Traits\PaymentsExpensesQueryTrait;
+use App\Util\Helper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -19,10 +20,7 @@ class DailyCashPendencies
         $payments = $this->paymentsQuery();
         $expenses = $this->expensesQuery();
 
-        $builder = $this->mergePaymentsExpensesQueries(
-            $payments,
-            $expenses
-        );
+        $builder = Helper::mergeQueries($expenses, $payments);
 
         $query = $builder->where(function ($query) {
             $query->whereNull('is_confirmed');

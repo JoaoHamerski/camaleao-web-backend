@@ -114,7 +114,9 @@ class User extends Authenticatable
         ]);
 
         if ($validator->fails()) {
-            throw new Error("As regras passadas devem ser apenas strings, verifique as regras em app\config\app.php roles");
+            throw new Error(
+                "As regras passadas devem ser apenas strings, verifique as regras no arquivo de configurações app.php roles"
+            );
         }
 
         return $this

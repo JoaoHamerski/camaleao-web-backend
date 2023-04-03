@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\EntriesTrait;
 use App\Util\FileHelper;
 use App\Traits\LogsActivity;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -80,6 +81,12 @@ class Expense extends Model
             }
         });
 
+        static::updated(function ($expense) {
+            if (!empty($expense->bank_uid)) {
+                Entry::where('bank_uid', $expense->bank_uid)->delete();
+            }
+        });
+
         static::deleting(function ($expense) use ($FILE_FIELD) {
             if (!empty($expense->{$FILE_FIELD})) {
                 FileHelper::deleteFile(
@@ -124,6 +131,14 @@ class Expense extends Model
         }
 
         return $path;
+    }
+
+    public function fillConfirmation(bool $confirmation = true)
+    {
+        $this->fill([
+            'confirmed_at' => Carbon::now(),
+            'is_confirmed' => $confirmation
+        ]);
     }
 
     public function confirm()

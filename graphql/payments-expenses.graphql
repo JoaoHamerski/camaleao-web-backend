@@ -1,5 +1,6 @@
 type PaymentExpense @guard {
   id: ID
+  bank_uid: String
   value: Float
   date: Date
   description: String
@@ -8,31 +9,44 @@ type PaymentExpense @guard {
   is_confirmed: Boolean
   created_at: DateTime
   employee_name: String
-  receipt_path: String @field(
-    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@receiptPath"
-  )
-  order: Order @field(
-    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@order"
-  )
-  user: User @field(
-    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@user"
-  )
-  via: Via @field(
-    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@via"
-  )
-  type: ExpenseType @field(
-    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@type"
-  )
-  is_expense: Boolean @field(
-    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@isExpense"
-  )
-  product_type: ProductType @field(
-    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@productType"
-  )
-  employee: User @field(
-    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@employee"
-  ),
-  sponsorship_client: Client @field (
-    resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@client"
-  )
+  receipt_path: String
+    @field(
+      resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@receiptPath"
+    )
+  order: Order
+    @field(
+      resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@order"
+    )
+  user: User
+    @field(
+      resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@user"
+    )
+  via: Via
+    @field(
+      resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@via"
+    )
+  type: ExpenseType
+    @field(
+      resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@type"
+    )
+  is_expense: Boolean
+    @field(
+      resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@isExpense"
+    )
+  product_type: ProductType
+    @field(
+      resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@productType"
+    )
+  employee: User
+    @field(
+      resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@employee"
+    )
+  sponsorship_client: Client
+    @field(
+      resolver: "App\\GraphQL\\Resolvers\\PaymentExpenseFieldsResolver@client"
+    )
+}
+
+enum QueryBankMirrorsWhereConditionColumns {
+  VIA_ID @enum(value: "via_id")
 }

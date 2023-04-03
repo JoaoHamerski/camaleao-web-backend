@@ -2,8 +2,10 @@
 
 namespace App\Util;
 
-use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class Helper
 {
@@ -345,5 +347,22 @@ class Helper
         return $value !== 1
             ? $value . ' ' . ($wordPlural ?? $word . 's')
             : "$value $word";
+    }
+
+    public static function arrayOnly($array, $keys, $appendAndReplace = [])
+    {
+        $keys = array_merge($keys, array_keys($appendAndReplace));
+        $data = array_merge($array, $appendAndReplace);
+
+        return Arr::only($data, $keys);
+    }
+
+    public static function mergeQueries($q1, $q2, $alias = 'merged')
+    {
+        $merged = $q1->unionAll($q2);
+
+        return DB::table(
+            DB::raw("({$merged->toSql()}) AS $alias")
+        );
     }
 }

@@ -8,7 +8,6 @@ use App\Models\Payment;
 use App\Models\BankEntry;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use App\GraphQL\Mutations\BankCheckDuplicatedEntries;
 
 class BankEntryLoad
 {
@@ -36,11 +35,23 @@ class BankEntryLoad
         $entries->each(function ($fileEntry) {
             $entry = Entry::where('bank_uid', $fileEntry->bank_uid)->first();
 
+            $fileEntry->hasOrder = $this->hasOrder($fileEntry);
             $fileEntry->isDuplicated = $this->isEntryDuplicated($fileEntry);
             $fileEntry->isCanceled = $entry ? $entry->is_canceled : false;
         });
 
         return $entries;
+    }
+
+    public function hasOrder($entry)
+    {
+        $payment = Payment::where('bank_uid', $entry->bank_uid)->first();
+
+        if (!$payment) {
+            return false;
+        }
+
+        return !!$payment->order_id;
     }
 
     public function isEntryDuplicated($entry)
