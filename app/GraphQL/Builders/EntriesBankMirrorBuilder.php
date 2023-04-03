@@ -9,6 +9,7 @@ class EntriesBankMirrorBuilder
 {
     public function __invoke()
     {
-        return Entry::select(['*', DB::raw('STR_TO_DATE(date, "%d/%m/%Y") AS date')]);
+        return Entry::where('is_canceled', false)
+            ->select(['*', DB::raw('STR_TO_DATE(date, "%d/%m/%Y") AS date')]);
     }
 }
