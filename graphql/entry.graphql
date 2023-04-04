@@ -18,6 +18,11 @@ type EntriesMonthlyBalance {
   previous: Float
 }
 
+type BankMirrorNav {
+  via: Via!
+  count: Int!
+}
+
 enum QueryWhereEntriesColumns {
   VALUE @enum(value: "value")
   DESCRIPTION @enum(value: "description")
@@ -36,6 +41,7 @@ extend type Query {
   entriesMonthlyBalance: EntriesMonthlyBalance
     @canAccess(roles: ["gerencia", "atendimento"])
 
+  entriesBankMirrorNavs: [BankMirrorNav]
   entriesBankMirror(
     where: _ @whereConditions(columnsEnum: "QueryWhereBankEntriesColumns")
   ): [Entry]
