@@ -45,7 +45,9 @@ class OrderToggle
                     'user' => $status->pivot->user,
                     'status' => $status->pivot->status,
                     'is_auto_concluded' => $status->pivot->is_auto_concluded,
-                    'created_at' => $status->pivot->created_at->toDateTimeString(),
+                    'created_at' => $status->pivot->created_at
+                        ? $status->pivot->created_at->toDateTimeString()
+                        : null
                 ]
             ];
         });
