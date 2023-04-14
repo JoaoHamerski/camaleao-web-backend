@@ -2,8 +2,8 @@ type AuthUserSectorsInfo {
   orders_count: String
   sector: Sector
   next_status: Status
-  quantity_count: Float
-  pendency_total: Float!
+  quantity_count: Float @canAccess(roles: ["gerencia"])
+  pendency_total: Float @canAccess(roles: ["gerencia"])
 }
 
 type SectorPiecesCurrentPrevious {
