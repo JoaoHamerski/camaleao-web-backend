@@ -52,7 +52,5 @@ class OrdersQueriesTest extends TestCase
         STR;
 
         $response = $this->graphQL($GRAPHQL_QUERY);
-
-        var_dump($response->json());
     }
 }

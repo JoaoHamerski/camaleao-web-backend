@@ -24,9 +24,6 @@ trait ReceiptTrait
         $date = $date->isoFormat('DD \d\e MMMM \d\e YYYY');
         $settings->date = Str::replace('%data%', $date, $settings->date);
 
-        $settings->logo = storage_path('app/public/receipt_settings/' . $settings->logo);
-        $settings->signature_image = storage_path('app/public/receipt_settings/' . $settings->signature_image);
-
         return [$data, $settings];
     }
 
