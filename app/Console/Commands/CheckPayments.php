@@ -54,7 +54,7 @@ class CheckPayments extends Command
                 }
 
                 if (!$this->datesMatch($entry, $payment)) {
-                    $date = Carbon::createFromFormat('Y-m-d', $entry['date'])->toDateString();
+                    $date = Carbon::createFromFormat('d/m/Y', $entry['date'])->toDateString();
 
                     $payment->update([
                         'date' => $date
