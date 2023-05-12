@@ -54,9 +54,11 @@ class CheckPayments extends Command
                 }
 
                 if (!$this->datesMatch($entry, $payment)) {
-                    var_dump($entry);
-                    var_dump($payment->getRawOriginal());
-                    var_dump('---');
+                    $date = Carbon::createFromFormat('Y-m-d', $entry['date'])->toDateString();
+
+                    $payment->update([
+                        'date' => $date
+                    ]);
                 }
             });
         });
