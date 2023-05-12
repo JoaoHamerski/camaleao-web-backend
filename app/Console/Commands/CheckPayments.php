@@ -54,9 +54,8 @@ class CheckPayments extends Command
                 }
 
                 if (!$this->datesMatch($entry, $payment)) {
-                    var_dump($payment->id);
-                    var_dump($entry['date']);
-                    var_dump($payment->date);
+                    var_dump($entry);
+                    var_dump($payment);
                     var_dump('---');
                 }
             });
