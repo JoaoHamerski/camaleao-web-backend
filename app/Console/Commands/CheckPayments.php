@@ -54,6 +54,7 @@ class CheckPayments extends Command
                 }
 
                 if (!$this->datesMatch($entry, $payment)) {
+                    $this->info($entry);
                     $this->info($payment->id);
                 }
             });
