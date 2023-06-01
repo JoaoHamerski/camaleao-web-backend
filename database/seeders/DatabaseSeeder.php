@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Database\Seeders\SectorsSeeder;
-use Spatie\Activitylog\ActivityLogStatus;
 
 class DatabaseSeeder extends Seeder
 {
