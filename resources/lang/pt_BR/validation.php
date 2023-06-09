@@ -259,7 +259,11 @@ return [
         'year'      => 'ano',
         'product_type_id' => 'produto',
         'employee_id' => 'funcionário',
-        'sponsorship_client_id' => 'cliente patrocinador'
+        'sponsorship_client_id' => 'cliente patrocinador',
+        'model_id' => 'modelo',
+        'material_id' => 'material',
+        'neck_type_id' => 'tipo de gola',
+        'sleeve_type_id' => 'tipo de manga',
     ],
 
 ];
