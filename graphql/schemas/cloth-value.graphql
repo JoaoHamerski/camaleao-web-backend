@@ -1,0 +1,6 @@
+type ClothValue @guard {
+  id: ID!
+  value: String!
+  start: String
+  end: String
+}

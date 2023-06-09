@@ -1,0 +1,23 @@
+type ClothSize @guard {
+  id: ID!
+  name: String!
+  order: Int
+  pivot: ClothSizePivot
+}
+
+type ClothSizePivot {
+  id: ID!
+  value: String
+}
+
+input ClothSizeInput {
+  name: String
+}
+
+extend type Query {
+  clothSizes: [ClothSize!]! @all @orderBy(column: "order", direction: ASC)
+}
+
+extend type Mutation {
+  clothSizeCreate(input: ClothSizeInput @spread): ClothSize!
+}

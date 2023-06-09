@@ -1,0 +1,17 @@
+type Model @guard {
+  id: ID!
+  name: String!
+  order: Int
+}
+
+input ModelInput {
+  name: String
+}
+
+extend type Query {
+  models: [Model!]! @all @orderBy(column: "order", direction: ASC)
+}
+
+extend type Mutation {
+  modelCreate(input: ModelInput @spread): Model!
+}

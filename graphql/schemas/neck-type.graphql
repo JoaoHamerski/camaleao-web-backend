@@ -1,0 +1,17 @@
+type NeckType @guard {
+  id: ID!
+  name: String!
+  order: Int
+}
+
+input NeckTypeInput {
+  name: String
+}
+
+extend type Query {
+  neckTypes: [NeckType!]! @all @orderBy(column: "order", direction: ASC)
+}
+
+extend type Mutation {
+  neckTypeCreate(input: NeckTypeInput @spread): NeckType!
+}

@@ -1,0 +1,17 @@
+type Material @guard {
+  id: ID!
+  name: String!
+  order: Int
+}
+
+input MaterialInput {
+  name: String
+}
+
+extend type Query {
+  materials: [Material!]! @all @orderBy(column: "order", direction: ASC)
+}
+
+extend type Mutation {
+  materialCreate(input: MaterialInput @spread): Material!
+}
