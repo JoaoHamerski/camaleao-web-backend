@@ -15,6 +15,7 @@ type GarmentMatchGarmentSize {
 type GarmentGarmentSize {
   id: ID!
   quantity: Int!
+  value: Float
 }
 
 input GarmentSizeInput {

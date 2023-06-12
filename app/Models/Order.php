@@ -55,7 +55,7 @@ class Order extends Model
         'art_paths',
         'size_paths',
         'payment_voucher_paths',
-        'total_clothings_value'
+        'total_clothings_value',
     ];
 
     public function getCreatedLog(): string

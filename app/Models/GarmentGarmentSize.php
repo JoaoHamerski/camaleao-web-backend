@@ -11,8 +11,19 @@ class GarmentGarmentSize extends Pivot
         'garment_size_id'
     ];
 
-    public function size()
+    protected $appends = [
+        'value'
+    ];
+
+    public function getValueAttribute()
     {
-        return $this->belongsTo(GarmentSize::class, 'garment_size_id');
+        if (!$this->pivotParent instanceof Garment) {
+            return null;
+        }
+
+        $sizes = $this->pivotParent->match->sizes;
+        $matchedSize = $sizes->first(fn ($size) => $size->id === $this->garment_size_id);
+
+        return $matchedSize->pivot->value;
     }
 }
