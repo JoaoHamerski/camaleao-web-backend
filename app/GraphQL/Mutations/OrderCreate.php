@@ -20,17 +20,15 @@ class OrderCreate
 
         $client = Client::find($args['client_id']);
 
-        // $this->validator($data)->validate();
-
-        $data = $this->handleFilesUpload($data);
         $data = $this->evaluateOrderAttributes($data);
 
+        $this->validator($data)->validate();
+
+        $data = $this->handleFilesUpload($data);
 
         $order = $client->orders()->create($data);
+
         $this->syncItems($data, $order);
-
-        return;
-
 
         if (!$order->isPreRegistered()) {
             $this->handleCommissions($order);
@@ -43,18 +41,29 @@ class OrderCreate
         return $order;
     }
 
-    public function syncItems($data, $order)
+    public function syncItems($input, $order)
     {
-        $clothes = collect($data['clothes']);
-        $clothes->each(function ($cloth) use ($order) {
-            $match = $this->findClothMatch($cloth);
+        $inputGarments = collect($input['garments']);
+        $inputGarments->each(function ($inputGarment) use ($order) {
+            $match = $this->findGarmentMatch($inputGarment);
+            $items = $inputGarment['items'];
 
-            $order->clothes()->create([
-                'cloth_match_id' => $match->id
-            ]);
+            $garment = $order->garments()
+                ->create(['garment_match_id' => $match->id]);
+
+            $this->syncGarmentSizes($garment, $items);
         });
+    }
 
-        dd($order->load('clothes'));
+    public function syncGarmentSizes($garment, $sizes)
+    {
+        foreach ($sizes as $size) {
+            $garment
+                ->sizes()
+                ->attach($size['size_id'], [
+                    'quantity' => $size['quantity']
+                ]);
+        }
     }
 
     public function hasDownPayment($data)

@@ -1,0 +1,9 @@
+type Garment @guard {
+  id: ID!
+  match: GarmentMatch
+  sizes: [GarmentSize!]!
+  quantity: Int
+  value: Float
+  sizes_value: Float
+  value_per_unit: Float
+}

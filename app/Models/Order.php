@@ -149,9 +149,9 @@ class Order extends Model
         return $this->hasMany(Commission::class);
     }
 
-    public function clothes()
+    public function garments()
     {
-        return $this->hasMany(Cloth::class);
+        return $this->hasMany(Garment::class);
     }
 
     public function getHasOrderControlAttribute()

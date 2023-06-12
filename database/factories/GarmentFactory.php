@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\ClothValue;
+use App\Models\Garment;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ClothValueFactory extends Factory
+class GarmentFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = ClothValue::class;
+    protected $model = Garment::class;
 
     /**
      * Define the model's default state.

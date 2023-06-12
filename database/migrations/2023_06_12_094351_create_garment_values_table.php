@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateClothValuesTable extends Migration
+class CreateGarmentValuesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,10 @@ class CreateClothValuesTable extends Migration
      */
     public function up()
     {
-        Schema::create('cloth_values', function (Blueprint $table) {
+        /**
+         * Armazena os intervalos de valores dos vestuários.
+         */
+        Schema::create('garment_values', function (Blueprint $table) {
             $table->id();
             $table->decimal('value')->nullable();
             $table->unsignedSmallInteger('start')->nullable();
@@ -29,6 +32,6 @@ class CreateClothValuesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('clothes_values');
+        Schema::dropIfExists('garment_values');
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\ClothSize;
+use App\Models\GarmentSize;
 use Illuminate\Support\Facades\Validator;
 
-class ClothSizeCreate
+class GarmentSizeCreate
 {
     /**
      * @param  null  $_
@@ -17,6 +17,6 @@ class ClothSizeCreate
             'name' => ['required', 'string', 'max:2']
         ])->validate();
 
-        return ClothSize::create($args);
+        return GarmentSize::create($args);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\ClothSize;
+use App\Models\GarmentSize;
 
-class ClothSizeSeeder extends BaseSeeder
+class GarmentSizeSeeder extends BaseSeeder
 {
     /**
      * Run the database seeds.
@@ -13,7 +13,7 @@ class ClothSizeSeeder extends BaseSeeder
      */
     public function run()
     {
-        ClothSize::insert([
+        GarmentSize::insert([
             ['name' => 'P', 'order' => 0],
             ['name' => 'M', 'order' => 1],
             ['name' => 'G', 'order' => 2],

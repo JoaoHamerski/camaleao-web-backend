@@ -2,13 +2,13 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\ClothMatch;
+use App\Models\GarmentMatch;
 use App\Util\Formatter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class ClothMatchCreate
+class GarmentMatchCreate
 {
     /**
      * @param  null  $_
@@ -19,7 +19,7 @@ class ClothMatchCreate
         $input = $this->getFormattedInput($args);
         $this->validator($input)->validate();
 
-        $clothMatch = ClothMatch::create(Arr::only($input, [
+        $garmentMatch = GarmentMatch::create(Arr::only($input, [
             'model_id',
             'material_id',
             'neck_type_id',
@@ -28,12 +28,12 @@ class ClothMatchCreate
         ]));
 
         if (!$input['is_unique_value']) {
-            $clothMatch->values()->createMany($input['values']);
+            $garmentMatch->values()->createMany($input['values']);
         }
 
-        $clothMatch->sizes()->attach($input['sizes']);
+        $garmentMatch->sizes()->attach($input['sizes']);
 
-        return $clothMatch;
+        return $garmentMatch;
     }
 
     public function formatSizes($input)
@@ -41,7 +41,7 @@ class ClothMatchCreate
         $sizes = collect($input['sizes']);
         $sizes = $sizes->filter(fn ($size) => $size['is_shown']);
         $sizes = $sizes->map(fn ($size) => [
-            'cloth_size_id' => $size['id'],
+            'garment_size_id' => $size['id'],
             'value' => $size['value']
         ]);
 
@@ -97,7 +97,7 @@ class ClothMatchCreate
             'neck_type_id' => ['nullable', 'exists:neck_types,id'],
             'sleeve_type_id' => ['nullable', 'exists:sleeve_types,id'],
             'sizes' => ['required', 'array'],
-            'sizes.*.cloth_size_id' => ['required', 'exists:cloth_sizes,id'],
+            'sizes.*.garment_size_id' => ['required', 'exists:garment_sizes,id'],
             'sizes.*.is_shown' => ['nullable', 'boolean'],
         ];
     }

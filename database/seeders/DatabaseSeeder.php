@@ -34,8 +34,8 @@ class DatabaseSeeder extends Seeder
                 MaterialSeeder::class,
                 NeckTypeSeeder::class,
                 SleeveTypeSeeder::class,
-                ClothSizeSeeder::class,
-                ClothMatchSeeder::class
+                GarmentSizeSeeder::class,
+                GarmentMatchSeeder::class
             ]);
         });
     }

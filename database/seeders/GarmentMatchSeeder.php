@@ -2,15 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\ClothMatch;
-use App\Models\ClothSize;
-use App\Models\ClothValue;
-use App\Models\Material;
-use App\Models\Model;
-use App\Models\NeckType;
-use App\Models\SleeveType;
+use App\Models\GarmentMatch;
+use App\Models\GarmentSize;
 
-class ClothMatchSeeder extends BaseSeeder
+class GarmentMatchSeeder extends BaseSeeder
 {
     /**
      * Run the database seeds.
@@ -19,17 +14,17 @@ class ClothMatchSeeder extends BaseSeeder
      */
     public function run()
     {
-        $CLOTH_MATCH_QUANTITY = 5;
+        $GARMENT_MATCH_QUANTITY = 5;
 
-        for ($i = 0; $i < $CLOTH_MATCH_QUANTITY; $i++) {
-            $clothMatch = ClothMatch::factory()->create();
+        for ($i = 0; $i < $GARMENT_MATCH_QUANTITY; $i++) {
+            $garmentMatch = GarmentMatch::factory()->create();
 
-            $clothMatch->values()->createMany($this->getClothMatchValues());
-            $clothMatch->sizes()->attach($this->getClothMatchSizes());
+            $garmentMatch->values()->createMany($this->getGarmentMatchValues());
+            $garmentMatch->sizes()->attach($this->getGarmentMatchSizes());
         }
     }
 
-    public function getClothMatchValues()
+    public function getGarmentMatchValues()
     {
         $NUMBER_OF_INTERVALS = $this->faker->numberBetween(2, 5);
         $intervals = [];
@@ -52,14 +47,14 @@ class ClothMatchSeeder extends BaseSeeder
         return $intervals;
     }
 
-    public function getClothMatchSizes()
+    public function getGarmentMatchSizes()
     {
-        $SIZE_QUANTITY = $this->faker->numberBetween(1, ClothSize::count());
+        $SIZE_QUANTITY = $this->faker->numberBetween(1, GarmentSize::count());
 
-        $clothSizes = ClothSize::inRandomOrder()->take($SIZE_QUANTITY)->get();
+        $garmentSizes = GarmentSize::inRandomOrder()->take($SIZE_QUANTITY)->get();
 
-        return $clothSizes->map(fn ($clothSize) => [
-            'cloth_size_id' => $clothSize->id,
+        return $garmentSizes->map(fn ($garmentSize) => [
+            'garment_size_id' => $garmentSize->id,
             'value' => $this->faker->randomFloat(1, 0, 5)
         ]);
     }

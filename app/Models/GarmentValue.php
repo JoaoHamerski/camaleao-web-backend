@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ClothSize extends Model
+class GarmentValue extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'order'
+        'value',
+        'start',
+        'end'
     ];
 }

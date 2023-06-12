@@ -3,7 +3,6 @@
 use App\Http\Controllers\ImagesController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PDFsController;
-use App\Models\ClothMatch;
 
 /*
 |--------------------------------------------------------------------------

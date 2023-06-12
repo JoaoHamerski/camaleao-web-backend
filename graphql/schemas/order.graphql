@@ -42,6 +42,7 @@ type Order @guard {
   closed_at: Date
   is_concluded: Boolean
   can_be_concluded: Boolean
+  garments: [Garment!]!
 }
 
 enum QueryOrdersOrderByColumn {
@@ -66,21 +67,21 @@ input ClothingTypesInput {
   quantity: String!
 }
 
-input OrderClothesItemInput {
+input OrderGarmentItemInput {
   quantity: String
   size_id: ID
 }
 
-input OrderClothesIndItemInput {
+input OrderGarmentIndItemInput {
   name: String
   number: String
   size_id: ID
 }
 
-input OrderClothesInput {
+input OrderGarmentsInput {
   individual_names: Boolean
-  items: [OrderClothesItemInput!]!
-  items_individual: [OrderClothesIndItemInput!]!
+  items: [OrderGarmentItemInput!]!
+  items_individual: [OrderGarmentIndItemInput!]!
   model_id: ID
   material_id: ID
   neck_type_id: ID
@@ -101,7 +102,7 @@ input OrderInput {
   art_paths: [String!]
   size_paths: [String!]
   payment_voucher_paths: [String!]
-  clothes: [OrderClothesInput!]!
+  garments: [OrderGarmentsInput!]!
 }
 
 enum OrderReportInputOrder {

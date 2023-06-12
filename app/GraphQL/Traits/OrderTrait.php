@@ -10,8 +10,7 @@ use App\Util\Formatter;
 use App\Util\FileHelper;
 use App\Models\Commission;
 use App\Models\ClothingType;
-use App\Models\ClothMatch;
-use App\Models\ClothSize;
+use App\Models\GarmentMatch;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
@@ -55,7 +54,7 @@ trait OrderTrait
                 'payment_voucher_paths.*'
             ])->get();
 
-        $data['clothes'] = $this->getFormattedClothes($data);
+        $data['garments'] = $this->getFormattedGarments($data);
 
         if (!$order) {
             unset($data['clothing_types']);
@@ -64,22 +63,22 @@ trait OrderTrait
         return $data;
     }
 
-    public function getFormattedClothes($data)
+    public function getFormattedGarments($data)
     {
-        return array_map(function ($cloth) {
-            if ($cloth['individual_names']) {
-                $cloth['items'] = $this->formatItemsIndividual($cloth);
+        return array_map(function ($garment) {
+            if ($garment['individual_names']) {
+                $garment['items'] = $this->formatItemsIndividual($garment);
             }
 
-            unset($cloth['items_individual']);
+            unset($garment['items_individual']);
 
-            return $cloth;
-        }, $data['clothes']);
+            return $garment;
+        }, $data['garments']);
     }
 
-    public function formatItemsIndividual($cloth)
+    public function formatItemsIndividual($garment)
     {
-        $items = collect($cloth['items_individual']);
+        $items = collect($garment['items_individual']);
         $grouped = $items->groupBy('size_id');
 
         return $grouped->map(fn ($group, $id) => [
@@ -94,8 +93,8 @@ trait OrderTrait
             return $this->ctEvaluateOrderAttributes($data, $order);
         }
 
-        $price = $this->evaluateClothesValue($data, $order);
-        $quantity = $this->evaluateClothesQuantity($data, $order);
+        $price = $this->evaluateGarmentsValue($data, $order);
+        $quantity = $this->evaluateGarmentsQuantity($data, $order);
 
         if ($price) {
             $data['price'] = $price;
@@ -108,18 +107,18 @@ trait OrderTrait
         return $data;
     }
 
-    private function findClothMatch($clothData)
+    private function findGarmentMatch($garmentData)
     {
-        return ClothMatch::where('model_id', $clothData['model_id'])
-            ->where('material_id', $clothData['material_id'])
-            ->where('neck_type_id', $clothData['neck_type_id'])
-            ->where('sleeve_type_id', $clothData['sleeve_type_id'])
+        return GarmentMatch::where('model_id', $garmentData['model_id'])
+            ->where('material_id', $garmentData['material_id'])
+            ->where('neck_type_id', $garmentData['neck_type_id'])
+            ->where('sleeve_type_id', $garmentData['sleeve_type_id'])
             ->first();
     }
 
-    private function getClothMatchValue($clothMatch, $quantity)
+    private function getGarmentMatchValue($garmentMatch, $quantity)
     {
-        $values = $clothMatch->values;
+        $values = $garmentMatch->values;
 
         $value = $values->first(
             fn ($value) => ($value->start <= $quantity && $value->end >= $quantity)
@@ -129,52 +128,52 @@ trait OrderTrait
         return $value->value;
     }
 
-    private function getClothQuantity($cloth)
+    private function getGarmentQuantity($garment)
     {
-        return collect($cloth['items'])->sum('quantity');
+        return collect($garment['items'])->sum('quantity');
     }
 
-    private function getSizeValues($clothMatch, $cloth)
+    private function getSizeValues($garmentMatch, $garment)
     {
-        $sizes = collect($cloth['items']);
+        $sizes = collect($garment['items']);
 
-        return $sizes->reduce(function ($total, $size) use ($clothMatch) {
-            $clothSize = $clothMatch->sizes()->find($size['size_id']);
-            $sizeSum = bcmul($clothSize->pivot->value, $size['quantity'], 2);
+        return $sizes->reduce(function ($total, $size) use ($garmentMatch) {
+            $garmentSize = $garmentMatch->sizes()->find($size['size_id']);
+            $sizeSum = bcmul($garmentSize->pivot->value, $size['quantity'], 2);
 
             return bcadd($total, $sizeSum, 2);
         }, 0);
     }
 
-    private function getClothValue($cloth)
+    private function getGarmentValue($garment)
     {
-        $clothMatch = $this->findClothMatch($cloth);
+        $garmentMatch = $this->findGarmentMatch($garment);
 
-        $quantity = $this->getClothQuantity($cloth);
-        $value = $this->getClothMatchValue($clothMatch, $quantity);
-        $sizeValues = $this->getSizeValues($clothMatch, $cloth);
-        $totalCloth = bcmul($quantity, $value, 2);
-        $total = bcadd($totalCloth, $sizeValues, 2);
+        $quantity = $this->getGarmentQuantity($garment);
+        $value = $this->getGarmentMatchValue($garmentMatch, $quantity);
+        $sizeValues = $this->getSizeValues($garmentMatch, $garment);
+        $totalGarment = bcmul($quantity, $value, 2);
+        $total = bcadd($totalGarment, $sizeValues, 2);
 
         return $total;
     }
 
-    private function getClothesValue($clothes)
+    private function getGarmentsValue($garments)
     {
-        return collect($clothes)->reduce(
-            fn ($total, $cloth) => bcadd(
+        return collect($garments)->reduce(
+            fn ($total, $garment) => bcadd(
                 $total,
-                $this->getClothValue($cloth),
+                $this->getGarmentValue($garment),
                 2
             ),
             0
         );
     }
 
-    private function evaluateTotalPrice($clothesValue, $data, $order = null)
+    private function evaluateTotalPrice($garmentsValue, $data, $order = null)
     {
         if (
-            $clothesValue <= 0
+            $garmentsValue <= 0
             && isset($data['discount'])
             && $order
         ) {
@@ -185,19 +184,19 @@ trait OrderTrait
             );
         }
 
-        if ($order && floatval($clothesValue) === 0.0) {
+        if ($order && floatval($garmentsValue) === 0.0) {
             return null;
         }
 
-        $price = bcsub($clothesValue, $data['discount'] ?? 0, 2);
+        $price = bcsub($garmentsValue, $data['discount'] ?? 0, 2);
 
         return bcadd($price, $data['shipping_value'] ?? 0, 2);
     }
 
-    private function evaluateClothesValue($data, $order = null)
+    private function evaluateGarmentsValue($data, $order = null)
     {
-        $clothesValue = $this->getClothesValue($data['clothes']);
-        $total = $this->evaluateTotalPrice($clothesValue, $data, $order);
+        $garmentsValue = $this->getGarmentsValue($data['garments']);
+        $total = $this->evaluateTotalPrice($garmentsValue, $data, $order);
 
         if (floatval($total) === 0.0 && $order && $order->isPreRegistered()) {
             return null;
@@ -214,20 +213,20 @@ trait OrderTrait
         return $total;
     }
 
-    private function getClothesQuantity($clothes)
+    private function getGarmentsQuantity($garments)
     {
-        return collect($clothes)->reduce(
-            fn ($total, $cloth) => bcadd(
+        return collect($garments)->reduce(
+            fn ($total, $garment) => bcadd(
                 $total,
-                collect($cloth['items'])->sum('quantity')
+                collect($garment['items'])->sum('quantity')
             ),
             0
         );
     }
 
-    private function evaluateClothesQuantity($data, Order $order = null)
+    private function evaluateGarmentsQuantity($data, Order $order = null)
     {
-        $total = $this->getClothesQuantity($data['clothes']);
+        $total = $this->getGarmentsQuantity($data['garments']);
 
         if ($total === 0 && $order && $order->isPreRegistered()) {
             return null;
@@ -333,17 +332,17 @@ trait OrderTrait
             'payment_voucher_paths.*' => ['nullable', 'file', 'max:1024'],
             'clothing_types.*.value' => ['nullable', 'numeric', 'max:999999'],
             'clothing_types.*.quantity' => ['nullable', 'integer', 'max:9999'],
-            'clothes' => ['required'],
-            'clothes.*.individual_names' => ['required', 'boolean'],
-            'clothes.*.model_id' => ['required', 'exists:models,id'],
-            'clothes.*.material_id' => ['nullable', 'exists:materials,id'],
-            'clothes.*.neck_type_id' => ['nullable', 'exists:neck_types,id'],
-            'clothes.*.sleeve_type_id' => ['nullable', 'exists:sleeve_types,id'],
-            'clothes.*.items' => ['sometimes', 'required', 'array'],
-            'clothes.*.items_individual' => ['sometimes', 'required', 'array'],
-            'clothes.*.items.*.quantity' => ['sometimes', 'required'],
-            'clothes.*.items.*.size_id' => ['sometimes', 'required', 'exists:cloth_sizes,id'],
-            'clothes.*.items_individual.*.size_id' => ['sometimes', 'required', 'exists:cloth_sizes,id']
+            'garments' => ['required'],
+            'garments.*.individual_names' => ['required', 'boolean'],
+            'garments.*.model_id' => ['required', 'exists:models,id'],
+            'garments.*.material_id' => ['nullable', 'exists:materials,id'],
+            'garments.*.neck_type_id' => ['nullable', 'exists:neck_types,id'],
+            'garments.*.sleeve_type_id' => ['nullable', 'exists:sleeve_types,id'],
+            'garments.*.items' => ['sometimes', 'required', 'array'],
+            'garments.*.items_individual' => ['sometimes', 'required', 'array'],
+            'garments.*.items.*.quantity' => ['sometimes', 'required'],
+            'garments.*.items.*.size_id' => ['sometimes', 'required', 'exists:garment_sizes,id'],
+            'garments.*.items_individual.*.size_id' => ['sometimes', 'required', 'exists:garment_sizes,id']
         ];
 
         if ($order) {

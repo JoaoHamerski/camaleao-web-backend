@@ -14,12 +14,14 @@ class FormOptionsSeeder extends Seeder
     public function run()
     {
         $this->call([
+            SectorsSeeder::class,
+            StatusSeeder::class,
             ModelSeeder::class,
             MaterialSeeder::class,
             SleeveTypeSeeder::class,
             NeckTypeSeeder::class,
-            ClothSizeSeeder::class,
-            ClothMatchSeeder::class
+            GarmentSizeSeeder::class,
+            GarmentMatchSeeder::class
         ]);
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateClothMatchClothSizeTable extends Migration
+class CreateGarmentMatchGarmentSizeTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,24 @@ class CreateClothMatchClothSizeTable extends Migration
      */
     public function up()
     {
-        Schema::create('cloth_match_cloth_size', function (Blueprint $table) {
+        /**
+         * Armazena os tamanhos da combinação,
+         * com o seu respectivo valor adicional por peça
+         */
+        Schema::create('garment_match_garment_size', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('cloth_match_id')
+            $table->foreignId('garment_match_id')
                 ->nullable()
-                ->constrained('cloth_matches')
+                ->constrained('garment_matches')
                 ->nullOnDelete();
 
-            $table->foreignId('cloth_size_id')
+            $table->foreignId('garment_size_id')
                 ->nullable()
-                ->constrained('cloth_sizes')
+                ->constrained('garment_sizes')
                 ->nullOnDelete();
 
+            // Valor do tamanho para a combinação específica criada.
             $table->decimal('value')->nullable();
 
             $table->timestamps();
@@ -39,6 +44,6 @@ class CreateClothMatchClothSizeTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cloth_match_cloth_size');
+        Schema::dropIfExists('garment_match_garment_size');
     }
 }

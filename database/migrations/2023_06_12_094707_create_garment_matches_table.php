@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateClothMatchesTable extends Migration
+class CreateGarmentMatchesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,12 @@ class CreateClothMatchesTable extends Migration
      */
     public function up()
     {
-        // SOFT DELETE ISSO
-        Schema::create('cloth_matches', function (Blueprint $table) {
+        /**
+         * Armazena uma combinação de vestuários.
+         * Caso o valor o valor seja único, usa-se o campo "unique_value",
+         * Caso o valor seja baseado em 1 ou muitos intervalos de quantidades, usa-se o pivô "garment_match_garment_value"
+         */
+        Schema::create('garment_matches', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('model_id')
@@ -37,6 +41,11 @@ class CreateClothMatchesTable extends Migration
                 ->constrained('sleeve_types')
                 ->nullOnDelete();
 
+            $table->unique(
+                ['model_id', 'material_id', 'neck_type_id', 'sleeve_type_id'],
+                'unique_match'
+            );
+
             $table->decimal('unique_value')->nullable();
 
             $table->timestamps();
@@ -50,6 +59,6 @@ class CreateClothMatchesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('clothes_matches');
+        Schema::dropIfExists('garment_matches');
     }
 }

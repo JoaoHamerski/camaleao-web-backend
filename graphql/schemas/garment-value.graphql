@@ -1,4 +1,4 @@
-type ClothValue @guard {
+type GarmentValue @guard {
   id: ID!
   value: String!
   start: String

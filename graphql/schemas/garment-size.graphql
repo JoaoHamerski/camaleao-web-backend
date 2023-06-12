@@ -1,0 +1,30 @@
+union GarmentSizePivot = GarmentMatchGarmentSize | GarmentGarmentSize
+
+type GarmentSize @guard {
+  id: ID!
+  name: String!
+  order: Int
+  pivot: GarmentSizePivot
+}
+
+type GarmentMatchGarmentSize {
+  id: ID!
+  value: Float!
+}
+
+type GarmentGarmentSize {
+  id: ID!
+  quantity: Int!
+}
+
+input GarmentSizeInput {
+  name: String
+}
+
+extend type Query {
+  garmentSizes: [GarmentSize!]! @all @orderBy(column: "order", direction: ASC)
+}
+
+extend type Mutation {
+  garmentSizeCreate(input: GarmentSizeInput @spread): GarmentSize!
+}

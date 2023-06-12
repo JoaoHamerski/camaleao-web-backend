@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateClothMatchClothValueTable extends Migration
+class CreateGarmentMatchGarmentValueTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,21 @@ class CreateClothMatchClothValueTable extends Migration
      */
     public function up()
     {
-        Schema::create('cloth_match_cloth_value', function (Blueprint $table) {
+        /**
+         * Pivô para armazenar os intervalos de valores
+         * de uma combinação de vestuário.
+         */
+        Schema::create('garment_match_garment_value', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cloth_match_id')
+
+            $table->foreignId('garment_match_id')
                 ->nullable()
-                ->constrained('cloth_matches')
+                ->constrained('garment_matches')
                 ->cascadeOnDelete();
 
-            $table->foreignId('cloth_value_id')
+            $table->foreignId('garment_value_id')
                 ->nullable()
-                ->constrained('cloth_values')
+                ->constrained('garment_values')
                 ->cascadeOnDelete();
 
             $table->timestamps();
@@ -36,6 +41,6 @@ class CreateClothMatchClothValueTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cloth_match_cloth_value');
+        Schema::dropIfExists('garment_match_garment_value');
     }
 }

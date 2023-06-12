@@ -5,18 +5,18 @@ namespace Database\Factories;
 use App\Models\Model;
 use App\Models\Material;
 use App\Models\NeckType;
-use App\Models\ClothMatch;
 use App\Models\SleeveType;
+use App\Models\GarmentMatch;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ClothMatchFactory extends Factory
+class GarmentMatchFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = ClothMatch::class;
+    protected $model = GarmentMatch::class;
 
     /**
      * Define the model's default state.

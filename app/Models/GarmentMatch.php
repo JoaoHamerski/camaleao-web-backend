@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ClothMatch extends Model
+class GarmentMatch extends Model
 {
     use HasFactory;
 
@@ -39,14 +39,15 @@ class ClothMatch extends Model
 
     public function sizes()
     {
-        return $this->belongsToMany(ClothSize::class)
+        return $this->belongsToMany(GarmentSize::class)
             ->orderBy('order')
-            ->withPivot('id', 'value');
+            ->withPivot('id', 'value')
+            ->using(GarmentMatchGarmentSize::class);
     }
 
     public function values()
     {
-        return $this->belongsToMany(ClothValue::class)
+        return $this->belongsToMany(GarmentValue::class)
             ->orderBy('start');
     }
 }

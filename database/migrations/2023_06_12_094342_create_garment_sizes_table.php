@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateClothesTable extends Migration
+class CreateGarmentSizesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,13 @@ class CreateClothesTable extends Migration
      */
     public function up()
     {
-        Schema::create('clothes', function (Blueprint $table) {
+        /**
+         * Armazena os tamanhos dos vestuários.
+         */
+        Schema::create('garment_sizes', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('order_id')
-                ->constrained('orders')
-                ->cascadeOnDelete();
-
-            $table->foreignId('cloth_match_id')
-                ->nullable()
-                ->constrained('cloth_matches')
-                ->nullOnDelete();
-
+            $table->char('name', 3);
+            $table->unsignedTinyInteger('order');
             $table->timestamps();
         });
     }
@@ -36,6 +31,6 @@ class CreateClothesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('clothes');
+        Schema::dropIfExists('garment_sizes');
     }
 }
