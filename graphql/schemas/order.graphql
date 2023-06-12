@@ -7,8 +7,6 @@ type Order @guard {
   quantity: Int
   price: Float
   delivery_date: Date
-  print_date: Date
-  seam_date: Date
   discount: Float
   shipping_value: Float
   total_paid_sponsor: Float
@@ -68,6 +66,27 @@ input ClothingTypesInput {
   quantity: String!
 }
 
+input OrderClothesItemInput {
+  quantity: String
+  size_id: ID
+}
+
+input OrderClothesIndItemInput {
+  name: String
+  number: String
+  size_id: ID
+}
+
+input OrderClothesInput {
+  individual_names: Boolean
+  items: [OrderClothesItemInput!]!
+  items_individual: [OrderClothesIndItemInput!]!
+  model_id: ID
+  material_id: ID
+  neck_type_id: ID
+  sleeve_type_id: ID
+}
+
 input OrderInput {
   client_id: ID
   name: String
@@ -76,14 +95,13 @@ input OrderInput {
   shipping_value: String
   down_payment: String
   payment_via_id: ID
-  seam_date: String
-  print_date: String
   delivery_date: String
   clothing_types: [ClothingTypesInput]
   status_id: ID
   art_paths: [String!]
   size_paths: [String!]
   payment_voucher_paths: [String!]
+  clothes: [OrderClothesInput!]!
 }
 
 enum OrderReportInputOrder {

@@ -2,8 +2,8 @@ type ClothMatch @guard {
   id: ID!
   model: Model
   material: Material
-  neck_type: NeckType
-  sleeve_type: SleeveType
+  neck_type: NeckType @rename(attribute: "neckType")
+  sleeve_type: SleeveType @rename(attribute: "sleeveType")
   values: [ClothValue!]!
   sizes: [ClothSize!]!
   unique_value: String

@@ -30,6 +30,12 @@ class DatabaseSeeder extends Seeder
                 OrdersSeeder::class,
                 PaymentsSeeder::class,
                 NotesSeeder::class,
+                ModelSeeder::class,
+                MaterialSeeder::class,
+                NeckTypeSeeder::class,
+                SleeveTypeSeeder::class,
+                ClothSizeSeeder::class,
+                ClothMatchSeeder::class
             ]);
         });
     }

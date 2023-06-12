@@ -17,19 +17,20 @@ class OrderCreate
     public function __invoke($_, array $args)
     {
         $data = $this->getFormattedData($args);
-        $data = $this->evaluateOrderAttributes($data);
 
         $client = Client::find($args['client_id']);
 
-        $this->validator($data)->validate();
+        // $this->validator($data)->validate();
 
         $data = $this->handleFilesUpload($data);
+        $data = $this->evaluateOrderAttributes($data);
+
 
         $order = $client->orders()->create($data);
+        $this->syncItems($data, $order);
 
-        $order->clothingTypes()->attach(
-            $this->getFilledClothingTypes($data)
-        );
+        return;
+
 
         if (!$order->isPreRegistered()) {
             $this->handleCommissions($order);
@@ -40,6 +41,20 @@ class OrderCreate
         }
 
         return $order;
+    }
+
+    public function syncItems($data, $order)
+    {
+        $clothes = collect($data['clothes']);
+        $clothes->each(function ($cloth) use ($order) {
+            $match = $this->findClothMatch($cloth);
+
+            $order->clothes()->create([
+                'cloth_match_id' => $match->id
+            ]);
+        });
+
+        dd($order->load('clothes'));
     }
 
     public function hasDownPayment($data)

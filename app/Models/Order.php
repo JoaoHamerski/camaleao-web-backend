@@ -149,6 +149,11 @@ class Order extends Model
         return $this->hasMany(Commission::class);
     }
 
+    public function clothes()
+    {
+        return $this->hasMany(Cloth::class);
+    }
+
     public function getHasOrderControlAttribute()
     {
         return !!$this->concludedStatus()->count();

@@ -5,7 +5,7 @@ type ClothSize @guard {
   pivot: ClothSizePivot
 }
 
-type ClothSizePivot {
+type ClothSizePivot @guard {
   id: ID!
   value: String
 }
