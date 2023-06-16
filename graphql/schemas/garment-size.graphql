@@ -9,7 +9,7 @@ type GarmentSize @guard {
 
 type GarmentMatchGarmentSize {
   id: ID!
-  value: Float!
+  value: Float
 }
 
 type GarmentGarmentSize {

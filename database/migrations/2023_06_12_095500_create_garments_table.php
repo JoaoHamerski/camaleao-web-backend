@@ -24,9 +24,7 @@ class CreateGarmentsTable extends Migration
                 ->cascadeOnDelete();
 
             $table->foreignId('garment_match_id')
-                ->nullable()
-                ->constrained('garment_matches')
-                ->nullOnDelete();
+                ->constrained('garment_matches');
 
             $table->timestamps();
         });

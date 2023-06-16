@@ -1,6 +1,6 @@
 type Garment @guard {
   id: ID!
-  match: GarmentMatch
+  match: GarmentMatch!
   sizes: [GarmentSize!]!
   quantity: Int
   value: Float

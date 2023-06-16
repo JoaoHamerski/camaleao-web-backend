@@ -70,7 +70,7 @@ class Garment extends Model
 
     public function match()
     {
-        return $this->belongsTo(GarmentMatch::class, 'garment_match_id');
+        return $this->belongsTo(GarmentMatch::class, 'garment_match_id')->withTrashed();
     }
 
     public function sizes()

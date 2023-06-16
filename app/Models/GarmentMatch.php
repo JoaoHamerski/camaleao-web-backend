@@ -4,17 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class GarmentMatch extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'model_id',
         'material_id',
         'neck_type_id',
         'sleeve_type_id',
-        'unique_value'
+        'unique_value',
+        'created_at'
     ];
 
     public function model()
@@ -49,5 +51,10 @@ class GarmentMatch extends Model
     {
         return $this->belongsToMany(GarmentValue::class)
             ->orderBy('start');
+    }
+
+    public function garments()
+    {
+        return $this->hasMany(Garment::class);
     }
 }

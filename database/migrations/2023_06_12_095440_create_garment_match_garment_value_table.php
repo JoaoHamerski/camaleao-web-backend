@@ -21,12 +21,10 @@ class CreateGarmentMatchGarmentValueTable extends Migration
             $table->id();
 
             $table->foreignId('garment_match_id')
-                ->nullable()
                 ->constrained('garment_matches')
                 ->cascadeOnDelete();
 
             $table->foreignId('garment_value_id')
-                ->nullable()
                 ->constrained('garment_values')
                 ->cascadeOnDelete();
 

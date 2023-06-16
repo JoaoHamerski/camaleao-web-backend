@@ -41,12 +41,8 @@ class CreateGarmentMatchesTable extends Migration
                 ->constrained('sleeve_types')
                 ->nullOnDelete();
 
-            $table->unique(
-                ['model_id', 'material_id', 'neck_type_id', 'sleeve_type_id'],
-                'unique_match'
-            );
-
             $table->decimal('unique_value')->nullable();
+            $table->softDeletes();
 
             $table->timestamps();
         });

@@ -21,9 +21,8 @@ class CreateGarmentMatchGarmentSizeTable extends Migration
             $table->id();
 
             $table->foreignId('garment_match_id')
-                ->nullable()
                 ->constrained('garment_matches')
-                ->nullOnDelete();
+                ->cascadeOnDelete();
 
             $table->foreignId('garment_size_id')
                 ->nullable()

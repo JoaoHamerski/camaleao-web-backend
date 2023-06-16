@@ -41,4 +41,6 @@ extend type Query {
 
 extend type Mutation {
   garmentMatchCreate(input: GarmentMatchInput @spread): GarmentMatch!
+  garmentMatchUpdate(id: ID!, input: GarmentMatchInput @spread): GarmentMatch!
+  garmentMatchDelete(id: ID!): GarmentMatch!
 }
