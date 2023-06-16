@@ -3,7 +3,6 @@ type ClothingType {
   key: String!
   name: String!
   is_hidden: Boolean!
-  commission: String
   quantity: String
   value: String
   total_value: String
@@ -11,20 +10,19 @@ type ClothingType {
 
 input ClothingTypeInput {
   name: String
-  commission: String
   is_hidden: Boolean
 }
 
 extend type Query {
-  clothingTypes (
-    is_hidden: Boolean @where(operator: "=")
-  ): [ClothingType!]! @all @canAccess(roles: ["gerencia", "atendimento"])
+  clothingTypes(is_hidden: Boolean @where(operator: "=")): [ClothingType!]!
+    @all
+    @canAccess(roles: ["gerencia", "atendimento"])
 }
 
 extend type Mutation {
-  clothingTypeCreate (input: ClothingTypeInput! @spread): ClothingType
+  clothingTypeCreate(input: ClothingTypeInput! @spread): ClothingType
     @canAccess(roles: ["gerencia"])
 
-  clothingTypeUpdate (id: ID! input: ClothingTypeInput! @spread): ClothingType
+  clothingTypeUpdate(id: ID!, input: ClothingTypeInput! @spread): ClothingType
     @canAccess(roles: ["gerencia"])
 }

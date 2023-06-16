@@ -68,38 +68,6 @@ class OrderFactory extends Factory
         return $this->afterCreating(function (Order $order) {
             $this->populatePriceAndQuantity($order);
             $this->populateDeliveryAndProductionDate($order);
-            $this->populateCommissions($order);
-        });
-    }
-
-    protected function populateCommissions(Order $order)
-    {
-        if ($order->isPreRegistered()) {
-            return;
-        }
-
-        $confirmedAt = $this
-            ->faker
-            ->optional(.6)
-            ->dateTimeBetween($order->created_at, 'now');
-
-        $commission = $order->commissions()->create([
-            'print_commission' => AppConfig::get('orders', 'print_commission'),
-            'seam_commission' => $order->fresh()->getCommissions()->toJson(),
-            'created_at' => $order->created_at,
-            'updated_at' => $order->created_at
-        ]);
-
-        $users = User::production()->get();
-
-        $users->each(function ($user) use ($commission, $confirmedAt) {
-            $user->commissions()->attach([
-                $commission->id => [
-                    'role_id' => $user->role->id,
-                    'commission_value' => $commission->getUserCommission($user),
-                    'confirmed_at' => $confirmedAt,
-                ]
-            ]);
         });
     }
 

@@ -30,10 +30,6 @@ class OrderCreate
 
         $this->syncItems($data, $order);
 
-        if (!$order->isPreRegistered()) {
-            $this->handleCommissions($order);
-        }
-
         if ($this->hasDownPayment($data)) {
             $this->createDownPayment($order, $data);
         }

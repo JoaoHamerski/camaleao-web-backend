@@ -1,4 +1,5 @@
-union Subject = Order
+union Subject =
+    Order
   | Client
   | Payment
   | Note
@@ -8,7 +9,6 @@ union Subject = Order
   | ShippingCompany
   | Branch
   | ClothingType
-  | CommissionUser
   | AppConfig
 
 union Causer = User
@@ -36,7 +36,7 @@ enum QueryActivitiesWhereColumn {
 }
 
 extend type Query {
-  activities (
+  activities(
     orderBy: _ @orderBy(columnsEnum: "QueryActivitiesOrderByColumn")
     where: _ @whereConditions(columnsEnum: "QueryActivitiesWhereColumn")
   ): [Activity] @paginate @canAccess(roles: ["gerencia"])

@@ -144,11 +144,6 @@ class Order extends Model
         return $this->hasMany(Note::class);
     }
 
-    public function commissions()
-    {
-        return $this->hasMany(Commission::class);
-    }
-
     public function garments()
     {
         return $this->hasMany(Garment::class);
@@ -274,33 +269,6 @@ class Order extends Model
         return $this->status->sector();
     }
 
-    public function commission()
-    {
-        return $this->hasOne(Commission::class);
-    }
-
-    public function isQuantityChanged()
-    {
-        $oldClothingTypes = collect(json_decode($this->commission->seam_commission));
-        $newClothingTypes = $this->clothingTypes;
-
-        $pluckKeyAndQuantity = fn ($clothingType) => [
-            'key' => $clothingType->key,
-            'quantity' => $clothingType->quantity
-        ];
-
-        $oldClothingTypes->transform($pluckKeyAndQuantity);
-        $newClothingTypes->transform($pluckKeyAndQuantity);
-
-        return $newClothingTypes->some(function ($newClothingType) use ($oldClothingTypes) {
-            $index = $oldClothingTypes->search(
-                fn ($item) => $item['key'] === $newClothingType['key']
-            );
-
-            return $oldClothingTypes[$index]['quantity'] !== $newClothingType['quantity'];
-        });
-    }
-
     public function scopePreRegistered(Builder $query)
     {
         return $query->whereNull('quantity')
@@ -313,11 +281,6 @@ class Order extends Model
         return $query->whereNotNull('quantity')
             ->whereNotNull('price')
             ->whereNotNull('client_id');
-    }
-
-    public function getCommissions()
-    {
-        return $this->clothingTypes;
     }
 
     public function clothingTypes()

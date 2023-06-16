@@ -212,7 +212,6 @@ return [
         'city'      => 'cidade',
         'client.name' => 'nome do cliente',
         'code' => 'código',
-        'commission' => 'comissão',
         'country'   => 'país',
         'date'      => 'data',
         'day'       => 'dia',
