@@ -43,6 +43,7 @@ type Order @guard {
   is_concluded: Boolean
   can_be_concluded: Boolean
   garments: [Garment!]!
+  has_individual_names: Boolean
 }
 
 enum QueryOrdersOrderByColumn {

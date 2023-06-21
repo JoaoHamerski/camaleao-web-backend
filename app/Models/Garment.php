@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Garment extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'garment_match_id'
+        'garment_match_id',
+        'individual_names'
     ];
 
     protected $appends = [
@@ -20,6 +22,26 @@ class Garment extends Model
         'sizes_value'
     ];
 
+    public function getIndividualNamesAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+
+        $names = collect(json_decode($value, true));
+
+        return $names->map(function ($name, $key) {
+            $size = GarmentSize::find($name['size_id']);
+
+            return [
+                'id' => $key,
+                'name' => $name['name'],
+                'number' => $name['number'],
+                'size' => $size->name,
+                'size_id' => $size->id
+            ];
+        })->toArray();
+    }
 
     public function getSizesValueAttribute()
     {
@@ -48,14 +70,16 @@ class Garment extends Model
 
     public function getValuePerUnitAttribute()
     {
-        $matchValues = $this->match->values;
         $quantity = $this->quantity;
-        $value = $matchValues->first(
+
+        if ($this->match->unique_value) {
+            return $this->match->unique_value;
+        }
+
+        return $this->match->values->first(
             fn ($value) => $value->start <= $quantity && $value->end >= $quantity
                 || !$value->end
-        );
-
-        return $value->value;
+        )->value;
     }
 
     public function getQuantityAttribute()

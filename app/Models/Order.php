@@ -56,6 +56,7 @@ class Order extends Model
         'size_paths',
         'payment_voucher_paths',
         'total_clothings_value',
+        'has_individual_names'
     ];
 
     public function getCreatedLog(): string
@@ -306,6 +307,11 @@ class Order extends Model
             ->where('is_confirmed', true)
             ->whereNotNull('sponsorship_client_id')
             ->exists();
+    }
+
+    public function getHasIndividualNamesAttribute()
+    {
+        return $this->garments->contains(fn ($garment) => $garment->individual_names);
     }
 
     public function getTotalPaidNonSponsorAttribute()

@@ -26,6 +26,8 @@ class CreateGarmentsTable extends Migration
             $table->foreignId('garment_match_id')
                 ->constrained('garment_matches');
 
+            $table->text('individual_names')->nullable();
+
             $table->timestamps();
         });
     }

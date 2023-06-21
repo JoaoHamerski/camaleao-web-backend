@@ -3,9 +3,7 @@
 namespace App\GraphQL\Traits;
 
 use App\Util\Mask;
-use App\Models\User;
 use App\Models\Order;
-use App\Models\AppConfig;
 use App\Util\Formatter;
 use App\Util\FileHelper;
 use App\Models\ClothingType;
@@ -35,6 +33,39 @@ trait OrderTrait
             ->get();
     }
 
+    public function syncItems($input, $order, $isUpdate = false)
+    {
+        $inputGarments = collect($input['garments']);
+
+        $inputGarments->each(function ($inputGarment) use ($order, $isUpdate) {
+            $match = $this->findGarmentMatch($inputGarment);
+            $items = $inputGarment['items'];
+
+            if ($isUpdate) {
+                $order->garments()->delete();
+            }
+
+            $garment = $order->garments()
+                ->create([
+                    'garment_match_id' => $match->id,
+                    'individual_names' => $inputGarment['items_individual']
+                ]);
+
+            $this->syncGarmentSizes($garment, $items);
+        });
+    }
+
+    public function syncGarmentSizes($garment, $sizes)
+    {
+        foreach ($sizes as $size) {
+            $garment
+                ->sizes()
+                ->sync([
+                    $size['size_id'] => ['quantity' => $size['quantity']]
+                ]);
+        }
+    }
+
     private function getFormattedData(array $data, $order = null)
     {
         $data = (new Formatter($data))
@@ -55,7 +86,7 @@ trait OrderTrait
 
         $data['garments'] = $this->getFormattedGarments($data);
 
-        if (!$order) {
+        if (!$order || !$order->clothingTypes->count()) {
             unset($data['clothing_types']);
         }
 
@@ -67,9 +98,10 @@ trait OrderTrait
         return array_map(function ($garment) {
             if ($garment['individual_names']) {
                 $garment['items'] = $this->formatItemsIndividual($garment);
+                $garment['items_individual'] = json_encode($garment['items_individual']);
+            } else {
+                $garment['items_individual'] = null;
             }
-
-            unset($garment['items_individual']);
 
             return $garment;
         }, $data['garments']);
@@ -118,6 +150,10 @@ trait OrderTrait
     private function getGarmentMatchValue($garmentMatch, $quantity)
     {
         $values = $garmentMatch->values;
+
+        if ($garmentMatch->unique_value) {
+            return $garmentMatch->unique_value;
+        }
 
         $value = $values->first(
             fn ($value) => ($value->start <= $quantity && $value->end >= $quantity)
@@ -338,7 +374,7 @@ trait OrderTrait
             'garments.*.neck_type_id' => ['nullable', 'exists:neck_types,id'],
             'garments.*.sleeve_type_id' => ['nullable', 'exists:sleeve_types,id'],
             'garments.*.items' => ['sometimes', 'required', 'array'],
-            'garments.*.items_individual' => ['sometimes', 'required', 'array'],
+            'garments.*.items_individual' => ['sometimes', 'required', 'string'],
             'garments.*.items.*.quantity' => ['sometimes', 'required'],
             'garments.*.items.*.size_id' => ['sometimes', 'required', 'exists:garment_sizes,id'],
             'garments.*.items_individual.*.size_id' => ['sometimes', 'required', 'exists:garment_sizes,id']

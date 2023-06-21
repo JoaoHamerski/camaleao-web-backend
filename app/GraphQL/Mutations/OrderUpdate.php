@@ -37,6 +37,8 @@ class OrderUpdate
 
         $order->save();
 
+        $this->syncItems($data, $order, true);
+
         return $order;
     }
 }

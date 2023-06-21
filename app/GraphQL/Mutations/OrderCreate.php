@@ -37,31 +37,6 @@ class OrderCreate
         return $order;
     }
 
-    public function syncItems($input, $order)
-    {
-        $inputGarments = collect($input['garments']);
-        $inputGarments->each(function ($inputGarment) use ($order) {
-            $match = $this->findGarmentMatch($inputGarment);
-            $items = $inputGarment['items'];
-
-            $garment = $order->garments()
-                ->create(['garment_match_id' => $match->id]);
-
-            $this->syncGarmentSizes($garment, $items);
-        });
-    }
-
-    public function syncGarmentSizes($garment, $sizes)
-    {
-        foreach ($sizes as $size) {
-            $garment
-                ->sizes()
-                ->attach($size['size_id'], [
-                    'quantity' => $size['quantity']
-                ]);
-        }
-    }
-
     public function hasDownPayment($data)
     {
         return !empty($data['down_payment'])
