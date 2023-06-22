@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Note;
 use App\Models\Order;
 
-class NotesSeeder extends BaseSeeder
+class NoteSeeder extends BaseSeeder
 {
     /**
      * Run the database seeds.

@@ -2,7 +2,7 @@ type Garment @guard {
   id: ID!
   match: GarmentMatch!
   sizes: [GarmentSize!]!
-  individual_names: [GarmentIndividualName!]!
+  individual_names: [GarmentIndividualName!]
   quantity: Int
   value: Float
   sizes_value: Float

@@ -62,7 +62,6 @@ class Garment extends Model
         }, 0);
     }
 
-
     public function getValueAttribute()
     {
         return bcmul($this->value_per_unit, $this->quantity, 2);

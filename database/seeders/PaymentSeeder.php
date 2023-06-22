@@ -9,7 +9,7 @@ use App\Models\Via;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Collection;
 
-class PaymentsSeeder extends BaseSeeder
+class PaymentSeeder extends BaseSeeder
 {
     /**
      * Run the database seeds.

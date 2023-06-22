@@ -56,6 +56,7 @@ class Order extends Model
         'size_paths',
         'payment_voucher_paths',
         'total_clothings_value',
+        'total_garments_value',
         'has_individual_names'
     ];
 
@@ -148,6 +149,16 @@ class Order extends Model
     public function garments()
     {
         return $this->hasMany(Garment::class);
+    }
+
+    public function getTotalGarmentsValueAttribute()
+    {
+        $INITIAL_VALUE = 0;
+
+        return $this->garments->reduce(function ($total, $garment) {
+            $totalGarment = bcadd($garment->value, $garment->sizesValue, 2);
+            return bcadd($totalGarment, $total, 2);
+        }, $INITIAL_VALUE);
     }
 
     public function getHasOrderControlAttribute()

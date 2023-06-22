@@ -14,4 +14,5 @@ extend type Query {
 
 extend type Mutation {
   modelCreate(input: ModelInput @spread): Model!
+  modelUpdate(id: ID!, input: ModelInput @spread): Model!
 }

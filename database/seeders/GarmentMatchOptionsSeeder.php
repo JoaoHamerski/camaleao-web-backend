@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class FormOptionsSeeder extends Seeder
+class GarmentMatchOptionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,14 +14,11 @@ class FormOptionsSeeder extends Seeder
     public function run()
     {
         $this->call([
-            SectorsSeeder::class,
-            StatusSeeder::class,
             ModelSeeder::class,
             MaterialSeeder::class,
             SleeveTypeSeeder::class,
             NeckTypeSeeder::class,
-            GarmentSizeSeeder::class,
-            GarmentMatchSeeder::class
+            GarmentSizeSeeder::class
         ]);
     }
 }

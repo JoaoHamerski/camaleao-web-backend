@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\AppConfig;
 use App\Models\Client;
 use App\Models\Order;
 
-class OrdersSeeder extends BaseSeeder
+class OrderSeeder extends BaseSeeder
 {
     /**
      * Run the database seeds.
@@ -18,7 +17,7 @@ class OrdersSeeder extends BaseSeeder
         $clients = Client::all();
 
         $clients->each(function ($client) {
-            $ORDERS_FOR_EACH_CLIENT = $this->faker->numberBetween(40, 60);
+            $ORDERS_FOR_EACH_CLIENT = $this->faker->numberBetween(15, 25);
 
             Order::factory()
                 ->count($ORDERS_FOR_EACH_CLIENT)

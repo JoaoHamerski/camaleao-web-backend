@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\Sector;
 use Illuminate\Database\Seeder;
 
-class SectorsSeeder extends Seeder
+class SectorSeeder extends Seeder
 {
     /**
      * Run the database seeds.

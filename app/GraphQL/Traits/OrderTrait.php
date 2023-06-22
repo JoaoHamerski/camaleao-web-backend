@@ -37,18 +37,18 @@ trait OrderTrait
     {
         $inputGarments = collect($input['garments']);
 
-        $inputGarments->each(function ($inputGarment) use ($order, $isUpdate) {
+        if ($isUpdate) {
+            $order->garments()->delete();
+        }
+
+        $inputGarments->each(function ($inputGarment) use ($order) {
             $match = $this->findGarmentMatch($inputGarment);
             $items = $inputGarment['items'];
-
-            if ($isUpdate) {
-                $order->garments()->delete();
-            }
 
             $garment = $order->garments()
                 ->create([
                     'garment_match_id' => $match->id,
-                    'individual_names' => $inputGarment['items_individual']
+                    'individual_names' => data_get($inputGarment, 'items_individual')
                 ]);
 
             $this->syncGarmentSizes($garment, $items);
@@ -58,11 +58,9 @@ trait OrderTrait
     public function syncGarmentSizes($garment, $sizes)
     {
         foreach ($sizes as $size) {
-            $garment
-                ->sizes()
-                ->sync([
-                    $size['size_id'] => ['quantity' => $size['quantity']]
-                ]);
+            $garment->sizes()->attach([
+                $size['size_id'] => ['quantity' => $size['quantity']]
+            ]);
         }
     }
 
@@ -100,7 +98,7 @@ trait OrderTrait
                 $garment['items'] = $this->formatItemsIndividual($garment);
                 $garment['items_individual'] = json_encode($garment['items_individual']);
             } else {
-                $garment['items_individual'] = null;
+                unset($garment['items_individual']);
             }
 
             return $garment;
