@@ -14,7 +14,7 @@ class GarmentSizeCreate
     public function __invoke($_, array $args)
     {
         Validator::make($args, [
-            'name' => ['required', 'string', 'max:2']
+            'name' => ['required', 'string', 'max:3']
         ])->validate();
 
         return GarmentSize::create($args);
