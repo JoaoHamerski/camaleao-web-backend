@@ -1,0 +1,18 @@
+type SleeveType @guard {
+  id: ID!
+  name: String!
+  order: Int
+}
+
+input SleeveTypeInput {
+  name: String
+}
+
+extend type Query {
+  sleeveTypes: [SleeveType!]! @all @orderBy(column: "order", direction: ASC)
+}
+
+extend type Mutation {
+  sleeveTypeCreate(input: SleeveTypeInput @spread): SleeveType!
+  sleeveTypeUpdate(id: ID, input: SleeveTypeInput @spread): SleeveType!
+}

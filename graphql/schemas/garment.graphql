@@ -1,0 +1,18 @@
+type Garment @guard {
+  id: ID!
+  match: GarmentMatch!
+  sizes: [GarmentSize!]!
+  individual_names: [GarmentIndividualName!]
+  quantity: Int
+  value: Float
+  sizes_value: Float
+  value_per_unit: Float
+}
+
+type GarmentIndividualName {
+  id: ID!
+  name: String
+  number: String
+  size: String
+  size_id: ID
+}

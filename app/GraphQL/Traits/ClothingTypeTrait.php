@@ -17,7 +17,6 @@ trait ClothingTypeTrait
         }
 
         return (new Formatter($data))
-            ->currencyBRL('commission')
             ->capitalize('name')
             ->get();
     }
@@ -39,7 +38,6 @@ trait ClothingTypeTrait
         return Validator::make($data, [
             'id' => ['sometimes', 'required', 'exists:clothing_types,id'],
             'name' => [$this->getRequiredRule($isUpdate), 'max:191'],
-            'commission' => [$this->getRequiredRule($isUpdate), 'numeric'],
             'is_hidden' =>  [$this->getRequiredRule($isUpdate), 'boolean'],
             'key' => [$this->getRequiredRule($isUpdate), $this->getUniqueRule($data['id'] ?? null)]
         ], $this->errorMessages());
@@ -49,7 +47,6 @@ trait ClothingTypeTrait
     {
         return [
             'name.required' => __('validation.rules.required'),
-            'commission.required' => __('validation.rules.required'),
             'key.unique' => __('validation.custom.clothing_types.key|unique')
         ];
     }

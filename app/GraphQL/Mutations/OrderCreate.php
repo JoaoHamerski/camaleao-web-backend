@@ -17,9 +17,10 @@ class OrderCreate
     public function __invoke($_, array $args)
     {
         $data = $this->getFormattedData($args);
-        $data = $this->evaluateOrderAttributes($data);
 
         $client = Client::find($args['client_id']);
+
+        $data = $this->evaluateOrderAttributes($data);
 
         $this->validator($data)->validate();
 
@@ -27,13 +28,7 @@ class OrderCreate
 
         $order = $client->orders()->create($data);
 
-        $order->clothingTypes()->attach(
-            $this->getFilledClothingTypes($data)
-        );
-
-        if (!$order->isPreRegistered()) {
-            $this->handleCommissions($order);
-        }
+        $this->syncItems($data, $order);
 
         if ($this->hasDownPayment($data)) {
             $this->createDownPayment($order, $data);

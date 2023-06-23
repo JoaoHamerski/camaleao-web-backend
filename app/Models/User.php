@@ -140,19 +140,6 @@ class User extends Authenticatable
         return $this->hasMany(Expense::class);
     }
 
-    public function commissions()
-    {
-        return $this->belongsToMany(Commission::class)
-            ->using(CommissionUser::class)
-            ->withPivot([
-                'id',
-                'commission_value',
-                'confirmed_at',
-                'was_quantity_changed',
-                'role_id'
-            ]);
-    }
-
     public function dailyCashReminders()
     {
         return $this->hasMany(DailyCashReminder::class);

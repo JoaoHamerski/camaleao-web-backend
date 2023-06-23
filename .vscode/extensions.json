@@ -2,12 +2,9 @@
     "recommendations": [
         "bmewburn.vscode-intelephense-client",
         "mehedidracula.php-namespace-resolver",
-        "onecentlin.laravel-blade",
-        "amiralizadeh9480.laravel-extra-intellisense",
+        "amiralizadeh9480.laravel-ewxtra-intellisense",
         "streetsidesoftware.code-spell-checker",
         "streetsidesoftware.code-spell-checker-portuguese-brazilian",
-        "kumar-harsh.graphql-for-vscode",
-        "ikappas.phpcs",
         "aaron-bond.better-comments",
         "EditorConfig.EditorConfig"
     ]

@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Status;
 use App\Models\AppConfig;
 use App\Models\ClothingType;
+use App\Models\GarmentMatch;
 
 class OrderFactory extends Factory
 {
@@ -53,63 +54,125 @@ class OrderFactory extends Factory
             'created_at' => $data['created_at'],
             'updated_at' => $data['created_at'],
             'status_id' => Status::inRandomOrder()->first()->id,
-            'art_paths' => json_encode([
-                $this->faker->imageUrl(
-                    1400,
-                    800,
-                    true
-                )
-            ])
+            'delivery_date' => $this->faker->dateTimeBetween('-3 months', '+3 months')
         ];
     }
 
     public function configure()
     {
         return $this->afterCreating(function (Order $order) {
-            $this->populatePriceAndQuantity($order);
-            $this->populateDeliveryAndProductionDate($order);
-            $this->populateCommissions($order);
+            if ($this->faker->boolean(100)) {
+                $this->populatePreRegistered($order);
+                return;
+            }
+
+            $this->populateClothes($order);
+            $this->populateValuesAndQuantity($order);
         });
     }
 
-    protected function populateCommissions(Order $order)
+    protected function populateValuesAndQuantity($order)
     {
-        if ($order->isPreRegistered()) {
+        $order->refresh();
+        $isGarment = !!$order->garments()->count();
+
+        $clothesValue = $isGarment
+            ? $order->total_garments_value
+            : $order->total_clothings_value;
+
+        $shipping_value = $this->faker->optional(.35)->randomFloat(2, 0, $clothesValue);
+        $discount = $this->faker->optional(.35)->randomFloat(2, 0, $clothesValue / 2);
+
+        $price = bcsub($clothesValue, $discount ?? 0, 2);
+        $price = bcadd($price, $shipping_value ?? 0, 2);
+
+        $quantity = $isGarment
+            ? $order->garments->sum('quantity')
+            : $order->clothingTypes()->sum('quantity');
+
+        $order->update(
+            compact(
+                'price',
+                'quantity',
+                'shipping_value',
+                'discount'
+            )
+        );
+    }
+
+    protected function populateClothes(Order $order)
+    {
+
+        // Ativo quando quiser testar retrocompatibilidade com clothingTypes
+        //     $this->populateClothingTypes($order);
+        //     return;
+
+        $this->populateGarments($order);
+    }
+
+    protected function populateGarments($order)
+    {
+        $ORDER_GARMENTS_COUNT = $this->faker->numberBetween(1, 5);
+
+        for ($i = 0; $i < $ORDER_GARMENTS_COUNT; $i++) {
+            $match = GarmentMatch::inRandomOrder()->first();
+            $individualNames = $this->populateIndividualNames($match);
+
+            $garment = $order->garments()->create([
+                'garment_match_id' => $match->id,
+                'individual_names' => json_encode($individualNames)
+            ]);
+
+            $this->populateGarmentSizes($garment, $match, $individualNames);
+        }
+    }
+
+    protected function populateGarmentSizes($garment, $match, $individualNames = null)
+    {
+        if ($individualNames) {
+            $sizes = collect($individualNames);
+            $grouped = $sizes->groupBy('size_id');
+
+            $grouped->each(function ($group, $id) use ($garment) {
+                $garment->sizes()->attach([
+                    $id => ['quantity' => $group->count()]
+                ]);
+            });
+
             return;
         }
 
-        $confirmedAt = $this
-            ->faker
-            ->optional(.6)
-            ->dateTimeBetween($order->created_at, 'now');
-
-        $commission = $order->commissions()->create([
-            'print_commission' => AppConfig::get('orders', 'print_commission'),
-            'seam_commission' => $order->fresh()->getCommissions()->toJson(),
-            'created_at' => $order->created_at,
-            'updated_at' => $order->created_at
-        ]);
-
-        $users = User::production()->get();
-
-        $users->each(function ($user) use ($commission, $confirmedAt) {
-            $user->commissions()->attach([
-                $commission->id => [
-                    'role_id' => $user->role->id,
-                    'commission_value' => $commission->getUserCommission($user),
-                    'confirmed_at' => $confirmedAt,
+        $match->sizes->each(function ($size) use ($garment) {
+            $garment->sizes()->attach([
+                $size->id => [
+                    'quantity' => $this->faker->numberBetween(1, 10)
                 ]
             ]);
         });
     }
 
-    protected function populatePriceAndQuantity(Order $order)
+    protected function populateIndividualNames($match)
     {
-        if ($isPreRegistered = $this->faker->boolean(10)) {
-            $this->populatePreRegistered($order);
-            return;
+        if ($this->faker->boolean(60)) {
+            return null;
         }
 
+        $NAMES_QUANTITY = $this->faker->numberBetween(1, 20);
+        $names = [];
+
+        for ($i = 0; $i < $NAMES_QUANTITY; $i++) {
+            $names[] = [
+                'name' => $this->faker->name(),
+                'number' => $this->faker->numberBetween(0, 999),
+                'size_id' => $match->sizes->random()->id
+            ];
+        }
+
+        return $names;
+    }
+
+    protected function populateClothingTypes($order)
+    {
         $clothingTypes = ClothingType::inRandomOrder()
             ->take($this->faker->numberBetween(1, 5))
             ->get();
@@ -122,11 +185,6 @@ class OrderFactory extends Factory
                 ]
             ]);
         });
-
-        $order->update([
-            'price' => $order->total_clothings_value,
-            'quantity' => $order->clothingTypes()->sum('quantity')
-        ]);
     }
 
     protected function populatePreRegistered(Order $order)
@@ -139,30 +197,6 @@ class OrderFactory extends Factory
 
         $order->update([
             'price' => $price
-        ]);
-    }
-
-    protected function populateDeliveryAndProductionDate(Order $order)
-    {
-        $date = $this
-            ->faker
-            ->dateTimeBetween('-1 month', 'now');
-
-        $printDate = null;
-        $deliveryDate = null;
-
-        if ($hasPrintDate = $this->faker->boolean(70)) {
-            $printDate = (new Carbon($date));
-
-            if ($hasDeliveryDate = $this->faker->boolean(85)) {
-                $deliveryDate = (new Carbon($date))
-                    ->addDays($this->faker->numberBetween(1, 20));
-            }
-        }
-
-        $order->update([
-            'print_date' => $printDate,
-            'delivery_date' => $deliveryDate
         ]);
     }
 }

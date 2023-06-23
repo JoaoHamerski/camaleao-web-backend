@@ -3,18 +3,19 @@
 namespace App\GraphQL\Traits;
 
 use App\Util\Mask;
-use App\Models\User;
 use App\Models\Order;
-use App\Models\AppConfig;
 use App\Util\Formatter;
 use App\Util\FileHelper;
-use App\Models\Commission;
 use App\Models\ClothingType;
+use App\Models\GarmentMatch;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
 trait OrderTrait
 {
+    use OrderLegacyTrait;
+
     /**
      * Campos da tabela 'orders' que armazenam o nome dos arquivos.
      */
@@ -33,6 +34,37 @@ trait OrderTrait
             ->get();
     }
 
+    public function syncItems($input, $order, $isUpdate = false)
+    {
+        $inputGarments = collect($input['garments']);
+
+        if ($isUpdate) {
+            $order->garments()->delete();
+        }
+
+        $inputGarments->each(function ($inputGarment) use ($order) {
+            $match = $this->findGarmentMatch($inputGarment);
+            $items = $inputGarment['items'];
+
+            $garment = $order->garments()
+                ->create([
+                    'garment_match_id' => $match->id,
+                    'individual_names' => data_get($inputGarment, 'items_individual')
+                ]);
+
+            $this->syncGarmentSizes($garment, $items);
+        });
+    }
+
+    public function syncGarmentSizes($garment, $sizes)
+    {
+        foreach ($sizes as $size) {
+            $garment->sizes()->attach([
+                $size['size_id'] => ['quantity' => $size['quantity']]
+            ]);
+        }
+    }
+
     private function getFormattedData(array $data, $order = null)
     {
         $data = (new Formatter($data))
@@ -43,26 +75,56 @@ trait OrderTrait
                 'shipping_value'
             ])
             ->date([
-                'seam_date',
-                'print_date',
                 'delivery_date',
             ])
             ->base64ToUploadedFile([
                 'art_paths.*',
                 'size_paths.*',
                 'payment_voucher_paths.*'
-            ])
-            ->get();
+            ])->get();
 
-        // $data = $this->evaluateOrderAttributes($data, $order);
+        $data['garments'] = $this->getFormattedGarments($data);
+
+        if (!$order || !$order->clothingTypes->count()) {
+            unset($data['clothing_types']);
+        }
 
         return $data;
     }
 
+    public function getFormattedGarments($data)
+    {
+        return array_map(function ($garment) {
+            if ($garment['individual_names']) {
+                $garment['items'] = $this->formatItemsIndividual($garment);
+                $garment['items_individual'] = json_encode($garment['items_individual']);
+            } else {
+                unset($garment['items_individual']);
+            }
+
+            return $garment;
+        }, $data['garments']);
+    }
+
+    public function formatItemsIndividual($garment)
+    {
+        $items = collect($garment['items_individual']);
+        $grouped = $items->groupBy('size_id');
+
+        return $grouped->map(fn ($group, $id) => [
+            'quantity' => $group->count(),
+            'size_id' => $id
+        ])->values()->toArray();
+    }
+
     private function evaluateOrderAttributes($data, Order $order = null)
     {
-        $price = $this->evaluatePrice($data, $order);
-        $quantity = $this->evaluateQuantity($data, $order);
+        if ($order && $order->clothingTypes->count()) {
+            return $this->ctEvaluateOrderAttributes($data, $order);
+        }
+
+        $price = $this->evaluateGarmentsValue($data, $order);
+        $quantity = $this->evaluateGarmentsQuantity($data, $order);
 
         if ($price) {
             $data['price'] = $price;
@@ -73,6 +135,138 @@ trait OrderTrait
         }
 
         return $data;
+    }
+
+    private function findGarmentMatch($garmentData)
+    {
+        return GarmentMatch::where('model_id', $garmentData['model_id'])
+            ->where('material_id', $garmentData['material_id'])
+            ->where('neck_type_id', $garmentData['neck_type_id'])
+            ->where('sleeve_type_id', $garmentData['sleeve_type_id'])
+            ->first();
+    }
+
+    private function getGarmentMatchValue($garmentMatch, $quantity)
+    {
+        $values = $garmentMatch->values;
+
+        if ($garmentMatch->unique_value) {
+            return $garmentMatch->unique_value;
+        }
+
+        $value = $values->first(
+            fn ($value) => ($value->start <= $quantity && $value->end >= $quantity)
+                || !$value->end
+        );
+
+        return $value->value;
+    }
+
+    private function getGarmentQuantity($garment)
+    {
+        return collect($garment['items'])->sum('quantity');
+    }
+
+    private function getSizeValues($garmentMatch, $garment)
+    {
+        $sizes = collect($garment['items']);
+
+        return $sizes->reduce(function ($total, $size) use ($garmentMatch) {
+            $garmentSize = $garmentMatch->sizes()->find($size['size_id']);
+            $sizeSum = bcmul($garmentSize->pivot->value, $size['quantity'], 2);
+
+            return bcadd($total, $sizeSum, 2);
+        }, 0);
+    }
+
+    private function getGarmentValue($garment)
+    {
+        $garmentMatch = $this->findGarmentMatch($garment);
+
+        $quantity = $this->getGarmentQuantity($garment);
+        $value = $this->getGarmentMatchValue($garmentMatch, $quantity);
+        $sizeValues = $this->getSizeValues($garmentMatch, $garment);
+        $totalGarment = bcmul($quantity, $value, 2);
+        $total = bcadd($totalGarment, $sizeValues, 2);
+
+        return $total;
+    }
+
+    private function getGarmentsValue($garments)
+    {
+        return collect($garments)->reduce(
+            fn ($total, $garment) => bcadd(
+                $total,
+                $this->getGarmentValue($garment),
+                2
+            ),
+            0
+        );
+    }
+
+    private function evaluateTotalPrice($garmentsValue, $data, $order = null)
+    {
+        if (
+            $garmentsValue <= 0
+            && isset($data['discount'])
+            && $order
+        ) {
+            return bcsub(
+                $order->original_price,
+                $data['discount'],
+                2
+            );
+        }
+
+        if ($order && floatval($garmentsValue) === 0.0) {
+            return null;
+        }
+
+        $price = bcsub($garmentsValue, $data['discount'] ?? 0, 2);
+
+        return bcadd($price, $data['shipping_value'] ?? 0, 2);
+    }
+
+    private function evaluateGarmentsValue($data, $order = null)
+    {
+        $garmentsValue = $this->getGarmentsValue($data['garments']);
+        $total = $this->evaluateTotalPrice($garmentsValue, $data, $order);
+
+        if (floatval($total) === 0.0 && $order && $order->isPreRegistered()) {
+            return null;
+        }
+
+        if (floatval($total) === 0.0 && $order) {
+            return $order->original_price;
+        }
+
+        if (floatval($total) === 0.0) {
+            return null;
+        }
+
+        return $total;
+    }
+
+    private function getGarmentsQuantity($garments)
+    {
+        return collect($garments)->reduce(
+            fn ($total, $garment) => bcadd(
+                $total,
+                collect($garment['items'])->sum('quantity')
+            ),
+            0
+        );
+    }
+
+    private function evaluateGarmentsQuantity($data, Order $order = null)
+    {
+        $total = $this->getGarmentsQuantity($data['garments']);
+
+        if ($total === 0 && $order && $order->isPreRegistered()) {
+            return null;
+        }
+
+        return $total;
     }
 
     private function getOriginalPrice($data, Order $order = null)
@@ -126,11 +320,11 @@ trait OrderTrait
             : Rule::unique('orders');
     }
 
-    private function rules($data, Order $order = null)
+    private function getGeneralRules($data, $order = null)
     {
         $originalPrice = $this->getOriginalPrice($data, $order);
 
-        $rules = [
+        $rules[] = [
             'client_id' => [
                 'nullable',
                 'exists:clients,id'
@@ -170,15 +364,52 @@ trait OrderTrait
             'art_paths.*' => ['nullable', 'file', 'max:1024'],
             'size_paths.*' => ['nullable', 'file', 'max:1024'],
             'payment_voucher_paths.*' => ['nullable', 'file', 'max:1024'],
-            'clothing_types.*.value' => ['nullable', 'numeric', 'max:999999'],
-            'clothing_types.*.quantity' => ['nullable', 'integer', 'max:9999'],
         ];
 
         if ($order) {
             $rules['price'][] = 'min_currency:' . $order->total_paid;
         }
 
-        return $rules;
+        return Arr::collapse($rules);
+    }
+
+    private function getClothingTypesRules($data, $order = null)
+    {
+        return [
+            'clothing_types.*.value' => ['nullable', 'numeric', 'max:999999'],
+            'clothing_types.*.quantity' => ['nullable', 'integer', 'max:9999'],
+        ];
+    }
+
+    private function getGarmentsRules($data, $order = null)
+    {
+        if ($order && $order->clothingTypes()->count()) {
+            return [];
+        }
+
+        return [
+            'garments' => ['required'],
+            'garments.*.individual_names' => ['required', 'boolean'],
+            'garments.*.model_id' => ['required', 'exists:models,id'],
+            'garments.*.material_id' => ['nullable', 'exists:materials,id'],
+            'garments.*.neck_type_id' => ['nullable', 'exists:neck_types,id'],
+            'garments.*.sleeve_type_id' => ['nullable', 'exists:sleeve_types,id'],
+            'garments.*.items' => ['sometimes', 'required', 'array'],
+            'garments.*.items_individual' => ['sometimes', 'required', 'string'],
+            'garments.*.items.*.quantity' => ['sometimes', 'required'],
+            'garments.*.items.*.size_id' => ['sometimes', 'required', 'exists:garment_sizes,id'],
+            'garments.*.items_individual.*.size_id' => ['sometimes', 'required', 'exists:garment_sizes,id']
+        ];
+    }
+
+    private function rules($data, Order $order = null)
+    {
+
+        $rules[] = $this->getGeneralRules($data, $order);
+        $rules[] = $this->getClothingTypesRules($data, $order);
+        $rules[] = $this->getGarmentsRules($data, $order);
+
+        return Arr::collapse($rules);
     }
 
     private function validator(array $data, Order $order = null)
@@ -190,36 +421,6 @@ trait OrderTrait
             $this->rules($data, $order),
             $this->errorMessages($data)
         );
-    }
-
-    private function getFilledClothingTypes(array $data)
-    {
-        $filled = [];
-
-        $uploadedClothingTypes = $data['clothing_types'];
-        $clothingsSearch = array_column($uploadedClothingTypes, 'key');
-
-        foreach ($this->clothingTypes as $type) {
-            $index = array_search($type->key, $clothingsSearch);
-
-            if ($index === false) {
-                continue;
-            }
-
-            $currentType = $uploadedClothingTypes[$index];
-
-            if (
-                !empty($currentType['quantity'])
-                && !empty($currentType['value'])
-            ) {
-                $filled[$type->id] = [
-                    'quantity' => $currentType['quantity'],
-                    'value' => $currentType['value']
-                ];
-            }
-        }
-
-        return $filled;
     }
 
     private function errorMessages($data)
@@ -252,143 +453,6 @@ trait OrderTrait
             'delivery_date.required' => __('validation.rules.required'),
             'delivery_date.date_format' =>  __('validation.rules.date'),
         ];
-    }
-
-    private function evaluateClothingTypesQuantity($data)
-    {
-        $INITIAL_VALUE = 0;
-        $clothingTypes = [];
-
-        if (!isset($data['clothing_types'])) {
-            return null;
-        }
-
-        $clothingTypes = collect($data['clothing_types']);
-
-        return $clothingTypes->reduce(
-            function ($total, $type) {
-                $value = $type["value"];
-                $quantity = $type["quantity"];
-
-                if (!empty($value)) {
-                    return bcadd($total, $quantity);
-                }
-
-                return $total;
-            },
-            $INITIAL_VALUE
-        );
-    }
-
-    /**
-     * Calcula a quantidade total dos tipos de roupas informados.
-     *
-     * @param array $data
-     * @return int|null
-     */
-    private function evaluateQuantity(array $data, Order $order = null)
-    {
-
-        $total = $this->evaluateClothingTypesQuantity($data);
-
-        if ($total === 0 && $order && $order->isPreRegistered()) {
-            return null;
-        }
-
-        return $total;
-    }
-
-    /**
-     * Calcula o valor total dos tipos de roupas informados.
-     *
-     * @param array $data
-     * @return float|null
-     */
-    private function evaluateClothingTypesValue($data)
-    {
-        $INITIAL_VALUE = 0;
-        $clothingTypes = [];
-
-        if (!isset($data['clothing_types'])) {
-            return null;
-        }
-
-        $clothingTypes = collect($data['clothing_types']);
-
-        return $clothingTypes->reduce(
-            function ($total, $type) {
-                $value = $type["value"];
-                $quantity = $type["quantity"];
-
-                if (!empty($quantity)) {
-                    $typeTotal = bcmul($quantity, $value, 2);
-
-                    return bcadd($total, $typeTotal, 2);
-                }
-
-                return $total;
-            },
-            $INITIAL_VALUE
-        );
-    }
-
-    /**
-     * Calcula o valor total do produto cadastrado.
-     *
-     * @param float $clothingTypesValue
-     * @param array $data
-     * @param \App\Models\Order|null $order
-     * @return float|null
-     */
-    private function evaluateTotalPrice($clothingTypesValue, $data, $order)
-    {
-        if (
-            $clothingTypesValue <= 0
-            && isset($data['discount'])
-            && $order
-        ) {
-            return bcsub(
-                $order->original_price,
-                $data['discount'],
-                2
-            );
-        }
-
-        if ($order && floatval($clothingTypesValue) === 0.0) {
-            return null;
-        }
-
-        $price = bcsub($clothingTypesValue, $data['discount'] ?? 0, 2);
-
-        return bcadd($price, $data['shipping_value'] ?? 0, 2);
-    }
-
-    /**
-     * Calcula o preço final do produto cadastrado.
-     *
-     * @param array $data,
-     * @param App\Models\Order|null $order
-     * @return float|null
-     */
-    private function evaluatePrice(array $data, Order $order = null)
-    {
-        $clothingTypesValue = $this->evaluateClothingTypesValue($data);
-
-        $total = $this->evaluateTotalPrice($clothingTypesValue, $data, $order);
-
-        if (floatval($total) === 0.0 && $order && $order->isPreRegistered()) {
-            return null;
-        }
-
-        if (floatval($total) === 0.0 && $order) {
-            return $order->original_price;
-        }
-
-        if (floatval($total) === 0.0) {
-            return null;
-        }
-
-        return $total;
     }
 
     /**
@@ -494,155 +558,5 @@ trait OrderTrait
         $removedFiles = array_diff($storedFiles, $uploadedFiles);
 
         FileHelper::deleteFiles($removedFiles, $field);
-    }
-
-    /**
-     * Registra ou atualiza as comissões após o cadastro de um pedido.
-     *
-     * @param \App\Models\Order $order
-     * @param bool $isUpdate
-     * @return void
-     */
-    public function handleCommissions(Order $order, $isUpdate = false): void
-    {
-        $order = $order->fresh();
-
-        $data = [
-            'print_commission' => AppConfig::get('orders', 'print_commission'),
-            'seam_commission' => $order->getCommissions()->toJson()
-        ];
-
-        if (!$isUpdate) {
-            $this->storeCommissions($order, $data);
-            return;
-        }
-
-        $this->updateCommissions($order, $data);
-    }
-
-    /**
-     * Armazena as comissões, apenas para usuários da produção.
-     *
-     * @param \App\Models\Order $order
-     * @param array $data
-     * @return void
-     */
-    public function storeCommissions(Order $order, array $data): void
-    {
-        $this->storeCommissionOnProduction(
-            $order->commissions()->create($data)
-        );
-    }
-
-    /**
-     * Atualiza as comissões, ou armazena, caso o pedido seja
-     * pré-registado e sofra uma atualização e conclua seu registro.
-     * Apenas atualiza as comissões se alguma quantidade for alterada,
-     * pois as comissões são baseadas apenas na quantidade e não no valor
-     * de cada camisa.
-     *
-     * @param \App\Models\Order $order
-     * @param array $data
-     * @return void
-     */
-    public function updateCommissions(Order $order, array $data): void
-    {
-        if (!$order->commission) {
-            $this->storeCommissions($order, $data);
-            return;
-        }
-
-        if (!$order->isQuantityChanged()) {
-            return;
-        }
-
-        $commission = $order->commission;
-        $commission->update($data);
-
-        $this->updateCommissionOnProduction($commission);
-    }
-
-    /**
-     * Armazena a comissão para o usuário.
-     *
-     * @param \App\Models\User $user
-     * @param \App\Models\Commission $commission
-     * @return \App\Models\User
-     */
-    public function storeUserCommission(User $user, Commission $commission): User
-    {
-        $user->commissions()->syncWithoutDetaching([
-            $commission->id => [
-                'role_id' => $user->role->id,
-                'commission_value' => $commission->getUserCommission($user)
-            ]
-        ]);
-
-        return $user->fresh();
-    }
-
-    /**
-     * Armazena comissões apenas para usuários da produção
-     *
-     * @param \App\Models\Commission $commission
-     * @return void
-     */
-    public function storeCommissionOnProduction(Commission $commission): void
-    {
-        $users = User::production()->get();
-
-        $users->each(function ($user) use ($commission) {
-            $this->storeUserCommission($user, $commission);
-        });
-    }
-
-    /**
-     * Retorna a comissão com pivô commissions_users.
-     * Se nao encontra a comissão é porque o usuário teve seu nível de
-     * privilégio recém alterado para produção.
-     *
-     * @param \App\Models\User $user
-     * @param \App\Models\Commission $commission
-     * @return \App\Models\Commission
-     */
-    public function getCommissionWithPivot(User $user, Commission $commission): Commission
-    {
-        $commissionWithPivot = $user->commissions()->find($commission->id);
-
-        if (!$commissionWithPivot) {
-            $user = $this->storeUserCommission($user, $commission);
-            $commissionWithPivot = $user->commissions()->find($commission->id);
-        }
-
-        return $commissionWithPivot;
-    }
-
-    /**
-     * Atualiza as comissões dos usuários da produção
-     *
-     * @param \App\Models\Commission $commission
-     * @return void
-     */
-    public function updateCommissionOnProduction(Commission $commission): void
-    {
-        $users = User::production()->get();
-
-        $users->each(function ($user) use ($commission) {
-            $commissionWithPivot = $this->getCommissionWithPivot($user, $commission);
-
-            $data['commission_value'] = $commissionWithPivot
-                ->pivot
-                ->commission
-                ->getUserCommission($user);
-
-            if ($commissionWithPivot->pivot->isConfirmed()) {
-                $data['confirmed_at'] = null;
-                $data['was_quantity_changed'] = true;
-            }
-
-            $user->commissions()->syncWithoutDetaching([
-                $commission->id => $data
-            ]);
-        });
     }
 }

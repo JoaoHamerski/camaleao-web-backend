@@ -55,7 +55,9 @@ class Order extends Model
         'art_paths',
         'size_paths',
         'payment_voucher_paths',
-        'total_clothings_value'
+        'total_clothings_value',
+        'total_garments_value',
+        'has_individual_names'
     ];
 
     public function getCreatedLog(): string
@@ -144,9 +146,19 @@ class Order extends Model
         return $this->hasMany(Note::class);
     }
 
-    public function commissions()
+    public function garments()
     {
-        return $this->hasMany(Commission::class);
+        return $this->hasMany(Garment::class);
+    }
+
+    public function getTotalGarmentsValueAttribute()
+    {
+        $INITIAL_VALUE = 0;
+
+        return $this->garments->reduce(function ($total, $garment) {
+            $totalGarment = bcadd($garment->value, $garment->sizesValue, 2);
+            return bcadd($totalGarment, $total, 2);
+        }, $INITIAL_VALUE);
     }
 
     public function getHasOrderControlAttribute()
@@ -269,33 +281,6 @@ class Order extends Model
         return $this->status->sector();
     }
 
-    public function commission()
-    {
-        return $this->hasOne(Commission::class);
-    }
-
-    public function isQuantityChanged()
-    {
-        $oldClothingTypes = collect(json_decode($this->commission->seam_commission));
-        $newClothingTypes = $this->clothingTypes;
-
-        $pluckKeyAndQuantity = fn ($clothingType) => [
-            'key' => $clothingType->key,
-            'quantity' => $clothingType->quantity
-        ];
-
-        $oldClothingTypes->transform($pluckKeyAndQuantity);
-        $newClothingTypes->transform($pluckKeyAndQuantity);
-
-        return $newClothingTypes->some(function ($newClothingType) use ($oldClothingTypes) {
-            $index = $oldClothingTypes->search(
-                fn ($item) => $item['key'] === $newClothingType['key']
-            );
-
-            return $oldClothingTypes[$index]['quantity'] !== $newClothingType['quantity'];
-        });
-    }
-
     public function scopePreRegistered(Builder $query)
     {
         return $query->whereNull('quantity')
@@ -308,11 +293,6 @@ class Order extends Model
         return $query->whereNotNull('quantity')
             ->whereNotNull('price')
             ->whereNotNull('client_id');
-    }
-
-    public function getCommissions()
-    {
-        return $this->clothingTypes;
     }
 
     public function clothingTypes()
@@ -338,6 +318,11 @@ class Order extends Model
             ->where('is_confirmed', true)
             ->whereNotNull('sponsorship_client_id')
             ->exists();
+    }
+
+    public function getHasIndividualNamesAttribute()
+    {
+        return $this->garments->contains(fn ($garment) => $garment->individual_names);
     }
 
     public function getTotalPaidNonSponsorAttribute()

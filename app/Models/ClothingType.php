@@ -20,7 +20,6 @@ class ClothingType extends Model
         'name',
         'is_hidden',
         'order',
-        'commission'
     ];
 
     protected $appends = [

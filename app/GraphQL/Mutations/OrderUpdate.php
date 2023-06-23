@@ -29,13 +29,6 @@ class OrderUpdate
             $order->clothingTypes()->sync(
                 $this->getFilledClothingTypes($data)
             );
-
-            if (!$order->isPreRegistered()) {
-                $this->handleCommissions(
-                    $order->fresh(),
-                    $isUpdate = true
-                );
-            }
         }
 
         if ($order->isDirty('print_date')) {
@@ -43,6 +36,10 @@ class OrderUpdate
         }
 
         $order->save();
+
+        if (!isset($data['clothing_types'])) {
+            $this->syncItems($data, $order, true);
+        }
 
         return $order;
     }

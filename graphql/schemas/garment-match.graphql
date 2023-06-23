@@ -1,0 +1,46 @@
+type GarmentMatch @guard {
+  id: ID!
+  model: Model
+  material: Material
+  neck_type: NeckType @rename(attribute: "neckType")
+  sleeve_type: SleeveType @rename(attribute: "sleeveType")
+  values: [GarmentValue!]!
+  sizes: [GarmentSize!]!
+  unique_value: String
+}
+
+input GarmentMatchSizeInput {
+  id: ID
+  is_shown: Boolean!
+  name: String
+  value: String
+}
+
+input GarmentMatchValueInput {
+  start: String
+  end: String
+  value: String
+}
+
+input GarmentMatchInput {
+  is_unique_value: Boolean!
+  material_id: ID
+  model_id: ID
+  neck_type_id: ID
+  sleeve_type_id: ID
+  unique_value: String
+  sizes: [GarmentMatchSizeInput]!
+  values: [GarmentMatchValueInput]!
+}
+
+extend type Query {
+  garmentMatches: [GarmentMatch!]!
+    @all
+    @orderBy(column: "created_at", direction: DESC)
+}
+
+extend type Mutation {
+  garmentMatchCreate(input: GarmentMatchInput @spread): GarmentMatch!
+  garmentMatchUpdate(id: ID!, input: GarmentMatchInput @spread): GarmentMatch!
+  garmentMatchDelete(id: ID!): GarmentMatch!
+}
