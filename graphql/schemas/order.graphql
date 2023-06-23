@@ -95,7 +95,6 @@ input OrderInput {
   code: ID
   discount: String
   shipping_value: String
-  down_payment: String
   payment_via_id: ID
   delivery_date: String
   clothing_types: [ClothingTypesInput]

@@ -30,10 +30,6 @@ class OrderCreate
 
         $this->syncItems($data, $order);
 
-        if ($this->hasDownPayment($data)) {
-            $this->createDownPayment($order, $data);
-        }
-
         return $order;
     }
 
@@ -50,7 +46,11 @@ class OrderCreate
             'payment_via_id' => $data['payment_via_id'],
             'value' => $data['down_payment'],
             'date' => Carbon::now()->format('d/m/Y'),
-            'note'  => 'Pagamento de entrada'
+            'note'  => 'Pagamento de entrada',
+            'add_rest_to_credits' => false,
+            'use_client_balance' => false,
+            'is_sponsor' => false,
+            'is_shipping' => false
         ]);
     }
 }
