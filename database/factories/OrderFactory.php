@@ -61,6 +61,11 @@ class OrderFactory extends Factory
     public function configure()
     {
         return $this->afterCreating(function (Order $order) {
+            if ($this->faker->boolean(100)) {
+                $this->populatePreRegistered($order);
+                return;
+            }
+
             $this->populateClothes($order);
             $this->populateValuesAndQuantity($order);
         });
@@ -97,10 +102,10 @@ class OrderFactory extends Factory
 
     protected function populateClothes(Order $order)
     {
-        // if ($this->faker->boolean(5)) {
+
+        // Ativo quando quiser testar retrocompatibilidade com clothingTypes
         //     $this->populateClothingTypes($order);
         //     return;
-        // }
 
         $this->populateGarments($order);
     }

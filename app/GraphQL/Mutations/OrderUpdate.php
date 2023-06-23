@@ -37,7 +37,9 @@ class OrderUpdate
 
         $order->save();
 
-        $this->syncItems($data, $order, true);
+        if (!isset($data['clothing_types'])) {
+            $this->syncItems($data, $order, true);
+        }
 
         return $order;
     }

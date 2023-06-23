@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
                 SleeveTypeSeeder::class,
                 GarmentSizeSeeder::class,
                 GarmentMatchSeeder::class,
+                ClothingTypeSeeder::class,
                 ExpenseSeeder::class,
                 ClientSeeder::class,
                 SectorSeeder::class,

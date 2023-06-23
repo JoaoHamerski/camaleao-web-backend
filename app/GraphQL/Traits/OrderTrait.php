@@ -8,6 +8,7 @@ use App\Util\Formatter;
 use App\Util\FileHelper;
 use App\Models\ClothingType;
 use App\Models\GarmentMatch;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
@@ -319,11 +320,11 @@ trait OrderTrait
             : Rule::unique('orders');
     }
 
-    private function rules($data, Order $order = null)
+    private function getGeneralRules($data, $order = null)
     {
         $originalPrice = $this->getOriginalPrice($data, $order);
 
-        $rules = [
+        $rules[] = [
             'client_id' => [
                 'nullable',
                 'exists:clients,id'
@@ -363,8 +364,30 @@ trait OrderTrait
             'art_paths.*' => ['nullable', 'file', 'max:1024'],
             'size_paths.*' => ['nullable', 'file', 'max:1024'],
             'payment_voucher_paths.*' => ['nullable', 'file', 'max:1024'],
+        ];
+
+        if ($order) {
+            $rules['price'][] = 'min_currency:' . $order->total_paid;
+        }
+
+        return Arr::collapse($rules);
+    }
+
+    private function getClothingTypesRules($data, $order = null)
+    {
+        return [
             'clothing_types.*.value' => ['nullable', 'numeric', 'max:999999'],
             'clothing_types.*.quantity' => ['nullable', 'integer', 'max:9999'],
+        ];
+    }
+
+    private function getGarmentsRules($data, $order = null)
+    {
+        if ($order && $order->clothingTypes()->count()) {
+            return [];
+        }
+
+        return [
             'garments' => ['required'],
             'garments.*.individual_names' => ['required', 'boolean'],
             'garments.*.model_id' => ['required', 'exists:models,id'],
@@ -377,12 +400,16 @@ trait OrderTrait
             'garments.*.items.*.size_id' => ['sometimes', 'required', 'exists:garment_sizes,id'],
             'garments.*.items_individual.*.size_id' => ['sometimes', 'required', 'exists:garment_sizes,id']
         ];
+    }
 
-        if ($order) {
-            $rules['price'][] = 'min_currency:' . $order->total_paid;
-        }
+    private function rules($data, Order $order = null)
+    {
 
-        return $rules;
+        $rules[] = $this->getGeneralRules($data, $order);
+        $rules[] = $this->getClothingTypesRules($data, $order);
+        $rules[] = $this->getGarmentsRules($data, $order);
+
+        return Arr::collapse($rules);
     }
 
     private function validator(array $data, Order $order = null)
