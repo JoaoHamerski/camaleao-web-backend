@@ -41,6 +41,8 @@ extend type Query {
 
 extend type Mutation {
   garmentMatchCreate(input: GarmentMatchInput @spread): GarmentMatch!
+    @canAccess(roles: ["gerencia"])
   garmentMatchUpdate(id: ID!, input: GarmentMatchInput @spread): GarmentMatch!
-  garmentMatchDelete(id: ID!): GarmentMatch!
+    @canAccess(roles: ["gerencia"])
+  garmentMatchDelete(id: ID!): GarmentMatch! @canAccess(roles: ["gerencia"])
 }
