@@ -8,6 +8,7 @@ use App\Util\Formatter;
 use App\Util\FileHelper;
 use App\Models\ClothingType;
 use App\Models\GarmentMatch;
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
@@ -329,6 +330,7 @@ trait OrderTrait
     private function getGeneralRules($data, $order = null)
     {
         $originalPrice = $this->getOriginalPrice($data, $order);
+        $deliveryDateMax = Carbon::now()->addMonth()->toDateString();
 
         $rules[] = [
             'client_id' => [
@@ -352,7 +354,7 @@ trait OrderTrait
                 'numeric',
                 'required_with:discount'
             ],
-            'delivery_date' => ['required', 'date_format:Y-m-d'],
+            'delivery_date' => ['required', 'date_format:Y-m-d', "before_or_equal:$deliveryDateMax"],
             'down_payment' => [
                 'sometimes',
                 $this->getDownPaymentRule($data['price'] ?? null)
@@ -432,6 +434,7 @@ trait OrderTrait
     {
         $originalPrice = $this->getOriginalPrice($data);
         $price = isset($data['price']) ? $data['price'] : null;
+        $deliveryDateMaxFormatted = Carbon::now()->addMonth()->format('d/m/Y');
 
         return [
             'code.required' => __('validation.rules.required'),
@@ -451,14 +454,11 @@ trait OrderTrait
             'payment_via_id.required_with' => __('validation.custom.orders.payment_via_id|required_with'),
             'price.min_currency' => __('validation.custom.orders.price|min_currency'),
             'price.required' => __('validation.custom.orders.price|required'),
-            'print_date.required' => __('validation.rules.required'),
-            'print_date.date_format' =>  __('validation.rules.date'),
-            'seam_date.required' => __('validation.rules.required'),
-            'seam_date.date_format' =>  __('validation.rules.date'),
             'delivery_date.required' => __('validation.rules.required'),
             'delivery_date.date_format' =>  __('validation.rules.date'),
             'garments.*.items.*.size_id.required' => 'Tamanho é obrigatório',
             'garments.*.items.*.quantity.required' => 'Qtd. é obrigatória',
+            'delivery_date.before_or_equal' => 'A data de entrega deve ser anterior ou igual a ' . $deliveryDateMaxFormatted
         ];
     }
 
