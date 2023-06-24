@@ -16,10 +16,8 @@ class OrderCreate
      */
     public function __invoke($_, array $args)
     {
-        $data = $this->getFormattedData($args);
-
         $client = Client::find($args['client_id']);
-
+        $data = $this->getFormattedData($args);
         $data = $this->evaluateOrderAttributes($data);
 
         $this->validator($data)->validate();

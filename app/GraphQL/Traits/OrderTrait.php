@@ -173,7 +173,9 @@ trait OrderTrait
 
         return $sizes->reduce(function ($total, $size) use ($garmentMatch) {
             $garmentSize = $garmentMatch->sizes()->find($size['size_id']);
-            $sizeSum = bcmul($garmentSize->pivot->value, $size['quantity'], 2);
+            $sizeSum = $garmentSize
+                ? bcmul($garmentSize->pivot->value, $size['quantity'], 2)
+                : 0;
 
             return bcadd($total, $sizeSum, 2);
         }, 0);
@@ -182,6 +184,10 @@ trait OrderTrait
     private function getGarmentValue($garment)
     {
         $garmentMatch = $this->findGarmentMatch($garment);
+
+        if (!$garmentMatch) {
+            return 0;
+        }
 
         $quantity = $this->getGarmentQuantity($garment);
         $value = $this->getGarmentMatchValue($garmentMatch, $quantity);
@@ -394,11 +400,10 @@ trait OrderTrait
             'garments.*.material_id' => ['nullable', 'exists:materials,id'],
             'garments.*.neck_type_id' => ['nullable', 'exists:neck_types,id'],
             'garments.*.sleeve_type_id' => ['nullable', 'exists:sleeve_types,id'],
-            'garments.*.items' => ['sometimes', 'required', 'array'],
-            'garments.*.items_individual' => ['sometimes', 'required', 'string'],
-            'garments.*.items.*.quantity' => ['sometimes', 'required'],
-            'garments.*.items.*.size_id' => ['sometimes', 'required', 'exists:garment_sizes,id'],
-            'garments.*.items_individual.*.size_id' => ['sometimes', 'required', 'exists:garment_sizes,id']
+            'garments.*.items' => ['required', 'required', 'array'],
+            'garments.*.items_individual' => ['sometimes', 'required', 'json'],
+            'garments.*.items.*.quantity' => ['required', 'required'],
+            'garments.*.items.*.size_id' => ['required', 'required', 'exists:garment_sizes,id'],
         ];
     }
 
@@ -452,6 +457,8 @@ trait OrderTrait
             'seam_date.date_format' =>  __('validation.rules.date'),
             'delivery_date.required' => __('validation.rules.required'),
             'delivery_date.date_format' =>  __('validation.rules.date'),
+            'garments.*.items.*.size_id.required' => 'Tamanho é obrigatório',
+            'garments.*.items.*.quantity.required' => 'Qtd. é obrigatória',
         ];
     }
 
