@@ -34,7 +34,7 @@ input GarmentMatchInput {
 }
 
 extend type Query {
-  garmentMatches: [GarmentMatch!]!
+  garmentMatches(trashed: Trashed @trashed): [GarmentMatch!]!
     @all
     @orderBy(column: "created_at", direction: DESC)
 }
