@@ -44,7 +44,7 @@ trait OrderTrait
         }
 
         $inputGarments->each(function ($inputGarment) use ($order) {
-            $match = $this->findGarmentMatch($inputGarment);
+            $match = $this->findGarmentMatch($inputGarment, $order);
             $items = $inputGarment['items'];
 
             $garment = $order->garments()
@@ -140,11 +140,7 @@ trait OrderTrait
 
     private function findGarmentMatch($garmentData)
     {
-        return GarmentMatch::where('model_id', $garmentData['model_id'])
-            ->where('material_id', $garmentData['material_id'])
-            ->where('neck_type_id', $garmentData['neck_type_id'])
-            ->where('sleeve_type_id', $garmentData['sleeve_type_id'])
-            ->first();
+        return GarmentMatch::withTrashed()->find($garmentData['match_id']);
     }
 
     private function getGarmentMatchValue($garmentMatch, $quantity)
@@ -406,12 +402,12 @@ trait OrderTrait
             'garments.*.items_individual' => ['sometimes', 'required', 'json'],
             'garments.*.items.*.quantity' => ['required', 'required'],
             'garments.*.items.*.size_id' => ['required', 'required', 'exists:garment_sizes,id'],
+            'garments.*.match_id' => ['required', 'exists:garment_matches,id']
         ];
     }
 
     private function rules($data, Order $order = null)
     {
-
         $rules[] = $this->getGeneralRules($data, $order);
         $rules[] = $this->getClothingTypesRules($data, $order);
         $rules[] = $this->getGarmentsRules($data, $order);
@@ -458,6 +454,7 @@ trait OrderTrait
             'delivery_date.date_format' =>  __('validation.rules.date'),
             'garments.*.items.*.size_id.required' => 'Tamanho é obrigatório',
             'garments.*.items.*.quantity.required' => 'Qtd. é obrigatória',
+            'garments.*.match_id.required' => 'Selecione uma combinação',
             'delivery_date.before_or_equal' => 'A data de entrega deve ser anterior ou igual a ' . $deliveryDateMaxFormatted
         ];
     }

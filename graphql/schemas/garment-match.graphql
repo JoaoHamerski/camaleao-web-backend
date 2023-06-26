@@ -7,6 +7,8 @@ type GarmentMatch @guard {
   values: [GarmentValue!]!
   sizes: [GarmentSize!]!
   unique_value: String
+  created_at: DateTime
+  deleted_at: DateTime
 }
 
 input GarmentMatchSizeInput {
@@ -34,8 +36,7 @@ input GarmentMatchInput {
 }
 
 extend type Query {
-  garmentMatches(trashed: Trashed @trashed): [GarmentMatch!]!
-    @all
+  garmentMatches(order_id: ID): [GarmentMatch!]!
     @orderBy(column: "created_at", direction: DESC)
 }
 

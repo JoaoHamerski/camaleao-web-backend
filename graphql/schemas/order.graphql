@@ -83,6 +83,7 @@ input OrderGarmentsInput {
   individual_names: Boolean
   items: [OrderGarmentItemInput!]!
   items_individual: [OrderGarmentIndItemInput!]!
+  match_id: ID
   model_id: ID
   material_id: ID
   neck_type_id: ID
