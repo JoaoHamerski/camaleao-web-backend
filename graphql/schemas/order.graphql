@@ -7,6 +7,8 @@ type Order @guard {
   quantity: Int
   price: Float
   delivery_date: Date
+  print_date: Date
+  seam_date: Date
   discount: Float
   shipping_value: Float
   total_paid_sponsor: Float
