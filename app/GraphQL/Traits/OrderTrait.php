@@ -454,7 +454,7 @@ trait OrderTrait
             'delivery_date.date_format' =>  __('validation.rules.date'),
             'garments.*.items.*.size_id.required' => 'Tamanho é obrigatório',
             'garments.*.items.*.quantity.required' => 'Qtd. é obrigatória',
-            'garments.*.match_id.required' => 'Selecione uma combinação',
+            'garments.*.match_id.required' => 'Selecione uma combinação válida.',
             'delivery_date.before_or_equal' => 'A data de entrega deve ser anterior ou igual a ' . $deliveryDateMaxFormatted
         ];
     }
