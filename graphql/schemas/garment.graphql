@@ -16,3 +16,25 @@ type GarmentIndividualName {
   size: String
   size_id: ID
 }
+
+enum GarmentOptionReorderOption {
+  MODEL @enum(value: "model")
+  MATERIAL @enum(value: "material")
+  NECK_TYPE @enum(value: "neck_type")
+  SLEEVE_TYPE @enum(value: "sleeve_type")
+  GARMENT_SIZE @enum(value: "garment_size")
+}
+
+input GarmentOptionReorder {
+  id: ID
+  order: Int
+}
+
+input GarmentOptionReorderInput {
+  option: GarmentOptionReorderOption
+  items: [GarmentOptionReorder]!
+}
+
+extend type Mutation {
+  garmentOptionReorder(input: GarmentOptionReorderInput! @spread): Boolean
+}
