@@ -1,8 +1,16 @@
 <?php
 
 use App\Http\Controllers\ImagesController;
+use App\Http\Controllers\PDFBudget;
+use App\Http\Controllers\PDFExpenseReport;
+use App\Http\Controllers\PDFOrderReport;
+use App\Http\Controllers\PDFOrdersReport;
+use App\Http\Controllers\PDFOrdersSizesReport;
+use App\Http\Controllers\PDFPreviewReceipt;
+use App\Http\Controllers\PDFReceipt;
+use App\Http\Controllers\PDFWeeklyCalendar;
+
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PDFsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,56 +23,13 @@ use App\Http\Controllers\PDFsController;
 |
 */
 
-Route::prefix('images')->name('images.')->group(function () {
-    Route::get('/view', [
-        ImagesController::class,
-        'show'
-    ])->name('show');
-});
-
 Route::prefix('pdf')->name('pdf.')->group(function () {
-    Route::get('receipt/preview', [
-        PDFsController::class,
-        'previewReceipt'
-    ])->name('receipt-preview');
-
-    Route::get('receipt/{receipt}', [
-        PDFsController::class,
-        'showReceipt'
-    ])->name('receipt');
-
-    Route::get('budget/{budget}', [
-        PDFsController::class,
-        'showBudget'
-    ])->name('budget');
-
-    Route::get('orders/report', [
-        PDFsController::class,
-        'ordersReport'
-    ])->name('orders-report');
-
-    Route::get('orders/report/print-date', [
-        PDFsController::class,
-        'ordersReportPrintDate'
-    ])->name('orders-report-print-date');
-
-    Route::get('orders/report/{order}', [
-        PDFsController::class,
-        'orderReport'
-    ])->name('order-report');
-
-    Route::get('weekly-calendar', [
-        PDFsController::class,
-        'ordersWeeklyCalendar'
-    ])->name('orders-weekly-calendar');
-
-    Route::get('expenses/report', [
-        PDFsController::class,
-        'expensesReport'
-    ])->name('expenses-report');
-
-    Route::get('orders/sizes', [
-        PDFsController::class,
-        'ordersSizesReport'
-    ])->name('orders-sizes');
+    Route::get('receipt/preview', PDFPreviewReceipt::class)->name('receipt-preview');
+    Route::get('receipt/{receipt}', PDFReceipt::class)->name('receipt');
+    Route::get('budget/{budget}', PDFBudget::class)->name('budget');
+    Route::get('orders/report', PDFOrdersReport::class)->name('orders-report');
+    Route::get('orders/report/{order}', PDFOrderReport::class)->name('order-report');
+    Route::get('weekly-calendar', PDFWeeklyCalendar::class)->name('orders-weekly-calendar');
+    Route::get('expenses/report', PDFExpenseReport::class)->name('expenses-report');
+    Route::get('orders/sizes', PDFOrdersSizesReport::class)->name('orders-sizes');
 });
