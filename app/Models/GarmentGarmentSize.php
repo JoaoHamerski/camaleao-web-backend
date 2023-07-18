@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Error;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class GarmentGarmentSize extends Pivot
@@ -21,7 +22,12 @@ class GarmentGarmentSize extends Pivot
             return null;
         }
 
+        if (!$this->pivotParent->match) {
+            return null;
+        }
+
         $sizes = $this->pivotParent->match->sizes;
+
         $matchedSize = $sizes->first(fn ($size) => $size->id === $this->garment_size_id);
 
         return $matchedSize->pivot->value;

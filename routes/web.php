@@ -62,4 +62,9 @@ Route::prefix('pdf')->name('pdf.')->group(function () {
         PDFsController::class,
         'expensesReport'
     ])->name('expenses-report');
+
+    Route::get('orders/sizes', [
+        PDFsController::class,
+        'ordersSizesReport'
+    ])->name('orders-sizes');
 });

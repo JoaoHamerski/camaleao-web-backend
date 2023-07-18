@@ -103,8 +103,10 @@ class OrderFactory extends Factory
     protected function populateClothes(Order $order)
     {
         // Ativo quando quiser testar retrocompatibilidade com clothingTypes
+        // if ($this->faker->boolean(20)) {
         //     $this->populateClothingTypes($order);
         //     return;
+        // }
 
         $this->populateGarments($order);
     }

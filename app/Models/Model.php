@@ -13,4 +13,9 @@ class Model extends LaravelModel
         'name',
         'order'
     ];
+
+    public function matches()
+    {
+        return $this->hasMany(GarmentMatch::class);
+    }
 }

@@ -14,7 +14,7 @@
 
 .header .header-camaleao-logo {
   width: 25%;
-  opacity: .5;
+  opacity: .2;
 }
 
 .header .header-title {
@@ -43,6 +43,7 @@
 footer {
   width: 100%;
   position: fixed;
+  font-size: .8rem;
   right: 0;
   bottom: 0;
   border-top: 1px solid #6c757d6b;
@@ -90,4 +91,19 @@ footer .page:after {
 
 .table-striped tbody tr:nth-child(odd) td {
   background-color: #6c757d17;
+}
+
+.table.table-bordered,
+.table.table-bordered tr,
+.table.table-bordered th,
+.table.table-bordered td
+{
+  border: 1px solid rgba(0, 0, 0, .7);
+  border-collapse: collapse !important;
+}
+
+.table-sm td,
+.table-sm th
+{
+  padding: .2rem;
 }

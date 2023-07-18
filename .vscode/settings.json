@@ -17,6 +17,7 @@
     "cSpell.words": [
         "Activitylog",
         "Authenticatable",
+        "colspans",
         "csrf",
         "Csrf",
         "IFNULL",

@@ -151,6 +151,11 @@ input OrdersWeeklyCalendarReport {
   status_id: ID
 }
 
+input OrdersSizesReportInput {
+  initial_date: String
+  final_date: String
+}
+
 extend type Query {
   order(id: ID! @eq, client_id: ID): Order
     @find
@@ -178,6 +183,9 @@ extend type Query {
     @canAccess(
       roles: ["gerencia", "atendimento", "design", "costura", "estampa"]
     )
+
+  ordersSizesReport(input: OrdersSizesReportInput @spread): String
+    @canAccess(roles: ["gerencia", "atendimento"])
 
   ordersActivities(id: ID!): [Activity] @canAccess(roles: ["gerencia"])
 }

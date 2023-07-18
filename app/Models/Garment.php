@@ -102,4 +102,9 @@ class Garment extends Model
             ->withPivot(['id', 'quantity'])
             ->using(GarmentGarmentSize::class);
     }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }
