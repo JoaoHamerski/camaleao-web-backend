@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>@yield('title')</title>
+  <title>@yield('title') - Camaleão Web</title>
   @include('pdf.styles')
 
   @stack('styles')

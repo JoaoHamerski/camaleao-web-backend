@@ -7,5 +7,9 @@
     "older": "Mais antigo",
     "newer": "Mais recente",
     "all": "Todos",
-    "open": "Em aberto"
+    "open": "Em aberto",
+    "model": "Modelo",
+    "neck_type": "Tipo de gola",
+    "sleeve_type": "Tipo de manga",
+    "material": "Material"
 }

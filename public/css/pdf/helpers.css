@@ -95,3 +95,11 @@
 .text-uppercase {
   text-transform: uppercase;
 }
+
+.text-black {
+  color: black;
+}
+
+.decoration-none {
+  text-decoration: none;
+}

@@ -99,6 +99,7 @@ class Garment extends Model
     public function sizes()
     {
         return $this->belongsToMany(GarmentSize::class)
+            ->orderBy('order', 'ASC')
             ->withPivot(['id', 'quantity'])
             ->using(GarmentGarmentSize::class);
     }
