@@ -151,9 +151,18 @@ input OrdersWeeklyCalendarReport {
   status_id: ID
 }
 
+enum OrdersSizesReportGroupsEnum {
+  MODEL @enum(value: "model")
+  MATERIAL @enum(value: "material")
+  NECK_TYPE @enum(value: "neck_type")
+  SLEEVE_TYPE @enum(value: "sleeve_type")
+}
+
 input OrdersSizesReportInput {
   initial_date: String
   final_date: String
+  groups: [OrdersSizesReportGroupsEnum]
+  indicators: Boolean
 }
 
 extend type Query {
@@ -184,7 +193,7 @@ extend type Query {
       roles: ["gerencia", "atendimento", "design", "costura", "estampa"]
     )
 
-  ordersSizesReport(input: OrdersSizesReportInput @spread): String
+  ordersSizesReport(input: OrdersSizesReportInput! @spread): String
     @canAccess(roles: ["gerencia", "atendimento"])
 
   ordersActivities(id: ID!): [Activity] @canAccess(roles: ["gerencia"])

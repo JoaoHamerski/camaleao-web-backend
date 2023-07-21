@@ -263,6 +263,8 @@ return [
         'material_id' => 'material',
         'neck_type_id' => 'tipo de gola',
         'sleeve_type_id' => 'tipo de manga',
+        'initial_date' => 'data inicial',
+        'final_date' => 'data final'
     ],
 
 ];

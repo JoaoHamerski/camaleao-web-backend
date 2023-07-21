@@ -69,7 +69,7 @@
 }
 
 .page-break-after-always {
-  page-break-after: always;
+  page-break-after: always !important;
 }
 
 .page-break-before-always {
@@ -102,4 +102,8 @@
 
 .decoration-none {
   text-decoration: none;
+}
+
+.small {
+  font-size: .8rem;
 }

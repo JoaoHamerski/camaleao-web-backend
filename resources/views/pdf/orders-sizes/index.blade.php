@@ -4,20 +4,27 @@
 
 @section('content')
 
-@foreach ($types as $type => $model)
-    @foreach ($ordersSizes[$type] as $key => $orders)
-    <div
-        @class([
-        'page-break-inside-avoid',
-        'page-break-after-always' => !$loop->last
-        ])
-    >
-        <table class="table table-sm table-bordered">
+@empty ($ordersSizes)
+    <div class="text-center text-secondary">
+        Nenhum pedido encontrado
+    </div>
+@else
+    @foreach ($types as $garmentType => $model)
+        @foreach ($ordersSizes[$garmentType] as $key => $orders)
+
+        <table
+            @class([
+                'page-break-after-always' => !$loop->last,
+                'page-break-inside-avoid' => !$loop->first,
+                'table table-sm table-bordered'
+            ])
+        >
         @include('pdf.orders-sizes.table-head')
         @include('pdf.orders-sizes.table-body')
         </table>
-    </div>
+
+        @endforeach
     @endforeach
-@endforeach
+@endif
 
 @endsection

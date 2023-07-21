@@ -2,27 +2,43 @@
 
 namespace App\Http\Controllers;
 
+use App\GraphQL\Queries\OrdersSizesReport;
 use App\Models\GarmentMatch;
 use App\Models\GarmentSize;
+use App\Models\Material;
 use App\Models\Model;
 use App\Models\NeckType;
+use App\Models\SleeveType;
 use App\Util\Mask;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class PDFOrdersSizesReport extends Controller
 {
     protected static $TYPES_OF_GARMENTS = [
         'model' => Model::class,
-        'neck_type' => NeckType::class
+        'material' => Material::class,
+        'neck_type' => NeckType::class,
+        'sleeve_type' => SleeveType::class
+    ];
+
+    protected static $INCLUDED_IN_MAP = [
+        'model' => ['abbr' => 'MO'],
+        'material' => ['abbr' => 'MA'],
+        'neck_type' => ['abbr' => 'TG'],
+        'sleeve_type' => ['abbr' => 'TM']
     ];
 
     public function __invoke(Request $request)
     {
-        $types = static::$TYPES_OF_GARMENTS;
+        OrdersSizesReport::validator($request->all())->validate();
+
+        $displayIndicators = $request->get('indicators');
+        $types = $this->getTypes($request->only('groups'));
         $dates = $request->only(['initial_date', 'final_date']);
-        $ordersSizes = $this->getOrdersSizes($dates);
+        $ordersSizes = $this->getOrdersSizes($dates, $types, $displayIndicators);
 
         $pdf = PDF::loadView(
             'pdf.orders-sizes.index',
@@ -31,38 +47,134 @@ class PDFOrdersSizesReport extends Controller
                 'ordersSizes' => $ordersSizes,
                 'title' => 'Relatório de tamanhos',
                 'subtitle' => $this->getSubtitle($dates),
+                'indicators' => $displayIndicators,
+                'includedInMap' => static::$INCLUDED_IN_MAP,
                 'isColumnEmpty' => fn ($size, $metadata) => $size['quantity'] === 0
                     && !in_array($size['id'], Arr::pluck($metadata['sizes'], 'id')),
+                'getPresentInText' => function ($order, $currentIndex) use ($types) {
+                    $indexes = collect($order['present_in']);
+                    $grouped = [];
+
+                    foreach ($types as $type => $model) {
+                        $abbr = static::$INCLUDED_IN_MAP[$type]['abbr'];
+                        $group = $indexes->filter(fn ($item) => Str::contains($item, $type));
+
+                        $indexesPresent = $group->map(fn ($item) => Arr::last(explode(':', $item)) + 1);
+
+                        $grouped[] = $abbr . ': ' . $indexesPresent->implode(', ');
+                    }
+
+                    if ($indexesPresent->isEmpty()) {
+                        return '';
+                    }
+
+                    return implode(' | ', $grouped);
+                }
             ]
         );
 
         return $pdf->stream('relatorio-por-tamanhos');
     }
 
-    public function getOrdersSizes($data)
+    public function getTypes($types)
+    {
+        return array_filter(
+            static::$TYPES_OF_GARMENTS,
+            fn ($_, $key) => in_array($key, $types['groups']),
+            ARRAY_FILTER_USE_BOTH
+        );
+    }
+
+    public function getOrdersSizes($dates, $types, $displayIndicators)
     {
         $query = GarmentMatch::join('garments', 'garment_matches.id', '=', 'garments.garment_match_id')
             ->join('garment_garment_size', 'garments.id', '=', 'garment_garment_size.garment_id')
             ->join('garment_sizes', 'garment_garment_size.garment_size_id', '=', 'garment_sizes.id')
             ->join('orders', 'garments.order_id', '=', 'orders.id');
 
-        $this->queryDates($query, $data);
-        $this->querySelect($query);
+        $this->queryDates($query, $dates, $types);
+        $this->querySelect($query, $types);
 
         $orders = $query->get();
 
-        $groupedOrders = $this->getGroupedOrders($orders);
-        $groupedOrders = $this->sortGroupsByMetadataOrder($groupedOrders);
+        if ($orders->isEmpty()) {
+            return [];
+        }
+
+        $groupedOrders = $this->getGroupedOrders($orders, $types);
+        $groupedOrders = $this->sortOrders($groupedOrders, $types);
+        $groupedOrders = $this->sortGroupsByMetadataOrder($groupedOrders, $types);
+
+        if ($displayIndicators) {
+            $groupedOrders = $this->addIndicatorsToOrders($groupedOrders, $types);
+        }
+
+        $groupedOrders = $this->reindexAssocArray($groupedOrders);
 
         return $groupedOrders;
     }
 
-    public function querySelect($ordersQuery)
+    public function reindexAssocArray($groupedOrders)
+    {
+        return array_map(fn ($group) => array_values($group), $groupedOrders);
+    }
+
+    public function sortOrders($groupedOrders, $types)
+    {
+        foreach ($types as $type => $model) {
+            foreach ($groupedOrders[$type] as $key => $orders) {
+                $groupedOrders[$type][$key] = $orders->sortByDesc('created_at');
+            }
+        }
+
+        return $groupedOrders;
+    }
+
+    public function addIndicatorsToOrders($groupedOrders, $types)
+    {
+        $groupedOrders = array_map(fn ($item) => array_values($item), $groupedOrders);
+        $groupedIds = [];
+
+        foreach ($types as $type => $model) {
+            foreach ($groupedOrders[$type] as $key => $orders) {
+                $groupedIds[$type][$key] = Arr::pluck($orders, 'id');
+            }
+        }
+
+        foreach ($types as $type => $model) {
+            foreach ($groupedOrders[$type] as $groupKey => $orders) {
+                foreach ($orders as $key => $order) {
+                    $groupedOrders[$type][$groupKey][$key] = array_merge($order, [
+                        'present_in' => $this->indexesWhereOrderIsPresent($groupedIds, $types, $order)
+                    ]);
+                }
+            }
+        }
+
+        return $groupedOrders;
+    }
+
+    public function indexesWhereOrderIsPresent($groupedIds, $types, $order)
+    {
+        $indexes = [];
+
+        foreach ($types as $type => $model) {
+            foreach ($groupedIds[$type] as $key => $ids) {
+                if (in_array($order['id'], $ids)) {
+                    $indexes[] = "$type:$key";
+                }
+            }
+        }
+
+        return $indexes;
+    }
+
+    public function querySelect($ordersQuery, $types)
     {
         $typesToInclude = array_map(
             fn ($_, $type) => "garment_matches.{$type}_id",
-            static::$TYPES_OF_GARMENTS,
-            array_keys(static::$TYPES_OF_GARMENTS)
+            $types,
+            array_keys($types)
         );
 
         $ordersQuery->select(array_merge([
@@ -77,25 +189,25 @@ class PDFOrdersSizesReport extends Controller
         ], $typesToInclude));
     }
 
-    public function queryDates($ordersQuery, $data)
+    public function queryDates($ordersQuery, $dates)
     {
-        if (isset($data['final_date'])) {
+        if (isset($dates['final_date'])) {
             $ordersQuery->whereBetween('orders.created_at', [
-                $data['initial_date'],
-                $data['final_date'] . ' ' . '23:59:59'
+                $dates['initial_date'],
+                $dates['final_date'] . ' ' . '23:59:59'
             ]);
 
             return;
         }
 
-        $ordersQuery->whereDate('orders.created_at', $data['initial_date']);
+        $ordersQuery->whereDate('orders.created_at', $dates['initial_date']);
     }
 
-    public function getGroupedOrders($orders)
+    public function getGroupedOrders($orders, $types)
     {
         $group = [];
 
-        foreach (static::$TYPES_OF_GARMENTS as $type => $model) {
+        foreach ($types as $type => $model) {
             $group[$type] = $this->getFormattedOrders($orders, "{$type}_id");
             $group["{$type}_metadata"] = $this->getMetadata($group[$type], $type);
         }
@@ -103,11 +215,11 @@ class PDFOrdersSizesReport extends Controller
         return $group;
     }
 
-    public function sortGroupsByMetadataOrder($groupedOrders)
+    public function sortGroupsByMetadataOrder($groupedOrders, $types)
     {
         $groups = [];
 
-        foreach (static::$TYPES_OF_GARMENTS as $type => $model) {
+        foreach ($types as $type => $model) {
             foreach ($groupedOrders["{$type}_metadata"] as $key => $metadata) {
                 $groups[$type][$key] = $groupedOrders[$type][$key];
             }
@@ -164,14 +276,14 @@ class PDFOrdersSizesReport extends Controller
             );
         }
 
-        return collect($metadata);
+        return $metadata;
     }
 
     public function getSubtitle($dates)
     {
         $formattedDates = array_map(fn ($date) => Mask::date($date), $dates);
 
-        if ($formattedDates['final_date']) {
+        if (isset($formattedDates['final_date'])) {
             return implode(' - ', $formattedDates);
         }
 
@@ -226,7 +338,6 @@ class PDFOrdersSizesReport extends Controller
             'order' => $size->order,
             'name' => $size->name,
             'quantity' => $orderSizes->where('size_id', $size->id)->sum('size_quantity'),
-        ])->sortBy('order')
-            ->values();
+        ])->sortBy('order')->values();
     }
 }
