@@ -8,7 +8,7 @@
                 @if ($indicators)
                 [{{ $includedInMap[$garmentType]['abbr'] }}{{ $key + 1}}]
                 @else
-                {{ $key + 1}}
+                [{{ $key + 1}}]
                 @endif
                 {{ __($garmentType) }}:
             </span>
