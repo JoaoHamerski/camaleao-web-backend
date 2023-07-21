@@ -15,7 +15,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-class PDFOrdersSizesReport extends Controller
+class PDFOrdersSizesReport extends PDFController
 {
     protected static $TYPES_OF_GARMENTS = [
         'model' => Model::class,

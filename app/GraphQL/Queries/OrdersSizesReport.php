@@ -15,6 +15,7 @@ use Illuminate\Validation\Rule;
 final class OrdersSizesReport
 {
     protected static $VALID_FIELDS = ['model', 'material', 'neck_type', 'sleeve_type'];
+
     /**
      * @param  null  $_
      * @param  array{}  $args
@@ -27,7 +28,7 @@ final class OrdersSizesReport
 
         return URL::temporarySignedRoute(
             'pdf.orders-sizes',
-            now()->addMinutes(100),
+            now()->addMinutes(10),
             $input
         );
     }
