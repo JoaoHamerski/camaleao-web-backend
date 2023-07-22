@@ -7,7 +7,7 @@
                     class="decoration-none text-black"
                     href="{{ $order['url'] }}"
                     target="_blank"
-                >{{ $order['id'] }} </a>
+                >{{ $order['code'] }} </a>
             </div>
             @if ($indicators)
             <div class="small">
