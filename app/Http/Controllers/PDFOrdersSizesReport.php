@@ -14,6 +14,7 @@ use App\Models\Status;
 use App\Util\Mask;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -89,7 +90,7 @@ class PDFOrdersSizesReport extends PDFController
             ]
         );
 
-        return $pdf->stream('relatorio-por-tamanhos');
+        return $pdf->stream('Relatório de tamanhos - ' . Carbon::now()->format('d_m_Y'));
     }
 
     public function getTypes($groups)
