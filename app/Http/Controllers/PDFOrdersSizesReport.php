@@ -149,7 +149,7 @@ class PDFOrdersSizesReport extends PDFController
 
         $status = $status->slice($index);
 
-        dd($status);
+        dd($status->pluck('id'));
 
         return $status->pluck('id');
     }
