@@ -40,7 +40,8 @@
   width: 100% !important;
 }
 
-footer {
+footer,
+.footer {
   width: 100%;
   position: fixed;
   font-size: .8rem;

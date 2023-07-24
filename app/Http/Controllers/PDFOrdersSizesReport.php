@@ -51,7 +51,7 @@ class PDFOrdersSizesReport extends PDFController
                 'includedInMap' => static::$INCLUDED_IN_MAP,
                 'isColumnEmpty' => fn ($size, $metadata) => $size['quantity'] === 0
                     && !in_array($size['id'], Arr::pluck($metadata['sizes'], 'id')),
-                'getPresentInText' => function ($order, $currentIndex) use ($types) {
+                'getPresentInText' => function ($order, $currentIndex, $currentType) use ($types) {
                     $indexes = collect($order['present_in']);
                     $grouped = [];
 
@@ -61,7 +61,13 @@ class PDFOrdersSizesReport extends PDFController
 
                         $indexesPresent = $group->map(fn ($item) => Arr::last(explode(':', $item)) + 1);
 
-                        $grouped[] = $abbr . ': ' . $indexesPresent->implode(', ');
+                        if ($currentType === $type) {
+                            $indexesPresent = $indexesPresent->filter(fn ($index) => $index !== $currentIndex + 1);
+                        }
+
+                        if (count($indexesPresent)) {
+                            $grouped[] = $abbr . ': ' . $indexesPresent->implode(', ');
+                        }
                     }
 
                     if ($indexesPresent->isEmpty()) {
@@ -90,7 +96,9 @@ class PDFOrdersSizesReport extends PDFController
         $query = GarmentMatch::join('garments', 'garment_matches.id', '=', 'garments.garment_match_id')
             ->join('garment_garment_size', 'garments.id', '=', 'garment_garment_size.garment_id')
             ->join('garment_sizes', 'garment_garment_size.garment_size_id', '=', 'garment_sizes.id')
-            ->join('orders', 'garments.order_id', '=', 'orders.id');
+            ->join('orders', 'garments.order_id', '=', 'orders.id')
+            ->join('order_status', 'orders.id', '=', 'order_status.order_id')
+            ->whereNotIn('order_status.status_id', [17, 5, 18, 8, 10, 9, 21]);
 
         $this->queryDates($query, $dates, $types);
         $this->querySelect($query, $types);

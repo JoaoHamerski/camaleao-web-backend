@@ -2,12 +2,7 @@
 
 namespace App\GraphQL\Queries;
 
-use App\Models\GarmentMatch;
-use App\Models\Model;
-use App\Models\Order;
 use App\Util\Formatter;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -28,7 +23,7 @@ final class OrdersSizesReport
 
         return URL::temporarySignedRoute(
             'pdf.orders-sizes',
-            now()->addMinutes(10),
+            now()->addMinutes(1000),
             $input
         );
     }

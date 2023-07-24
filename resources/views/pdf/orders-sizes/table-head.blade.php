@@ -17,6 +17,19 @@
             </span>
         </th>
     </tr>
+    @if ($indicators)
+    <thead>
+        <tr class="bg-secondary">
+            <th
+                colspan="{{ count($ordersSizes["{$garmentType}_metadata"][$key]['sizes']) + 1 }}"
+                class="text-secondary"
+                style="font-weight: normal; font-size: .7rem"
+            >
+                <b>Legenda:</b> MO - Modelo | MA - Material | TG - Tipo de Gola | TM - Tipo de Manga
+            </th>
+        </tr>
+    </thead>
+    @endif
 
     <tr class="bg-secondary">
       <th class="text-left">Cód.</th>

@@ -11,7 +11,7 @@
             </div>
             @if ($indicators)
             <div class="small">
-                {{ $getPresentInText($order, $key) }}
+                {{ $getPresentInText($order, $key, $garmentType) }}
             </div>
             @endif
         </td>
