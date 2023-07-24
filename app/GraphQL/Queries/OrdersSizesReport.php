@@ -23,7 +23,7 @@ final class OrdersSizesReport
 
         return URL::temporarySignedRoute(
             'pdf.orders-sizes',
-            now()->addMinutes(1000),
+            now()->addMinutes(10),
             $input
         );
     }
