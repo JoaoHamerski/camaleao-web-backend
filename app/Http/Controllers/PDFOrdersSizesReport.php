@@ -147,7 +147,7 @@ class PDFOrdersSizesReport extends PDFController
 
     public function getStatusToIgnore($startStatusId)
     {
-        $status = Status::all();
+        $status = Status::orderBy('order')->get();
         $index = $status->search(fn ($s) => $s->id === +$startStatusId);
 
         $status = $status->slice($index);
