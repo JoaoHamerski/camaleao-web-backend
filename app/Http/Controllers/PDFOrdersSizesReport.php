@@ -229,15 +229,15 @@ class PDFOrdersSizesReport extends PDFController
     public function queryDates($ordersQuery, $dates)
     {
         if (isset($dates['final_date'])) {
-            $ordersQuery->whereBetween('orders.created_at', [
+            $ordersQuery->whereBetween('orders.delivery_date', [
                 $dates['initial_date'],
-                $dates['final_date'] . ' ' . '23:59:59'
+                $dates['final_date']
             ]);
 
             return;
         }
 
-        $ordersQuery->whereDate('orders.created_at', $dates['initial_date']);
+        $ordersQuery->whereDate('orders.delivery_date', $dates['initial_date']);
     }
 
     public function getGroupedOrders($orders, $types)

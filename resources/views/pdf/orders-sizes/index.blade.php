@@ -14,8 +14,8 @@
 
         <table
             @class([
-                'page-break-after-always' => !$loop->last,
-                'page-break-inside-avoid' => !$loop->first,
+                'page-break-after-always' => !$loop->parent->last,
+                'page-break-inside-avoid',
                 'table table-sm table-bordered'
             ])
         >
