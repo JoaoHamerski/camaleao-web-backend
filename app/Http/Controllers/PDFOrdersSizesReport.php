@@ -8,11 +8,14 @@ use App\Models\GarmentSize;
 use App\Models\Material;
 use App\Models\Model;
 use App\Models\NeckType;
+use App\Models\OrderStatus;
 use App\Models\SleeveType;
+use App\Models\Status;
 use App\Util\Mask;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class PDFOrdersSizesReport extends PDFController
@@ -35,10 +38,17 @@ class PDFOrdersSizesReport extends PDFController
     {
         OrdersSizesReport::validator($request->all())->validate();
 
+        $startStatusToIgnore = $request->get('start_status_to_ignore');
         $displayIndicators = $request->get('indicators');
-        $types = $this->getTypes($request->only('groups'));
+        $types = $this->getTypes($request->get('groups'));
         $dates = $request->only(['initial_date', 'final_date']);
-        $ordersSizes = $this->getOrdersSizes($dates, $types, $displayIndicators);
+
+        $ordersSizes = $this->getOrdersSizes(
+            $dates,
+            $types,
+            $displayIndicators,
+            $startStatusToIgnore
+        );
 
         $pdf = PDF::loadView(
             'pdf.orders-sizes.index',
@@ -82,23 +92,32 @@ class PDFOrdersSizesReport extends PDFController
         return $pdf->stream('relatorio-por-tamanhos');
     }
 
-    public function getTypes($types)
+    public function getTypes($groups)
     {
         return array_filter(
             static::$TYPES_OF_GARMENTS,
-            fn ($_, $key) => in_array($key, $types['groups']),
+            fn ($_, $key) => in_array($key, $groups),
             ARRAY_FILTER_USE_BOTH
         );
     }
 
-    public function getOrdersSizes($dates, $types, $displayIndicators)
+    public function getOrdersSizes($dates, $types, $displayIndicators, $startStatusToIgnore)
     {
+        $idsToIgnore = OrderStatus::whereIn('status_id', $this->getStatusToIgnore($startStatusToIgnore))
+            ->select('order_id')
+            ->get()
+            ->unique()
+            ->pluck('order_id');
+
         $query = GarmentMatch::join('garments', 'garment_matches.id', '=', 'garments.garment_match_id')
             ->join('garment_garment_size', 'garments.id', '=', 'garment_garment_size.garment_id')
             ->join('garment_sizes', 'garment_garment_size.garment_size_id', '=', 'garment_sizes.id')
             ->join('orders', 'garments.order_id', '=', 'orders.id')
-            ->leftJoin('order_status', 'orders.id', '=', 'order_status.order_id')
-            ->whereNotIn('order_status.status_id', [17, 5, 18, 8, 10, 9, 21]);
+            ->join('order_status', 'orders.id', '=', 'order_status.order_id')
+            ->whereNotIn(
+                'orders.id',
+                $idsToIgnore
+            );
 
         $this->queryDates($query, $dates, $types);
         $this->querySelect($query, $types);
@@ -120,6 +139,16 @@ class PDFOrdersSizesReport extends PDFController
         $groupedOrders = $this->reindexAssocArray($groupedOrders);
 
         return $groupedOrders;
+    }
+
+    public function getStatusToIgnore($startStatusId)
+    {
+        $status = Status::all();
+        $index = $status->search(fn ($s) => $s->id === +$startStatusId);
+
+        $status = $status->slice($index);
+
+        return $status->pluck('id');
     }
 
     public function reindexAssocArray($groupedOrders)

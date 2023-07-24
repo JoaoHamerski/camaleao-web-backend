@@ -35,7 +35,8 @@ final class OrdersSizesReport
             'final_date' => ['nullable', 'date'],
             'groups' => ['array', 'required'],
             'groups.*' => [Rule::in(static::$VALID_FIELDS)],
-            'indicators' => ['required', 'boolean']
+            'indicators' => ['required', 'boolean'],
+            'start_status_to_ignore' => ['required', 'exists:status,id']
         ], static::errorMessages());
     }
 

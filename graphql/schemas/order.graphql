@@ -163,6 +163,7 @@ input OrdersSizesReportInput {
   final_date: String
   groups: [OrdersSizesReportGroupsEnum]
   indicators: Boolean
+  start_status_to_ignore: ID
 }
 
 extend type Query {
