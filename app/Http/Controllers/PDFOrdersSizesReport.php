@@ -97,9 +97,8 @@ class PDFOrdersSizesReport extends PDFController
             ->join('garment_garment_size', 'garments.id', '=', 'garment_garment_size.garment_id')
             ->join('garment_sizes', 'garment_garment_size.garment_size_id', '=', 'garment_sizes.id')
             ->join('orders', 'garments.order_id', '=', 'orders.id')
-            ->join('order_status', 'orders.id', '=', 'order_status.order_id')
-            ->whereNotIn('order_status.status_id', [17, 5, 18, 8, 10, 9, 21])
-            ->whereIn('order_status.status_id', [24, 22, 23, 11, 15]);
+            ->leftJoin('order_status', 'orders.id', '=', 'order_status.order_id')
+            ->whereNotIn('order_status.status_id', [17, 5, 18, 8, 10, 9, 21]);
 
         $this->queryDates($query, $dates, $types);
         $this->querySelect($query, $types);
