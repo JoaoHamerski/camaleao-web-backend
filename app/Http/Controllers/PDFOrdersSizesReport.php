@@ -110,7 +110,6 @@ class PDFOrdersSizesReport extends PDFController
             ->unique()
             ->pluck('order_id');
 
-
         $query = GarmentMatch::join('garments', 'garment_matches.id', '=', 'garments.garment_match_id')
             ->join('garment_garment_size', 'garments.id', '=', 'garment_garment_size.garment_id')
             ->join('garment_sizes', 'garment_garment_size.garment_size_id', '=', 'garment_sizes.id')
@@ -149,6 +148,8 @@ class PDFOrdersSizesReport extends PDFController
         $index = $status->search(fn ($s) => $s->id === +$startStatusId);
 
         $status = $status->slice($index);
+
+        dd($status);
 
         return $status->pluck('id');
     }
