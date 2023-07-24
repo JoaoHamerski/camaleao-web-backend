@@ -111,7 +111,7 @@ class PDFOrdersSizesReport extends PDFController
             ->pluck('order_id');
 
 
-        dd($idsToIgnore);
+        dd($this->getStatusToIgnore($startStatusToIgnore));
 
         $query = GarmentMatch::join('garments', 'garment_matches.id', '=', 'garments.garment_match_id')
             ->join('garment_garment_size', 'garments.id', '=', 'garment_garment_size.garment_id')
