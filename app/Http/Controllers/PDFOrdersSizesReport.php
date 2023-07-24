@@ -107,6 +107,7 @@ class PDFOrdersSizesReport extends PDFController
         $idsToIgnore = OrderStatus::whereIn('status_id', $this->getStatusToIgnore($startStatusToIgnore))
             ->select('order_id')
             ->get()
+            ->unique('order_id')
             ->pluck('order_id');
 
         dd($idsToIgnore);
