@@ -10,20 +10,24 @@
     </div>
 @else
     @foreach ($types as $garmentType => $model)
+    <div @class([
+        'page-break-after-always' => !$loop->last
+    ])>
         @foreach ($ordersSizes[$garmentType] as $key => $orders)
 
-        <table
+            <table
             @class([
-                'page-break-after-always' => !$loop->parent->last,
-                'page-break-inside-avoid',
-                'table table-sm table-bordered'
-            ])
-        >
-        @include('pdf.orders-sizes.table-head')
-        @include('pdf.orders-sizes.table-body')
-        </table>
+                    'page-break-after-always' => !$loop->last,
+                    'page-break-inside-avoid',
+                    'table table-sm table-bordered'
+                    ])
+            >
+            @include('pdf.orders-sizes.table-head')
+            @include('pdf.orders-sizes.table-body')
+            </table>
 
         @endforeach
+    </div>
     @endforeach
 @endif
 
