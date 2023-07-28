@@ -34,21 +34,17 @@ extend type Query {
 }
 
 extend type Mutation {
-  statusCreate (input: StatusInput! @spread): Status!
+  statusCreate(input: StatusInput! @spread): Status!
     @canAccess(roles: ["gerencia"])
 
-  statusUpdate (id: ID! input: StatusInput! @spread): Status!
+  statusUpdate(id: ID!, input: StatusInput! @spread): Status!
     @canAccess(roles: ["gerencia"])
 
-  statusDelete(id: ID! input: StatusDeleteInput! @spread): Status!
+  statusDelete(id: ID!, input: StatusDeleteInput! @spread): Status!
     @canAccess(roles: ["gerencia"])
 
-  statusSetAvailable(ids: [ID]): [Status]
-    @canAccess(roles: ["gerencia"])
+  statusSetAvailable(ids: [ID]): [Status] @canAccess(roles: ["gerencia"])
 
   statusReorder(input: [StatusReorderInput] @spread): [Status]
-    @canAccess(roles: ["gerencia"])
-
-  statusSync: Boolean
     @canAccess(roles: ["gerencia"])
 }

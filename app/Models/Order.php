@@ -112,6 +112,7 @@ class Order extends Model
         static::creating(function (Order $order) {
             if (!$order->status_id) {
                 $defaultStatus = Status::find(22);
+
                 $order->status_id = $defaultStatus
                     ? $defaultStatus->id
                     : Status::first()->id;
@@ -119,7 +120,7 @@ class Order extends Model
         });
 
         static::created(function (Order $order) {
-            $order->syncStatus(true);
+            $order->syncStatus(false);
         });
 
         static::deleting(function (Order $order) use ($FILE_FIELDS) {
@@ -192,27 +193,27 @@ class Order extends Model
         return $this->belongsTo(Status::class);
     }
 
-    public function syncStatus($withTimestamps = false)
+    public function syncStatus()
     {
-        $this->attachStatusIfNeeded($withTimestamps);
+        $this->attachStatusIfNeeded();
         $this->refresh();
-        $this->concludeSkippedStatus($withTimestamps);
+        $this->concludeSkippedStatus();
         $this->cancelConcludedStatus();
     }
 
-    private function attachStatusIfNeeded($withTimestamps = false)
+    private function attachStatusIfNeeded()
     {
         if (!$this->isStatusConcluded($this->status)) {
             $this->concludedStatus()
                 ->syncWithPivotValues($this->status, [
                     'user_id' => Auth::id(),
-                    'created_at' => $withTimestamps ? now() : null,
-                    'updated_at' => $withTimestamps ? now() : null,
+                    'created_at' => null,
+                    'updated_at' => null,
                 ], false);
         }
     }
 
-    private function concludeSkippedStatus($withTimestamps = false)
+    private function concludeSkippedStatus()
     {
         $status = Status::ordered()->get();
         $lastConcludedStatus = $this->concludedStatus->last();
@@ -227,8 +228,8 @@ class Order extends Model
                     ->syncWithPivotValues($status[$i], [
                         'user_id' => Auth::id(),
                         'is_auto_concluded' => true,
-                        'created_at' => $withTimestamps ? now() : null,
-                        'updated_at' => $withTimestamps ? now() : null,
+                        'created_at' => null,
+                        'updated_at' => null,
                     ], false);
             }
         }

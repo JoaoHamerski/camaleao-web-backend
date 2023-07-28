@@ -2,6 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\Order;
 use App\Models\Status;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
@@ -25,6 +26,19 @@ class StatusReorder
             Status::find($order['id'])->update(['order' => $order['order']]);
         }
 
+        $this->syncOrders();
+
         return Status::orderBy('order')->get();
+    }
+
+    private function syncOrders()
+    {
+        activity()->withoutLogs(function () {
+            $orders = Order::whereNull('closed_at')->get();
+
+            $orders->each(function ($order) {
+                $order->syncStatus();
+            });
+        });
     }
 }
