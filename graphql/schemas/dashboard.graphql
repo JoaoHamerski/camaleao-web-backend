@@ -1,0 +1,27 @@
+type SalesAmountDates {
+  day: Float
+  week: Float
+  month: Float
+}
+
+type SalesAmount {
+  current: SalesAmountDates
+  previous: SalesAmountDates
+}
+
+type SalesAmountCity {
+  city: City
+  amount: Float
+  shirts_count: Int
+  orders_count: Int
+}
+
+enum SalesAmountCityMonth {
+  CURRENT @enum(value: "current")
+  PREVIOUS @enum(value: "previous")
+}
+
+extend type Query {
+  dashboardSalesAmount: SalesAmount
+  dashboardSalesAmountCities(month: SalesAmountCityMonth): [SalesAmountCity]
+}
