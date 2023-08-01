@@ -4,7 +4,6 @@ namespace App\GraphQL\Queries;
 
 use App\Models\City;
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -32,18 +31,26 @@ final class DashboardSalesAmountCities
 
     public function formatQueryResult($query)
     {
+        $cities = City::all();
         $result = $query->get();
 
-        return $result->map(function ($item) {
-            $attrs = $item->only(['shirts_count', 'amount', 'orders_count']);
+        $result = $cities->map(function ($city) use ($result) {
+            $cityAttrs = $result->first(fn ($_city) => $_city->id === $city->id);
 
             return [
-                'city' => Arr::except($item, ['shirts_count', 'amount', 'orders_count']),
-                'shirts_count' => $attrs['shirts_count'],
-                'amount' => $attrs['amount'],
-                'orders_count' => $attrs['orders_count']
+                'city' => $city,
+                'amount' => data_get($cityAttrs, 'amount', 0),
+                'shirts_count' => data_get($cityAttrs, 'shirts_count', 0),
+                'orders_count' => data_get($cityAttrs, 'orders_count', 0)
             ];
         });
+
+        $result = $result->sortByDesc([
+            ['amount', 'desc'],
+            ['city.name', 'asc']
+        ]);
+
+        return $result;
     }
 
     public function buildQuery()
