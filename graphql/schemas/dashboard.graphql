@@ -16,12 +16,59 @@ type SalesAmountCity {
   orders_count: Int
 }
 
+type SalesAmountModel {
+  model: Model
+  amount: Float
+  shirts_count: Int
+  sales_percentage: Float
+}
+
 enum SalesAmountCityMonth {
   CURRENT @enum(value: "current")
   PREVIOUS @enum(value: "previous")
 }
 
+type ClientsSegmentationData {
+  amount: Float
+  amount_pre_registered: Float
+  shirts_count: Int
+  orders_count: Int
+  orders_count_pre_registered: Int
+}
+
+type ClientsSegmentation {
+  new_clients: ClientsSegmentationData!
+  recurrent_clients: ClientsSegmentationData!
+}
+
+type DashboardProductionStatusOrdersDates {
+  day: Int!
+  week: Int!
+  last_week: Int!
+}
+
+type DashboardProductionStatus {
+  orders_count: DashboardProductionStatusOrdersDates!
+  receipt: Float!
+}
+
+type DashboardProductionMonth {
+  orders_count: Int
+  receipt: Float
+}
+
+type DashboardProduction {
+  estampados: DashboardProductionStatus!
+  costurados: DashboardProductionStatus!
+  month_production: DashboardProductionMonth!
+  late_orders: Int
+  waiting_for_withdrawal_orders: Int
+}
+
 extend type Query {
   dashboardSalesAmount: SalesAmount
   dashboardSalesAmountCities(month: SalesAmountCityMonth): [SalesAmountCity]
+  dashboardSalesAmountModels: [SalesAmountModel]
+  dashboardClientsSegmentation: ClientsSegmentation!
+  dashboardProduction: DashboardProduction
 }
