@@ -47,9 +47,15 @@ type DashboardProductionStatusOrdersDates {
   last_week: Int!
 }
 
+type DashboardProductionStatusOrdersReceipt {
+  day: Float!
+  week: Float!
+  last_week: Float!
+}
+
 type DashboardProductionStatus {
   orders_count: DashboardProductionStatusOrdersDates!
-  receipt: Float!
+  receipt: DashboardProductionStatusOrdersReceipt!
 }
 
 type DashboardProductionMonth {

@@ -43,7 +43,8 @@ class Order extends Model
         'closed_at',
         'order',
         'final_status',
-        'shipping_value'
+        'shipping_value',
+        'created_at'
     ];
 
     protected $appends = [
@@ -207,8 +208,8 @@ class Order extends Model
             $this->concludedStatus()
                 ->syncWithPivotValues($this->status, [
                     'user_id' => Auth::id(),
-                    'created_at' => null,
-                    'updated_at' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ], false);
         }
     }
@@ -228,8 +229,8 @@ class Order extends Model
                     ->syncWithPivotValues($status[$i], [
                         'user_id' => Auth::id(),
                         'is_auto_concluded' => true,
-                        'created_at' => null,
-                        'updated_at' => null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ], false);
             }
         }

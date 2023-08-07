@@ -41,7 +41,7 @@ final class DashboardSalesAmount
             return Order::whereBetween('created_at', $date)->sum('price');
         }
 
-        return Order::where('created_at', $date)->sum('price');
+        return Order::whereDate('created_at', $date)->sum('price');
     }
 
     public function getIntervalDates($period)
