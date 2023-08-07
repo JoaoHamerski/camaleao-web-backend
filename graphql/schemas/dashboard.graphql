@@ -72,9 +72,11 @@ type DashboardProduction {
 }
 
 extend type Query {
-  dashboardSalesAmount: SalesAmount
+  dashboardSalesAmount: SalesAmount @canAccess(roles: ["GERENCIA"])
   dashboardSalesAmountCities(month: SalesAmountCityMonth): [SalesAmountCity]
-  dashboardSalesAmountModels: [SalesAmountModel]
+    @canAccess(roles: ["GERENCIA"])
+  dashboardSalesAmountModels: [SalesAmountModel] @canAccess(roles: ["GERENCIA"])
   dashboardClientsSegmentation: ClientsSegmentation!
-  dashboardProduction: DashboardProduction
+    @canAccess(roles: ["GERENCIA"])
+  dashboardProduction: DashboardProduction @canAccess(roles: ["GERENCIA"])
 }
