@@ -71,7 +71,9 @@ final class DashboardProduction
             $query->whereRaw(
                 "orders.id = order_status.order_id AND order_status.status_id = {$disponivelParaRetiradaId}"
             );
-        })->whereDate('delivery_date', '<', Carbon::now());
+        })
+            ->whereDate('delivery_date', '<', Carbon::now())
+            ->whereDate('created_at', '>', '2023-01-01');
 
         return $query->count();
     }
