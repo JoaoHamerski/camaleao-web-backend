@@ -10,7 +10,7 @@ final class DashboardProduction
     static $ESTAMPADOS_ID = '17';
     static $COSTURADOS_ID = '5';
     static $MONTH_PRODUCTION_STATUS_ID = '5';
-    static $DISPONIVEL_PARA_RETIRADA_STATUS_ID = '7';
+    static $DISPONIVEL_PARA_RETIRADA_STATUS_ID = '5';
     static $COSTURADOS_E_EMBALADOS_ID = '5';
     static $ENTREGUE_STATUS_ID = '18';
 
