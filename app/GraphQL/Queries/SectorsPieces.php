@@ -40,9 +40,9 @@ class SectorsPieces
             'orders.id',
             '=',
             'order_status.order_id'
-        )
-            ->select('orders.*')
-            ->whereIn('order_status.status_id', $status->pluck('id')->toArray());
+        )->select('orders.*')
+            ->whereIn('order_status.status_id', $status->pluck('id')->toArray())
+            ->where('order_status.is_auto_concluded', '=', 0);
 
         $whereMethod = $this->getWhereMethod($date);
 
