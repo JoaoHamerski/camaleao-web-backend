@@ -194,11 +194,11 @@ class Order extends Model
         return $this->belongsTo(Status::class);
     }
 
-    public function syncStatus()
+    public function syncStatus($isManuallySet = false)
     {
         $this->attachStatusIfNeeded();
         $this->refresh();
-        $this->concludeSkippedStatus();
+        $this->concludeSkippedStatus($isManuallySet);
         $this->cancelConcludedStatus();
     }
 
@@ -214,7 +214,7 @@ class Order extends Model
         }
     }
 
-    private function concludeSkippedStatus()
+    private function concludeSkippedStatus($isManuallySet)
     {
         $status = Status::ordered()->get();
         $lastConcludedStatus = $this->concludedStatus->last();
@@ -228,7 +228,7 @@ class Order extends Model
                 $this->concludedStatus()
                     ->syncWithPivotValues($status[$i], [
                         'user_id' => Auth::id(),
-                        'is_auto_concluded' => true,
+                        'is_auto_concluded' => $isManuallySet ? false : true,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ], false);
