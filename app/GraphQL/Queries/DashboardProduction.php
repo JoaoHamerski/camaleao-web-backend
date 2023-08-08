@@ -24,10 +24,12 @@ final class DashboardProduction
             'estampados' => $this->getFormattedData(
                 $this->buildQuery()
                     ->where('order_status.status_id', static::$ESTAMPADOS_ID)
+                    ->whereNull('order_status.is_auto_concluded')
             ),
             'costurados' => $this->getFormattedData(
                 $this->buildQuery()
                     ->where('order_status.status_id', static::$COSTURADOS_ID)
+                    ->whereNull('order_status.is_auto_concluded')
             ),
             'month_production' => $this->getMonthProduction(),
             'late_orders' => $this->getLateOrders(),
