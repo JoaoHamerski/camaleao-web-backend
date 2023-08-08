@@ -44,8 +44,8 @@ final class DashboardClientsSegmentation
 
         if ($date === 'year') {
             $query->whereBetween('orders.created_at', [
-                Carbon::now()->startOfMonth()->toDateString(),
-                Carbon::now()->endOfMonth()->toDateTimeString()
+                Carbon::now()->startOfYear()->toDateString(),
+                Carbon::now()->endOfYear()->toDateTimeString()
             ]);
         }
     }
