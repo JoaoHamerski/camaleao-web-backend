@@ -34,11 +34,9 @@ final class DashboardSalesAmountCities
         $cities = City::all();
         $result = $query->get();
 
-        $result = $cities->map(function ($city) use ($result) {
-            $cityAttrs = $result->first(fn ($_city) => $_city->id === $city->id);
-
+        $result = $result->map(function ($cityAttrs) use ($cities) {
             return [
-                'city' => $city,
+                'city' => $cities->first(fn ($_city) => $_city->id === $cityAttrs['id']),
                 'amount' => data_get($cityAttrs, 'amount', 0),
                 'shirts_count' => data_get($cityAttrs, 'shirts_count', 0),
                 'orders_count' => data_get($cityAttrs, 'orders_count', 0)
