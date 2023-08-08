@@ -71,12 +71,30 @@ type DashboardProduction {
   waiting_for_withdrawal_orders: Int
 }
 
+enum SalesAmountModelDates {
+  MONTH @enum(value: "month")
+  YEAR @enum(value: "year")
+  ALL_TIME @enum(value: "all_time")
+}
+
+enum ClientSegmentationDates {
+  MONTH @enum(value: "month")
+  YEAR @enum(value: "year")
+  ALL_TIME @enum(value: "all_time")
+}
+
 extend type Query {
   dashboardSalesAmount: SalesAmount @canAccess(roles: ["GERENCIA"])
+
   dashboardSalesAmountCities(month: SalesAmountCityMonth): [SalesAmountCity]
     @canAccess(roles: ["GERENCIA"])
-  dashboardSalesAmountModels: [SalesAmountModel] @canAccess(roles: ["GERENCIA"])
-  dashboardClientsSegmentation: ClientsSegmentation!
+
+  dashboardSalesAmountModels(date: SalesAmountModelDates!): [SalesAmountModel]
     @canAccess(roles: ["GERENCIA"])
+
+  dashboardClientsSegmentation(
+    date: ClientSegmentationDates!
+  ): ClientsSegmentation! @canAccess(roles: ["GERENCIA"])
+
   dashboardProduction: DashboardProduction @canAccess(roles: ["GERENCIA"])
 }

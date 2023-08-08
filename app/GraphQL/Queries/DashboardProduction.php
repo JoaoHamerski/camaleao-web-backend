@@ -7,12 +7,12 @@ use Carbon\Carbon;
 
 final class DashboardProduction
 {
-    static $ESTAMPADOS_ID = '5';
-    static $COSTURADOS_ID = '6';
-    static $MONTH_PRODUCTION_STATUS_ID = '6';
+    static $ESTAMPADOS_ID = '17';
+    static $COSTURADOS_ID = '5';
+    static $MONTH_PRODUCTION_STATUS_ID = '5';
     static $DISPONIVEL_PARA_RETIRADA_STATUS_ID = '7';
-    static $COSTURADOS_E_EMBALADOS_ID = '6';
-    static $ENTREGUE_STATUS_ID = '9';
+    static $COSTURADOS_E_EMBALADOS_ID = '5';
+    static $ENTREGUE_STATUS_ID = '18';
 
     /**
      * @param  null  $_

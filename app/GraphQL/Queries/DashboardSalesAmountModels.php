@@ -3,7 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\Model;
-use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 final class DashboardSalesAmountModels
 {
@@ -13,7 +13,8 @@ final class DashboardSalesAmountModels
      */
     public function __invoke($_, array $args)
     {
-        $query = $this->buildQuery();
+        $query = $this->buildQuery($args['date']);
+
         return $this->getFormattedData($query);
     }
 
@@ -47,9 +48,26 @@ final class DashboardSalesAmountModels
         );
     }
 
-    public function buildQuery()
+    public function queryDate($query, $date)
     {
-        return Model::join('garment_matches', 'model_id', '=', 'models.id')
+        if ($date === 'month') {
+            $query->whereBetween('orders.created_at', [
+                Carbon::now()->startOfMonth()->toDateString(),
+                Carbon::now()->endOfMonth()->toDateTimeString()
+            ]);
+        }
+
+        if ($date === 'year') {
+            $query->whereBetween('orders.created_at', [
+                Carbon::now()->startOfYear()->toDateString(),
+                Carbon::now()->endOfYear()->toDateTimeString()
+            ]);
+        }
+    }
+
+    public function buildQuery($date)
+    {
+        $query = Model::join('garment_matches', 'model_id', '=', 'models.id')
             ->join('garments', 'garment_matches.id', '=', 'garments.garment_match_id')
             ->join('orders', 'garments.order_id', '=', 'orders.id')
             ->groupBy(['orders.id', 'models.id'])
@@ -59,5 +77,9 @@ final class DashboardSalesAmountModels
                 'orders.quantity',
                 'orders.price'
             );
+
+        $this->queryDate($query, $date);
+
+        return $query;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\Order;
+use Carbon\Carbon;
 
 final class DashboardClientsSegmentation
 {
@@ -12,8 +13,8 @@ final class DashboardClientsSegmentation
      */
     public function __invoke($_, array $args)
     {
-        $newClientsQuery = $this->getQuery('NEW_CLIENTS');
-        $recurrentClientsQuery = $this->getQuery('RECURRENT_CLIENTS');
+        $newClientsQuery = $this->getQuery('NEW_CLIENTS', $args['date']);
+        $recurrentClientsQuery = $this->getQuery('RECURRENT_CLIENTS', $args['date']);
 
         return [
             'new_clients' => $this->getFormattedData($newClientsQuery),
@@ -32,16 +33,36 @@ final class DashboardClientsSegmentation
         ];
     }
 
-    public function getQuery($type)
+    public function queryDates($query, $date)
     {
-        if ($type == 'NEW_CLIENTS') {
-            return Order::whereHas('client', function ($query) {
-                $query->has('orders', '=', 1);
-            });
+        if ($date === 'month') {
+            $query->whereBetween('orders.created_at', [
+                Carbon::now()->startOfMonth()->toDateString(),
+                Carbon::now()->endOfMonth()->toDateTimeString()
+            ]);
         }
 
-        return Order::whereHas('client', function ($query) {
+        if ($date === 'year') {
+            $query->whereBetween('orders.created_at', [
+                Carbon::now()->startOfMonth()->toDateString(),
+                Carbon::now()->endOfMonth()->toDateTimeString()
+            ]);
+        }
+    }
+
+    public function getQuery($type, $date)
+    {
+        $query = Order::whereHas('client', function ($query) use ($type) {
+            if ($type === 'NEW_CLIENTS') {
+                $query->has('orders', '=', 1);
+                return;
+            }
+
             $query->has('orders', '>', 1);
         });
+
+        $this->queryDates($query, $date);
+
+        return $query;
     }
 }
