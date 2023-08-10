@@ -83,8 +83,19 @@ enum ClientSegmentationDates {
   ALL_TIME @enum(value: "all_time")
 }
 
+type SalesAmountChartDate {
+  day: Date
+  amount: Float
+}
+
+type SalesAmountChart {
+  current: [SalesAmountChartDate]
+  previous: [SalesAmountChartDate]
+}
+
 extend type Query {
   dashboardSalesAmount: SalesAmount @canAccess(roles: ["GERENCIA"])
+  dashboardSalesAmountChart: SalesAmountChart! @canAccess(roles: ["GERENCIA"])
 
   dashboardSalesAmountCities(month: SalesAmountCityMonth): [SalesAmountCity]
     @canAccess(roles: ["GERENCIA"])
