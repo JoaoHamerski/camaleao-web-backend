@@ -102,5 +102,6 @@ extend type Query {
     date: ClientSegmentationDates!
   ): ClientsSegmentation! @canAccess(roles: ["GERENCIA"])
 
-  dashboardProduction: DashboardProduction @canAccess(roles: ["GERENCIA"])
+  dashboardProduction(production_date: String): DashboardProduction
+    @canAccess(roles: ["GERENCIA"])
 }

@@ -31,7 +31,7 @@ final class DashboardProduction
                     ->where('order_status.status_id', static::$COSTURADOS_ID)
                     ->where('order_status.is_auto_concluded', '=', 0)
             ),
-            'month_production' => $this->getMonthProduction(),
+            'month_production' => $this->getMonthProduction($args['production_date']),
             'late_orders' => $this->getLateOrders(),
             'waiting_for_withdrawal_orders' => $this->getWaitingForWithdrawalOrders()
         ];
@@ -78,14 +78,22 @@ final class DashboardProduction
         return $query->count();
     }
 
-    public function getMonthProduction()
+    public function getDatesForMonthProduction($date)
+    {
+        return [
+            Carbon::createFromFormat('Y-m', $date)->startOfMonth(),
+            Carbon::createFromFormat('Y-m', $date)->endOfMonth(),
+        ];
+    }
+
+    public function getMonthProduction($date)
     {
         $query = $this->buildQuery()
             ->where('order_status.status_id', static::$MONTH_PRODUCTION_STATUS_ID)
-            ->whereBetween('order_status.created_at', [
-                Carbon::now()->startOfMonth()->toDateString(),
-                Carbon::now()->endOfMonth()->toDateTimeString()
-            ]);
+            ->whereBetween(
+                'order_status.created_at',
+                $this->getDatesForMonthProduction($date)
+            );
 
         return [
             'orders_count' => $query->count(),
