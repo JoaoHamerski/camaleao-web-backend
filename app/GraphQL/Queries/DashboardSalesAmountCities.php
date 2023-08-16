@@ -3,6 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\City;
+use App\Util\Helper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -18,12 +19,12 @@ final class DashboardSalesAmountCities
     public function __invoke($_, array $args)
     {
         Validator::make($args, [
-            'month' => [Rule::in(['current', 'previous'])]
+            'date' => ['required'],
         ])->validate();
 
         $query = $this->buildQuery();
 
-        $this->queryDates($query, $args['month']);
+        $this->queryDates($query, $args['date']);
         $this->querySelect($query);
 
         return $this->formatQueryResult($query);
@@ -76,23 +77,32 @@ final class DashboardSalesAmountCities
         ]);
     }
 
-    public function getQueryDates($month)
+    public function getDates($date)
     {
-        if ($month === 'current') {
+        if (in_array($date, ['LAST_3_MONTHS', 'LAST_6_MONTHS'])) {
             return [
-                Carbon::now()->startOfMonth()->toDateString(),
-                Carbon::now()->endOfMonth()->toDateTimeString()
+                Carbon::now()->subMonthsNoOverflow(
+                    $date === 'LAST_3_MONTHS' ? 3 : 6
+                )->startOfMonth(),
+                Carbon::now()->subMonthNoOverflow()->endOfMonth()
+            ];
+        }
+
+        if ($date === 'CURRENT_YEAR') {
+            return [
+                Carbon::now()->startOfYear(),
+                Carbon::now()
             ];
         }
 
         return [
-            Carbon::now()->subMonthNoOverflow()->startOfMonth()->toDateString(),
-            Carbon::now()->subMonthNoOverflow()->endOfMonth()->toDateTimeString()
+            Carbon::now()->createFromFormat('Y-m', $date)->startOfMonth(),
+            Carbon::now()->createFromFormat('Y-m', $date)->endOfMonth()
         ];
     }
 
-    public function queryDates($query, $month)
+    public function queryDates($query, $date)
     {
-        $query->whereBetween('orders.created_at', $this->getQueryDates($month));
+        $query->whereBetween('orders.created_at', $this->getDates($date));
     }
 }

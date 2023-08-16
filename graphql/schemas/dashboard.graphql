@@ -23,11 +23,6 @@ type SalesAmountModel {
   sales_percentage: Float
 }
 
-enum SalesAmountCityMonth {
-  CURRENT @enum(value: "current")
-  PREVIOUS @enum(value: "previous")
-}
-
 type ClientsSegmentationData {
   amount: Float
   amount_pre_registered: Float
@@ -97,7 +92,7 @@ extend type Query {
   dashboardSalesAmount: SalesAmount @canAccess(roles: ["GERENCIA"])
   dashboardSalesAmountChart: SalesAmountChart! @canAccess(roles: ["GERENCIA"])
 
-  dashboardSalesAmountCities(month: SalesAmountCityMonth): [SalesAmountCity]
+  dashboardSalesAmountCities(date: String): [SalesAmountCity]
     @canAccess(roles: ["GERENCIA"])
 
   dashboardSalesAmountModels(date: SalesAmountModelDates!): [SalesAmountModel]
