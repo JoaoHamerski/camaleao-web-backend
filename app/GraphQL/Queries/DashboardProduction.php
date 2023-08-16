@@ -90,7 +90,7 @@ final class DashboardProduction
     {
         $query = $this->buildQuery()
             ->where('order_status.status_id', static::$MONTH_PRODUCTION_STATUS_ID)
-            ->where('order_status.auto_concluded', 0)
+            ->where('order_status.is_auto_concluded', 0)
             ->whereBetween(
                 'order_status.created_at',
                 $this->getDatesForMonthProduction($date)
