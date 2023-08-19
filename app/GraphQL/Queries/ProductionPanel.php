@@ -5,9 +5,8 @@ namespace App\GraphQL\Queries;
 use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\Sector;
-use Illuminate\Support\Facades\DB;
 
-class SectorsPieces
+class ProductionPanel
 {
     /**
      * @param  null  $_
@@ -19,48 +18,50 @@ class SectorsPieces
 
         return $sectors->map(fn ($sector) => [
             'sector' => $sector,
-            'pieces' => $this->getSectorPieces($sector)
+            'orders_on_periods' => $this->getOrdersOnPeriods($sector)
         ]);
     }
 
-    private function getSectorPieces($sector)
+    private function getOrdersOnPeriods($sector)
     {
         return [
-            'day' => $this->getPiecesOfDate('day', $sector),
-            'week' => $this->getPiecesOfDate('week', $sector),
-            'month' => $this->getPiecesOfDate('month', $sector),
+            'day' => $this->getDataByPeriod('day', $sector),
+            'week' => $this->getDataByPeriod('week', $sector),
+            'month' => $this->getDataByPeriod('month', $sector),
         ];
     }
 
-    private function getPiecesOfDate(string $date, $sector)
+    private function getDataByPeriod(string $date, $sector)
     {
         $status = $sector->status;
+
         $ordersQuery = Order::join(
             'order_status',
             'orders.id',
             '=',
             'order_status.order_id'
-        )->select('orders.*')
-            ->whereIn('order_status.status_id', $status->pluck('id')->toArray())
-            ->where('order_status.is_confirmed', '=', 1)
-            ->whereNotNull('order_status.confirmed_at');
+        )
+            ->select('orders.*')
+            ->whereIn('order_status.status_id', $status->pluck('id')->toArray());
+        // ->where('order_status.is_confirmed', 1)
+        // ->whereNotNull('order_status.confirmed_at');
 
         $whereMethod = $this->getWhereMethod($date);
 
         return [
             'current_orders' => $ordersQuery
                 ->clone()
-                ->$whereMethod('order_status.created_at', $this->getWhereParams($date))
+                ->$whereMethod('order_status.confirmed_at', $this->getWhereParams($date))
                 ->orderBy('orders.created_at', 'desc')
                 ->distinct(['orders.id']),
-            'current' => $ordersQuery
+            'current_count' => $ordersQuery
                 ->clone()
-                ->$whereMethod('order_status.created_at', $this->getWhereParams($date))
+                ->$whereMethod('order_status.confirmed_at', $this->getWhereParams($date))
                 ->distinct()
                 ->sum('quantity'),
-            'previous' => $ordersQuery
+            'previous_count' => $ordersQuery
                 ->clone()
-                ->$whereMethod('order_status.created_at', $this->getWhereParamsPrevious($date))
+                ->$whereMethod('order_status.confirmed_at', $this->getWhereParamsPrevious($date))
                 ->distinct()
                 ->sum('quantity')
         ];

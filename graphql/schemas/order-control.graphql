@@ -6,22 +6,22 @@ type AuthUserSectorsInfo {
   pendency_total: Float @canAccess(roles: ["gerencia"])
 }
 
-type SectorPiecesCurrentPrevious {
+type SectorOrders {
   current_orders: [Order]
-    @paginate(builder: "App\\GraphQL\\Builders\\SectorPiecesOrdersBuilder")
-  current: Int
-  previous: Int
+    @paginate(builder: "App\\GraphQL\\Builders\\SectorOrdersByPeriodBuilder")
+  current_count: Int
+  previous_count: Int
 }
 
-type SectorPiecesDays {
-  day: SectorPiecesCurrentPrevious
-  week: SectorPiecesCurrentPrevious
-  month: SectorPiecesCurrentPrevious
+type SectorOrdersOnPeriods {
+  day: SectorOrders
+  week: SectorOrders
+  month: SectorOrders
 }
 
-type SectorPieces {
+type SectorData {
   sector: Sector!
-  pieces: SectorPiecesDays
+  orders_on_periods: SectorOrdersOnPeriods
 }
 
 enum OrdersBySectorOrderByColumns {
@@ -38,7 +38,7 @@ extend type Query {
     @paginate(builder: "App\\GraphQL\\Builders\\OrdersBySectorBuilder")
     @can(ability: "viewSector", injectArgs: true)
 
-  sectorsPieces: [SectorPieces] @canAccess(roles: ["gerencia"])
+  productionPanel: [SectorData] @canAccess(roles: ["gerencia"])
 }
 
 extend type Mutation {
