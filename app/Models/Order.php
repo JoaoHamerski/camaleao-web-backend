@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Util\FileHelper;
 use App\Traits\LogsActivity;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,7 +45,7 @@ class Order extends Model
         'order',
         'final_status',
         'shipping_value',
-        'created_at'
+        // 'created_at'
     ];
 
     protected $appends = [
@@ -121,7 +122,8 @@ class Order extends Model
         });
 
         static::created(function (Order $order) {
-            $order->syncStatus(false);
+            $order->attachAllStatus($order);
+            $order->confirmStatusOnCreated();
         });
 
         static::deleting(function (Order $order) use ($FILE_FIELDS) {
@@ -130,6 +132,73 @@ class Order extends Model
 
                 FileHelper::deleteFiles($files, $field);
             }
+        });
+    }
+
+    public function confirmStatusOnCreated()
+    {
+        $ids = [];
+        $status = $this->linkedStatus;
+        $orderStatusIndex = $this->linkedStatus->search(
+            fn ($status) => $status->id === $this->status->id
+        );
+
+        $status = $status->slice(0, $orderStatusIndex);
+
+        array_push($ids, $this->status->id);
+        array_push($ids, ...$status->pluck('id')->toArray());
+
+        foreach ($ids as $id) {
+            $this->confirmLinkedStatus($id);
+        }
+    }
+
+    public function cancelLinkedStatus($status)
+    {
+        $this->linkedStatus()->updateExistingPivot(
+            data_get($status, 'id', $status),
+            [
+                'is_confirmed' => false,
+                'confirmed_at' => null,
+                'user_id' => Auth::id()
+            ]
+        );
+    }
+
+    public function confirmLinkedStatus($status, $updateConfirmedAt = true)
+    {
+        $data = [
+            'is_confirmed' => true,
+            'user_id' => Auth::id()
+        ];
+
+        $data = $updateConfirmedAt
+            ? array_merge($data, ['confirmed_at' => now()])
+            : $data;
+
+        $this->linkedStatus()->updateExistingPivot(
+            data_get($status, 'id', $status),
+            $data
+        );
+    }
+
+    public function syncStatus()
+    {
+        if ($this->closed_at) {
+            throw new Exception('Pedido fechado, não é possível sincronizar os status.');
+            return;
+        }
+
+        $status = $this->linkedStatus;
+        $orderStatus = $this->status;
+
+        $status->each(function ($_status) use ($orderStatus) {
+            $isConfirmed = $orderStatus->order >= $_status->order ? 1 : 0;
+
+            $this->linkedStatus()->updateExistingPivot(
+                $_status->id,
+                ['is_confirmed' => $isConfirmed]
+            );
         });
     }
 
@@ -165,16 +234,24 @@ class Order extends Model
 
     public function getHasOrderControlAttribute()
     {
-        return !!$this->concludedStatus()->count();
+        return !!$this->linkedStatus()->count();
     }
 
-    public function concludedStatus()
+    public function attachAllStatus()
+    {
+        $status = Status::all();
+
+        $status->each(function ($_status) {
+            $this->linkedStatus()->attach($_status->id);
+        });
+    }
+
+    public function linkedStatus()
     {
         return $this->belongsToMany(Status::class)
             ->using(OrderStatus::class)
-            ->withPivot(['is_auto_concluded', 'user_id'])
-            ->withTimestamps()
-            ->orderBy('order');
+            ->withPivot(['id', 'is_confirmed', 'confirmed_at', 'user_id'])
+            ->orderBy('order', 'asc');
     }
 
     public static function getBySector($sector): Builder
@@ -192,85 +269,6 @@ class Order extends Model
     public function status()
     {
         return $this->belongsTo(Status::class);
-    }
-
-    public function syncStatus($isManuallySet = false)
-    {
-        $this->attachStatusIfNeeded();
-        $this->refresh();
-        $this->concludeSkippedStatus($isManuallySet);
-        $this->cancelConcludedStatus();
-    }
-
-    private function attachStatusIfNeeded()
-    {
-        if (!$this->isStatusConcluded($this->status)) {
-            $this->concludedStatus()
-                ->syncWithPivotValues($this->status, [
-                    'user_id' => Auth::id(),
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ], false);
-        }
-    }
-
-    private function concludeSkippedStatus($isManuallySet)
-    {
-        $status = Status::ordered()->get();
-        $lastConcludedStatus = $this->concludedStatus->last();
-
-        $index = $status->search(
-            fn ($item) => $item->id === $lastConcludedStatus->id
-        );
-
-        for ($i = $index; $i >= 0; $i--) {
-            if (!$this->isStatusConcluded($status[$i])) {
-                $this->concludedStatus()
-                    ->syncWithPivotValues($status[$i], [
-                        'user_id' => Auth::id(),
-                        'is_auto_concluded' => $isManuallySet ? false : true,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ], false);
-            }
-        }
-    }
-
-    private function cancelConcludedStatus()
-    {
-        $status = Status::ordered()->get();
-        $index = $status->search(
-            fn ($_status) => $_status->id === $this->status->id
-        );
-
-        $status = $status->splice($index);
-        $s = $status->shift();
-
-        if (!$this->isStatusConcluded($s)) {
-            $this->concludedStatus()->updateExistingPivot(
-                $s->id,
-                [
-                    'is_auto_concluded' => true,
-                ]
-            );
-        }
-
-        $status->each(function ($_status) {
-            $this->concludedStatus()
-                ->detach($_status->id);
-        });
-    }
-
-    private function isStatusConcluded(Status $status): bool
-    {
-        $concludedStatusIds = $this->concludedStatus
-            ->pluck('id')
-            ->toArray();
-
-        return in_array(
-            $status->id,
-            $concludedStatusIds
-        );
     }
 
     public function getSectorWithRematchedStatus()

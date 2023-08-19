@@ -14,19 +14,13 @@ class OrderStatus extends Pivot
     protected $fillable = [
         'user_id',
         'status_id',
-        'created_at',
-        'updated_at',
-        'is_auto_concluded'
+        'is_confirmed',
+        'confirmed_at'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function order()
-    {
-        return $this->belongsTo(Order::class);
     }
 
     public function status()

@@ -8,11 +8,10 @@ type Status @guard {
 }
 
 type OrderStatusPivot {
-  order: Order
   status: Status
   user: User
-  is_auto_concluded: Boolean
-  created_at: DateTime
+  confirmed_at: DateTime
+  is_confirmed: Boolean
 }
 
 input StatusInput {

@@ -26,16 +26,17 @@ class StatusReorder
             Status::find($order['id'])->update(['order' => $order['order']]);
         }
 
-        $this->syncOrders();
+        $this->syncOrdersStatus();
 
         return Status::orderBy('order')->get();
     }
 
-    private function syncOrders()
-    {
-        activity()->withoutLogs(function () {
-            $orders = Order::whereNull('closed_at')->get();
 
+    public function syncOrdersStatus()
+    {
+        $orders = Order::whereNull('closed_at');
+
+        activity()->withoutLogs(function () use ($orders) {
             $orders->each(function ($order) {
                 $order->syncStatus();
             });

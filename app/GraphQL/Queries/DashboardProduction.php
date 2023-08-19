@@ -24,12 +24,14 @@ final class DashboardProduction
             'estampados' => $this->getFormattedData(
                 $this->buildQuery()
                     ->where('order_status.status_id', static::$ESTAMPADOS_ID)
-                    ->where('order_status.is_auto_concluded', '=', 0)
+                    ->where('order_status.is_confirmed', '=', 1)
+                    ->whereNotNull('order_status.confirmed_at')
             ),
             'costurados' => $this->getFormattedData(
                 $this->buildQuery()
                     ->where('order_status.status_id', static::$COSTURADOS_ID)
-                    ->where('order_status.is_auto_concluded', '=', 0)
+                    ->where('order_status.is_confirmed', '=', 1)
+                    ->whereNotNull('order_status.confirmed_at')
             ),
             'month_production' => $this->getMonthProduction($args['production_date']),
             'late_orders' => $this->getLateOrders(),
@@ -90,7 +92,8 @@ final class DashboardProduction
     {
         $query = $this->buildQuery()
             ->where('order_status.status_id', static::$MONTH_PRODUCTION_STATUS_ID)
-            ->where('order_status.is_auto_concluded', 0)
+            ->where('order_status.is_confirmed', 1)
+            ->whereNotNull('order_status.confirmed_at')
             ->whereBetween(
                 'order_status.created_at',
                 $this->getDatesForMonthProduction($date)

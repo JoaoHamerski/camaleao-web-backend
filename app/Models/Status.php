@@ -4,14 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Status extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     public $timestamps = false;
+
     protected $table = 'status';
-    protected $fillable = ['sector_id', 'text', 'order', 'created_at', 'updated_at'];
+    protected $fillable = [
+        'sector_id',
+        'text',
+        'order',
+    ];
 
     public function orders()
     {
@@ -27,6 +33,21 @@ class Status extends Model
     {
         return $this->belongsTo(Sector::class);
     }
+
+    public static function getStatusBetween($statusA, $statusB)
+    {
+        $status = static::ordered()->get();
+
+        $statusAIndex = $status->search(fn ($s) => $s->id === $statusA->id);
+        $statusBIndex = $status->search(fn ($s) => $s->id === $statusB->id);
+
+        $status = $status->slice($statusAIndex, $statusBIndex - $statusAIndex);
+
+        $status->shift();
+
+        return $status;
+    }
+
 
     public function getSectorWithRematchedStatus()
     {

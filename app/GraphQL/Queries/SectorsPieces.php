@@ -42,7 +42,8 @@ class SectorsPieces
             'order_status.order_id'
         )->select('orders.*')
             ->whereIn('order_status.status_id', $status->pluck('id')->toArray())
-            ->where('order_status.is_auto_concluded', '=', 0);
+            ->where('order_status.is_confirmed', '=', 1)
+            ->whereNotNull('order_status.confirmed_at');
 
         $whereMethod = $this->getWhereMethod($date);
 

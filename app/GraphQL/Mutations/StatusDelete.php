@@ -27,12 +27,20 @@ class StatusDelete
 
         activity()->withoutLogs(function () use ($status, $statusToReplace) {
             Order::all()->each(function ($order) use ($status, $statusToReplace) {
-                if ($order->concludedStatus()->where('order_status.status_id', '=', $statusToReplace->id)->exists()) {
-                    $order->concludedStatus()->where('order_status.status_id', '=', $status->id)->detach();
+                if (
+                    $order->concludedStatus()
+                    ->where('order_status.status_id', '=', $statusToReplace->id)->exists()
+                ) {
+                    $order->concludedStatus()
+                        ->where('order_status.status_id', '=', $status->id)
+                        ->detach();
+
                     return;
                 }
 
-                $order->concludedStatus()->where('order_status.status_id', '=', $status->id)->update(['order_status.status_id' => $statusToReplace->id]);
+                $order->concludedStatus()
+                    ->where('order_status.status_id', '=', $status->id)
+                    ->update(['order_status.status_id' => $statusToReplace->id]);
             });
 
             $status->orders()->update([

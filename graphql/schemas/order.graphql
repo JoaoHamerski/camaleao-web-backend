@@ -34,7 +34,7 @@ type Order @guard {
     @builder(method: "\\App\\GraphQL\\Builders\\NotesOrderBuilder")
 
   reminder: String
-  concluded_status: [Status] @rename(attribute: "concludedStatus")
+  linked_status: [Status] @rename(attribute: "linkedStatus")
   has_order_control: Boolean
   final_status: String
   original_price: Float
@@ -166,6 +166,11 @@ input OrdersSizesReportInput {
   start_status_to_ignore: ID
 }
 
+enum OrderUpdateStatusOverrideOptions {
+  UPDATE @enum(value: "update")
+  KEEP @enum(value: "keep")
+}
+
 extend type Query {
   order(id: ID! @eq, client_id: ID): Order
     @find
@@ -208,7 +213,11 @@ extend type Mutation {
     @can(ability: "update", query: true)
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  orderUpdateStatus(id: ID! @eq, status_id: ID!): Order
+  orderUpdateStatus(
+    id: ID! @eq
+    status_id: ID!
+    override_option: OrderUpdateStatusOverrideOptions
+  ): Order
     @can(ability: "update", query: true)
     @canAccess(roles: ["gerencia", "atendimento"])
 
