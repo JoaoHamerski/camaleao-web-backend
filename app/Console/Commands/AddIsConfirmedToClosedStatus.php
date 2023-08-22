@@ -47,7 +47,7 @@ class AddIsConfirmedToClosedStatus extends Command
                 foreach ($status as $key => $s) {
                     unset($status[$key]['pivot']['is_auto_concluded']);
                     unset($status[$key]['pivot']['created_at']);
-                    $status[$key]['pivot']['is_concluded'] = true;
+                    $status[$key]['pivot']['is_confirmed'] = true;
                 }
 
                 $order->update(['final_status' => json_encode($status)]);
