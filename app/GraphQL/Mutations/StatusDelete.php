@@ -22,36 +22,31 @@ class StatusDelete
             'password' => ['required', 'current_password']
         ], $this->errorMessages())->validate();
 
-        $status = Status::find($args['id']);
+        $statusToDelete = Status::find($args['id']);
         $statusToReplace = Status::find($args['replace_status_id']);
 
-        activity()->withoutLogs(function () use ($status, $statusToReplace) {
-            Order::all()->each(function ($order) use ($status, $statusToReplace) {
-                if (
-                    $order->concludedStatus()
-                    ->where('order_status.status_id', '=', $statusToReplace->id)->exists()
-                ) {
-                    $order->concludedStatus()
-                        ->where('order_status.status_id', '=', $status->id)
-                        ->detach();
+        activity()->withoutLogs(function () use ($statusToDelete, $statusToReplace) {
+            $query = Order::where('status_id', $statusToDelete->id)
+                ->whereNull('closed_at');
 
-                    return;
-                }
+            $orders = $query->get();
 
-                $order->concludedStatus()
-                    ->where('order_status.status_id', '=', $status->id)
-                    ->update(['order_status.status_id' => $statusToReplace->id]);
-            });
+            $query->update(['status_id' => $statusToReplace->id]);
 
-            $status->orders()->update([
-                'status_id' => $statusToReplace->id
-            ]);
+            $this->syncAllOrdersStatus($orders);
         });
 
-        $statusToReplace->update(['order' => $status->order]);
-        $status->delete();
+        $statusToDelete->delete();
 
-        return $status;
+        return $statusToDelete;
+    }
+
+    public function syncAllOrdersStatus($orders)
+    {
+        $orders->each(function ($order) {
+            $order->refresh();
+            $order->syncStatus();
+        });
     }
 
     private function errorMessages()

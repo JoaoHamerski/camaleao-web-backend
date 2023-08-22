@@ -16,39 +16,18 @@ class StepToStatus
      */
     public function __invoke($_, array $args)
     {
-        $order = null;
-        $status = null;
-
         Validator::make($args, [
             'order_id' => ['required', 'exists:orders,id'],
+            'status_id' => ['required', 'exists:status,id'],
+            'override_option' => ['nullable', Rule::in(['update', 'keep'])]
         ])->validate();
 
-        $order = Order::find($args['order_id']);
+        (new OrderUpdateStatus)->__invoke(null, [
+            'id' => $args['order_id'],
+            'status_id' => $args['status_id'],
+            'override_option' => $args['override_option']
+        ]);
 
-        Validator::make($args, [
-            'status_id' => [
-                'required',
-                'exists:status,id'
-            ]
-        ])->validate();
-
-        $status = Status::find($args['status_id']);
-
-        $this->attachStatusToOrder($order, $status);
-
-        return $order->fresh();
-    }
-
-    public function attachStatusToOrder(Order $order, Status $status)
-    {
-        $order->concludedStatus()
-            ->syncWithPivotValues(
-                $status,
-                ['user_id' => Auth::id()],
-                false
-            );
-
-        $order->update(['status_id' => $status->id]);
-        $order->syncStatus();
+        return Order::find($args['order_id']);
     }
 }

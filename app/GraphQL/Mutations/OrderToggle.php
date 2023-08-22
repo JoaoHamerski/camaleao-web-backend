@@ -27,15 +27,15 @@ class OrderToggle
         ]);
 
         if ($order->closed_at) {
-            $this->consolidateConcludedStatus($order);
+            $this->saveFinalStatus($order);
         }
 
         return $order;
     }
 
-    public function consolidateConcludedStatus(Order $order): void
+    public function saveFinalStatus(Order $order): void
     {
-        $data = $order->concludedStatus->map(function ($status) {
+        $data = $order->linkedStatus->map(function ($status) {
             return [
                 'id' => $status->id,
                 'text' => $status->text,
@@ -44,10 +44,8 @@ class OrderToggle
                 'pivot' => [
                     'user' => $status->pivot->user,
                     'status' => $status->pivot->status,
-                    'is_auto_concluded' => $status->pivot->is_auto_concluded,
-                    'created_at' => $status->pivot->created_at
-                        ? $status->pivot->created_at->toDateTimeString()
-                        : null
+                    'is_confirmed' => $status->pivot->is_confirmed,
+                    'confirmed_at' => $status->pivot->confirmed_at,
                 ]
             ];
         });

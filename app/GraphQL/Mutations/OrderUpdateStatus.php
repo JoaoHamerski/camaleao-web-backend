@@ -72,8 +72,6 @@ class OrderUpdateStatus
         $orderStatus = $order->status;
         $updateConfirmedDate = $overrideOption === null || $overrideOption === 'update';
 
-        // dd($overrideOption);
-
         $linkedStatus->each(function ($linkedS) use ($orderStatus, $order, $updateConfirmedDate) {
             if ($orderStatus->order >= $linkedS->order) {
                 if (!$linkedS->pivot->is_confirmed) {
