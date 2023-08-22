@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Order;
+use App\Models\Status;
 use Illuminate\Console\Command;
 
 class SyncCurrentOrderStatus extends Command
@@ -37,6 +39,30 @@ class SyncCurrentOrderStatus extends Command
      */
     public function handle()
     {
+        $orders = Order::whereNull('closed_at');
+
+        activity()->withoutLogs(function () use ($orders) {
+            $orders->each(function ($order) {
+                $this->confirmExistingStatus($order);
+                $this->syncAllStatus($order);
+            });
+        });
+
         return 0;
+    }
+
+
+    public function syncAllStatus($order)
+    {
+        $order->syncWithoutDetaching(Status::all()->pluck('id'));
+    }
+
+    public function confirmExistingStatus($order)
+    {
+        $order->linkedStatus->each(function ($status) use ($order) {
+            $order->linkedStatus->updateExistingPivot($status->id, [
+                'is_confirmed' => true
+            ]);
+        });
     }
 }
