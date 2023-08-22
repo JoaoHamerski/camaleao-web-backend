@@ -43,7 +43,7 @@ class AddIsConfirmedToClosedStatus extends Command
         $bar = $this->output->createProgressBar($orders->count());
 
         activity()->withoutLogs(function () use ($orders, $bar) {
-            $orders->each(function ($order, $bar) {
+            $orders->each(function ($order) use ($bar) {
                 $status = json_decode($order->final_status, true);
 
                 foreach ($status as $key => $s) {

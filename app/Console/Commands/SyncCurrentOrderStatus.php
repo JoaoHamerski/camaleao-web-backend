@@ -13,7 +13,7 @@ class SyncCurrentOrderStatus extends Command
      *
      * @var string
      */
-    protected $signature = 'order-status:sync';
+    protected $signature = 'orders:status-sync';
 
     /**
      * The console command description.
@@ -41,12 +41,18 @@ class SyncCurrentOrderStatus extends Command
     {
         $orders = Order::whereNull('closed_at');
 
-        activity()->withoutLogs(function () use ($orders) {
-            $orders->each(function ($order) {
+        $bar = $this->output->createProgressBar($orders->count());
+
+        activity()->withoutLogs(function () use ($orders, $bar) {
+            $orders->each(function ($order) use ($bar) {
                 $this->confirmExistingStatus($order);
                 $this->syncAllStatus($order);
+
+                $bar->advance();
             });
         });
+
+        $bar->finish();
 
         return 0;
     }
@@ -54,13 +60,13 @@ class SyncCurrentOrderStatus extends Command
 
     public function syncAllStatus($order)
     {
-        $order->syncWithoutDetaching(Status::all()->pluck('id'));
+        $order->linkedStatus()->syncWithoutDetaching(Status::all()->pluck('id'));
     }
 
     public function confirmExistingStatus($order)
     {
         $order->linkedStatus->each(function ($status) use ($order) {
-            $order->linkedStatus->updateExistingPivot($status->id, [
+            $order->linkedStatus()->updateExistingPivot($status->id, [
                 'is_confirmed' => true
             ]);
         });
