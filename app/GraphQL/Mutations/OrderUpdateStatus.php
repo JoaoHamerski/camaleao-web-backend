@@ -75,7 +75,12 @@ class OrderUpdateStatus
         $linkedStatus->each(function ($linkedS) use ($orderStatus, $order, $updateConfirmedDate) {
             if ($orderStatus->order >= $linkedS->order) {
                 if (!$linkedS->pivot->is_confirmed) {
-                    $order->confirmLinkedStatus($linkedS, $updateConfirmedDate);
+                    $order->confirmLinkedStatus(
+                        $linkedS,
+                        !$linkedS->pivot->confirmed_at
+                            ? true
+                            : $updateConfirmedDate
+                    );
                 }
             }
 
