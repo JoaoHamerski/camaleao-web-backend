@@ -40,8 +40,10 @@ class AddIsConfirmedToClosedStatus extends Command
     {
         $orders = Order::whereNotNull('closed_at');
 
-        activity()->withoutLogs(function () use ($orders) {
-            $orders->each(function ($order) {
+        $bar = $this->output->createProgressBar($orders->count());
+
+        activity()->withoutLogs(function () use ($orders, $bar) {
+            $orders->each(function ($order, $bar) {
                 $status = json_decode($order->final_status, true);
 
                 foreach ($status as $key => $s) {
@@ -51,8 +53,12 @@ class AddIsConfirmedToClosedStatus extends Command
                 }
 
                 $order->update(['final_status' => json_encode($status)]);
+
+                $bar->advance();
             });
         });
+
+        $bar->finish();
 
         return 0;
     }
