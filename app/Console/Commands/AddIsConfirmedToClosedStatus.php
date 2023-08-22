@@ -38,7 +38,7 @@ class AddIsConfirmedToClosedStatus extends Command
      */
     public function handle()
     {
-        $orders = Order::whereNotNull('closed_at');
+        $orders = Order::whereNotNull('closed_at')->whereNotNull('final_status');
 
         $bar = $this->output->createProgressBar($orders->count());
 
