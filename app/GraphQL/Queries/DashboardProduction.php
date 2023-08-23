@@ -95,7 +95,7 @@ final class DashboardProduction
             ->where('order_status.is_confirmed', 1)
             ->whereNotNull('order_status.confirmed_at')
             ->whereBetween(
-                'order_status.created_at',
+                'order_status.confirmed_at',
                 $this->getDatesForMonthProduction($date)
             );
 
@@ -109,10 +109,10 @@ final class DashboardProduction
     {
         return [
             'day' => $query->clone()
-                ->whereDate('order_status.created_at', Carbon::now()->toDateString()),
+                ->whereDate('order_status.confirmed_at', Carbon::now()->toDateString()),
             'week' => $query->clone()
                 ->whereBetween(
-                    'order_status.created_at',
+                    'order_status.confirmed_at',
                     [
                         Carbon::now()->startOfWeek()->toDateString(),
                         Carbon::now()->endOfWeek()->toDateTimeString()
@@ -120,7 +120,7 @@ final class DashboardProduction
                 ),
             'last_week' => $query->clone()
                 ->whereBetween(
-                    'order_status.created_at',
+                    'order_status.confirmed_at',
                     [
                         Carbon::now()->subWeek()->startOfWeek()->toDateString(),
                         Carbon::now()->subWeek()->endOfWeek()->toDateTimeString()
