@@ -90,7 +90,7 @@
 
         .signature .signature-image {
             margin-bottom: -1.7rem;
-            width: 25%;
+            width: 30%;
         }
 
         .signature .signature-name {
