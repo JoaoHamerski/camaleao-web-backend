@@ -29,7 +29,7 @@
         .header {
             margin-left: 3.75rem;
             margin-right: 3.75rem;
-            margin-top: 8rem;
+            /* margin-top: 8rem; */
             clear: both;
         }
 
@@ -37,8 +37,8 @@
             font-size: 1.3rem;
             font-weight: bold;
             text-align: center;
-            margin-top: 7rem;
-            margin-bottom: 4rem;
+            margin-top: 6rem;
+            margin-bottom: 2rem;
         }
 
         .content {
