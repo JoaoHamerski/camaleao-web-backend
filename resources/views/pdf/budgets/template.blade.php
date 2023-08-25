@@ -49,7 +49,7 @@
         }
 
         .table-wrapper {
-            margin-bottom: 3rem;
+            margin-bottom: 130px;
         }
 
         .text-sm {
@@ -75,20 +75,30 @@
             border-collapse: collapse;
         }
 
+        .date {
+            position: absolute;
+            right: 0;
+            bottom: 8rem;
+            height: 30px;
+        }
+
         .signature {
             position: absolute;
-            bottom: 1rem;
+            bottom: 0rem;
+            height: 100px;;
         }
 
         .signature .signature-image {
-            width: 30%;
+            margin-bottom: -1.7rem;
+            width: 25%;
         }
 
         .signature .signature-name {
             font-style: italic;
         }
+
         .signature .signature-rubric {
-            width: 300px;
+            width: 200px;
             border-width: 1px;
         }
     </style>
@@ -147,7 +157,7 @@
             <div class="text-sm">*ESTE ORÇAMENTO É VÁLIDO POR 10 DIAS.</div>
     </div>
 
-    <div class="date text-right mt-4">
+    <div class="date text-right">
         {!! $settings->date !!}
     </div>
 
