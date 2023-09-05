@@ -120,14 +120,12 @@ final class DashboardProduction
     {
         $statusId = json_decode(AppConfig::get('dashboard', 'production'), true)['late_orders_id'];
 
-        return Order::whereNotExists(function ($query) use ($statusId) {
-            $query->selectRaw('1 from order_status');
-            $query->whereRaw(
-                "orders.id = order_status.order_id AND order_status.status_id = {$statusId}"
-            )
-                ->whereDate('delivery_date', '<', Carbon::now()->toDateString())
-                ->whereDate('created_at', '>', '2023-01-01');
-        });
+        return Order::whereHas('linkedStatus', function ($query) use ($statusId) {
+            $query->where('order_status.status_id', $statusId)
+                ->whereNotNull('order_status.confirmed_at');
+        })
+            ->where('created_at', '>', '2023-01-01')
+            ->where('delivery_date', '<', Carbon::now()->toDateString());
     }
 
     public static function waitingForWithdrawalQuery()
