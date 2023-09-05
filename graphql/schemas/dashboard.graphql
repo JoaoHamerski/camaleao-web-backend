@@ -36,34 +36,33 @@ type ClientsSegmentation {
   recurrent_clients: ClientsSegmentationData!
 }
 
-type DashboardProductionStatusOrdersDates {
-  day: Int!
-  week: Int!
-  last_week: Int!
+type DashboardProductionOfDay {
+  day: DashboardProductionData
+  week: DashboardProductionData
+  last_week: DashboardProductionData
 }
 
-type DashboardProductionStatusOrdersReceipt {
-  day: Float!
-  week: Float!
-  last_week: Float!
-}
-
-type DashboardProductionStatus {
-  orders_count: DashboardProductionStatusOrdersDates!
-  receipt: DashboardProductionStatusOrdersReceipt!
-}
-
-type DashboardProductionMonth {
+type DashboardProductionData {
   orders_count: Int
+  shirts_count: Int
   receipt: Float
 }
 
 type DashboardProduction {
-  estampados: DashboardProductionStatus!
-  costurados: DashboardProductionStatus!
-  month_production: DashboardProductionMonth!
-  late_orders: Int
-  waiting_for_withdrawal_orders: Int
+  estampados: DashboardProductionOfDay
+  costurados: DashboardProductionOfDay
+  month_production: DashboardProductionData
+  late_orders: DashboardProductionData
+  waiting_for_withdrawal_orders: DashboardProductionData
+}
+
+input DashboardProductionSettings {
+  estampados_no_dia_id: ID
+  costurados_no_dia_id: ID
+  month_production_id: ID
+  late_orders_id: ID
+  waiting_for_withdrawal_id: ID
+  delivered_id: ID
 }
 
 enum SalesAmountModelDates {
@@ -88,6 +87,14 @@ type SalesAmountChart {
   previous: [SalesAmountChartDate]
 }
 
+enum DashboardProductionOrdersTypes {
+  ESTAMPADOS @enum(value: "estampados")
+  COSTURADOS @enum(value: "costurados")
+  MONTH_PRODUCTION @enum(value: "month_production")
+  LATE_ORDERS @enum(value: "late_orders")
+  WAITING_FOR_WITHDRAWAL_ORDERS @Enum(value: "waiting_for_withdrawal_orders")
+}
+
 extend type Query {
   dashboardSalesAmount: SalesAmount @canAccess(roles: ["GERENCIA"])
   dashboardSalesAmountChart: SalesAmountChart! @canAccess(roles: ["GERENCIA"])
@@ -104,4 +111,19 @@ extend type Query {
 
   dashboardProduction(production_date: String): DashboardProduction
     @canAccess(roles: ["GERENCIA"])
+
+  dashboardProductionOrders(
+    type: DashboardProductionOrdersTypes!
+    production_date: String
+  ): [Order]
+    @paginate(
+      builder: "App\\GraphQL\\Builders\\DashboardProductionOrdersBuilder"
+    )
+    @canAccess(roles: ["GERENCIA"])
+}
+
+extend type Mutation {
+  dashboardProductionSettings(
+    settings: DashboardProductionSettings! @spread
+  ): Boolean
 }

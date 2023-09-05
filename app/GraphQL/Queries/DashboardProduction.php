@@ -2,171 +2,154 @@
 
 namespace App\GraphQL\Queries;
 
+use App\Models\AppConfig;
 use App\Models\Order;
+use App\Models\Status;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Validator;
 
 final class DashboardProduction
 {
-    static $ESTAMPADOS_ID = '17';
-    static $COSTURADOS_ID = '5';
-    static $MONTH_PRODUCTION_STATUS_ID = '5';
-    static $DISPONIVEL_PARA_RETIRADA_STATUS_ID = '5';
-    static $COSTURADOS_E_EMBALADOS_ID = '5';
-    static $ENTREGUE_STATUS_ID = '18';
-
     /**
      * @param  null  $_
      * @param  array{}  $args
      */
     public function __invoke($_, array $args)
     {
+        Validator::make($args, [
+            'production_date' => ['required', 'date_format:Y-m']
+        ])->validate();
+
+        $query = $this->query();
+
         return [
-            'estampados' => $this->getFormattedData(
-                $this->buildQuery()
-                    ->where('order_status.status_id', static::$ESTAMPADOS_ID)
-                    ->where('order_status.is_confirmed', '=', 1)
-                    ->whereNotNull('order_status.confirmed_at')
+            'estampados' => $this->getDataByPeriods(
+                static::confirmedStatusQuery($query->clone(), 'estampados')
             ),
-            'costurados' => $this->getFormattedData(
-                $this->buildQuery()
-                    ->where('order_status.status_id', static::$COSTURADOS_ID)
-                    ->where('order_status.is_confirmed', '=', 1)
-                    ->whereNotNull('order_status.confirmed_at')
+            'costurados' => $this->getDataByPeriods(
+                static::confirmedStatusQuery($query->clone(), 'costurados')
             ),
-            'month_production' => $this->getMonthProduction($args['production_date']),
-            'late_orders' => $this->getLateOrders(),
-            'waiting_for_withdrawal_orders' => $this->getWaitingForWithdrawalOrders()
+            'month_production' => $this->getData(
+                static::monthProductionQuery($query->clone(), $args['production_date'])
+            ),
+            'late_orders' => $this->getData(
+                static::lateOrdersQuery()
+            ),
+            'waiting_for_withdrawal_orders' => $this->getData(
+                static::waitingForWithdrawalQuery()
+            )
         ];
     }
 
-    public function getWaitingForWithdrawalOrders()
+    public static function query()
     {
-        $disponivelParaRetiradaId = static::$DISPONIVEL_PARA_RETIRADA_STATUS_ID;
-        $entregueId = static::$ENTREGUE_STATUS_ID;
-
-        $query = Order::whereExists(
-            fn ($query) => $query
-                ->selectRaw('1 FROM order_status')
-                ->whereRaw("
-                    orders.id = order_status.order_id
-                    AND order_status.status_id = $disponivelParaRetiradaId
-               ")
-        )
-            ->whereNotExists(
-                fn ($query) => $query
-                    ->selectRaw('1 FROM order_status')
-                    ->whereRaw("
-                    orders.id = order_status.order_id
-                    AND order_status.status_id = $entregueId
-               ")
-            );
-
-        return $query->count();
+        return Order::join('order_status', 'orders.id', '=', 'order_status.order_id')
+            ->select(['orders.*']);
     }
 
-    public function getLateOrders()
+    public static function queryPeriods($query)
     {
-        $disponivelParaRetiradaId = static::$DISPONIVEL_PARA_RETIRADA_STATUS_ID;
+        $periods = [
+            'day' => Carbon::now()->toDateString(),
+            'week' => [
+                Carbon::now()->startOfWeek()->toDateString(),
+                Carbon::now()->endOfWeek()->toDateTimeString()
+            ],
+            'last_week' => [
+                Carbon::now()->subWeek()->startOfWeek()->toDateString(),
+                Carbon::now()->subWeek()->endOfWeek()->toDateTimeString()
+            ]
+        ];
 
-        $query = Order::whereNotExists(function ($query) use ($disponivelParaRetiradaId) {
-            $query->selectRaw('1 from order_status');
-            $query->whereRaw(
-                "orders.id = order_status.order_id AND order_status.status_id = {$disponivelParaRetiradaId}"
-            );
-        })
-            ->whereDate('delivery_date', '<', Carbon::now())
-            ->whereDate('created_at', '>', '2023-01-01');
-
-        return $query->count();
-    }
-
-    public function getDatesForMonthProduction($date)
-    {
         return [
-            Carbon::createFromFormat('Y-m', $date)->startOfMonth(),
-            Carbon::createFromFormat('Y-m', $date)->endOfMonth(),
+            'day' => $query->clone()->whereDate('order_status.confirmed_at', $periods['day']),
+            'week' => $query->clone()->whereBetween('order_status.confirmed_at', $periods['week']),
+            'last_week' => $query->clone()->whereBetween('order_status.confirmed_at', $periods['last_week'])
         ];
     }
 
-    public function getMonthProduction($date)
+    public function getData($query)
     {
-        $query = $this->buildQuery()
-            ->where('order_status.status_id', static::$MONTH_PRODUCTION_STATUS_ID)
-            ->where('order_status.is_confirmed', 1)
-            ->whereNotNull('order_status.confirmed_at')
-            ->whereBetween(
-                'order_status.confirmed_at',
-                $this->getDatesForMonthProduction($date)
-            );
-
         return [
             'orders_count' => $query->count(),
+            'shirts_count' => $query->sum('quantity'),
             'receipt' => $query->sum('price')
         ];
     }
 
-    public function getQueryDates($query)
+    public function getDataByPeriods($query)
     {
+        $queryPeriods = $this->queryPeriods($query);
+
         return [
-            'day' => $query->clone()
-                ->whereDate('order_status.confirmed_at', Carbon::now()->toDateString()),
-            'week' => $query->clone()
-                ->whereBetween(
-                    'order_status.confirmed_at',
-                    [
-                        Carbon::now()->startOfWeek()->toDateString(),
-                        Carbon::now()->endOfWeek()->toDateTimeString()
-                    ]
-                ),
-            'last_week' => $query->clone()
-                ->whereBetween(
-                    'order_status.confirmed_at',
-                    [
-                        Carbon::now()->subWeek()->startOfWeek()->toDateString(),
-                        Carbon::now()->subWeek()->endOfWeek()->toDateTimeString()
-                    ]
-                )
+            'day' => $this->getData($queryPeriods['day']),
+            'week' => $this->getData($queryPeriods['week']),
+            'last_week' => $this->getData($queryPeriods['last_week'])
         ];
     }
 
-    public function getDataByDates($queryDates, $type)
+    public static function confirmedStatusQuery($query, $type)
     {
-        if ($type === 'count') {
-            return [
-                'day' => $queryDates['day']->count(),
-                'week' => $queryDates['week']->count(),
-                'last_week' => $queryDates['last_week']->count()
-            ];
-        }
+        $status = json_decode(AppConfig::get('dashboard', 'production'), true);
 
-        if ($type === 'receipt') {
-            return [
-                'day' => $queryDates['day']->sum('price'),
-                'week' => $queryDates['week']->sum('price'),
-                'last_week' => $queryDates['last_week']->sum('price'),
-            ];
-        }
-
-        return null;
-    }
-
-    public function getFormattedData($query)
-    {
-        $queryDates = $this->getQueryDates($query);
-
-        return [
-            'orders_count' => $this->getDataByDates($queryDates, 'count'),
-            'receipt' => $this->getDataByDates($queryDates, 'receipt')
+        $types = [
+            'estampados' => $status['estampados_no_dia_id'],
+            'costurados' => $status['costurados_no_dia_id'],
+            'month_production' => $status['month_production_id']
         ];
+
+        return $query
+            ->where('order_status.status_id', $types[$type])
+            ->where('order_status.is_confirmed', '=', 1)
+            ->whereNotNull('order_status.confirmed_at');
     }
 
-    public function buildQuery()
+    public static function monthProductionQuery($query, $date)
     {
-        return Order::join(
-            'order_status',
-            'orders.id',
-            '=',
-            'order_status.order_id'
+        $queryPeriods = [
+            Carbon::createFromFormat('Y-m', $date)->startOfMonth()->toDateString(),
+            Carbon::createFromFormat('Y-m', $date)->endOfMonth()->toDateTimeString()
+        ];
+
+        return static::confirmedStatusQuery($query, 'month_production')
+            ->whereBetween('order_status.confirmed_at', $queryPeriods);
+    }
+
+    public static function lateOrdersQuery()
+    {
+        $statusId = json_decode(AppConfig::get('dashboard', 'production'), true)['late_orders_id'];
+
+        return Order::whereNotExists(function ($query) use ($statusId) {
+            $query->selectRaw('1 from order_status');
+            $query->whereRaw(
+                "orders.id = order_status.order_id AND order_status.status_id = {$statusId}"
+            )
+                ->whereDate('delivery_date', '<', Carbon::now()->toDateString())
+                ->whereDate('created_at', '>', '2023-01-01');
+        });
+    }
+
+    public static function waitingForWithdrawalQuery()
+    {
+        $status = json_decode(AppConfig::get('dashboard', 'production'), true);
+        $waitingForWithdrawalId = $status['waiting_for_withdrawal_id'];
+        $deliveredId = $status['delivered_id'];
+
+        return Order::whereExists(
+            fn ($query) => $query
+                ->selectRaw("1 FROM order_status")
+                ->whereRaw("
+                    orders.id = order_status.order_id
+                    AND order_status.status_id = {$waitingForWithdrawalId}
+                ")
+        )->whereNotExists(
+            fn ($query) => $query
+                ->selectRaw('1 FROM order_status')
+                ->whereRaw("
+                    orders.id = order_status.order_id
+                    AND order_status.status_id = {$deliveredId}
+                ")
         );
     }
 }
