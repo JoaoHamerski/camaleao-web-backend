@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Status;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 final class DashboardProduction
@@ -134,20 +135,22 @@ final class DashboardProduction
         $waitingForWithdrawalId = $status['waiting_for_withdrawal_id'];
         $deliveredId = $status['delivered_id'];
 
-        return Order::whereExists(
-            fn ($query) => $query
-                ->selectRaw("1 FROM order_status")
+        // dd($deliveredId);
+        return Order::whereExists(function ($query) use ($waitingForWithdrawalId) {
+            $query->selectRaw('1 FROM order_status')
                 ->whereRaw("
                     orders.id = order_status.order_id
                     AND order_status.status_id = {$waitingForWithdrawalId}
-                ")
-        )->whereNotExists(
-            fn ($query) => $query
-                ->selectRaw('1 FROM order_status')
-                ->whereRaw("
+                    AND order_status.is_confirmed = 1
+                ");
+        })
+            ->whereExists(function ($query) use ($deliveredId) {
+                $query->selectRaw('1 FROM order_status')
+                    ->whereRaw("
                     orders.id = order_status.order_id
                     AND order_status.status_id = {$deliveredId}
-                ")
-        );
+                    AND order_status.is_confirmed = 0
+                ");
+            });
     }
 }
