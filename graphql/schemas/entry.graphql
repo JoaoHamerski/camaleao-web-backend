@@ -36,7 +36,10 @@ enum QueryWhereBankEntriesColumns {
 extend type Query {
   entries(
     where: _ @whereConditions(columnsEnum: "QueryWhereEntriesColumns")
-  ): [Entry] @paginate @canAccess(roles: ["gerencia", "atendimento"])
+  ): [Entry]
+    @paginate
+    @canAccess(roles: ["gerencia", "atendimento"])
+    @where(key: "is_canceled", operator: "equals", value: false)
 
   entriesMonthlyBalance: EntriesMonthlyBalance
     @canAccess(roles: ["gerencia", "atendimento"])
