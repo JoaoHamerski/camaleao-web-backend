@@ -39,7 +39,7 @@ extend type Query {
   ): [Entry]
     @paginate
     @canAccess(roles: ["gerencia", "atendimento"])
-    @where(key: "is_canceled", value: false)
+    @where(key: "is_canceled", value: 0)
 
   entriesMonthlyBalance: EntriesMonthlyBalance
     @canAccess(roles: ["gerencia", "atendimento"])
