@@ -27,6 +27,7 @@ enum QueryWhereEntriesColumns {
   VALUE @enum(value: "value")
   DESCRIPTION @enum(value: "description")
   VIA_ID @enum(value: "via_id")
+  IS_CANCELED @enum(value: "is_canceled")
 }
 
 enum QueryWhereBankEntriesColumns {
@@ -36,10 +37,7 @@ enum QueryWhereBankEntriesColumns {
 extend type Query {
   entries(
     where: _ @whereConditions(columnsEnum: "QueryWhereEntriesColumns")
-  ): [Entry]
-    @paginate
-    @canAccess(roles: ["gerencia", "atendimento"])
-    @where(key: "is_canceled", value: 0)
+  ): [Entry] @paginate @canAccess(roles: ["gerencia", "atendimento"])
 
   entriesMonthlyBalance: EntriesMonthlyBalance
     @canAccess(roles: ["gerencia", "atendimento"])
