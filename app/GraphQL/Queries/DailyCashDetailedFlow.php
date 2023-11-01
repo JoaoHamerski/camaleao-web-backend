@@ -71,8 +71,8 @@ class DailyCashDetailedFlow
     public function getShirtsDetailsOfMonth($date, $dateField)
     {
         $orderQuery = Order::whereBetween($dateField, [
-            $date->startOfMonth()->toDateString(),
-            $date->endOfMonth()->toDateString()
+            $date->startOfMonth()->toDateTimeString(),
+            $date->endOfMonth()->toDateTimeString()
         ]);
 
         $lessThanFiveQuery = $orderQuery->clone()->where('quantity', '<', 5);
@@ -89,8 +89,8 @@ class DailyCashDetailedFlow
     public function getTotalPriceOfMonth($date, $dateField)
     {
         $total = Order::query()->whereBetween($dateField, [
-            $date->startOfMonth()->toDateString(),
-            $date->endOfMonth()->toDateString(),
+            $date->startOfMonth()->toDateTimeString(),
+            $date->endOfMonth()->toDateTimeString(),
         ])->sum('price');
 
         return number_format($total, 2, '.', '');
@@ -101,18 +101,18 @@ class DailyCashDetailedFlow
         $value = Payment::query()
             ->where('is_confirmed', true)
             ->whereBetween('date', [
-                $date->startOfMonth()->toDateString(),
-                $date->endOfMonth()->toDateString()
+                $date->startOfMonth()->toDateTimeString(),
+                $date->endOfMonth()->toDateTimeString()
             ])->sum('value');
 
         $ordersPriceAvg = Order::whereBetween($dateField, [
-            $date->startOfMonth()->toDateString(),
-            $date->endOfMonth()->toDateString(),
+            $date->startOfMonth()->toDateTimeString(),
+            $date->endOfMonth()->toDateTimeString(),
         ])->avg('price');
 
         $unitiesAvg = Order::whereBetween($dateField, [
-            $date->startOfMonth()->toDateString(),
-            $date->endOfMonth()->toDateString()
+            $date->startOfMonth()->toDateTimeString(),
+            $date->endOfMonth()->toDateTimeString()
         ])->selectRaw(
             'round(sum(price) / sum(quantity), 2) AS unities_avg'
         )->first()->unities_avg;
@@ -129,15 +129,15 @@ class DailyCashDetailedFlow
         $IDS_TO_SHOW_INDIVIDUALLY = AppConfig::get('app', 'expense_types_ids_to_show');
 
         $total = CashFlowBalance::expensesQuery([
-            'start_date' => $date->startOf('month')->toDateString(),
-            'final_date' => $date->endOf('month')->toDateString()
+            'start_date' => $date->startOf('month')->toDateTimeString(),
+            'final_date' => $date->endOf('month')->toDateTimeString()
         ])->where('is_confirmed', true)->sum('value');
 
         $expensesByGroup = DB::table('expense_types')
             ->leftJoin('expenses', 'expenses.expense_type_id', '=', 'expense_types.id')
             ->whereBetween('expenses.date', [
-                $date->startOfMonth()->toDateString(),
-                $date->endOfMonth()->toDateString()
+                $date->startOfMonth()->toDateTimeString(),
+                $date->endOfMonth()->toDateTimeString()
             ])
             ->where('expenses.is_confirmed', true)
             ->select([

@@ -69,8 +69,8 @@ class DailyCashBalance
     {
         return Order::query()
             ->whereBetween($field, [
-                $date->startOfMonth()->toDateString(),
-                $date->endOfMonth()->toDateString(),
+                $date->startOfMonth()->toDateTimeString(),
+                $date->endOfMonth()->toDateTimeString(),
             ])
             ->sum('quantity');
     }
@@ -86,8 +86,8 @@ class DailyCashBalance
 
         return Order::leftJoin('payments', 'orders.id', '=', 'payments.order_id')
             ->whereBetween($field, [
-                $date->startOfMonth()->toDateString(),
-                $date->endOfMonth()->toDateString()
+                $date->startOfMonth()->toDateTimeString(),
+                $date->endOfMonth()->toDateTimeString()
             ])
             ->groupBy('orders.id')
             ->havingRaw('total_payments_order <> orders.price')
@@ -145,8 +145,8 @@ class DailyCashBalance
         return $this->getBalanceBetweenDates(
             $payments->clone(),
             $expenses->clone(),
-            Carbon::now()->startOfWeek()->toDateString(),
-            Carbon::now()->endOfWeek()->toDateString()
+            Carbon::now()->startOfWeek()->toDateTimeString(),
+            Carbon::now()->endOfWeek()->toDateTimeString()
         );
     }
 
