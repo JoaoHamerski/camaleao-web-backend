@@ -25,7 +25,7 @@ class OrderFactory extends Factory
      *
      * @var string
      */
-    protected $CREATED_AT_START_DATE = '-1 month';
+    protected $CREATED_AT_START_DATE = '-3 months';
 
     /**
      * Define the model's default state.

@@ -16,7 +16,7 @@ class ClientSeeder extends BaseSeeder
      */
     public function run()
     {
-        $CLIENTS_QUANTITY = $this->faker->numberBetween(10, 15);
+        $CLIENTS_QUANTITY = $this->faker->numberBetween(5, 10);
 
         Client::factory()
             ->count($CLIENTS_QUANTITY)

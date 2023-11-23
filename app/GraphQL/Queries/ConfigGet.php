@@ -48,6 +48,6 @@ class ConfigGet
         return Validator::make($data, [
             'name' => ['required', 'exists:configs,name'],
             'key' => ['nullable']
-        ]);
+        ], ['name.exists' => 'O nome da configuração informada é inválido.']);
     }
 }
