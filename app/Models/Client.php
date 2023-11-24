@@ -28,7 +28,8 @@ class Client extends Model
         'branch_id',
         'city_id',
         'shipping_company_id',
-        'balance'
+        'balance',
+        'client_recommended_id'
     ];
 
     protected $cascadeDeletes = ['orders', 'payments'];
@@ -99,6 +100,15 @@ class Client extends Model
     public function balances()
     {
         return $this->hasMany(ClientBalance::class);
+    }
+    public function clientRecommendations()
+    {
+        return $this->hasMany(Client::class, 'client_recommended_id');
+    }
+
+    public function clientRecommended()
+    {
+        return $this->belongsTo(Client::class, 'client_recommended_id');
     }
 
     public function getIsSponsorAttribute()

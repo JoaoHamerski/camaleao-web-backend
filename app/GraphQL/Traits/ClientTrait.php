@@ -24,6 +24,7 @@ trait ClientTrait
             'branch_id' => ['nullable', 'exists:branches,id'],
             'city_id' => ['nullable', 'exists:cities,id'],
             'shipping_company_id' => ['nullable', 'exists:shipping_companies,id'],
+            'recommended_client_id' => ['nullable', 'exists:clients,id']
         ], $this->errorMessages());
     }
 

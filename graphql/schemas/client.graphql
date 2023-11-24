@@ -2,15 +2,17 @@ type Client @guard {
   id: ID!
   name: String!
   phone: String
-  orders (
+  orders(
     orderBy: _ @orderBy(columnsEnum: "QueryOrdersOrderByColumn")
     where: _ @whereConditions(columnsEnum: "QueryOrdersWhereConditionsColumn")
-  ): [Order]  @hasMany(type: "paginator")
+  ): [Order] @hasMany(type: "paginator")
   city: City @belongsTo
   branch: Branch @belongsTo
   shipping_company: ShippingCompany @rename(attribute: "shippingCompany")
   total_owing: Float
   total_owing_as_sponsorship: Float
+  client_recommended: Client @rename(attribute: "clientRecommended")
+  client_recommendations: [Client] @rename(attribute: "clientRecommendations")
   is_sponsor: Boolean
   balance: Float
   has_balance: Boolean
@@ -39,27 +41,29 @@ input ClientInput {
   city_id: ID
   branch_id: ID
   shipping_company_id: ID
+  recommended_client_id: ID
 }
 
 extend type Query {
-  client (
-    id: ID! @eq
-  ): Client @find @canAccess(roles: ["gerencia", "atendimento"])
+  client(id: ID! @eq): Client
+    @find
+    @canAccess(roles: ["gerencia", "atendimento"])
 
-  clients (
+  clients(
     orderBy: _ @orderBy(columnsEnum: "QueryClientsOrderByColumn")
     where: _ @whereConditions(columnsEnum: "QueryClientsWhereConditionsColumn")
-    hasCity: _ @whereHasConditions(columnsEnum: "QueryClientsWhereHasCityColumn")
+    hasCity: _
+      @whereHasConditions(columnsEnum: "QueryClientsWhereHasCityColumn")
   ): [Client!] @paginate @canAccess(roles: ["gerencia", "atendimento"])
 }
 
 extend type Mutation {
-  clientCreate (input: ClientInput @spread): Client
+  clientCreate(input: ClientInput @spread): Client
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  clientUpdate (id: ID! input: ClientInput @spread): Client
+  clientUpdate(id: ID!, input: ClientInput @spread): Client
     @canAccess(roles: ["gerencia", "atendimento"])
 
-  clientDelete (id: ID! password: String!): Client
+  clientDelete(id: ID!, password: String!): Client
     @canAccess(roles: ["gerencia"])
 }
