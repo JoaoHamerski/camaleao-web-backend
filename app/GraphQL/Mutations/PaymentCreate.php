@@ -10,6 +10,7 @@ use Illuminate\Validation\Rule;
 use App\GraphQL\Traits\PaymentTrait;
 use Illuminate\Support\Facades\Validator;
 use App\GraphQL\Exceptions\UnprocessableException;
+use App\Models\Bonus;
 
 class PaymentCreate
 {
@@ -57,6 +58,10 @@ class PaymentCreate
             $payment->date = null;
         }
 
+        if ($data['use_client_bonus'] && $data['bonus']) {
+            $this->payWithClientBonus($order, $payment, $data);
+        }
+
         $payment->save();
 
         if (!$payment->is_shipping) {
@@ -66,10 +71,20 @@ class PaymentCreate
         return $payment;
     }
 
+    public function payWithClientBonus($order, $payment, $data)
+    {
+        $client = $order->client;
+        $payment->is_bonus = true;
+
+        $client->update([
+            'bonus' => bcsub($client->bonus, $data['bonus'], 2)
+        ]);
+    }
+
     public function getComputedValues(Order $order, $data)
     {
         $data['total_owing'] = $order->total_owing;
-        $data['total_value'] = bcadd($data['value'], $data['credit'], 2);
+        $data['total_value'] = bcadd($data['value'], bcadd($data['credit'], $data['bonus'], 2), 2);
         $data['original_value'] = $data['value'];
 
         $data['value'] = $this->getPaymentValue(
@@ -118,6 +133,13 @@ class PaymentCreate
             );
         }
 
+        if ($data['use_client_bonus'] && $data['use_client_balance']) {
+            throw new UnprocessableException(
+                'Não foi possível registrar o pagamento.',
+                'Não é possível usar o bônus e saldo ao mesmo tempo.'
+            );
+        }
+
         return Validator::make(
             $data,
             [
@@ -131,7 +153,9 @@ class PaymentCreate
                 'note' => ['nullable', 'max:255'],
                 'add_rest_to_credits' => ['required', 'boolean'],
                 'use_client_balance' => ['required', 'boolean'],
+                'use_client_bonus' => ['required', 'boolean'],
                 'credit' => $this->getCreditRules($order),
+                'bonus' => $this->getBonusRules($order),
                 'value' => $this->getValueRules($data, $order),
                 'is_sponsor' => ['required', 'boolean'],
                 'is_shipping' => ['required', 'boolean'],
@@ -147,6 +171,7 @@ class PaymentCreate
                     'date',
                     'before_or_equal:' . Carbon::now()->toDateString()
                 ],
+
             ],
             $this->errorMessages()
         );
@@ -156,7 +181,7 @@ class PaymentCreate
     {
         $rules = [];
 
-        if (empty($data['credit'])) {
+        if (empty($data['credit']) && empty($data['bonus'])) {
             $rules[] = 'required';
             $rules[] = 'min_currency:0.01';
         }
@@ -164,6 +189,16 @@ class PaymentCreate
         if (!$data['add_rest_to_credits'] && !$data['is_shipping']) {
             $rules[] = 'max_currency:' . $order->total_owing;
         }
+
+        return $rules;
+    }
+
+    public function getBonusRules($order)
+    {
+        $rules = [];
+        $rules[] = 'nullable';
+        $rules[] = 'max_currency:' . min(bcmul($order->price, 0.5, 2), $order->client->bonus);
+        $rules[] = 'required_if:use_client_bonus,true';
 
         return $rules;
     }

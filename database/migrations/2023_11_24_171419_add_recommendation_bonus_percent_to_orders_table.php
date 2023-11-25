@@ -14,7 +14,7 @@ class AddRecommendationBonusPercentToOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->decimal('recommendation_bonus_percent', 4, 2)->nullable();
+            $table->decimal('recommendation_bonus_percent', 5, 2)->nullable();
         });
     }
 

@@ -8,8 +8,17 @@ trait PaymentTrait
 {
     public function getFormattedData(array $data)
     {
+        if ($data['is_sponsor']) {
+            $data['use_client_balance'] = false;
+            $data['use_client_bonus'] = false;
+        }
+
+        if ($data['use_client_balance'] || $data['use_client_bonus']) {
+            $data['value'] = 0;
+        }
+
         return (new Formatter($data))
-            ->currencyBRL(['value', 'price', 'credit'])
+            ->currencyBRL(['value', 'price', 'credit', 'bonus'])
             ->date('date')
             ->get();
     }

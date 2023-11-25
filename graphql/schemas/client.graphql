@@ -15,6 +15,7 @@ type Client @guard {
   client_recommendations: [Client] @rename(attribute: "clientRecommendations")
   is_sponsor: Boolean
   balance: Float
+  bonus: Float
   has_balance: Boolean
   created_at: DateTime
   updated_at: DateTime
@@ -41,7 +42,7 @@ input ClientInput {
   city_id: ID
   branch_id: ID
   shipping_company_id: ID
-  recommended_client_id: ID
+  client_recommended_id: ID
 }
 
 extend type Query {

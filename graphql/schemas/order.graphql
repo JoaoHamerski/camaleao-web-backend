@@ -106,6 +106,7 @@ input OrderInput {
   size_paths: [String!]
   payment_voucher_paths: [String!]
   garments: [OrderGarmentsInput!]!
+  recommendation_bonus_percent: String
 }
 
 enum OrderReportInputOrder {

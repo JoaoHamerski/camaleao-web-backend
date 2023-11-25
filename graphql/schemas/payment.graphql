@@ -11,6 +11,7 @@ type Payment @guard {
   is_confirmed: Boolean
   is_sponsor: Boolean
   is_shipping: Boolean
+  is_bonus: Boolean
   sponsorship_client: Client @rename(attribute: "sponsorshipClient")
   created_at: DateTime
   updated_at: DateTime
@@ -27,8 +28,10 @@ input PaymentInput {
   order_id: ID!
   payment_via_id: ID
   value: String
-  use_client_balance: Boolean
   credit: String
+  bonus: String
+  use_client_balance: Boolean
+  use_client_bonus: Boolean
   date: String
   note: String
   sponsorship_client_id: ID

@@ -29,7 +29,8 @@ class Client extends Model
         'city_id',
         'shipping_company_id',
         'balance',
-        'client_recommended_id'
+        'client_recommended_id',
+        'bonus'
     ];
 
     protected $cascadeDeletes = ['orders', 'payments'];

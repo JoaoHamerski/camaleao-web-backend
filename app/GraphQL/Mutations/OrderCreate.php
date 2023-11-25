@@ -5,6 +5,7 @@ namespace App\GraphQL\Mutations;
 use Carbon\Carbon;
 use App\Models\Client;
 use App\GraphQL\Traits\OrderTrait;
+use App\Models\Bonus;
 
 class OrderCreate
 {
@@ -28,8 +29,32 @@ class OrderCreate
 
         $this->syncItems($data, $order);
 
+        if ($client->clientRecommended) {
+            $this->addBonusToRecommendedClient($client, $order);
+        }
+
         return $order;
     }
+
+    public function addBonusToRecommendedClient($client, $order)
+    {
+        $bonus = bcmul(
+            $order->price,
+            bcdiv($order->recommendation_bonus_percent, 100, 2),
+            2
+        );
+
+        $client->clientRecommended->update([
+            'bonus' => bcadd($client->clientRecommended->bonus, $bonus, 2)
+        ]);
+
+        Bonus::create([
+            'client_id' => $client->clientRecommended->id,
+            'order_id' => $order->id,
+            'value' => $bonus
+        ]);
+    }
+
 
     public function hasDownPayment($data)
     {

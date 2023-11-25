@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 
 trait ClientTrait
 {
-    private function getFormattedData(array $data)
+    public function getFormattedData(array $data)
     {
         return (new Formatter($data))
             ->name('name')
@@ -15,7 +15,7 @@ trait ClientTrait
             ->get();
     }
 
-    private function validator($data, $isUpdate = false)
+    public function validator($data, $isUpdate = false)
     {
         return Validator::make($data, [
             'id' => ['sometimes', 'required', 'exists:clients,id'],
@@ -28,7 +28,7 @@ trait ClientTrait
         ], $this->errorMessages());
     }
 
-    private function errorMessages()
+    public function errorMessages()
     {
         return [
             'name.required' => __('validation.rules.required')

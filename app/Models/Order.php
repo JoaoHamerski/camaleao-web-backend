@@ -45,6 +45,7 @@ class Order extends Model
         'order',
         'final_status',
         'shipping_value',
+        'recommendation_bonus_percent',
         // 'created_at'
     ];
 
