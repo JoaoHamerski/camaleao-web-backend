@@ -17,6 +17,11 @@ trait PaymentTrait
             $data['value'] = 0;
         }
 
+        if ($data['add_rest_to_credits']) {
+            $data['use_client_bonus'] = false;
+            $data['use_client_balance'] = false;
+        }
+
         return (new Formatter($data))
             ->currencyBRL(['value', 'price', 'credit', 'bonus'])
             ->date('date')

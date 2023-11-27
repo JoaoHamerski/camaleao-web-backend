@@ -85,7 +85,7 @@ class PaymentCreate
     {
         $data['total_owing'] = $order->total_owing;
         $data['total_value'] = bcadd($data['value'], bcadd($data['credit'], $data['bonus'], 2), 2);
-        $data['original_value'] = $data['value'];
+        $data['original_value'] = max($data['value'], $data['credit'], $data['bonus']);
 
         $data['value'] = $this->getPaymentValue(
             $data['total_value'],
@@ -155,7 +155,7 @@ class PaymentCreate
                 'use_client_balance' => ['required', 'boolean'],
                 'use_client_bonus' => ['required', 'boolean'],
                 'credit' => $this->getCreditRules($order),
-                'bonus' => $this->getBonusRules($order),
+                'bonus' => $this->getBonusRules($data, $order),
                 'value' => $this->getValueRules($data, $order),
                 'is_sponsor' => ['required', 'boolean'],
                 'is_shipping' => ['required', 'boolean'],
@@ -193,18 +193,23 @@ class PaymentCreate
         return $rules;
     }
 
-    public function getBonusRules($order)
+    public function getBonusRules($data, $order)
     {
         $maxAvailableViaBonus = bcsub(
             bcmul($order->price, 0.5, 2),
             $order->paidWithBonus(),
             2
         );
+
         $rules = [];
         $rules[] = 'nullable';
-        $rules[] = 'max_currency:' . min($maxAvailableViaBonus, $order->client->bonus);
         $rules[] = 'min_currency:0.01';
+        $rules[] = 'max_currency:' . min($maxAvailableViaBonus, $order->client->bonus);
         $rules[] = 'required_if:use_client_bonus,true';
+
+        if (!$data['add_rest_to_credits'] && !$data['is_shipping']) {
+            $rules[] = 'max_currency:' . $order->total_owing;
+        }
 
         return $rules;
     }
