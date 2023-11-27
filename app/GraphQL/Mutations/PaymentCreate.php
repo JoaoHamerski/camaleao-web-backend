@@ -195,9 +195,15 @@ class PaymentCreate
 
     public function getBonusRules($order)
     {
+        $maxAvailableViaBonus = bcsub(
+            bcmul($order->price, 0.5, 2),
+            $order->paidWithBonus(),
+            2
+        );
         $rules = [];
         $rules[] = 'nullable';
-        $rules[] = 'max_currency:' . min(bcmul($order->price, 0.5, 2), $order->client->bonus);
+        $rules[] = 'max_currency:' . min($maxAvailableViaBonus, $order->client->bonus);
+        $rules[] = 'min_currency:0.01';
         $rules[] = 'required_if:use_client_bonus,true';
 
         return $rules;
@@ -208,6 +214,7 @@ class PaymentCreate
         $rules = [];
         $rules[] = 'nullable';
         $rules[] = 'max_currency:' . min($order->client->balance, $order->total_owing);
+        $rules[] = 'min_currency:0.01';
         $rules[] = 'required_if:use_client_balance,true';
 
         return $rules;

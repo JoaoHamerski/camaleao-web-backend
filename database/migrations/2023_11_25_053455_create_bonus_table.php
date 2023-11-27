@@ -16,7 +16,7 @@ class CreateBonusTable extends Migration
         Schema::create('bonus', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained('clients')->cascadeOnDelete();
-            $table->foreignId('order_id')->constrained('orders')->nullable();
+            $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
             $table->decimal('value');
             $table->timestamps();
         });

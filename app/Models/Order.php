@@ -223,6 +223,16 @@ class Order extends Model
         return $this->hasMany(Garment::class);
     }
 
+    public function bonus()
+    {
+        return $this->hasOne(Bonus::class);
+    }
+
+    public function paidWithBonus()
+    {
+        return $this->payments()->where('is_bonus', true)->sum('value');
+    }
+
     public function getTotalGarmentsValueAttribute()
     {
         $INITIAL_VALUE = 0;

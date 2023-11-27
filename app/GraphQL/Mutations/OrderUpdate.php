@@ -37,10 +37,38 @@ class OrderUpdate
 
         $order->save();
 
+        if ($order->client->clientRecommended) {
+            $this->updateClientBonus($order);
+        }
+
         if (!isset($data['clothing_types'])) {
             $this->syncItems($data, $order, true);
         }
 
         return $order;
+    }
+
+    public function updateClientBonus($order)
+    {
+        $order = $order->fresh();
+        $oldBonus = $order->bonus->value;
+
+        $newBonus = bcmul(
+            bcsub($order->price, $order->shipping_value ?? 0, 2),
+            bcdiv($order->recommendation_bonus_percent, 100, 2),
+            2
+        );
+
+        $order->bonus->update([
+            'value' => $newBonus
+        ]);
+
+        $order->bonus->client->update([
+            'bonus' => bcadd(
+                bcsub($order->bonus->client->bonus, $oldBonus, 2),
+                $newBonus,
+                2
+            )
+        ]);
     }
 }

@@ -39,7 +39,7 @@ class OrderCreate
     public function addBonusToRecommendedClient($client, $order)
     {
         $bonus = bcmul(
-            $order->price,
+            bcsub($order->price, $order->shipping_value ?? 0, 2),
             bcdiv($order->recommendation_bonus_percent, 100, 2),
             2
         );

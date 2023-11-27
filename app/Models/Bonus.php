@@ -11,4 +11,14 @@ class Bonus extends Model
 
     protected $guarded = [];
     protected $table = 'bonus';
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

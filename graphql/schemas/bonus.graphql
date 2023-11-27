@@ -1,0 +1,13 @@
+type Bonus @guard {
+  id: ID!
+  client: Client @belongsTo
+  order: Order @belongsTo
+  value: Float
+  created_at: DateTime
+}
+
+extend type Query {
+  bonusesFromClient(id: ID!): [Bonus!]
+    @paginate(builder: "App\\GraphQL\\Builders\\BonusesFromClientBuilder")
+    @orderBy(column: "created_at", direction: DESC)
+}

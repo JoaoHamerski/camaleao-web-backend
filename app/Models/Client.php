@@ -102,6 +102,12 @@ class Client extends Model
     {
         return $this->hasMany(ClientBalance::class);
     }
+
+    public function bonuses()
+    {
+        return $this->hasMany(Bonus::class);
+    }
+
     public function clientRecommendations()
     {
         return $this->hasMany(Client::class, 'client_recommended_id');
