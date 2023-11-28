@@ -128,12 +128,33 @@ class Order extends Model
         });
 
         static::deleting(function (Order $order) use ($FILE_FIELDS) {
+
             foreach ($FILE_FIELDS as $field) {
                 $files = FileHelper::getFilesFromField($order->{$field});
 
                 FileHelper::deleteFiles($files, $field);
             }
         });
+
+        static::deleted(function (Order $order) {
+            static::removeClientBonus($order);
+        });
+    }
+
+    public static function removeClientBonus($order)
+    {
+        if (!$order->client->clientRecommended) {
+            return;
+        }
+
+        $recommendedClient = $order->client->clientRecommended;
+        $bonus = $order->bonus->value;
+
+        $bonusUpdated = bcsub($recommendedClient->bonus, $bonus, 2);
+
+        $recommendedClient->update([
+            'bonus' => $bonusUpdated < 0 ? 0 : $bonusUpdated
+        ]);
     }
 
     public function confirmStatusOnCreated()

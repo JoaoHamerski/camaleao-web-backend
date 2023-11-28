@@ -51,7 +51,13 @@ class OrderUpdate
     public function updateClientBonus($order)
     {
         $order = $order->fresh();
+
+        if (!$order->bonus) {
+            return;
+        }
+
         $oldBonus = $order->bonus->value;
+
 
         $newBonus = bcmul(
             bcsub($order->price, $order->shipping_value ?? 0, 2),

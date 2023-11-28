@@ -24,21 +24,6 @@ class OrderDelete
 
         $order->delete();
 
-        $this->removeClientBonus($order);
-
         return $order;
-    }
-
-
-    public function removeClientBonus($order)
-    {
-        $recommendedClient = $order->client->clientRecommended;
-        $bonus = $order->bonus->value;
-
-        $bonusUpdated = bcsub($recommendedClient->bonus, $bonus, 2);
-
-        $recommendedClient->update([
-            'bonus' => $bonusUpdated < 0 ? 0 : $bonusUpdated
-        ]);
     }
 }
