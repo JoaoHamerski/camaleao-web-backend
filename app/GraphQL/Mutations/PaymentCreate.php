@@ -73,12 +73,9 @@ class PaymentCreate
 
     public function payWithClientBonus($order, $payment, $data)
     {
-        $client = $order->client;
         $payment->is_bonus = true;
 
-        $client->update([
-            'bonus' => bcsub($client->bonus, $data['bonus'], 2)
-        ]);
+        $order->client->increaseBonus(-$data['bonus']);
     }
 
     public function getComputedValues(Order $order, $data)

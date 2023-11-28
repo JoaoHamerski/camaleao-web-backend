@@ -8,18 +8,13 @@ trait PaymentTrait
 {
     public function getFormattedData(array $data)
     {
-        if ($data['is_sponsor']) {
+        if ($data['is_sponsor'] || $data['add_rest_to_credits']) {
             $data['use_client_balance'] = false;
             $data['use_client_bonus'] = false;
         }
 
         if ($data['use_client_balance'] || $data['use_client_bonus']) {
             $data['value'] = 0;
-        }
-
-        if ($data['add_rest_to_credits']) {
-            $data['use_client_bonus'] = false;
-            $data['use_client_balance'] = false;
         }
 
         return (new Formatter($data))

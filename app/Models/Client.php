@@ -88,6 +88,15 @@ class Client extends Model
         }
     }
 
+    public function increaseBonus($value)
+    {
+        $bonus = $this->bonus;
+
+        $this->update([
+            'bonus' => bcadd($bonus, $value, 2)
+        ]);
+    }
+
     public function orders()
     {
         return $this->hasMany(Order::class);

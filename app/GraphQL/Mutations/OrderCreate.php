@@ -44,9 +44,7 @@ class OrderCreate
             2
         );
 
-        $client->clientRecommended->update([
-            'bonus' => bcadd($client->clientRecommended->bonus, $bonus, 2)
-        ]);
+        $client->clientRecommended->increaseBonus($bonus);
 
         Bonus::create([
             'client_id' => $client->clientRecommended->id,
