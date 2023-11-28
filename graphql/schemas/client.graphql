@@ -43,6 +43,7 @@ input ClientInput {
   branch_id: ID
   shipping_company_id: ID
   client_recommended_id: ID
+  bonus: String
 }
 
 extend type Query {

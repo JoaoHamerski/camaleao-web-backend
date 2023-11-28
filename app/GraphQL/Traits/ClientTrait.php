@@ -13,6 +13,7 @@ trait ClientTrait
         return (new Formatter($data))
             ->name('name')
             ->stripNonDigits('phone')
+            ->currencyBRL('bonus')
             ->get();
     }
 
@@ -29,7 +30,8 @@ trait ClientTrait
                 'nullable',
                 'exists:clients,id',
                 isset($data['id']) ? Rule::notIn([$data['id']]) : ''
-            ]
+            ],
+            'bonus' => ['nullable']
         ], $this->errorMessages());
     }
 
