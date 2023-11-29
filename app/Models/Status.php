@@ -135,6 +135,6 @@ class Status extends Model
     {
         $availableIds = AppConfig::get('app', 'status_available');
 
-        return in_array($this->id, $availableIds);
+        return in_array($this->id, $availableIds ?? []);
     }
 }

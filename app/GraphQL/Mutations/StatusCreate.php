@@ -17,9 +17,10 @@ class StatusCreate
     {
         $this->validator($args)->validate();
 
+        $lastStatus = Status::ordered()->get()->last();
         $status = Status::create([
             'text' => $args['text'],
-            'order' => Status::ordered()->get()->last()->order + 1
+            'order' => $lastStatus ? $lastStatus->order + 1 : 1
         ]);
 
         return $status;
