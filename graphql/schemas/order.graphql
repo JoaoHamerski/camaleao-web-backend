@@ -44,6 +44,7 @@ type Order @guard {
   can_be_concluded: Boolean
   has_individual_names: Boolean
   products: [OrderProduct]!
+  # user: User
 }
 
 enum QueryOrdersOrderByColumn {
