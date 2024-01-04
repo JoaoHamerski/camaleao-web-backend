@@ -49,6 +49,7 @@ class OrderFactory extends Factory
         ];
 
         return [
+            'user_id' => User::inRandomOrder()->first()->id,
             'code' => $data['code'],
             'name' => $data['name'],
             'created_at' => $data['created_at'],

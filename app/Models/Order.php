@@ -46,6 +46,7 @@ class Order extends Model
         'final_status',
         'shipping_value',
         'recommendation_bonus_percent',
+        'user_id'
         // 'created_at'
     ];
 
@@ -245,6 +246,11 @@ class Order extends Model
     public function bonus()
     {
         return $this->hasOne(Bonus::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function paidWithBonus()

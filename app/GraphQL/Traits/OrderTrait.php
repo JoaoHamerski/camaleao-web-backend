@@ -10,6 +10,7 @@ use App\Models\ClothingType;
 use App\Models\GarmentMatch;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
@@ -71,6 +72,8 @@ trait OrderTrait
                 'size_paths.*',
                 'payment_voucher_paths.*'
             ])->get();
+
+        $data['user_id'] = Auth::id();
 
         return $data;
     }

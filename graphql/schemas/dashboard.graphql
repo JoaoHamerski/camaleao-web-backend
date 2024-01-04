@@ -87,6 +87,12 @@ type SalesAmountChart {
   previous: [SalesAmountChartDate]
 }
 
+type DashboardMonthSalesUsers {
+  user: User
+  percentage: Float
+  total: Float
+}
+
 enum DashboardProductionOrdersTypes {
   ESTAMPADOS @enum(value: "estampados")
   COSTURADOS @enum(value: "costurados")
@@ -120,6 +126,8 @@ extend type Query {
       builder: "App\\GraphQL\\Builders\\DashboardProductionOrdersBuilder"
     )
     @canAccess(roles: ["GERENCIA"])
+
+  dashboardMonthSalesUsers: [DashboardMonthSalesUsers!]!
 }
 
 extend type Mutation {

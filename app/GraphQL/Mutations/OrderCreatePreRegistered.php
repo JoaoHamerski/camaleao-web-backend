@@ -7,6 +7,7 @@ use App\Util\FileHelper;
 use App\Util\Formatter;
 use App\Util\Helper;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class OrderCreatePreRegistered
@@ -22,6 +23,7 @@ class OrderCreatePreRegistered
         $this->validator($data)->validate();
 
         $data['art_paths'] = $this->storeFiles($data['art_paths']);
+        $data['user_id'] = Auth::id();
 
         $order = Order::create(Arr::only($data, [
             'status_id',
