@@ -35,35 +35,23 @@ trait OrderTrait
             ->get();
     }
 
-    public function syncItems($input, $order, $isUpdate = false)
+    public function registerProducts($input, $order, $isUpdate = false)
     {
-        $inputGarments = collect($input['garments']);
+        $products = collect($input['product_items']);
 
         if ($isUpdate) {
-            $order->garments()->delete();
+            $order->products()->delete();
         }
 
-        $inputGarments->each(function ($inputGarment) use ($order) {
-            $match = $this->findGarmentMatch($inputGarment, $order);
-            $items = $inputGarment['items'];
-
-            $garment = $order->garments()
+        $products->each(function ($product) use ($order) {
+            $order->products()
                 ->create([
-                    'garment_match_id' => $match->id,
-                    'individual_names' => data_get($inputGarment, 'items_individual')
+                    'description' => $product['description'],
+                    'value' => $product['value'],
+                    'quantity' => $product['quantity'],
+                    'unity' => $product['unity']
                 ]);
-
-            $this->syncGarmentSizes($garment, $items);
         });
-    }
-
-    public function syncGarmentSizes($garment, $sizes)
-    {
-        foreach ($sizes as $size) {
-            $garment->sizes()->attach([
-                $size['size_id'] => ['quantity' => $size['quantity']]
-            ]);
-        }
     }
 
     private function getFormattedData(array $data, $order = null)
@@ -72,7 +60,7 @@ trait OrderTrait
             ->currencyBRL([
                 'down_payment',
                 'discount',
-                'clothing_types.*.value',
+                'product_items.*.value',
                 'shipping_value'
             ])
             ->date([
@@ -84,48 +72,13 @@ trait OrderTrait
                 'payment_voucher_paths.*'
             ])->get();
 
-        $data['garments'] = $this->getFormattedGarments($data);
-
-        if (!$order || !$order->clothingTypes->count()) {
-            unset($data['clothing_types']);
-        }
-
         return $data;
-    }
-
-    public function getFormattedGarments($data)
-    {
-        return array_map(function ($garment) {
-            if ($garment['individual_names']) {
-                $garment['items'] = $this->formatItemsIndividual($garment);
-                $garment['items_individual'] = json_encode($garment['items_individual']);
-            } else {
-                unset($garment['items_individual']);
-            }
-
-            return $garment;
-        }, $data['garments']);
-    }
-
-    public function formatItemsIndividual($garment)
-    {
-        $items = collect($garment['items_individual']);
-        $grouped = $items->groupBy('size_id');
-
-        return $grouped->map(fn ($group, $id) => [
-            'quantity' => $group->count(),
-            'size_id' => $id
-        ])->values()->toArray();
     }
 
     private function evaluateOrderAttributes($data, Order $order = null)
     {
-        if ($order && $order->clothingTypes->count()) {
-            return $this->ctEvaluateOrderAttributes($data, $order);
-        }
-
-        $price = $this->evaluateGarmentsValue($data, $order);
-        $quantity = $this->evaluateGarmentsQuantity($data, $order);
+        $price = $this->evaluateProductsValue($data, $order);
+        $quantity = $this->evaluateProductsQuantity($data, $order);
 
         if ($price) {
             $data['price'] = $price;
@@ -138,79 +91,27 @@ trait OrderTrait
         return $data;
     }
 
-    private function findGarmentMatch($garmentData)
+    private function getProductValue($product)
     {
-        return GarmentMatch::withTrashed()->find($garmentData['match_id']);
+        return bcmul($product['value'], $product['quantity'], 2);
     }
 
-    private function getGarmentMatchValue($garmentMatch, $quantity)
+    private function getProductsValue($products)
     {
-        $values = $garmentMatch->values;
-
-        if ($garmentMatch->unique_value) {
-            return $garmentMatch->unique_value;
-        }
-
-        $value = $values->first(
-            fn ($value) => ($value->start <= $quantity && $value->end >= $quantity)
-                || !$value->end
-        );
-
-        return $value->value;
-    }
-
-    private function getGarmentQuantity($garment)
-    {
-        return collect($garment['items'])->sum('quantity');
-    }
-
-    private function getSizeValues($garmentMatch, $garment)
-    {
-        $sizes = collect($garment['items']);
-
-        return $sizes->reduce(function ($total, $size) use ($garmentMatch) {
-            $garmentSize = $garmentMatch->sizes()->find($size['size_id']);
-            $sizeSum = $garmentSize
-                ? bcmul($garmentSize->pivot->value, $size['quantity'], 2)
-                : 0;
-
-            return bcadd($total, $sizeSum, 2);
-        }, 0);
-    }
-
-    private function getGarmentValue($garment)
-    {
-        $garmentMatch = $this->findGarmentMatch($garment);
-
-        if (!$garmentMatch) {
-            return 0;
-        }
-
-        $quantity = $this->getGarmentQuantity($garment);
-        $value = $this->getGarmentMatchValue($garmentMatch, $quantity);
-        $sizeValues = $this->getSizeValues($garmentMatch, $garment);
-        $totalGarment = bcmul($quantity, $value, 2);
-        $total = bcadd($totalGarment, $sizeValues, 2);
-
-        return $total;
-    }
-
-    private function getGarmentsValue($garments)
-    {
-        return collect($garments)->reduce(
-            fn ($total, $garment) => bcadd(
+        return collect($products)->reduce(
+            fn ($total, $product) => bcadd(
                 $total,
-                $this->getGarmentValue($garment),
+                $this->getProductValue($product),
                 2
             ),
             0
         );
     }
 
-    private function evaluateTotalPrice($garmentsValue, $data, $order = null)
+    private function evaluateTotalPrice($productsValue, $data, $order = null)
     {
         if (
-            $garmentsValue <= 0
+            $productsValue <= 0
             && isset($data['discount'])
             && $order
         ) {
@@ -221,19 +122,19 @@ trait OrderTrait
             );
         }
 
-        if ($order && floatval($garmentsValue) === 0.0) {
+        if ($order && floatval($productsValue) === 0.0) {
             return null;
         }
 
-        $price = bcsub($garmentsValue, $data['discount'] ?? 0, 2);
+        $price = bcsub($productsValue, $data['discount'] ?? 0, 2);
 
         return bcadd($price, $data['shipping_value'] ?? 0, 2);
     }
 
-    private function evaluateGarmentsValue($data, $order = null)
+    private function evaluateProductsValue($data, $order = null)
     {
-        $garmentsValue = $this->getGarmentsValue($data['garments']);
-        $total = $this->evaluateTotalPrice($garmentsValue, $data, $order);
+        $productsValue = $this->getProductsValue($data['product_items']);
+        $total = $this->evaluateTotalPrice($productsValue, $data, $order);
 
         if (floatval($total) === 0.0 && $order && $order->isPreRegistered()) {
             return null;
@@ -250,20 +151,20 @@ trait OrderTrait
         return $total;
     }
 
-    private function getGarmentsQuantity($garments)
+    private function getProductsQuantity($products)
     {
-        return collect($garments)->reduce(
-            fn ($total, $garment) => bcadd(
+        return collect($products)->reduce(
+            fn ($total, $product) => bcadd(
                 $total,
-                collect($garment['items'])->sum('quantity')
+                $product['quantity']
             ),
             0
         );
     }
 
-    private function evaluateGarmentsQuantity($data, Order $order = null)
+    private function evaluateProductsQuantity($data, Order $order = null)
     {
-        $total = $this->getGarmentsQuantity($data['garments']);
+        $total = $this->getProductsQuantity($data['product_items']);
 
         if ($total === 0 && $order && $order->isPreRegistered()) {
             return null;
@@ -385,32 +286,28 @@ trait OrderTrait
         ];
     }
 
-    private function getGarmentsRules($data, $order = null)
+    private function getProductsRules($data, $order = null)
     {
         if ($order && $order->clothingTypes()->count()) {
             return [];
         }
 
         return [
-            'garments' => ['required'],
-            'garments.*.individual_names' => ['required', 'boolean'],
-            'garments.*.model_id' => ['required', 'exists:models,id'],
-            'garments.*.material_id' => ['nullable', 'exists:materials,id'],
-            'garments.*.neck_type_id' => ['nullable', 'exists:neck_types,id'],
-            'garments.*.sleeve_type_id' => ['nullable', 'exists:sleeve_types,id'],
-            'garments.*.items' => ['required', 'required', 'array'],
-            'garments.*.items_individual' => ['sometimes', 'required', 'json'],
-            'garments.*.items.*.quantity' => ['required', 'required'],
-            'garments.*.items.*.size_id' => ['required', 'required', 'exists:garment_sizes,id'],
-            'garments.*.match_id' => ['required', 'exists:garment_matches,id']
+            'product_items' => ['required'],
+            'product_items.*.description' => ['required'],
+            'product_items.*.unity' => [
+                'required',
+                Rule::in(['un', 'pc', 'pct', 'cx', 'm'])
+            ],
+            'product_items.*.quantity' => ['required'],
+            'product_items.*.value' => ['required'],
         ];
     }
 
     private function rules($data, Order $order = null)
     {
         $rules[] = $this->getGeneralRules($data, $order);
-        $rules[] = $this->getClothingTypesRules($data, $order);
-        $rules[] = $this->getGarmentsRules($data, $order);
+        $rules[] = $this->getProductsRules($data, $order);
 
         return Arr::collapse($rules);
     }

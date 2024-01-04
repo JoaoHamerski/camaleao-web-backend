@@ -20,8 +20,6 @@ type Order @guard {
     @orderBy(column: "date", direction: DESC)
     @orderBy(column: "created_at", direction: DESC)
 
-  clothing_types: [ClothingType] @rename(attribute: "clothingTypes")
-
   art_paths: [String]
   size_paths: [String]
   payment_voucher_paths: [String]
@@ -44,8 +42,8 @@ type Order @guard {
   closed_at: Date
   is_concluded: Boolean
   can_be_concluded: Boolean
-  garments: [Garment!]!
   has_individual_names: Boolean
+  products: [OrderProduct]!
 }
 
 enum QueryOrdersOrderByColumn {
@@ -64,32 +62,11 @@ enum QueryOrdersWhereConditionsColumn {
   CLIENT_ID @enum(value: "client_id")
 }
 
-input ClothingTypesInput {
-  key: String!
-  value: String!
-  quantity: String!
-}
-
-input OrderGarmentItemInput {
+input OrderProductInput {
+  unity: String
+  description: String
   quantity: String
-  size_id: ID
-}
-
-input OrderGarmentIndItemInput {
-  name: String
-  number: String
-  size_id: ID
-}
-
-input OrderGarmentsInput {
-  individual_names: Boolean
-  items: [OrderGarmentItemInput!]!
-  items_individual: [OrderGarmentIndItemInput!]!
-  match_id: ID
-  model_id: ID
-  material_id: ID
-  neck_type_id: ID
-  sleeve_type_id: ID
+  value: String
 }
 
 input OrderInput {
@@ -100,12 +77,11 @@ input OrderInput {
   shipping_value: String
   payment_via_id: ID
   delivery_date: String
-  clothing_types: [ClothingTypesInput]
   status_id: ID
   art_paths: [String!]
   size_paths: [String!]
   payment_voucher_paths: [String!]
-  garments: [OrderGarmentsInput!]!
+  product_items: [OrderProductInput!]!
   recommendation_bonus_percent: String
 }
 

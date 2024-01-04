@@ -27,7 +27,7 @@ class OrderCreate
 
         $order = $client->orders()->create($data);
 
-        $this->syncItems($data, $order);
+        $this->registerProducts($data, $order);
 
         if ($client->clientRecommended) {
             $this->addBonusToRecommendedClient($client, $order);

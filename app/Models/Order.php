@@ -58,9 +58,7 @@ class Order extends Model
         'art_paths',
         'size_paths',
         'payment_voucher_paths',
-        'total_clothings_value',
-        'total_garments_value',
-        'has_individual_names'
+        'total_products_value',
     ];
 
     public function getCreatedLog(): string
@@ -239,9 +237,9 @@ class Order extends Model
         return $this->hasMany(Note::class);
     }
 
-    public function garments()
+    public function products()
     {
-        return $this->hasMany(Garment::class);
+        return $this->hasMany(OrderProduct::class);
     }
 
     public function bonus()
@@ -254,14 +252,14 @@ class Order extends Model
         return $this->payments()->where('is_bonus', true)->sum('value');
     }
 
-    public function getTotalGarmentsValueAttribute()
+    public function getTotalProductsValueAttribute()
     {
-        $INITIAL_VALUE = 0;
-
-        return $this->garments->reduce(function ($total, $garment) {
-            $totalGarment = bcadd($garment->value, $garment->sizesValue, 2);
-            return bcadd($totalGarment, $total, 2);
-        }, $INITIAL_VALUE);
+        return $this->products->reduce(function ($total, $product) {
+            return bcadd(
+                $total,
+                bcmul($product->value, $product->quantity, 2)
+            );
+        }, 0);
     }
 
     public function getHasOrderControlAttribute()
@@ -350,11 +348,6 @@ class Order extends Model
             ->where('is_confirmed', true)
             ->whereNotNull('sponsorship_client_id')
             ->exists();
-    }
-
-    public function getHasIndividualNamesAttribute()
-    {
-        return $this->garments->contains(fn ($garment) => $garment->individual_names);
     }
 
     public function getTotalPaidNonSponsorAttribute()

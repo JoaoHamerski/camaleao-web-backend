@@ -66,7 +66,7 @@ class OrderFactory extends Factory
                 return;
             }
 
-            $this->populateClothes($order);
+            $this->populateProducts($order);
             $this->populateValuesAndQuantity($order);
         });
     }
@@ -74,21 +74,15 @@ class OrderFactory extends Factory
     protected function populateValuesAndQuantity($order)
     {
         $order->refresh();
-        $isGarment = !!$order->garments()->count();
+        $totalValue = $order->total_products_value;
 
-        $clothesValue = $isGarment
-            ? $order->total_garments_value
-            : $order->total_clothings_value;
+        $shipping_value = $this->faker->optional(.35)->randomFloat(2, 0, $totalValue);
+        $discount = $this->faker->optional(.35)->randomFloat(2, 0, $totalValue / 2);
 
-        $shipping_value = $this->faker->optional(.35)->randomFloat(2, 0, $clothesValue);
-        $discount = $this->faker->optional(.35)->randomFloat(2, 0, $clothesValue / 2);
-
-        $price = bcsub($clothesValue, $discount ?? 0, 2);
+        $price = bcsub($totalValue, $discount ?? 0, 2);
         $price = bcadd($price, $shipping_value ?? 0, 2);
 
-        $quantity = $isGarment
-            ? $order->garments->sum('quantity')
-            : $order->clothingTypes()->sum('quantity');
+        $quantity = $order->products->sum('quantity');
 
         $order->update(
             compact(
@@ -100,92 +94,19 @@ class OrderFactory extends Factory
         );
     }
 
-    protected function populateClothes(Order $order)
+    protected function populateProducts($order)
     {
-        // Ativo quando quiser testar retrocompatibilidade com clothingTypes
-        // if ($this->faker->boolean(20)) {
-        //     $this->populateClothingTypes($order);
-        //     return;
-        // }
+        $QUANTITY = $this->faker->numberBetween(1, 5);
 
-        $this->populateGarments($order);
-    }
 
-    protected function populateGarments($order)
-    {
-        $ORDER_GARMENTS_COUNT = $this->faker->numberBetween(1, 5);
-
-        for ($i = 0; $i < $ORDER_GARMENTS_COUNT; $i++) {
-            $match = GarmentMatch::inRandomOrder()->first();
-            $individualNames = $this->populateIndividualNames($match);
-
-            $garment = $order->garments()->create([
-                'garment_match_id' => $match->id,
-                'individual_names' => json_encode($individualNames)
+        for ($i = 0; $i < $QUANTITY; $i++) {
+            $order->products()->create([
+                'description' => $this->faker->sentence(10),
+                'value' => $this->faker->randomFloat(2, 1, 100),
+                'quantity' => $this->faker->numberBetween(1, 5),
+                'unity' => $this->faker->randomElement(['un', 'cx', 'cpx'])
             ]);
-
-            $this->populateGarmentSizes($garment, $match, $individualNames);
         }
-    }
-
-    protected function populateGarmentSizes($garment, $match, $individualNames = null)
-    {
-        if ($individualNames) {
-            $sizes = collect($individualNames);
-            $grouped = $sizes->groupBy('size_id');
-
-            $grouped->each(function ($group, $id) use ($garment) {
-                $garment->sizes()->attach([
-                    $id => ['quantity' => $group->count()]
-                ]);
-            });
-
-            return;
-        }
-
-        $match->sizes->each(function ($size) use ($garment) {
-            $garment->sizes()->attach([
-                $size->id => [
-                    'quantity' => $this->faker->numberBetween(1, 10)
-                ]
-            ]);
-        });
-    }
-
-    protected function populateIndividualNames($match)
-    {
-        if ($this->faker->boolean(60)) {
-            return null;
-        }
-
-        $NAMES_QUANTITY = $this->faker->numberBetween(1, 20);
-        $names = [];
-
-        for ($i = 0; $i < $NAMES_QUANTITY; $i++) {
-            $names[] = [
-                'name' => $this->faker->name(),
-                'number' => $this->faker->numberBetween(0, 999),
-                'size_id' => $match->sizes->random()->id
-            ];
-        }
-
-        return $names;
-    }
-
-    protected function populateClothingTypes($order)
-    {
-        $clothingTypes = ClothingType::inRandomOrder()
-            ->take($this->faker->numberBetween(1, 5))
-            ->get();
-
-        $clothingTypes->each(function (ClothingType $clothingType) use ($order) {
-            $order->clothingTypes()->attach([
-                $clothingType->id => [
-                    'value' => round($this->faker->randomFloat(2, 20, 50), 1),
-                    'quantity' => $this->faker->numberBetween(1, 15)
-                ]
-            ]);
-        });
     }
 
     protected function populatePreRegistered(Order $order)

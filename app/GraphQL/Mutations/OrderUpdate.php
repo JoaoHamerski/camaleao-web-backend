@@ -25,12 +25,6 @@ class OrderUpdate
 
         $order->fill($data);
 
-        if (isset($data['clothing_types'])) {
-            $order->clothingTypes()->sync(
-                $this->getFilledClothingTypes($data)
-            );
-        }
-
         if ($order->isDirty('print_date')) {
             $order->order = null;
         }
@@ -41,9 +35,7 @@ class OrderUpdate
             $this->updateClientBonus($order);
         }
 
-        if (!isset($data['clothing_types'])) {
-            $this->syncItems($data, $order, true);
-        }
+        $this->registerProducts($data, $order, true);
 
         return $order;
     }

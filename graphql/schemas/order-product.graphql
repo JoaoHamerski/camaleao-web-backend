@@ -1,0 +1,7 @@
+type OrderProduct @guard {
+  id: ID
+  description: String
+  value: Float
+  quantity: Int
+  unity: String
+}
