@@ -38,6 +38,8 @@ final class DashboardMonthSalesUsers
             ]
         );
 
+        $results = $results->filter(fn ($result) => $result['user']['id'] !== 3);
+
         if (!Auth::user()->hasRole('GERENCIA')) {
             return $results->filter(
                 fn ($result) => $result['user']['id'] === Auth::id()
