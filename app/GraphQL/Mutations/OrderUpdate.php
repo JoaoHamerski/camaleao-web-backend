@@ -20,6 +20,7 @@ class OrderUpdate
         $data = $this->evaluateOrderAttributes($data, $order);
 
         $this->validator($data, $order)->validate();
+        $data['product_items'] = array_merge($data['product_items'], $data['direct_cost_items']);
 
         $data = $this->handleFilesUpload($data, $order);
 
