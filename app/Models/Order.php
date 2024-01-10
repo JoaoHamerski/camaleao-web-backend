@@ -240,7 +240,7 @@ class Order extends Model
 
     public function products()
     {
-        return $this->hasMany(OrderProduct::class)->where('value', '>', 0);
+        return $this->hasMany(OrderProduct::class);
     }
 
     public function directCostItems()
