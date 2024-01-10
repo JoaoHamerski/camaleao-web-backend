@@ -62,6 +62,7 @@ trait OrderTrait
                 'down_payment',
                 'discount',
                 'product_items.*.value',
+                'direct_cost_items.*.value',
                 'shipping_value'
             ])
             ->date([
@@ -72,6 +73,11 @@ trait OrderTrait
                 'size_paths.*',
                 'payment_voucher_paths.*'
             ])->get();
+
+        $data['direct_cost_items'] = array_map(
+            fn ($item) => array_merge($item, ['value' => -$item['value']]),
+            $data['direct_cost_items']
+        );
 
         $data['user_id'] = Auth::id();
 
@@ -291,20 +297,21 @@ trait OrderTrait
 
     private function getProductsRules($data, $order = null)
     {
-        if ($order && $order->clothingTypes()->count()) {
-            return [];
-        }
-
-        return [
-            'product_items' => ['required'],
-            'product_items.*.description' => ['required'],
-            'product_items.*.unity' => [
-                'required',
-                Rule::in(['un', 'pc', 'pct', 'cx', 'm'])
+        $rules = array_map(
+            fn ($prop) => [
+                $prop => ['required'],
+                "$prop.*.description" => ['required'],
+                "$prop.*.unity" => [
+                    'required',
+                    Rule::in(['un', 'pc', 'pct', 'cx', 'm'])
+                ],
+                "$prop.*.quantity" => ['required'],
+                "$prop.*.value" => ['required'],
             ],
-            'product_items.*.quantity' => ['required'],
-            'product_items.*.value' => ['required'],
-        ];
+            ['product_items', 'direct_cost_items']
+        );
+
+        return Arr::collapse($rules);
     }
 
     private function rules($data, Order $order = null)

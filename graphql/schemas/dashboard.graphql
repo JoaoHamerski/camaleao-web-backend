@@ -87,10 +87,15 @@ type SalesAmountChart {
   previous: [SalesAmountChartDate]
 }
 
-type DashboardMonthSalesUsers {
-  user: User
+type DashboardMonthSales {
   percentage: Float
   total: Float
+}
+
+type DashboardMonthSalesUsers {
+  user: User
+  direct_cost_items: DashboardMonthSales
+  products: DashboardMonthSales
 }
 
 enum DashboardProductionOrdersTypes {

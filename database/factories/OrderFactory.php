@@ -103,7 +103,7 @@ class OrderFactory extends Factory
         for ($i = 0; $i < $QUANTITY; $i++) {
             $order->products()->create([
                 'description' => $this->faker->sentence(10),
-                'value' => $this->faker->randomFloat(2, 1, 100),
+                'value' => $this->faker->randomFloat(2, -100, 100),
                 'quantity' => $this->faker->numberBetween(1, 5),
                 'unity' => $this->faker->randomElement(['un', 'cx', 'cpx'])
             ]);

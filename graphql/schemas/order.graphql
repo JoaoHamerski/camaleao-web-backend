@@ -44,7 +44,7 @@ type Order @guard {
   can_be_concluded: Boolean
   has_individual_names: Boolean
   products: [OrderProduct]!
-  # user: User
+  direct_cost_items: [OrderProduct]!
 }
 
 enum QueryOrdersOrderByColumn {
@@ -83,6 +83,7 @@ input OrderInput {
   size_paths: [String!]
   payment_voucher_paths: [String!]
   product_items: [OrderProductInput!]!
+  direct_cost_items: [OrderProductInput!]!
   recommendation_bonus_percent: String
 }
 

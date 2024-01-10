@@ -23,6 +23,8 @@ class OrderCreate
 
         $this->validator($data)->validate();
 
+        $data['product_items'] = array_merge($data['product_items'], $data['direct_cost_items']);
+
         $data = $this->handleFilesUpload($data);
 
         $order = $client->orders()->create($data);
