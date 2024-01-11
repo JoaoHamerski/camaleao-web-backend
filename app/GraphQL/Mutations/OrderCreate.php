@@ -22,7 +22,6 @@ class OrderCreate
         $data = $this->evaluateOrderAttributes($data);
 
         $this->validator($data)->validate();
-
         $data['product_items'] = array_merge($data['product_items'], $data['direct_cost_items']);
 
         $data = $this->handleFilesUpload($data);
@@ -64,7 +63,7 @@ class OrderCreate
 
     public function createDownPayment($order, $data)
     {
-        return (new PaymentCreate)->__invoke(null, [
+        return (new PaymentCreate())->__invoke(null, [
             'order_id' => $order->id,
             'payment_via_id' => $data['payment_via_id'],
             'value' => $data['down_payment'],

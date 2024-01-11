@@ -75,8 +75,13 @@ trait OrderTrait
             ])->get();
 
         $data['direct_cost_items'] = array_map(
-            fn ($item) => array_merge($item, ['value' => -$item['value']]),
+            fn($item) => array_merge($item, ['value' => -$item['value']]),
             $data['direct_cost_items']
+        );
+
+        $data['direct_cost_items'] = array_filter(
+            $data['direct_cost_items'],
+            fn($item) => !empty($item['value'])
         );
 
         $data['user_id'] = Auth::id();
@@ -108,7 +113,7 @@ trait OrderTrait
     private function getProductsValue($products)
     {
         return collect($products)->reduce(
-            fn ($total, $product) => bcadd(
+            fn($total, $product) => bcadd(
                 $total,
                 $this->getProductValue($product),
                 2
@@ -163,7 +168,7 @@ trait OrderTrait
     private function getProductsQuantity($products)
     {
         return collect($products)->reduce(
-            fn ($total, $product) => bcadd(
+            fn($total, $product) => bcadd(
                 $total,
                 $product['quantity']
             ),
@@ -298,7 +303,7 @@ trait OrderTrait
     private function getProductsRules($data, $order = null)
     {
         $rules = array_map(
-            fn ($prop) => [
+            fn($prop) => [
                 $prop => ['required'],
                 "$prop.*.description" => ['required'],
                 "$prop.*.unity" => [
@@ -308,7 +313,7 @@ trait OrderTrait
                 "$prop.*.quantity" => ['required'],
                 "$prop.*.value" => ['required'],
             ],
-            ['product_items', 'direct_cost_items']
+            ['product_items']
         );
 
         return Arr::collapse($rules);
@@ -415,7 +420,7 @@ trait OrderTrait
     {
         if ($order) {
             $orderFields = array_map(
-                fn ($file) => FileHelper::getFilenameFromUrl($file),
+                fn($file) => FileHelper::getFilenameFromUrl($file),
                 $order->{$field}
             );
 
@@ -460,7 +465,7 @@ trait OrderTrait
     public function deleteRemovedFiles(array $storedFiles, array $uploadedFiles, string $field): void
     {
         $uploadedFiles = array_map(
-            fn ($file) => FileHelper::isBase64($file)
+            fn($file) => FileHelper::isBase64($file)
                 ? $file
                 : FileHelper::getFilename($file),
             $uploadedFiles
