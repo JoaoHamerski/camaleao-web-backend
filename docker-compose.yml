@@ -1,50 +1,45 @@
-# For more information: https://laravel.com/docs/sail
-version: '3'
 services:
-    laravel.test:
+    camaleao-app:
+        container_name: camaleao-app
         build:
-            context: ./vendor/laravel/sail/runtimes/8.1
-            dockerfile: Dockerfile
-            args:
-                WWWGROUP: '${WWWGROUP}'
-        image: sail-8.1/app
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
-        ports:
-            - '${APP_PORT:-80}:80'
-        environment:
-            WWWUSER: '${WWWUSER}'
-            LARAVEL_SAIL: 1
-            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
-            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+            context: ./docker/php
+        restart: unless-stopped
         volumes:
-            - '.:/var/www/html'
+            - ./:/var/www
+            - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
         networks:
-            - sail
-        depends_on:
-            - mysql
-    mysql:
-        image: 'mysql/mysql-server:8.0'
+            - camaleao-network
+
+    camaleao-server:
+        container_name: camaleao-server
+        restart: unless-stopped
+        image: nginx:1.27.0-alpine
         ports:
-            - '${FORWARD_DB_PORT:-3306}:3306'
-        environment:
-            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
-            MYSQL_ROOT_HOST: "%"
-            MYSQL_DATABASE: '${DB_DATABASE}'
-            MYSQL_USER: '${DB_USERNAME}'
-            MYSQL_PASSWORD: '${DB_PASSWORD}'
-            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+            - ${FORWARD_APP_PORT:-8000}:80
         volumes:
-            - 'sail-mysql:/var/lib/mysql'
+            - ./:/var/www
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d/
         networks:
-            - sail
-        healthcheck:
-            test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
-            retries: 3
-            timeout: 5s
+            - camaleao-network
+
+    camaleao-mysql:
+        image: mysql:5.7
+        container_name: camaleao-mysql
+        restart: unless-stopped
+        volumes:
+            - camaleao-mysql:/var/lib/mysql
+        environment:
+            - MYSQL_DATABASE=${DB_DATABASE:-camaleao_web}
+            - MYSQL_PASSWORD=${DB_PASSWORD:-secret}
+            - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-secret}
+        ports:
+            - ${FORWARD_DB_PORT:-3306}:3306
+        networks:
+            - camaleao-network
+
 networks:
-    sail:
+    camaleao-network:
         driver: bridge
+
 volumes:
-    sail-mysql:
-        driver: local
+    camaleao-mysql:
