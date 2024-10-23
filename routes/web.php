@@ -9,7 +9,6 @@ use App\Http\Controllers\PDFOrdersSizesReport;
 use App\Http\Controllers\PDFPreviewReceipt;
 use App\Http\Controllers\PDFReceipt;
 use App\Http\Controllers\PDFWeeklyCalendar;
-
 use Illuminate\Support\Facades\Route;
 
 /*
