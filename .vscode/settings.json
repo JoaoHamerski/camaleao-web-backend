@@ -1,30 +1,7 @@
 {
-    "workbench.colorCustomizations": {
-        "activityBar.background": "#1329897a",
-    },
     "search.exclude": {
         "public/css": true,
         "public/js": true
     },
-    "phpcs.ignorePatterns": [
-        "/resources",
-        "/public",
-        "/database/migrations",
-        "/vendor"
-    ],
-    "phpcs.executablePath": "./vendor/squizlabs/php_codesniffer/bin/phpcs",
-    "cSpell.language": "en,pt-BR",
-    "cSpell.words": [
-        "Activitylog",
-        "Authenticatable",
-        "colspans",
-        "csrf",
-        "Csrf",
-        "IFNULL",
-        "laravel",
-        "Laravel",
-        "Nuwave",
-        "Spatie",
-        "Upsert"
-    ]
+    "php.version": "7.4",
 }
